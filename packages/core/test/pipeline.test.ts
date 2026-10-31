@@ -1,0 +1,485 @@
+import { describe, expect, it } from 'vitest';
+import {
+  analyze,
+  assessScam,
+  buildCard,
+  buildSpeechPlan,
+  CONFIDENCE_THRESHOLD,
+  createRulesClassifier,
+  extractFacts,
+  matchSender,
+  type Card,
+  type Classifier,
+} from '../src/index.js';
+import { ctx, lexicons, msg, region } from './helpers.js';
+
+const run = (text: string, sender?: Parameters<typeof msg>[1], receivedAt = '2026-10-31') =>
+  analyze(msg(text, sender, receivedAt), { region, lexicons });
+const keys = (c: Card, today?: string) =>
+  buildSpeechPlan(c, today ? { today } : {}).sections.flatMap((s) => s.utterances.map((u) => u.key));
+const phoneSender = { kind: 'number' as const, value: '+237677123456' };
+
+describe('full messages: French', () => {
+  it('ENEO bill with due date and amount', async () => {
+    const c = await run(
+      'Votre facture ENEO N° 4561237 de 15 000 FCFA est disponible. Veuillez régler avant le 15/11/2026 pour éviter la coupure.',
+    );
+    expect(c.mode).toBe('full');
+    expect(c.understanding.kind).toBe('electricity_bill');
+    expect(c.understanding.action).toBe('pay');
+    expect(c.amount?.value.amount).toBe(15000);
+    expect(c.deadline?.value).toBe('2026-11-15');
+    expect(c.reference?.value).toBe('4561237');
+    expect(c.scam.level).toBe('no_signs');
+    expect(keys(c)).toContain('deadline.by');
+    expect(keys(c)).toContain('about.electricity_bill');
+  });
+
+  it('CAMWATER cut-off notice', async () => {
+    const c = await run(
+      'CAMWATER: Cher client, votre facture d\'eau de 8 400 FCFA est impayée. Une coupure interviendra le 5 novembre 2026 si le règlement n\'est pas effectué. Réf: CW-77812.',
+    );
+    expect(c.understanding.kind).toBe('water_bill');
+    expect(c.understanding.action).toBe('pay');
+    expect(c.understanding.urgency).toBe('urgent');
+    expect(c.deadline?.value).toBe('2026-11-05');
+    expect(c.amount?.value.amount).toBe(8400);
+    expect(c.reference?.value).toBe('CW-77812');
+  });
+
+  it('genuine-looking MoMo receipt takes the received amount, not the balance', async () => {
+    const c = await run(
+      'Vous avez reçu 25 000 FCFA de Jean Mballa. Nouveau solde: 40 000 FCFA. ID de transaction: 8821993. Ne communiquez jamais votre code secret.',
+      { kind: 'name', value: 'MTN MoMo' },
+    );
+    expect(c.understanding.kind).toBe('mobile_money');
+    expect(c.understanding.action).toBe('nothing');
+    expect(c.amount?.value.amount).toBe(25000);
+    expect(c.scam.level).toBe('no_signs');
+    expect(c.scam.signals).not.toContain('asks_pin');
+    expect(c.scam.claimedSenderId).toBe('mtn-momo');
+    expect(keys(c)).toContain('scam.no_signs');
+    expect(keys(c)).toContain('sender.claimed');
+  });
+
+  it('MoMo wrong-transfer scam from an ordinary number', async () => {
+    const c = await run(
+      'Bonjour, je vous ai envoyé 50.000 F par erreur. Merci de me renvoyer au 699 12 34 56. Dieu vous bénisse.',
+      phoneSender,
+    );
+    expect(c.scam.level).toBe('likely_scam');
+    expect(c.scam.signals).toContain('wrong_transfer');
+    expect(c.contactPhone).toBeUndefined();
+    const k = keys(c);
+    expect(k[0]).toBe('scam.likely');
+    expect(k).toContain('scam.signal.wrong_transfer');
+    expect(k).toContain('scam.check_balance');
+    expect(k).not.toContain('action.pay');
+    expect(k).not.toContain('money.amount');
+    expect(k).toContain('help.none');
+  });
+
+  it('fake prize asking for a fee and PIN', async () => {
+    const c = await run(
+      'FELICITATIONS! Vous avez gagné 2 000 000 FCFA à la loterie MTN. Pour recevoir votre gain, envoyez 10 000 FCFA de frais et votre code PIN au 677 00 11 22 immédiatement.',
+      phoneSender,
+    );
+    expect(c.scam.level).toBe('likely_scam');
+    for (const s of ['prize_fee', 'asks_pin', 'time_pressure', 'sender_mismatch'] as const)
+      expect(c.scam.signals).toContain(s);
+    expect(c.contactPhone).toBeUndefined();
+    expect(keys(c)[0]).toBe('scam.likely');
+  });
+
+  it('hospital appointment', async () => {
+    const c = await run(
+      "Hôpital Laquintinie: Rendez-vous de consultation le 4 novembre 2026 à 8h. Présentez-vous avec votre carnet et votre ordonnance. Pour toute question appelez le 233 42 00 11.",
+    );
+    expect(c.understanding.kind).toBe('health');
+    expect(c.understanding.action).toBe('go_to_place');
+    expect(c.deadline?.value).toBe('2026-11-04');
+    expect(c.scam.level).toBe('no_signs');
+    expect(c.contactPhone?.value).toBe('+237233420011');
+    expect(keys(c)).toContain('help.call');
+  });
+
+  it('school fees', async () => {
+    const c = await run(
+      "Lycée de Bonamoussadi: les frais de scolarité de la 2e tranche, soit 45 000 FCFA, sont à régler avant le 20 novembre 2026. Merci.",
+    );
+    expect(c.understanding.kind).toBe('school');
+    expect(c.understanding.action).toBe('pay');
+    expect(c.amount?.value.amount).toBe(45000);
+    expect(c.deadline?.value).toBe('2026-11-20');
+  });
+
+  it('administrative ID card pickup', async () => {
+    const c = await run(
+      "Commissariat central: votre carte nationale d'identité est prête. Vous pouvez la retirer au guichet de la préfecture du lundi au vendredi. Munissez-vous de votre récépissé N° 00457812.",
+    );
+    expect(c.understanding.kind).toBe('administrative');
+    expect(c.understanding.action).toBe('collect');
+    expect(c.reference?.value).toBe('00457812');
+    expect(c.deadline).toBeUndefined();
+  });
+
+  it('threat to block a SIM', async () => {
+    const c = await run(
+      'URGENT: Votre carte SIM sera bloquée dans les 24 heures. Appelez le 655 44 33 22 pour confirmer votre identité.',
+      phoneSender,
+    );
+    expect(c.scam.level).toBe('likely_scam');
+    expect(c.scam.signals).toContain('account_block_threat');
+    expect(c.scam.signals).toContain('asks_to_call_number');
+    expect(c.contactPhone).toBeUndefined();
+  });
+
+  it('message with a bit.ly link is a caution at least', async () => {
+    const c = await run('Votre colis est en attente. Suivez-le ici: bit.ly/3AbCdEf');
+    expect(c.scam.signals).toContain('link');
+    expect(c.scam.level).toBe('caution');
+    expect(keys(c)).toContain('scam.signal.link');
+    expect(keys(c)).toContain('scam.caution');
+  });
+
+  it('claims ENEO from an ordinary number: sender mismatch', async () => {
+    const c = await run('ENEO: votre facture de 12 300 FCFA est impayée. Réglez avant le 2 novembre.', phoneSender);
+    expect(c.scam.signals).toContain('sender_mismatch');
+    expect(c.scam.level).toBe('likely_scam');
+    const plan = buildSpeechPlan(c).sections.flatMap((s) => s.utterances);
+    const u = plan.find((x) => x.key === 'scam.signal.sender_mismatch');
+    expect(u?.slots?.sender).toEqual({ type: 'sender', officialId: 'eneo' });
+  });
+
+  it('fake balance notice from an ordinary number', async () => {
+    const c = await run('Vous avez reçu 100 000 FCFA. Nouveau solde: 120 000 FCFA.', phoneSender);
+    expect(c.scam.signals).toContain('fake_balance');
+    expect(c.scam.level).toBe('likely_scam');
+  });
+});
+
+describe('full messages: English', () => {
+  it('ENEO bill', async () => {
+    const c = await run(
+      'Dear customer, your ENEO electricity bill of 18,500 FCFA is ready. Invoice no INV-445210. Please pay before 12th November 2026 to avoid disconnection.',
+    );
+    expect(c.facts.lang).toBe('en');
+    expect(c.understanding.kind).toBe('electricity_bill');
+    expect(c.understanding.action).toBe('pay');
+    expect(c.amount?.value.amount).toBe(18500);
+    expect(c.deadline?.value).toBe('2026-11-12');
+    expect(c.reference?.value).toBe('INV-445210');
+  });
+
+  it('PIN scam in English', async () => {
+    const c = await run(
+      'Your MoMo account will be blocked. Send your secret PIN to 677123456 within 30 minutes to keep it active.',
+      phoneSender,
+    );
+    expect(c.scam.level).toBe('likely_scam');
+    expect(c.scam.signals).toEqual(expect.arrayContaining(['asks_pin', 'account_block_threat', 'time_pressure']));
+  });
+
+  it('English wrong-transfer scam', async () => {
+    const c = await run('Hi, I sent you 20,000 FCFA by mistake. Please send it back to this number.', phoneSender);
+    expect(c.scam.signals).toContain('wrong_transfer');
+  });
+
+  it('English receipt with warning about PIN is not asks_pin', async () => {
+    const c = await run('You have received 5,000 FCFA from Paul. New balance: 9,000 FCFA. Never share your PIN with anyone.', {
+      kind: 'name',
+      value: 'MTN MoMo',
+    });
+    expect(c.scam.signals).not.toContain('asks_pin');
+    expect(c.scam.level).toBe('no_signs');
+    expect(c.amount?.value.amount).toBe(5000);
+  });
+
+  it('school fees in English', async () => {
+    const c = await run('School fees of 60,000 FCFA are due before 30 November 2026. Kindly pay at the bursar office.');
+    expect(c.understanding.kind).toBe('school');
+    expect(c.deadline?.value).toBe('2026-11-30');
+  });
+});
+
+describe('sender matching', () => {
+  it('never verifies unverified entries', () => {
+    expect(matchSender(msg('x', { kind: 'name', value: 'ENEO' }), region).sender.verified).toBe(false);
+  });
+  it('verifies only an official id on a verified sender', () => {
+    const r = {
+      ...region,
+      officialSenders: region.officialSenders.map((o) =>
+        o.id === 'eneo' ? { ...o, verified: true, smsSenderIds: ['ENEO-CM'], shortCodes: ['8010'] } : o,
+      ),
+    };
+    const a = matchSender(msg('Facture', { kind: 'name', value: 'eneo-cm' }), r);
+    expect(a.sender).toEqual({ officialId: 'eneo', displayName: 'ENEO', verified: true });
+    expect(matchSender(msg('Facture', { kind: 'number', value: '8010' }), r).sender.verified).toBe(true);
+    expect(matchSender(msg('ENEO facture', { kind: 'number', value: '+237677123456' }), r).sender.verified).toBe(false);
+  });
+  it('detects a claim from the text', () => {
+    expect(matchSender(msg('Votre facture ENEO est prête'), region).claimedSenderId).toBe('eneo');
+    expect(matchSender(msg('Message de camwater: coupure'), region).claimedSenderId).toBe('camwater');
+  });
+  it('prefers the longest alias', () => {
+    expect(matchSender(msg('Orange Money: transfert'), region).claimedSenderId).toBe('orange-money');
+  });
+  it('does not treat a payment channel as the sender', () => {
+    const t = 'Hôpital central: votre rendez-vous est confirmé pour demain. Vous pouvez payer les frais par Orange Money.';
+    expect(matchSender(msg(t), region, lexicons).claimedSenderId).toBeUndefined();
+  });
+  it('returns no claim for an unrelated message', () => {
+    expect(matchSender(msg('Bonjour, comment vas-tu ?'), region).claimedSenderId).toBeUndefined();
+  });
+});
+
+describe('scam assessment', () => {
+  const scam = (text: string, sender?: Parameters<typeof msg>[1]) => {
+    const input = msg(text, sender);
+    return assessScam(input, extractFacts(text, ctx), region, lexicons);
+  };
+  it('never returns a level meaning safe', () => {
+    expect(['likely_scam', 'caution', 'no_signs']).toContain(scam('Bonjour').level);
+  });
+  it('a clean message has no signals', () => {
+    expect(scam('Réunion des parents le 12 novembre 2026 à 15h.')).toEqual({ level: 'no_signs', signals: [] });
+  });
+  it('one weak signal is a caution', () => {
+    expect(scam('Voir www.ecole.cm').level).toBe('caution');
+  });
+  it('two weak signals are likely_scam', () => {
+    expect(scam('Voir www.ecole.cm. Réagissez immédiatement').level).toBe('likely_scam');
+  });
+  it('a warning sentence does not ask for a PIN', () => {
+    expect(scam('Ne partagez jamais votre code PIN.').signals).toEqual([]);
+    expect(scam('Envoyez votre code PIN pour confirmer.').signals).toEqual(['asks_pin']);
+  });
+  it('calling the claimed official helpline is fine', () => {
+    const r = {
+      ...region,
+      officialSenders: region.officialSenders.map((o) => (o.id === 'eneo' ? { ...o, helpline: '233 42 00 11' } : o)),
+    };
+    const t = 'ENEO: pour toute question appelez le 233 42 00 11';
+    expect(assessScam(msg(t), extractFacts(t, { ...ctx, region: r }), r, lexicons).signals).toEqual([]);
+    expect(assessScam(msg(t), extractFacts(t, ctx), region, lexicons).signals).toEqual(['asks_to_call_number']);
+  });
+  it('works without lexicons (structural signals only)', () => {
+    const t = 'ENEO facture http://x.cm/a';
+    const input = msg(t, phoneSender);
+    const s = assessScam(input, extractFacts(t, ctx), region);
+    expect(s.signals).toEqual(expect.arrayContaining(['link', 'sender_mismatch']));
+  });
+});
+
+describe('classifier', () => {
+  it('has the contract id and accepts lexicons', async () => {
+    const c = createRulesClassifier(region, lexicons);
+    expect(c.id).toBe('rules@1');
+    const t = 'Votre facture ENEO de 10 000 FCFA. Veuillez régler avant le 15/11/2026.';
+    const u = await c.classify(msg(t), extractFacts(t, ctx));
+    expect(u.kind).toBe('electricity_bill');
+    expect(u.producedBy).toBe('rules@1');
+    expect(u.confidence).toBeGreaterThan(0 );
+    expect(u.confidence).toBeLessThanOrEqual(1);
+  });
+  it('gives low confidence for unknown text', async () => {
+    const c = createRulesClassifier(region, lexicons);
+    const t = 'Salut, on se voit plus tard au marché.';
+    const u = await c.classify(msg(t), extractFacts(t, ctx));
+    expect(u.kind).toBe('other');
+    expect(u.confidence).toBeLessThan(CONFIDENCE_THRESHOLD);
+  });
+  it('marks a near deadline as urgent', async () => {
+    const c = createRulesClassifier(region, lexicons);
+    const t = 'Votre facture eau: payer 5 000 FCFA. Date: 1 novembre 2026';
+    const u = await c.classify(msg(t), extractFacts(t, ctx));
+    expect(u.urgency).toBe('urgent');
+  });
+});
+
+describe('card builder', () => {
+  it('uses a custom classifier and falls back to rules if it throws', async () => {
+    const bad: Classifier = { id: 'x', classify: async () => { throw new Error('boom'); } };
+    const c = await analyze(msg('Votre facture ENEO de 10 000 FCFA. Veuillez régler.'), { region, lexicons, classifier: bad });
+    expect(c.understanding.producedBy).toBe('rules@1');
+    const good: Classifier = {
+      id: 'llm@1',
+      classify: async () => ({ kind: 'bank', action: 'call', urgency: 'soon', confidence: 0.9, producedBy: 'llm@1' }),
+    };
+    const d = await analyze(msg('Votre facture ENEO de 10 000 FCFA.'), { region, lexicons, classifier: good });
+    expect(d.understanding.producedBy).toBe('llm@1');
+    expect(d.mode).toBe('full');
+  });
+  it('falls back to facts_only for low confidence', async () => {
+    const c = await run('Salut, rendez-vous demain au marché pour 5 000 FCFA.');
+    expect(c.mode).toBe('facts_only');
+    expect(c.degradedReason).toBe('low_confidence');
+    expect(keys(c)).toContain('facts_only.intro');
+    expect(keys(c)).not.toContain('about.other');
+  });
+  it('falls back to facts_only for unreadable text', async () => {
+    for (const t of ['ok', '#$%^&*()_+!@#$%^&', '��� abc ����']) {
+      const c = await run(t);
+      expect(c.mode).toBe('facts_only');
+      expect(c.degradedReason).toBe('unreadable');
+    }
+  });
+  it('fails verification when a fact does not match its span', () => {
+    const input = msg('Votre facture ENEO de 10 000 FCFA. Veuillez régler.');
+    const facts = extractFacts(input.text, ctx);
+    const bad = { ...facts, amounts: facts.amounts.map((a) => ({ ...a, raw: '99 999 FCFA' })) };
+    const c = buildCard({
+      input,
+      facts: bad,
+      understanding: { kind: 'electricity_bill', action: 'pay', urgency: 'soon', confidence: 0.9, producedBy: 't' },
+      scam: { level: 'no_signs', signals: [] },
+      sender: { verified: false },
+    });
+    expect(c.mode).toBe('facts_only');
+    expect(c.degradedReason).toBe('verification_failed');
+    expect(c.amount).toBeUndefined();
+  });
+  it('picks the amount next to amount words over a bigger unrelated one', async () => {
+    const c = await run('Facture ENEO. Montant à payer: 12 000 FCFA. Pénalité en cas de retard: 150 000 FCFA.');
+    expect(c.amount?.value.amount).toBe(12000);
+  });
+  it('without any label picks the largest amount', async () => {
+    const c = await run('Facture ENEO: 2 000 FCFA et 9 500 FCFA. Veuillez payer.');
+    expect(c.amount?.value.amount).toBe(9500);
+  });
+  it('picks the deadline near deadline words, not the earliest date', async () => {
+    const c = await run('Facture ENEO émise le 2 novembre 2026. Veuillez payer avant le 20 novembre 2026.');
+    expect(c.deadline?.value).toBe('2026-11-20');
+  });
+  it('uses the earliest future date when no deadline word is present', async () => {
+    const c = await run('Hôpital: consultation le 9 novembre 2026, contrôle le 3 novembre 2026. Rendez-vous au guichet.');
+    expect(c.deadline?.value).toBe('2026-11-03');
+  });
+  it('keeps a past deadline so the plan can say it passed', async () => {
+    const c = await run('Facture ENEO 10 000 FCFA à payer avant le 20/10/2026. Veuillez régler.');
+    expect(c.deadline?.value).toBe('2026-10-20');
+    expect(keys(c)).toContain('deadline.passed');
+  });
+  it('never surfaces a phone on a caution card', async () => {
+    const c = await run('Votre colis: voir bit.ly/abc123 ou appelez le 677 12 34 56');
+    expect(c.scam.level).not.toBe('no_signs');
+    expect(c.contactPhone).toBeUndefined();
+  });
+  it('every chosen fact exists in facts with a matching span', async () => {
+    const c = await run('Votre facture ENEO N° 4561237 de 15 000 FCFA. Veuillez régler avant le 15/11/2026.');
+    for (const [f, pool] of [
+      [c.deadline, c.facts.dates],
+      [c.amount, c.facts.amounts],
+      [c.reference, c.facts.references],
+    ] as const) {
+      expect(f).toBeDefined();
+      expect(c.input.text.slice(f!.span.start, f!.span.end)).toBe(f!.raw);
+      expect(pool.some((p) => p.span.start === f!.span.start && p.raw === f!.raw)).toBe(true);
+    }
+  });
+});
+
+describe('speech plan', () => {
+  it('orders sections as CARD_SECTIONS and uses SlotValue shapes', async () => {
+    const c = await run(
+      'Votre facture ENEO de 15 000 FCFA. Veuillez régler avant le 15/11/2026. Appelez le 233 42 00 11 pour toute question.',
+    );
+    const plan = buildSpeechPlan(c, { today: '2026-10-31' });
+    expect(plan.sections.map((s) => s.section)).toEqual(
+      ['scam', 'sender', 'about', 'action', 'deadline', 'money', 'help', 'urgency'].filter((s) =>
+        plan.sections.some((x) => x.section === s),
+      ),
+    );
+    const flat = plan.sections.flatMap((s) => s.utterances);
+    expect(flat.find((u) => u.key === 'deadline.by')?.slots?.date).toEqual({
+      type: 'date',
+      value: '2026-11-15',
+      relativeTo: '2026-10-31',
+    });
+    expect(flat.find((u) => u.key === 'money.amount')?.slots?.amount).toEqual({
+      type: 'money',
+      value: { amount: 15000, currency: 'XAF' },
+    });
+    expect(flat.find((u) => u.key === 'sender.claimed')?.slots?.sender).toEqual({ type: 'sender', officialId: 'eneo' });
+  });
+  it('uses today for deadline.passed', async () => {
+    const c = await run('Facture ENEO 10 000 FCFA. Veuillez régler avant le 15/11/2026.');
+    expect(keys(c, '2026-11-20')).toContain('deadline.passed');
+    expect(keys(c, '2026-11-01')).toContain('deadline.by');
+  });
+  it('omits deadline and money sections when absent', async () => {
+    const c = await run('Votre carte nationale d\'identité est prête. Vous pouvez la retirer à la préfecture.');
+    const k = keys(c);
+    expect(k.some((x) => x.startsWith('deadline.'))).toBe(false);
+    expect(k).not.toContain('money.amount');
+    expect(k).toContain('help.none');
+  });
+  it('only emits catalog keys', async () => {
+    const { PHRASE_KEYS } = await import('../src/index.js');
+    const c = await run('FELICITATIONS! Vous avez gagné 2 000 000 FCFA. Envoyez votre code PIN et 10 000 FCFA de frais.', phoneSender);
+    for (const k of keys(c)) expect(PHRASE_KEYS).toContain(k);
+  });
+  it('says no_signs for money kinds but never "safe"', async () => {
+    const c = await run('Votre facture ENEO de 15 000 FCFA. Veuillez régler.');
+    expect(keys(c)).toContain('scam.no_signs');
+    expect(keys(c).join(' ')).not.toMatch(/safe/);
+  });
+  it('facts_only keeps scam warnings first', async () => {
+    const c = await run('ok 50.000 F par erreur renvoyer 699123456', phoneSender);
+    expect(c.mode).toBe('facts_only');
+    expect(keys(c)[0]).toBe('scam.likely');
+    expect(keys(c)).toContain('facts_only.intro');
+  });
+});
+
+describe('span property checks', () => {
+  const samples = [
+    'Votre facture ENEO N° 4561237 de 15 000 FCFA. Veuillez régler avant le 15/11/2026. Appelez le 677 12 34 56 ou www.eneo.cm *126#',
+    'Pay 15.000 F CFA by 12th Nov. Ref: AB-1234. Call +237 677 123 456, text 8080. bit.ly/xyz123',
+    'Rendez-vous demain à 9h. Montant: 2 500 (FCFA). Avant le 3 déc. 2026 ou le 05-12-26. Tel 00237677123456',
+    'XAF 15000, 15000F, 15 000 frs, November 12, 2026, 12.11.2026, #150*1#, N° facture: FAC/26/001',
+    "Aujourd'hui même! Dial 8010. Transaction ID 55412099. Total: 1 250 000 FCFA",
+  ];
+  it('raw always equals the text slice, for every fact', () => {
+    for (const t of samples) {
+      const facts = extractFacts(t, ctx);
+      const all = [
+        ...facts.dates,
+        ...facts.amounts,
+        ...facts.phones,
+        ...facts.references,
+        ...facts.urls,
+        ...facts.ussdCodes,
+      ];
+      expect(all.length).toBeGreaterThan(2);
+      for (const f of all) {
+        expect(f.span.start).toBeGreaterThanOrEqual(0);
+        expect(f.span.end).toBeLessThanOrEqual(t.length);
+        expect(f.span.start).toBeLessThan(f.span.end);
+        expect(f.raw).toBe(t.slice(f.span.start, f.span.end));
+      }
+    }
+  });
+  it('facts of different kinds never overlap', () => {
+    for (const t of samples) {
+      const facts = extractFacts(t, ctx);
+      const spans = [...facts.dates, ...facts.amounts, ...facts.phones, ...facts.references, ...facts.urls, ...facts.ussdCodes]
+        .map((f) => f.span)
+        .sort((a, b) => a.start - b.start);
+      for (let i = 1; i < spans.length; i++) expect(spans[i]!.start).toBeGreaterThanOrEqual(spans[i - 1]!.end);
+    }
+  });
+  it('spans stay valid when text has accents and upper case', () => {
+    const t = 'ÉCHÉANCE LE 12 NOVEMBRE 2026 — RÉGLEZ 15 000 FCFA';
+    const facts = extractFacts(t, ctx);
+    expect(facts.dates[0]?.raw).toBe('12 NOVEMBRE 2026');
+    expect(facts.amounts[0]?.raw).toBe('15 000 FCFA');
+  });
+  it('is deterministic and does not throw on odd input', () => {
+    for (const t of ['', ' ', '\n\n', '💥💥💥', 'a'.repeat(5000), '0'.repeat(300), '***###', '+++ 237']) {
+      expect(() => extractFacts(t, ctx)).not.toThrow();
+      expect(extractFacts(t, ctx)).toEqual(extractFacts(t, ctx));
+    }
+  });
+});

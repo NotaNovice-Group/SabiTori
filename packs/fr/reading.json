@@ -1,0 +1,84 @@
+{
+  "formatVersion": 1,
+  "tag": "fr",
+  "name": "French",
+  "stopwords": ["le", "la", "les", "de", "des", "du", "un", "une", "et", "est", "vous", "votre", "vos", "pour", "par", "avec", "sur", "dans", "au", "aux", "ce", "cette", "que", "qui", "nous", "ne", "pas", "nos", "sont", "ont", "avez", "avoir", "etre", "ou", "il", "elle", "se", "si", "plus", "tres", "merci", "veuillez", "afin", "avant", "apres", "svp", "bonjour", "cher", "chere", "client"],
+  "months": [
+    ["janvier", "janv", "jan"],
+    ["février", "fevrier", "févr", "fevr", "fév", "fev"],
+    ["mars"],
+    ["avril", "avr"],
+    ["mai"],
+    ["juin"],
+    ["juillet", "juil"],
+    ["août", "aout"],
+    ["septembre", "sept"],
+    ["octobre", "oct"],
+    ["novembre", "nov"],
+    ["décembre", "decembre", "déc", "dec"]
+  ],
+  "weekdays": [["dimanche"], ["lundi"], ["mardi"], ["mercredi"], ["jeudi"], ["vendredi"], ["samedi"]],
+  "relativeDays": {
+    "aujourd'hui": 0,
+    "ce jour": 0,
+    "ce soir": 0,
+    "demain": 1,
+    "après-demain": 2,
+    "apres demain": 2,
+    "hier": -1,
+    "avant-hier": -2
+  },
+  "ordinalSuffixes": ["er", "e", "eme", "ème"],
+  "dateFillers": [],
+  "dateLeadWords": ["le", "avant le", "avant", "jusqu'au", "jusqu'à", "au plus tard le", "du", "au", "d'ici le", "pour le", "dès le", "à partir du", "échéance", "délai"],
+  "weekdayLeadWords": ["le", "avant", "ce", "jusqu'à", "jusqu'a", "dès", "pour", "d'ici"],
+
+  "currencyWords": ["francs cfa", "franc cfa", "francs", "franc"],
+  "amountWords": ["montant", "total", "somme", "net à payer", "à payer", "montant dû", "montant à payer", "reste à payer", "mensualité", "frais de scolarité", "frais de"],
+  "balanceWords": ["solde", "nouveau solde", "votre solde", "solde disponible", "solde actuel"],
+  "referenceLabels": ["n°", "n° facture", "n°facture", "n° de facture", "numéro de facture", "numéro facture", "facture n°", "facture no", "n° contrat", "n° de contrat", "numéro de contrat", "contrat n°", "n° client", "numéro client", "n° abonné", "n° compteur", "numéro de compteur", "n° police", "n° de dossier", "numéro de dossier", "dossier n°", "n° de transaction", "id transaction", "id de transaction", "transaction id", "code de transaction", "n° d'ordre", "référence", "reference", "réf", "ref", "matricule", "code paiement", "n° de reçu", "reçu n°"],
+  "deadlineWords": ["avant le", "avant coupure", "date limite", "délai", "au plus tard", "jusqu'au", "jusqu'à", "échéance", "d'ici le", "expire le", "expirera le", "dernier délai", "à régler avant", "à payer avant", "limite de paiement", "date d'échéance", "échu", "valable jusqu'au", "avant la date du", "au plus tard le"],
+  "contactWords": ["appelez", "appeler", "rappelez", "contactez", "joindre", "composez", "pour toute information", "pour toute question", "service client", "numéro vert", "au numéro", "au"],
+  "shortCodeLabels": ["appelez le", "composez le", "contactez le", "au numéro court", "numéro court", "code court", "envoyez au", "envoyer au", "sms au", "tapez le"],
+
+  "kinds": {
+    "electricity_bill": ["eneo", "électricité", "facture d'électricité", "facture eneo", "kwh", "compteur", "énergie", "coupure d'électricité", "relevé d'index", "index", "consommation d'électricité", "courant électrique", "prépayé", "recharge compteur"],
+    "water_bill": ["camwater", "eau", "facture d'eau", "facture camwater", "m3", "m³", "consommation d'eau", "abonnement eau", "robinet", "coupure d'eau", "alimentation en eau"],
+    "mobile_money": ["mobile money", "momo", "mtn momo", "orange money", "transfert", "retrait", "dépôt", "solde", "transaction", "code secret", "code pin", "pin", "vous avez reçu", "nouveau solde", "id de transaction", "frais de transaction", "portefeuille", "transfert de", "envoyé", "renvoyer", "envoyé à", "compte momo", "compte orange money"],
+    "telecom": ["forfait", "crédit", "recharge", "data", "internet", "carte sim", "sim", "ligne", "abonnement", "mo de données", "go de données", "minutes d'appel", "nexttel", "camtel", "bonus de recharge", "numéro suspendu", "service client"],
+    "bank": ["banque", "compte bancaire", "virement", "carte bancaire", "découvert", "afriland", "uba", "ecobank", "société générale", "bicec", "cca bank", "relevé de compte", "compte courant", "chèque", "agence bancaire", "distributeur", "gab", "crédit bancaire"],
+    "health": ["hôpital", "clinique", "centre de santé", "médecin", "docteur", "consultation", "rendez-vous médical", "ordonnance", "vaccin", "vaccination", "analyses", "laboratoire", "patient", "traitement", "médicament", "médicaments", "soins", "résultats d'analyses", "paludisme", "maternité", "infirmier", "infirmière", "chirurgie", "hospitalisation", "prise de sang", "radiologie"],
+    "school": ["école", "lycée", "collège", "frais de scolarité", "scolarité", "pension", "enseignant", "élève", "élèves", "parents d'élèves", "bulletin", "examen", "probatoire", "baccalauréat", "bepc", "cepe", "gce", "inscription", "rentrée", "réunion des parents", "classe", "université", "apee", "directeur de l'école", "proviseur", "année scolaire", "tranche"],
+    "administrative": ["carte nationale d'identité", "cni", "acte de naissance", "passeport", "mairie", "commune", "préfecture", "sous-préfecture", "état civil", "casier judiciaire", "certificat", "dossier", "récépissé", "carte d'identité", "délégation", "impôts", "dgi", "timbre", "permis de conduire", "immatriculation", "légalisation", "service public", "carte grise", "nationalité", "identification", "pièce d'identité", "attestation"],
+    "legal": ["tribunal", "police", "gendarmerie", "huissier", "convocation", "avocat", "plainte", "jugement", "procès", "audience", "mise en demeure", "cour d'appel", "procureur", "commissariat", "greffe", "assignation"]
+  },
+  "actions": {
+    "pay": ["veuillez régler", "veuillez payer", "regl*", "règlement", "payer", "payez", "à payer", "net à payer", "versez", "verser", "acquitter", "s'acquitter", "montant dû", "impayé", "impayée", "solder", "frais à payer", "effectuer le paiement", "régulariser", "faire un versement", "paiement requis", "merci de payer"],
+    "collect": ["retirer", "retirez", "à retirer", "est prête", "est prêt", "sont prêts", "venir chercher", "récupérer", "récupérez", "disponible au retrait", "à votre disposition", "disponible pour retrait", "prête pour retrait", "peut être retirée", "retrait de votre carte"],
+    "go_to_place": ["rendez-vous", "rendez vous", "présentez-vous", "présenter", "se présenter", "vous êtes convoqué", "convoqué", "à l'agence", "au guichet", "passer à", "passez à", "veuillez vous rendre", "vous rendre", "au bureau", "à la mairie", "vous êtes attendu", "venir à", "à l'hôpital", "à la clinique", "à l'école"],
+    "bring_document": ["apporter", "apportez", "munissez-vous", "muni de", "munis de", "se munir", "fournir", "déposer", "dépôt du dossier", "pièces à fournir", "joindre", "photocopie", "présenter votre carte", "veuillez apporter", "ramener", "ramenez"],
+    "call": ["appelez", "appeler", "rappelez", "contactez", "composez", "joindre", "numéro vert", "pour toute information appelez", "pour plus d'informations appelez"],
+    "reply": ["répondez", "répondre", "envoyez oui", "envoyez le code", "confirmer par sms", "répondez par", "tapez", "répondre par sms", "confirmez par"],
+    "take_medicine": ["prenez", "prendre", "comprimé", "comprimés", "matin et soir", "fois par jour", "posologie", "avant le repas", "après le repas", "gélule", "gélules", "sirop", "traitement à suivre"],
+    "nothing": ["avec succès", "vous avez reçu", "vous avez bien reçu", "transfert réussi", "paiement reçu", "nous avons bien reçu", "merci pour votre paiement", "bien reçu", "effectué avec succès", "paiement effectué", "transaction réussie", "à titre d'information", "pour information", "aucune action", "nouveau solde", "retrait effectué", "dépôt effectué", "paiement confirmé", "bien été enregistré"]
+  },
+  "urgency": {
+    "urgent": ["urgent", "urgence", "immédiatement", "dernier avertissement", "dernier rappel", "sans délai", "dès réception", "coupure", "aujourd'hui même", "dans les {n} heures", "dans les {n} minutes", "au plus vite", "ce soir", "suspension", "mise en demeure", "dernière chance"],
+    "soon": ["avant le", "date limite", "délai", "au plus tard", "jusqu'au", "échéance", "rappel", "demain", "cette semaine", "bientôt", "prochainement", "expire", "rendez-vous", "convoqué", "pénalité", "majoration", "veuillez"]
+  },
+
+  "scam": {
+    "secretWords": ["code secret", "code pin", "pin", "mot de passe", "code de confirmation", "code de validation", "code otp", "otp", "code d'accès", "code de sécurité", "code momo"],
+    "askVerbs": ["envoy*", "communiqu*", "donn*", "fournir", "fournissez", "saisi*", "entr*", "tap*", "confirm*", "répond*", "partag*", "transmet*", "transmis*", "indiqu*", "renseign*", "vérifi*", "composez", "dites", "révél*"],
+    "negations": ["jamais", "ne partagez pas", "ne communiquez pas", "ne donnez pas", "n'envoyez pas", "ne divulguez pas", "ne le donnez", "ne révélez pas", "ne le partagez", "ne saisissez pas", "attention aux arnaques", "méfiez-vous"],
+    "mistakeWords": ["par erreur", "par inadvertance", "erreur de transfert", "transfert erroné", "mauvais numéro", "me suis trompé", "je me suis trompé", "je me suis trompée", "erronément"],
+    "returnWords": ["renvoy*", "retourn*", "rembours*", "restitu*", "rends-moi", "rendez-moi", "remettez", "remets-moi", "reversez", "renvoie", "remboursez"],
+    "prizeWords": ["félicitations", "vous avez gagné", "gagnant", "gagnante", "gagné", "tombola", "loterie", "tirage au sort", "cadeau", "jackpot", "vous êtes l'heureux", "lot de", "bonus de", "tirage"],
+    "feeWords": ["frais", "payer", "paiement", "verser", "versez", "envoyez", "pour recevoir", "pour retirer", "pour réclamer", "pour débloquer", "taxe", "taxes", "droits", "dédouanement", "frais de dossier", "activation", "pour toucher", "pour valider"],
+    "blockThreats": ["sera bloqu*", "seront bloqu*", "sera suspend*", "sera désactiv*", "sera ferm*", "sera résili*", "sera supprim*", "va être bloqu*", "va être suspend*", "risque d'être bloqu*", "compte bloqu*", "numéro bloqu*", "ligne bloqu*", "sim bloqu*", "bloquer votre", "blocage de votre", "carte sim sera", "compte sera"],
+    "timePressure": ["immédiatement", "dans les {n} minutes", "dans les {n} heures", "dans {n} minutes", "sous {n} minutes", "sous {n} heures", "dernier avertissement", "dernière chance", "tout de suite", "sans tarder", "expire dans", "expire aujourd'hui", "aujourd'hui même", "dans les 24h", "dans les 48h", "avant minuit"],
+    "moneyReceived": ["vous avez reçu", "vous avez recu", "vous venez de recevoir", "transfert de", "transfert reçu", "dépôt de", "crédité de", "votre compte a été crédité", "reçu de", "vous avez bien reçu", "retrait de"],
+    "callWords": ["appelez", "appeler", "rappelez", "contactez", "joignez", "composez", "appel au", "au numéro", "veuillez appeler", "veuillez contacter"],
+    "viaWords": ["via", "par", "avec", "sur", "depuis", "à travers", "par le biais de", "utilisez", "utiliser", "en utilisant", "grâce à", "chez"]
+  }
+}

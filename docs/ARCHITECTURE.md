@@ -25,15 +25,29 @@ Card ─► buildSpeechPlan (language-neutral Utterances) ─► renderPlan(pack
 ### @sabitori/core
 
 ```ts
-analyze(input: MessageInput, deps: { region: RegionConfig; classifier?: Classifier }): Promise<Card>
-extractFacts(text: string, ctx: { region: RegionConfig; receivedAt: IsoDate }): Facts
-matchSender(input: MessageInput, region: RegionConfig): { sender: Sender; claimedSenderId?: string }
-assessScam(input: MessageInput, facts: Facts, region: RegionConfig): ScamAssessment
-createRulesClassifier(region: RegionConfig): Classifier            // always available, id "rules@1"
-buildCard(args: { input; facts; understanding; scam; sender }): Card
+analyze(input: MessageInput, deps: { region: RegionConfig; lexicons: ReadingLexicon[]; classifier?: Classifier }): Promise<Card>
+extractFacts(text: string, ctx: { region: RegionConfig; lexicons: ReadingLexicon[]; receivedAt: IsoDate }): Facts
+matchSender(input: MessageInput, region: RegionConfig, lexicons?: ReadingLexicon[]): { sender: Sender; claimedSenderId?: string }
+assessScam(input: MessageInput, facts: Facts, region: RegionConfig, lexicons?: ReadingLexicon[]): ScamAssessment
+createRulesClassifier(region: RegionConfig, lexicons?: ReadingLexicon[]): Classifier   // always available, id "rules@1"
+buildCard(args: { input; facts; understanding; scam; sender; lexicons?: ReadingLexicon[] }): Card
 buildSpeechPlan(card: Card, opts?: { today?: IsoDate }): SpeechPlan
-CONFIDENCE_THRESHOLD: number                                       // below → facts_only
+CONFIDENCE_THRESHOLD: number                                       // 0.55; below → facts_only
 ```
+
+Reading lexicons: every word used to READ a message (month and weekday names, "demain",
+currency words, classification keywords, scam phrases, reference labels) lives in
+`packs/<tag>/reading.json`, typed `ReadingLexicon` (`packages/core/src/reading.ts`).
+The app loads the lexicons of the languages it can read (today fr and en) and passes them
+to the pipeline as data. Code contains no language words. Without lexicons the pipeline
+still extracts amounts, phones, URLs and USSD codes, but cannot classify or detect
+phrase-based scam signals.
+
+Core behaviours worth knowing:
+- Scam level `likely_scam` suppresses the message's own action, deadline, amount and urgency in the
+  speech plan (they are the trap), and `contactPhone` is never set unless the sender is verified.
+- `facts_only` plans still speak scam warnings first, then `facts_only.intro`, then fact sections.
+- `Facts.ussdCodes` also holds short numbers such as 8080 when introduced by a lexicon label.
 
 ### @sabitori/speech
 

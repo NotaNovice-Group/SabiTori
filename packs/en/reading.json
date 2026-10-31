@@ -1,0 +1,81 @@
+{
+  "formatVersion": 1,
+  "tag": "en",
+  "name": "English",
+  "stopwords": ["the", "and", "you", "your", "is", "are", "to", "of", "for", "in", "on", "with", "this", "that", "please", "will", "from", "by", "has", "have", "be", "at", "as", "not", "it", "we", "our", "if", "or", "can", "was", "been", "dear", "customer", "thank", "thanks", "before", "after", "an", "hello", "kindly", "do", "your"],
+  "months": [
+    ["january", "jan"],
+    ["february", "feb"],
+    ["march", "mar"],
+    ["april", "apr"],
+    ["may"],
+    ["june", "jun"],
+    ["july", "jul"],
+    ["august", "aug"],
+    ["september", "sept", "sep"],
+    ["october", "oct"],
+    ["november", "nov"],
+    ["december", "dec"]
+  ],
+  "weekdays": [["sunday"], ["monday"], ["tuesday"], ["wednesday"], ["thursday"], ["friday"], ["saturday"]],
+  "relativeDays": {
+    "today": 0,
+    "tonight": 0,
+    "tomorrow": 1,
+    "day after tomorrow": 2,
+    "yesterday": -1
+  },
+  "ordinalSuffixes": ["st", "nd", "rd", "th"],
+  "dateFillers": ["of"],
+  "dateLeadWords": ["on", "by", "before", "until", "till", "from", "due", "no later than", "this", "next", "the", "on or before", "since", "expires", "due on", "date"],
+  "weekdayLeadWords": ["on", "by", "before", "until", "this", "next", "till"],
+
+  "currencyWords": ["cfa francs", "cfa franc", "francs", "franc"],
+  "amountWords": ["amount", "total", "amount due", "total due", "sum", "balance due", "outstanding", "fee", "fees", "tuition", "pay"],
+  "balanceWords": ["balance", "new balance", "your balance", "available balance", "current balance"],
+  "referenceLabels": ["invoice no", "invoice number", "invoice #", "bill no", "bill number", "account number", "account no", "customer number", "customer no", "reference", "ref", "ref no", "reference number", "transaction id", "txn id", "trans id", "transaction no", "case number", "file number", "contract number", "meter number", "receipt no", "order number", "order no", "confirmation number", "booking reference", "ref id"],
+  "deadlineWords": ["before", "by", "due", "due date", "due on", "deadline", "no later than", "until", "expires", "expiry", "expire on", "last day", "payable by", "pay by", "on or before", "valid until", "valid till"],
+  "contactWords": ["call", "contact", "reach us", "dial", "customer care", "customer service", "hotline", "helpline", "for enquiries", "for inquiries", "on"],
+  "shortCodeLabels": ["call", "dial", "text", "send to", "sms to", "short code", "shortcode", "call us on", "reply to"],
+
+  "kinds": {
+    "electricity_bill": ["eneo", "electricity", "electricity bill", "power bill", "kwh", "meter", "energy", "power cut", "electricity supply", "prepaid meter", "meter reading", "power supply"],
+    "water_bill": ["camwater", "water", "water bill", "water supply", "m3", "water meter", "water consumption", "water cut"],
+    "mobile_money": ["mobile money", "momo", "mtn momo", "orange money", "transfer", "withdrawal", "deposit", "balance", "transaction", "secret code", "pin", "you have received", "new balance", "transaction id", "transaction fee", "wallet", "transfer of", "sent to", "sent you", "send back", "send it back", "momo account"],
+    "telecom": ["airtime", "credit", "recharge", "data", "internet", "sim card", "sim", "line", "subscription", "data bundle", "bundle", "call minutes", "nexttel", "camtel", "recharge bonus", "number suspended", "customer care"],
+    "bank": ["bank", "bank account", "account balance", "bank card", "overdraft", "afriland", "uba", "ecobank", "societe generale", "bicec", "cca bank", "statement", "current account", "cheque", "branch", "atm", "loan"],
+    "health": ["hospital", "clinic", "health centre", "health center", "doctor", "consultation", "medical appointment", "prescription", "vaccine", "vaccination", "lab test", "laboratory", "patient", "treatment", "medicine", "medication", "nurse", "malaria", "maternity", "surgery", "admission", "blood test", "radiology", "test results"],
+    "school": ["school", "college", "high school", "tuition", "school fees", "fees", "teacher", "student", "students", "parents", "report card", "exam", "gce", "bepc", "registration", "enrolment", "enrollment", "resumption", "parents meeting", "class", "university", "pta", "principal", "academic year", "installment", "instalment"],
+    "administrative": ["national identity card", "identity card", "id card", "cni", "birth certificate", "passport", "council", "mayor", "prefecture", "civil status", "police record", "certificate", "file", "receipt", "delegation", "tax", "taxes", "stamp", "driving licence", "driving license", "registration number", "legalisation", "public service", "attestation", "collect your card", "ready for collection"],
+    "legal": ["court", "police", "gendarmerie", "bailiff", "summons", "lawyer", "complaint", "judgment", "judgement", "hearing", "demand notice", "court of appeal", "prosecutor", "police station", "registry", "subpoena"]
+  },
+  "actions": {
+    "pay": ["please pay", "kindly pay", "pay", "payment", "payment due", "amount due", "settle", "settle your bill", "outstanding", "outstanding balance", "make payment", "pay before", "pay now", "bill is due", "arrears", "regularise", "regularize"],
+    "collect": ["collect", "pick up", "is ready", "are ready", "ready for collection", "ready for pickup", "available for collection", "come and collect", "can be collected", "withdraw your", "ready for pick up"],
+    "go_to_place": ["appointment", "report to", "come to", "visit", "you are invited", "you are summoned", "at the office", "at the counter", "please come", "kindly come", "present yourself", "go to", "at the hospital", "at the clinic", "at the school", "you are expected", "attend"],
+    "bring_document": ["bring", "come with", "provide", "submit", "documents required", "documents needed", "attach", "photocopy", "carry your", "please bring", "kindly bring", "deposit your file", "required documents"],
+    "call": ["call", "call us", "contact us", "dial", "hotline", "for more information call", "for enquiries call", "for inquiries call", "ring"],
+    "reply": ["reply", "respond", "send yes", "send the code", "confirm by sms", "reply with", "text back", "reply yes", "reply stop"],
+    "take_medicine": ["take", "tablet", "tablets", "morning and evening", "times a day", "dosage", "before meals", "after meals", "capsule", "capsules", "syrup", "twice daily", "once daily", "medication"],
+    "nothing": ["successfully", "you have received", "you received", "transfer successful", "payment received", "we have received", "thank you for your payment", "successful", "completed successfully", "payment made", "transaction successful", "for your information", "no action", "new balance", "withdrawal successful", "deposit successful", "payment confirmed", "has been recorded"]
+  },
+  "urgency": {
+    "urgent": ["urgent", "urgently", "immediately", "final warning", "final notice", "last reminder", "without delay", "upon receipt", "disconnection", "today only", "within {n} hours", "within {n} minutes", "asap", "tonight", "suspension", "demand notice", "last chance", "cut off"],
+    "soon": ["before", "deadline", "due date", "no later than", "until", "due", "reminder", "tomorrow", "this week", "soon", "shortly", "expires", "appointment", "summoned", "penalty", "late fee", "kindly"]
+  },
+
+  "scam": {
+    "secretWords": ["secret code", "pin", "pin code", "password", "confirmation code", "verification code", "otp", "access code", "security code", "momo code", "secret pin"],
+    "askVerbs": ["send", "share", "give", "provide", "enter", "type", "confirm", "reply", "tell", "reveal", "submit", "forward", "disclose", "verify", "supply"],
+    "negations": ["never", "do not", "don't", "dont", "must not", "should not", "will never ask", "beware", "be careful", "do not share", "never share"],
+    "mistakeWords": ["by mistake", "in error", "wrongly", "mistakenly", "wrong number", "by error", "mistaken transfer", "sent in error", "erroneously", "accidentally"],
+    "returnWords": ["send back", "send it back", "return", "refund", "give it back", "transfer it back", "send me back", "pay me back", "reverse", "give back", "send me the money", "return the money"],
+    "prizeWords": ["congratulations", "you won", "you have won", "winner", "won", "lottery", "raffle", "draw", "gift", "jackpot", "prize", "lucky", "bonus of", "reward"],
+    "feeWords": ["fee", "fees", "pay", "payment", "send", "deposit", "to claim", "to receive", "to withdraw", "to unlock", "tax", "taxes", "duty", "customs", "processing fee", "activation", "to collect", "to validate"],
+    "blockThreats": ["will be blocked", "will be suspended", "will be deactivated", "will be closed", "will be terminated", "will be deleted", "will be barred", "about to be blocked", "account blocked", "number blocked", "line blocked", "sim blocked", "block your", "blocking of your", "your sim will", "your account will"],
+    "timePressure": ["immediately", "within {n} minutes", "within {n} hours", "in {n} minutes", "in {n} hours", "final warning", "last chance", "right now", "without delay", "expires in", "expires today", "today only", "within 24 hours", "within 48 hours", "before midnight", "act now"],
+    "moneyReceived": ["you have received", "you received", "you just received", "transfer of", "transfer received", "deposit of", "credited with", "your account has been credited", "received from", "payment received", "withdrawal of"],
+    "callWords": ["call", "contact", "reach", "dial", "phone", "ring", "call us on", "kindly call", "please call", "please contact"],
+    "viaWords": ["via", "with", "on", "through", "using", "use", "thanks to"]
+  }
+}

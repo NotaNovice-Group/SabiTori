@@ -1,0 +1,210 @@
+{
+  "formatVersion": 1,
+  "numbers": {
+    "atoms": {
+      "0": "zéro",
+      "1": "un",
+      "2": "deux",
+      "3": "trois",
+      "4": "quatre",
+      "5": "cinq",
+      "6": "six",
+      "7": "sept",
+      "8": "huit",
+      "9": "neuf",
+      "10": "dix",
+      "11": "onze",
+      "12": "douze",
+      "13": "treize",
+      "14": "quatorze",
+      "15": "quinze",
+      "16": "seize",
+      "17": "dix-sept",
+      "18": "dix-huit",
+      "19": "dix-neuf",
+      "20": "vingt",
+      "30": "trente",
+      "40": "quarante",
+      "50": "cinquante",
+      "60": "soixante",
+      "80": {
+        "text": "quatre-vingts",
+        "bound": "quatre-vingt"
+      }
+    },
+    "joiners": {
+      "and": {
+        "text": "et"
+      },
+      "hyphen": {
+        "text": "-",
+        "silent": true
+      }
+    },
+    "join": [
+      {
+        "token": "and",
+        "when": {
+          "remainderEq": [
+            1,
+            11
+          ]
+        }
+      },
+      {
+        "token": "hyphen"
+      }
+    ],
+    "scales": [
+      {
+        "value": 100,
+        "word": "cent",
+        "plural": "cents",
+        "pluralWhen": "multiple_final",
+        "omitOne": true
+      },
+      {
+        "value": 1000,
+        "word": "mille",
+        "omitOne": true,
+        "multiplierFinal": false
+      },
+      {
+        "value": 1000000,
+        "word": "million",
+        "plural": "millions",
+        "pluralWhen": "multiple",
+        "multiplierFinal": true
+      },
+      {
+        "value": 1000000000,
+        "word": "milliard",
+        "plural": "milliards",
+        "pluralWhen": "multiple",
+        "multiplierFinal": true
+      }
+    ],
+    "overrides": {
+      "70-79": {
+        "base": 60
+      },
+      "81-99": {
+        "base": 80,
+        "join": [
+          {
+            "token": "hyphen"
+          }
+        ]
+      }
+    }
+  },
+  "words": {
+    "de": "de"
+  },
+  "money": {
+    "template": "{amount} {link} {currency}",
+    "singularFor": [
+      0,
+      1
+    ],
+    "link": {
+      "word": "de",
+      "multipleOf": 1000000
+    },
+    "currencies": {
+      "XAF": {
+        "text": "franc CFA",
+        "plural": "francs CFA"
+      },
+      "XOF": {
+        "text": "franc CFA",
+        "plural": "francs CFA"
+      },
+      "EUR": {
+        "text": "euro",
+        "plural": "euros"
+      },
+      "USD": {
+        "text": "dollar américain",
+        "plural": "dollars américains"
+      }
+    }
+  },
+  "dates": {
+    "months": [
+      "janvier",
+      "février",
+      "mars",
+      "avril",
+      "mai",
+      "juin",
+      "juillet",
+      "août",
+      "septembre",
+      "octobre",
+      "novembre",
+      "décembre"
+    ],
+    "weekdays": [
+      "lundi",
+      "mardi",
+      "mercredi",
+      "jeudi",
+      "vendredi",
+      "samedi",
+      "dimanche"
+    ],
+    "days": {
+      "1": "premier"
+    },
+    "templates": {
+      "full": "{day} {month} {year}",
+      "noYear": "{day} {month}",
+      "fullWeekday": "{weekday} {day} {month} {year}",
+      "noYearWeekday": "{weekday} {day} {month}"
+    },
+    "omitCurrentYear": true,
+    "includeWeekday": false,
+    "yearStyle": "cardinal"
+  },
+  "phones": {
+    "countryCode": "omit",
+    "groups": [
+      1,
+      2,
+      2,
+      2,
+      2
+    ],
+    "groupsByLength": {
+      "3": [
+        3
+      ],
+      "4": [
+        2,
+        2
+      ],
+      "5": [
+        1,
+        2,
+        2
+      ],
+      "6": [
+        2,
+        2,
+        2
+      ],
+      "8": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    "defaultGroupSize": 2,
+    "read": "number",
+    "pause": {
+      "text": ","
+    }
+  }
+}

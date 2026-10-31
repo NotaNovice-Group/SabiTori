@@ -1,0 +1,77 @@
+{
+  "formatVersion": 1,
+  "code": "CM",
+  "name": "Cameroon",
+  "timezone": "Africa/Douala",
+  "currency": {
+    "code": "XAF",
+    "aliases": ["FCFA", "F CFA", "F.CFA", "CFA", "XAF", "FRS", "F"]
+  },
+  "phone": {
+    "countryCode": "237",
+    "nationalPattern": "6\\d{8}|2\\d{8}"
+  },
+  "languages": ["fr", "en", "wes", "dua", "ewo", "fub"],
+  "officialSenders": [
+    {
+      "id": "mtn-momo",
+      "displayName": "MTN Mobile Money",
+      "aliases": ["MTN Mobile Money", "MTN MoMo", "MoMo", "Mobile Money"],
+      "kind": "mobile_money",
+      "smsSenderIds": [],
+      "shortCodes": [],
+      "verified": false,
+      "source": "TODO: confirm from official operator page"
+    },
+    {
+      "id": "orange-money",
+      "displayName": "Orange Money",
+      "aliases": ["Orange Money"],
+      "kind": "mobile_money",
+      "smsSenderIds": [],
+      "shortCodes": [],
+      "verified": false,
+      "source": "TODO: confirm from official operator page"
+    },
+    {
+      "id": "eneo",
+      "displayName": "ENEO",
+      "aliases": ["ENEO", "ENEO Cameroon", "ENEO Cameroun"],
+      "kind": "electricity_bill",
+      "smsSenderIds": [],
+      "shortCodes": [],
+      "verified": false,
+      "source": "TODO: confirm from official operator page"
+    },
+    {
+      "id": "camwater",
+      "displayName": "CAMWATER",
+      "aliases": ["CAMWATER", "Cameroon Water Utilities"],
+      "kind": "water_bill",
+      "smsSenderIds": [],
+      "shortCodes": [],
+      "verified": false,
+      "source": "TODO: confirm from official operator page"
+    },
+    {
+      "id": "mtn-cameroon",
+      "displayName": "MTN Cameroon",
+      "aliases": ["MTN Cameroon", "MTN Cameroun", "MTN"],
+      "kind": "telecom",
+      "smsSenderIds": [],
+      "shortCodes": [],
+      "verified": false,
+      "source": "TODO: confirm from official operator page"
+    },
+    {
+      "id": "orange-cameroun",
+      "displayName": "Orange Cameroun",
+      "aliases": ["Orange Cameroun", "Orange Cameroon", "Orange"],
+      "kind": "telecom",
+      "smsSenderIds": [],
+      "shortCodes": [],
+      "verified": false,
+      "source": "TODO: confirm from official operator page"
+    }
+  ]
+}

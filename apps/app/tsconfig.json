@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": { "@wllama/wllama": ["../../packages/understand/node_modules/@wllama/wllama/esm/index.d.ts"] },
+    "declaration": false,
+    "types": ["vite/client", "vite-plugin-pwa/client"]
+  },
+  "include": ["src", "test", "vite.config.ts", "capacitor.config.ts"]
+}
