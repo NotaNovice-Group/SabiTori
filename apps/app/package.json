@@ -13,6 +13,7 @@
     "icons": "node scripts/icons.mjs"
   },
   "dependencies": {
+    "@capacitor-community/text-to-speech": "^8.0.2",
     "@capacitor/core": "^8.6.0",
     "@fontsource/andika": "^5.3.0",
     "@sabitori/core": "workspace:*",

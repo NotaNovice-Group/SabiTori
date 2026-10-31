@@ -15,6 +15,7 @@ import {
   type Card, type Classifier, type LangTag, type MessageInput, type PackManifest, type PhraseKey,
   type ReadingLexicon, type RegionConfig, type SlotValue,
 } from '@sabitori/core';
+import { createAppPlayer } from './native-player';
 import { createBrowserPlayer, createPackRegistry, renderPhrase, renderPlan, type PackRegistry } from '@sabitori/speech';
 import { EXTRA, EXTRA_KEYS, isExtraKey } from './extra';
 import { BUNDLE_KEYS, fallbackChain, fillSlots, resolveExtra } from './shared';
@@ -72,7 +73,7 @@ export function createEngineFrom(deps: EngineDeps): Engine {
   const ctx = () => ({ region, today: today() });
   const rules: Classifier = createRulesClassifier(region, lexicons);
   const model = createModelController(rules, deps.baseUrl);
-  const player = deps.player ?? createBrowserPlayer();
+  const player = deps.player ?? createAppPlayer();
 
   let manifestsP: Promise<PackManifest[]> | null = null;
   const allManifests = () => (manifestsP ??= registry.list().catch(() => []));

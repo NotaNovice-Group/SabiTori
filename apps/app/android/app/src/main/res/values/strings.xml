@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">SabiTori</string>
+    <string name="title_activity_main">SabiTori</string>
+    <string name="package_name">cm.sabitori.app</string>
+    <string name="custom_url_scheme">cm.sabitori.app</string>
+</resources>
