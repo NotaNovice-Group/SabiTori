@@ -1,10 +1,11 @@
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { cpSync, existsSync, mkdirSync, copyFileSync, rmSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { buildCsp } from './src/lib/connect-env';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '../..');
@@ -56,13 +57,29 @@ function sabitoriAssets(): Plugin {
   };
 }
 
+/**
+ * Content-Security-Policy for the built app (web and Android WebView). connect-src is 'self' plus the
+ * two optional origins, derived at build time from VITE_UPDATE_URL and VITE_SENTRY_DSN only.
+ */
+function sabitoriCsp(mode: string): Plugin {
+  return {
+    name: 'sabitori-csp',
+    apply: 'build',
+    transformIndexHtml() {
+      const env = loadEnv(mode, here, 'VITE_');
+      return [{ tag: 'meta', attrs: { 'http-equiv': 'Content-Security-Policy', content: buildCsp(env) }, injectTo: 'head-prepend' }];
+    },
+  };
+}
+
 const pkg = JSON.parse(readFileSync(resolve(here, 'package.json'), 'utf8')) as { version: string };
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: './',
   define: { __APP_VERSION__: JSON.stringify(pkg.version) },
   plugins: [
     sabitoriAssets(),
+    sabitoriCsp(mode),
     react(),
     VitePWA({
       registerType: 'autoUpdate',
@@ -95,4 +112,4 @@ export default defineConfig({
   ],
   build: { target: 'es2022', chunkSizeWarningLimit: 1200 },
   test: { environment: 'jsdom', include: ['test/**/*.test.ts', 'test/**/*.test.tsx'] },
-} as never);
+} as never));

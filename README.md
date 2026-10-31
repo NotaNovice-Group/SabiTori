@@ -6,8 +6,10 @@ SabiTori tells them, in their own language: who sent it, what it is about, what 
 how much, who to call, and whether it looks like a scam.
 
 It is built for people with disabilities and people who cannot read French or English, on
-low-cost Android phones, fully offline. Nothing leaves the phone: the Android app does not even
-have internet permission.
+low-cost Android phones, and it works fully offline. Your messages never leave this phone. If you
+switch them on, SabiTori can download updates and send error reports, never your messages. Both are
+off by default and only exist in a build that has been given an update address or an error-report
+address ([`docs/updates.md`](docs/updates.md)).
 
 ## How it works
 
@@ -40,6 +42,7 @@ See [`packs/README.md`](packs/README.md).
 | `packages/core` | Contracts, phrase catalog, the pipeline (facts, scam, card, speech plan) |
 | `packages/speech` | Language-pack rules, rendering, audio player |
 | `packages/understand` | Optional on-device classifier (Qwen2.5-1.5B via wllama) |
+| `packages/connect` | Optional signed-update client and overlay (no message content, ever) |
 | `apps/app` | The SabiTori app (React PWA, wrapped for Android with Capacitor) |
 | `apps/recorder` | Tool for communities to translate and record a language |
 | `packs/`, `regions/` | Language and country data |

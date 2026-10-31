@@ -13,7 +13,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.2.4
-        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3)(lightningcss@1.33.0)(terser@5.51.2)
+        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3(@noble/hashes@2.4.0))(lightningcss@1.33.0)(terser@5.51.2)
 
   apps/app:
     dependencies:
@@ -26,6 +26,9 @@ importers:
       '@fontsource/andika':
         specifier: ^5.3.0
         version: 5.3.0
+      '@sabitori/connect':
+        specifier: workspace:*
+        version: link:../../packages/connect
       '@sabitori/core':
         specifier: workspace:*
         version: link:../../packages/core
@@ -35,6 +38,9 @@ importers:
       '@sabitori/understand':
         specifier: workspace:*
         version: link:../../packages/understand
+      '@sentry/browser':
+        specifier: ^11.10.0
+        version: 11.10.0
       '@tesseract.js-data/eng':
         specifier: ^1.0.0
         version: 1.0.0
@@ -77,7 +83,7 @@ importers:
         version: 6.2.7
       jsdom:
         specifier: ^30.1.3
-        version: 30.1.3
+        version: 30.1.3(@noble/hashes@2.4.0)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -89,7 +95,7 @@ importers:
         version: 2.0.0(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(terser@5.51.2))(workbox-build@7.4.1)(workbox-window@7.4.1)
       vitest:
         specifier: ^3.2.7
-        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3)(lightningcss@1.33.0)(terser@5.51.2)
+        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3(@noble/hashes@2.4.0))(lightningcss@1.33.0)(terser@5.51.2)
 
   apps/recorder:
     dependencies:
@@ -132,7 +138,26 @@ importers:
         version: 8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(terser@5.51.2)
       vitest:
         specifier: ^5.0.5
-        version: 5.0.5(@types/node@26.6.6)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(terser@5.51.2))
+        version: 5.0.5(@types/node@26.6.6)(jsdom@30.1.3(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(terser@5.51.2))
+
+  packages/connect:
+    dependencies:
+      '@noble/ed25519':
+        specifier: ^3.2.0
+        version: 3.2.0
+      '@noble/hashes':
+        specifier: ^2.4.0
+        version: 2.4.0
+    devDependencies:
+      fake-indexeddb:
+        specifier: ^6.2.7
+        version: 6.2.7
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3(@noble/hashes@2.4.0))(lightningcss@1.33.0)(terser@5.51.2)
 
   packages/core:
     devDependencies:
@@ -141,7 +166,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.2.4
-        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3)(lightningcss@1.33.0)(terser@5.51.2)
+        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3(@noble/hashes@2.4.0))(lightningcss@1.33.0)(terser@5.51.2)
 
   packages/speech:
     dependencies:
@@ -154,7 +179,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.2.4
-        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3)(lightningcss@1.33.0)(terser@5.51.2)
+        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3(@noble/hashes@2.4.0))(lightningcss@1.33.0)(terser@5.51.2)
 
   packages/understand:
     dependencies:
@@ -170,7 +195,7 @@ importers:
         version: 5.9.3
       vitest:
         specifier: ^3.2.4
-        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3)(lightningcss@1.33.0)(terser@5.51.2)
+        version: 3.2.7(@types/node@26.6.6)(jsdom@30.1.3(@noble/hashes@2.4.0))(lightningcss@1.33.0)(terser@5.51.2)
 
 packages:
 
@@ -980,6 +1005,13 @@ packages:
     cpu: [x64]
     os: [linux]
 
+  '@noble/ed25519@3.2.0':
+    resolution: {integrity: sha512-criDgRlnUA09hchYrTy/JUWPIEap5rZxQe6wDWzRx51oWWpDRcUpuNzlgPxDJaOK6AsW9c0wKcj3rKRv6t+bPQ==}
+
+  '@noble/hashes@2.4.0':
+    resolution: {integrity: sha512-X5XaVWZIBCT7HHZGm5I7ZQXDwLG+bGXuSrMQAW+7Zvl87h1kmc1ZB1VSRJcpUfoUrGQp4Fkoxm5kZ+Ms+aW+eA==}
+    engines: {node: '>= 20.19.0'}
+
   '@oxc-project/types@0.156.0':
     resolution: {integrity: sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw==}
 
@@ -1259,6 +1291,34 @@ packages:
     resolution: {integrity: sha512-DeuVFilvaGtoS9TFIbTIQ0Kt4CBqP3xnjJ8SFqWWbXlFbrpmCdivEW7Rm38trRA8rZzQQ8lhs73nEetWotJpTg==}
     cpu: [x64]
     os: [win32]
+
+  '@sentry/browser-utils@11.10.0':
+    resolution: {integrity: sha512-P/bYHTgj76sYBYCZa524YoZ/hZac2XCW3i3qShrMXnh7s63x1cweUjD7BDVDb0L/lGMwtuObuZeRnCif4hWLNg==}
+    engines: {node: '>=20.19.0 <22.0.0 || >=22.12.0 <23.0.0 || >=23.2.0'}
+
+  '@sentry/browser@11.10.0':
+    resolution: {integrity: sha512-kU8Inx3K/PaaDGqTu4lBW8XCYNsYNTwwPIZNIRDas/mTXtepXpM7M0KxxrTSZXBTWX0RfDU4t7vsL9ay0o4+NQ==}
+    engines: {node: '>=20.19.0 <22.0.0 || >=22.12.0 <23.0.0 || >=23.2.0'}
+
+  '@sentry/conventions@0.29.0':
+    resolution: {integrity: sha512-kYq9/HJ/l6MYP/srIc20dy1W4mWyJfCF0OWFF+RhBGZwyr/wCmtabRFKyw7kqM+DTwZXQOjSTSZUcJhDowcInQ==}
+    engines: {node: '>=14'}
+
+  '@sentry/core@11.10.0':
+    resolution: {integrity: sha512-l/OtTo1v+TQgZtHG2Q5N4IX+gFdAE1tZ27K/P21UCzJglWk54TPEm+d9T2lulPqMK06kZcLwDgRAhE2GO4YS5w==}
+    engines: {node: '>=20.19.0 <22.0.0 || >=22.12.0 <23.0.0 || >=23.2.0'}
+
+  '@sentry/feedback@11.10.0':
+    resolution: {integrity: sha512-jZqxVHPoUeZ6W7xSlhJdTMuM/GUJLA/K4U9OFmkP+g+TvtXhdwWxeiT23m2Wm5NmTHjaB07jSc05ayuflD8ETw==}
+    engines: {node: '>=20.19.0 <22.0.0 || >=22.12.0 <23.0.0 || >=23.2.0'}
+
+  '@sentry/replay-canvas@11.10.0':
+    resolution: {integrity: sha512-i0Fsjbl8ChzTMntLVhZvn72+p395tGNtL4iflsprnzPhTVSOGW9IYgUYfO87UcujUf5CmYn7ELBKUc5V0Ipfdg==}
+    engines: {node: '>=20.19.0 <22.0.0 || >=22.12.0 <23.0.0 || >=23.2.0'}
+
+  '@sentry/replay@11.10.0':
+    resolution: {integrity: sha512-0rcg+43tkO278VyrKcbmg0JQm2yxuguXKLbr9ieiNsynaxj22JC8baie4Uxizf2jM2ukfqA3O+o0Pbqaed8P2Q==}
+    engines: {node: '>=20.19.0 <22.0.0 || >=22.12.0 <23.0.0 || >=23.2.0'}
 
   '@tesseract.js-data/eng@1.0.0':
     resolution: {integrity: sha512-mbTumm6KQPUHyzTPQaF3ObXYnx0SqqfV2nabqFVQBwD6Kl7PhGSLSzOlfFTWy0P3BjghaSKA2W9GB19Jk+ZcTg==}
@@ -2864,6 +2924,9 @@ packages:
   wasm-feature-detect@1.9.0:
     resolution: {integrity: sha512-zonE+xlIIYtxPy++L24ow0hAD8CICb4+FgPyROd3buyXIqsJvUEDkBgfCCoXOd1Hu3DUr0GOfnPIdcGV+YpNaA==}
 
+  web-vitals@6.2.3:
+    resolution: {integrity: sha512-Dmy+vdO1UPMqXiAtZSNayhl4f794Bxfd94W4HIj2HlYtczEQfEOon969memlcpcHrTuOKLa5baFjX7WbgmOq+A==}
+
   webidl-conversions@3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
 
@@ -3829,7 +3892,9 @@ snapshots:
   '@esbuild/win32-x64@0.28.2':
     optional: true
 
-  '@exodus/bytes@1.16.0': {}
+  '@exodus/bytes@1.16.0(@noble/hashes@2.4.0)':
+    optionalDependencies:
+      '@noble/hashes': 2.4.0
 
   '@fontsource/andika@5.3.0': {}
 
@@ -3941,6 +4006,10 @@ snapshots:
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true
+
+  '@noble/ed25519@3.2.0': {}
+
+  '@noble/hashes@2.4.0': {}
 
   '@oxc-project/types@0.156.0': {}
 
@@ -4115,6 +4184,41 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.67.2':
     optional: true
+
+  '@sentry/browser-utils@11.10.0':
+    dependencies:
+      '@sentry/conventions': 0.29.0
+      '@sentry/core': 11.10.0
+      web-vitals: 6.2.3
+
+  '@sentry/browser@11.10.0':
+    dependencies:
+      '@sentry/browser-utils': 11.10.0
+      '@sentry/conventions': 0.29.0
+      '@sentry/core': 11.10.0
+      '@sentry/feedback': 11.10.0
+      '@sentry/replay': 11.10.0
+      '@sentry/replay-canvas': 11.10.0
+
+  '@sentry/conventions@0.29.0': {}
+
+  '@sentry/core@11.10.0':
+    dependencies:
+      '@sentry/conventions': 0.29.0
+
+  '@sentry/feedback@11.10.0':
+    dependencies:
+      '@sentry/core': 11.10.0
+
+  '@sentry/replay-canvas@11.10.0':
+    dependencies:
+      '@sentry/core': 11.10.0
+      '@sentry/replay': 11.10.0
+
+  '@sentry/replay@11.10.0':
+    dependencies:
+      '@sentry/browser-utils': 11.10.0
+      '@sentry/core': 11.10.0
 
   '@tesseract.js-data/eng@1.0.0': {}
 
@@ -4404,10 +4508,10 @@ snapshots:
 
   csstype@3.2.3: {}
 
-  data-urls@8.0.0:
+  data-urls@8.0.0(@noble/hashes@2.4.0):
     dependencies:
       whatwg-mimetype: 5.0.0
-      whatwg-url: 17.3.0
+      whatwg-url: 17.3.0(@noble/hashes@2.4.0)
     transitivePeerDependencies:
       - '@noble/hashes'
 
@@ -4749,9 +4853,9 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  html-encoding-sniffer@7.0.0:
+  html-encoding-sniffer@7.0.0(@noble/hashes@2.4.0):
     dependencies:
-      '@exodus/bytes': 1.16.0
+      '@exodus/bytes': 1.16.0(@noble/hashes@2.4.0)
     transitivePeerDependencies:
       - '@noble/hashes'
 
@@ -4911,17 +5015,17 @@ snapshots:
 
   js-tokens@9.0.1: {}
 
-  jsdom@30.1.3:
+  jsdom@30.1.3(@noble/hashes@2.4.0):
     dependencies:
       '@asamuzakjp/css-color': 7.1.9
       '@asamuzakjp/dom-selector': 10.0.5
       '@bramus/specificity': 2.4.3
       '@csstools/css-syntax-patches-for-csstree': 1.1.16(css-tree@3.2.1)
-      '@exodus/bytes': 1.16.0
+      '@exodus/bytes': 1.16.0(@noble/hashes@2.4.0)
       css-tree: 3.2.1
-      data-urls: 8.0.0
+      data-urls: 8.0.0(@noble/hashes@2.4.0)
       decimal.js: 10.6.0
-      html-encoding-sniffer: 7.0.0
+      html-encoding-sniffer: 7.0.0(@noble/hashes@2.4.0)
       is-potential-custom-element-name: 1.0.1
       lru-cache: 11.5.3
       parse5: 8.0.1
@@ -4931,7 +5035,7 @@ snapshots:
       w3c-xmlserializer: 6.0.0
       webidl-conversions: 8.0.1
       whatwg-mimetype: 5.0.0
-      whatwg-url: 17.3.0
+      whatwg-url: 17.3.0(@noble/hashes@2.4.0)
       xml-name-validator: 5.0.0
     transitivePeerDependencies:
       - '@noble/hashes'
@@ -5710,7 +5814,7 @@ snapshots:
       fsevents: 2.3.3
       terser: 5.51.2
 
-  vitest@3.2.7(@types/node@26.6.6)(jsdom@30.1.3)(lightningcss@1.33.0)(terser@5.51.2):
+  vitest@3.2.7(@types/node@26.6.6)(jsdom@30.1.3(@noble/hashes@2.4.0))(lightningcss@1.33.0)(terser@5.51.2):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/expect': 3.2.7
@@ -5737,7 +5841,7 @@ snapshots:
       why-is-node-running: 2.3.0
     optionalDependencies:
       '@types/node': 26.6.6
-      jsdom: 30.1.3
+      jsdom: 30.1.3(@noble/hashes@2.4.0)
     transitivePeerDependencies:
       - jiti
       - less
@@ -5752,7 +5856,7 @@ snapshots:
       - tsx
       - yaml
 
-  vitest@5.0.5(@types/node@26.6.6)(jsdom@30.1.3)(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(terser@5.51.2)):
+  vitest@5.0.5(@types/node@26.6.6)(jsdom@30.1.3(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(terser@5.51.2)):
     dependencies:
       '@types/chai': 5.2.3
       '@vitest/mocker': 5.0.5(vite@8.3.5(@types/node@26.6.6)(esbuild@0.28.2)(terser@5.51.2))
@@ -5770,7 +5874,7 @@ snapshots:
       why-is-node-running: 3.2.1
     optionalDependencies:
       '@types/node': 26.6.6
-      jsdom: 30.1.3
+      jsdom: 30.1.3(@noble/hashes@2.4.0)
     transitivePeerDependencies:
       - msw
 
@@ -5780,15 +5884,17 @@ snapshots:
 
   wasm-feature-detect@1.9.0: {}
 
+  web-vitals@6.2.3: {}
+
   webidl-conversions@3.0.1: {}
 
   webidl-conversions@8.0.1: {}
 
   whatwg-mimetype@5.0.0: {}
 
-  whatwg-url@17.3.0:
+  whatwg-url@17.3.0(@noble/hashes@2.4.0):
     dependencies:
-      '@exodus/bytes': 1.16.0
+      '@exodus/bytes': 1.16.0(@noble/hashes@2.4.0)
       tr46: 7.0.0
       webidl-conversions: 8.0.1
     transitivePeerDependencies:

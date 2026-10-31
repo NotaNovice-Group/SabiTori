@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { AppProvider, useApp } from './app-context';
 import { getEngine, type Engine } from './engine';
 import { parseHash, useRoute } from './lib/router';
@@ -12,9 +12,12 @@ import { CardRoute } from './screens/Card';
 import { ExampleRoute } from './screens/Example';
 import { SettingsScreen } from './screens/Settings';
 import { navigate } from './lib/router';
+import { config } from './config';
+import { maybeBackgroundCheck } from './lib/updates';
+import { startCrashReporting, stopCrashReporting } from './lib/crash';
 
 function Routes() {
-  const { settings, engine } = useApp();
+  const { settings, engine, languages } = useApp();
   const route = useRoute();
   const [head = '', arg = ''] = route.path;
 
@@ -23,6 +26,19 @@ function Routes() {
     const id = window.setTimeout(() => void engine.model.init(), 1200);
     return () => window.clearTimeout(id);
   }, [engine]);
+
+  // Optional network features: each does nothing unless configured at build time AND switched on.
+  useEffect(() => {
+    if (config.updates && settings.updatesOn) maybeBackgroundCheck({ enabled: true });
+  }, [settings.updatesOn]);
+
+  const packVersions = useRef<Record<string, string>>({});
+  packVersions.current = Object.fromEntries(languages.map((m) => [m.tag, m.version ?? '']).filter(([, v]) => v));
+  useEffect(() => {
+    if (!config.crashReports) return;
+    if (settings.crashOn) void startCrashReporting({ packVersions: () => packVersions.current }).catch(() => undefined);
+    else void stopCrashReporting();
+  }, [settings.crashOn]);
 
   if (!settings.onboarded && head !== 'welcome' && head !== 'mode') {
     queueMicrotask(() => navigate('/welcome', { replace: true }));

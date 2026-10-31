@@ -193,6 +193,11 @@ a { color: inherit; text-decoration: none; }
 .btn-primary, .btn-hero { background: var(--ink); color: var(--ground); }
 .btn-primary:active:not(:disabled), .btn-hero:active:not(:disabled) { background: var(--ink-press); color: var(--ground); }
 .btn-hero { min-height: 80px; font-size: var(--fs-title); padding-inline: var(--s5); }
+/* Destructive confirmation: the one place a hue (urgent red) marks a button. Never colour alone: it also carries the bin glyph and names what it deletes. */
+.btn-danger { background: var(--urgent); color: var(--ground); }
+.btn-danger:active:not(:disabled) { background: var(--ink); color: var(--ground); }
+.confirm { display: flex; flex-direction: column; gap: var(--s4); }
+.confirm .btn { width: 100%; }
 .btn-block { width: 100%; }
 
 
@@ -478,6 +483,8 @@ a { color: inherit; text-decoration: none; }
 .panel-title { font-size: var(--fs-title); line-height: 1.2; }
 .panel-hint { color: var(--ink-2); }
 .panel-strong { font-weight: 700; }
+.panel-group { display: flex; flex-direction: column; gap: var(--s3); align-self: stretch; align-items: flex-start; padding-top: var(--s3); }
+.panel-group > .seg { align-self: stretch; }
 .panel .lang { background: var(--ground); }
 .panel .lang-play .round-ic { background: var(--surface); }
 .error { color: var(--urgent); font-weight: 700; }

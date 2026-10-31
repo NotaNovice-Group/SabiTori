@@ -34,22 +34,33 @@ export interface EngineDeps {
   today?: () => string;
 }
 
-async function getJson(url: string): Promise<unknown> {
-  const res = await fetch(url);
+type FetchFn = (url: string) => Promise<Response>;
+
+async function getJson(url: string, doFetch: FetchFn = (u) => fetch(u)): Promise<unknown> {
+  const res = await doFetch(url);
   if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
   // A dev server answers unknown paths with index.html: that is "not found", not JSON.
   return JSON.parse(await res.text());
 }
 
-/** Load region, packs index and reading lexicons from the app's own origin. */
-export async function createEngine(baseUrl: string, regionCode: string): Promise<Engine> {
+/**
+ * Load region, packs index and reading lexicons from the app's own origin.
+ * `assets` (only when the optional update channel is configured) serves downloaded, verified
+ * files first and the bundled ones otherwise: packs, region.json, reading.json, audio clips.
+ */
+export async function createEngine(
+  baseUrl: string,
+  regionCode: string,
+  assets?: { fetch: FetchFn; resolveClip: (url: string) => Promise<string | null> } | null,
+): Promise<Engine> {
+  const f = assets?.fetch;
   let region: RegionConfig;
   try {
-    region = (await getJson(`${baseUrl}regions/${regionCode}/region.json`)) as RegionConfig;
+    region = (await getJson(`${baseUrl}regions/${regionCode}/region.json`, f)) as RegionConfig;
   } catch {
-    region = (await getJson(`${baseUrl}regions/CM/region.json`)) as RegionConfig;
+    region = (await getJson(`${baseUrl}regions/CM/region.json`, f)) as RegionConfig;
   }
-  const registry = createPackRegistry({ baseUrl: `${baseUrl}packs` });
+  const registry = createPackRegistry({ baseUrl: `${baseUrl}packs`, ...(f ? { fetch: f } : {}) });
   const manifests = await registry.list().catch(() => [] as PackManifest[]);
   const lexicons: ReadingLexicon[] = [];
   await Promise.all(
@@ -57,14 +68,14 @@ export async function createEngine(baseUrl: string, regionCode: string): Promise
       .filter((m) => m.reads)
       .map(async (m) => {
         try {
-          const lx = (await getJson(`${baseUrl}packs/${m.tag}/reading.json`)) as ReadingLexicon;
+          const lx = (await getJson(`${baseUrl}packs/${m.tag}/reading.json`, f)) as ReadingLexicon;
           if (lx && lx.formatVersion === 1) lexicons.push(lx);
         } catch {
           /* this language cannot be read yet: rules use the others */
         }
       }),
   );
-  return createEngineFrom({ region, registry, lexicons, baseUrl });
+  return createEngineFrom({ region, registry, lexicons, baseUrl, ...(assets ? { player: createAppPlayer(assets.resolveClip) } : {}) });
 }
 
 export function createEngineFrom(deps: EngineDeps): Engine {

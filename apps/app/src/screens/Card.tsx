@@ -14,6 +14,7 @@ import { buildIcs, downloadIcs } from '../lib/ics';
 import { formatLongDate, formatMoney, formatPhone } from '../lib/format';
 import { senderName } from './Home';
 import { SPEEDS } from '../lib/settings';
+import { rememberMessage } from '../lib/crash';
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -58,6 +59,7 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
   const [speedStep, setSpeedStep] = useState<number>(settings.speed);
   const [source, setSource] = useState<Source | null>(null);
   const [helper, setHelper] = useState(false);
+  useEffect(() => rememberMessage(card.input.text, card.input.sender?.value), [card]);
   const els = useRef<(HTMLElement | null)[]>([]);
   const last = useRef(0);
   const rate = SPEEDS[speedStep] ?? 1;

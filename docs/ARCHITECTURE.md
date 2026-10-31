@@ -6,6 +6,7 @@ Offline-first, on-device. One pipeline, language-neutral code, data-driven langu
 packages/core        types, phrase catalog, pack + region contracts, the pipeline (pure TS, no DOM)
 packages/speech      pack rules (numbers/dates/money/phones), pack loading, plan rendering, audio player
 packages/understand  on-device LLM classifier (wllama, GGUF), model storage in OPFS
+packages/connect     optional update channel: signature check, atomic install, overlay fetch
 packs/<tag>/         language packs: manifest.json, phrases.json, rules.json, audio/
 regions/<CODE>/      region.json: currency, phone format, official senders, offered languages
 apps/app             the SabiTori app (Vite + React PWA, wrapped for Android with Capacitor)
@@ -81,5 +82,10 @@ modelStore: { has(): Promise<boolean>; save(file: Blob): Promise<void>; load(): 
 - No language or country words in code. UI text = catalog keys rendered through packs.
 - Facts come from code only; the card builder rejects any fact without a source span.
 - Never call a message safe. Scam level `no_signs` is spoken as "no warning signs found".
-- No network calls at runtime. Packs, fonts, OCR data and models are bundled or side-loaded.
+- Message text and photos never leave the phone, in any mode. The app works fully offline: packs, fonts,
+  OCR data and models are bundled or side-loaded.
+- Two OPTIONAL network features exist, both off by default, both absent unless the build was configured
+  (apps/app/.env.example): signed updates (`packages/connect`, docs/updates.md: GET of files named in a
+  signed index, nothing else) and scrubbed crash reports (apps/app/src/lib/scrub.ts). The Android app
+  has the INTERNET permission only for these, HTTPS only, and a CSP limits `connect-src`.
 - Tests: vitest, next to each package in `test/`.

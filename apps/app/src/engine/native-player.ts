@@ -6,7 +6,7 @@
  */
 import { Capacitor } from '@capacitor/core';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
-import { createBrowserClips, createBrowserPlayer, createPlayer, type Player, type TtsBackend } from '@sabitori/speech';
+import { createBrowserClips, createBrowserPlayer, createBrowserTts, createPlayer, type ClipBackend, type Player, type TtsBackend } from '@sabitori/speech';
 
 function createNativeTts(): TtsBackend {
   return {
@@ -22,7 +22,20 @@ function createNativeTts(): TtsBackend {
   };
 }
 
-export function createAppPlayer(): Player {
-  if (!Capacitor.isNativePlatform()) return createBrowserPlayer();
-  return createPlayer({ tts: createNativeTts(), clips: createBrowserClips() });
+/** Plays a clip from the downloaded update set when it has one, else the bundled file. */
+function withOverlay(inner: ClipBackend, resolveClip: (url: string) => Promise<string | null>): ClipBackend {
+  return {
+    async play({ url, rate }) {
+      const hit = await resolveClip(url).catch(() => null);
+      return inner.play({ url: hit ?? url, rate });
+    },
+    cancel: () => inner.cancel(),
+  };
+}
+
+export function createAppPlayer(resolveClip?: (url: string) => Promise<string | null>): Player {
+  const native = Capacitor.isNativePlatform();
+  if (!native && !resolveClip) return createBrowserPlayer();
+  const clips = resolveClip ? withOverlay(createBrowserClips(), resolveClip) : createBrowserClips();
+  return createPlayer({ tts: native ? createNativeTts() : createBrowserTts(), clips });
 }

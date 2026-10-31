@@ -4,6 +4,8 @@
 
     <application
         android:allowBackup="true"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -38,7 +40,10 @@
 
     <!-- Permissions -->
 
-    <!-- No INTERNET permission, on purpose: SabiTori never sends a message off the phone.
-         Anyone can verify this in Android Settings > Apps > SabiTori > Permissions. -->
-    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <!-- SabiTori never sends a message, a photo or any text you read off this phone.
+         The network is used only for two features a person must switch on in Settings:
+         downloading signed language/scam-warning updates, and sending error reports that
+         contain no message content. Traffic is HTTPS only (see res/xml/network_security_config.xml).
+         If the app is built without update or error-report settings, it never opens a connection. -->
+    <uses-permission android:name="android.permission.INTERNET" />
 </manifest>

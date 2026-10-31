@@ -12,7 +12,8 @@ interface Props {
   /** Visible label. Defaults to the spoken phrase. */
   label?: ReactNode;
   icon?: ReactNode;
-  variant?: 'primary' | 'secondary' | 'quiet' | 'round' | 'seg' | 'hero';
+  /** 'danger' is for the confirming step of a deletion only. */
+  variant?: 'primary' | 'secondary' | 'quiet' | 'round' | 'seg' | 'hero' | 'danger';
   onAct: () => void;
   disabled?: boolean;
   className?: string;

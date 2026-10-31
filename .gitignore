@@ -13,3 +13,7 @@ apps/app/android/capacitor-cordova-android-plugins/build/
 apps/app/android/app/src/main/assets/public/
 apps/*/screenshots/
 packages/understand/harness/public/
+dist-updates/
+.env
+.env.local
+.env.*.local

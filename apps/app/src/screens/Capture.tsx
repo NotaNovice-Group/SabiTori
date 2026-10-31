@@ -8,6 +8,7 @@ import { session } from '../lib/session';
 import { buildInput } from '../lib/open';
 import { isSharp, measureSharpness } from '../lib/sharpness';
 import { recognise } from '../lib/ocr';
+import { rememberMessage } from '../lib/crash';
 
 type Phase = 'checking' | 'blurry' | 'reading' | 'empty' | 'error';
 
@@ -45,6 +46,7 @@ export function CaptureScreen() {
         setPhase('reading');
         setProgress(0);
         const text = await recognise(file, (f) => live && setProgress(f));
+        rememberMessage(text);
         if (!live) return;
         if (text.replace(/\s/g, '').length < 12) {
           setPhase('empty');

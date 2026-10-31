@@ -1,5 +1,6 @@
 import { createEngine } from './packages-engine';
 import { loadSettings } from '../lib/settings';
+import { connectedAssets } from '../lib/updates';
 import type { Engine, PlayOptions, Rendered, RenderedSection } from './types';
 
 let engine: Promise<Engine> | null = null;
@@ -59,7 +60,7 @@ export function withLifecycle(inner: Engine): Engine {
 
 /** The one door to @sabitori/core, speech and understand. */
 export function getEngine(): Promise<Engine> {
-  engine ??= createEngine(import.meta.env.BASE_URL, loadSettings().region).then(withLifecycle);
+  engine ??= createEngine(import.meta.env.BASE_URL, loadSettings().region, connectedAssets()).then(withLifecycle);
   return engine;
 }
 
