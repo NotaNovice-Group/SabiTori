@@ -1,0 +1,16 @@
+{
+  "formatVersion": 1,
+  "tag": "en",
+  "name": "English",
+  "autonym": "English",
+  "script": "Latn",
+  "direction": "ltr",
+  "fallback": [],
+  "voice": { "kind": "tts", "engine": "system", "bcp47": "en-GB" },
+  "reads": true,
+  "status": "beta",
+  "regions": ["CM"],
+  "license": "CC-BY-4.0",
+  "contributors": [],
+  "version": "0.1.0"
+}

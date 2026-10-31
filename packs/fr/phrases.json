@@ -1,0 +1,278 @@
+{
+  "scam.likely": {
+    "text": "Ceci ressemble à un piège. N'envoyez pas d'argent. Ne donnez pas votre code secret.",
+    "status": "draft"
+  },
+  "scam.caution": {
+    "text": "Soyez prudent. Vérifiez avant de faire quoi que ce soit.",
+    "status": "draft"
+  },
+  "scam.no_signs": {
+    "text": "Nous n'avons trouvé aucun signe d'alerte. Ne donnez jamais votre code secret à personne.",
+    "status": "draft"
+  },
+  "scam.check_balance": {
+    "text": "Vérifiez votre solde avec le code de votre opérateur, pas avec un numéro de ce message.",
+    "status": "draft"
+  },
+  "scam.signal.asks_pin": {
+    "text": "Ce message demande votre code secret.",
+    "status": "draft"
+  },
+  "scam.signal.wrong_transfer": {
+    "text": "Ce message dit que de l'argent vous a été envoyé par erreur.",
+    "status": "draft"
+  },
+  "scam.signal.prize_fee": {
+    "text": "Ce message dit que vous avez gagné quelque chose, mais que vous devez payer d'abord.",
+    "status": "draft"
+  },
+  "scam.signal.account_block_threat": {
+    "text": "Ce message menace de bloquer votre compte ou votre carte SIM.",
+    "status": "draft"
+  },
+  "scam.signal.link": {
+    "text": "Ce message contient un lien. N'ouvrez pas ce lien.",
+    "status": "draft"
+  },
+  "scam.signal.time_pressure": {
+    "text": "Ce message vous pousse à agir très vite.",
+    "status": "draft"
+  },
+  "scam.signal.sender_mismatch": {
+    "text": "Il dit qu'il vient de {sender}, mais il ne vient pas du vrai numéro de {sender}.",
+    "status": "draft"
+  },
+  "scam.signal.fake_balance": {
+    "text": "Ce message de solde ne vient pas de votre opérateur.",
+    "status": "draft"
+  },
+  "scam.signal.asks_to_call_number": {
+    "text": "Ce message vous demande d'appeler un numéro. Utilisez plutôt le numéro officiel.",
+    "status": "draft"
+  },
+  "sender.known": {
+    "text": "Ce message vient de {sender}.",
+    "status": "draft"
+  },
+  "sender.claimed": {
+    "text": "Ce message dit qu'il vient de {sender}.",
+    "status": "draft"
+  },
+  "sender.unknown": {
+    "text": "Nous ne savons pas qui a envoyé ce message.",
+    "status": "draft"
+  },
+  "about.electricity_bill": {
+    "text": "Ceci concerne votre facture d'électricité.",
+    "status": "draft"
+  },
+  "about.water_bill": {
+    "text": "Ceci concerne votre facture d'eau.",
+    "status": "draft"
+  },
+  "about.mobile_money": {
+    "text": "Ceci concerne le Mobile Money.",
+    "status": "draft"
+  },
+  "about.telecom": {
+    "text": "Ceci concerne votre ligne téléphonique ou votre crédit.",
+    "status": "draft"
+  },
+  "about.bank": {
+    "text": "Ceci concerne votre compte bancaire.",
+    "status": "draft"
+  },
+  "about.health": {
+    "text": "Ceci concerne votre santé ou une visite à l'hôpital.",
+    "status": "draft"
+  },
+  "about.school": {
+    "text": "Ceci concerne l'école.",
+    "status": "draft"
+  },
+  "about.administrative": {
+    "text": "Ceci concerne un papier officiel.",
+    "status": "draft"
+  },
+  "about.legal": {
+    "text": "Ceci concerne une affaire de justice, comme le tribunal ou la police.",
+    "status": "draft"
+  },
+  "about.other": {
+    "text": "Nous ne savons pas de quoi parle ce message.",
+    "status": "draft"
+  },
+  "action.pay": {
+    "text": "Vous devez payer.",
+    "status": "draft"
+  },
+  "action.bring_document": {
+    "text": "Vous devez apporter ou envoyer un papier.",
+    "status": "draft"
+  },
+  "action.go_to_place": {
+    "text": "Vous devez aller dans un bureau ou un lieu.",
+    "status": "draft"
+  },
+  "action.call": {
+    "text": "Vous devez les appeler.",
+    "status": "draft"
+  },
+  "action.reply": {
+    "text": "Vous devez répondre à ce message.",
+    "status": "draft"
+  },
+  "action.collect": {
+    "text": "Vous pouvez venir chercher quelque chose.",
+    "status": "draft"
+  },
+  "action.take_medicine": {
+    "text": "Prenez vos médicaments comme dit le papier.",
+    "status": "draft"
+  },
+  "action.nothing": {
+    "text": "Vous n'avez rien à faire.",
+    "status": "draft"
+  },
+  "action.unclear": {
+    "text": "Nous ne sommes pas sûrs de ce que vous devez faire. Demandez à une personne de confiance.",
+    "status": "draft"
+  },
+  "deadline.by": {
+    "text": "Faites-le avant le {date}.",
+    "status": "draft"
+  },
+  "deadline.passed": {
+    "text": "La date du {date} est déjà passée.",
+    "status": "draft"
+  },
+  "deadline.none": {
+    "text": "Ce message ne contient pas de date.",
+    "status": "draft"
+  },
+  "money.amount": {
+    "text": "Le montant est de {amount}.",
+    "status": "draft"
+  },
+  "money.none": {
+    "text": "Ce message ne dit pas de montant d'argent.",
+    "status": "draft"
+  },
+  "help.call": {
+    "text": "Pour poser des questions, appelez le {phone}.",
+    "status": "draft"
+  },
+  "help.none": {
+    "text": "Si vous n'êtes pas sûr, demandez à une personne de confiance.",
+    "status": "draft"
+  },
+  "urgency.info": {
+    "text": "C'est seulement une information.",
+    "status": "draft"
+  },
+  "urgency.soon": {
+    "text": "Faites ceci bientôt.",
+    "status": "draft"
+  },
+  "urgency.urgent": {
+    "text": "C'est urgent.",
+    "status": "draft"
+  },
+  "facts_only.intro": {
+    "text": "Nous n'avons pas pu tout comprendre dans ce message. Voici ce que nous avons trouvé.",
+    "status": "draft"
+  },
+  "ui.welcome": {
+    "text": "Choisissez votre langue.",
+    "status": "draft"
+  },
+  "ui.take_photo": {
+    "text": "Prenez une photo d'un message",
+    "status": "draft"
+  },
+  "ui.paste": {
+    "text": "Collez un message",
+    "status": "draft"
+  },
+  "ui.reading": {
+    "text": "Nous lisons votre message.",
+    "status": "draft"
+  },
+  "ui.camera_closer": {
+    "text": "Approchez-vous.",
+    "status": "draft"
+  },
+  "ui.camera_hold": {
+    "text": "Ne bougez plus.",
+    "status": "draft"
+  },
+  "ui.camera_ok": {
+    "text": "C'est bon.",
+    "status": "draft"
+  },
+  "ui.retake": {
+    "text": "La photo n'est pas claire. Reprenez la photo, s'il vous plaît.",
+    "status": "draft"
+  },
+  "ui.listen": {
+    "text": "Écouter",
+    "status": "draft"
+  },
+  "ui.again": {
+    "text": "Encore",
+    "status": "draft"
+  },
+  "ui.slower": {
+    "text": "Plus lent",
+    "status": "draft"
+  },
+  "ui.stop": {
+    "text": "Arrêter",
+    "status": "draft"
+  },
+  "ui.call": {
+    "text": "Appeler",
+    "status": "draft"
+  },
+  "ui.remind": {
+    "text": "Rappelez-moi",
+    "status": "draft"
+  },
+  "ui.show_helper": {
+    "text": "Montrer à quelqu'un",
+    "status": "draft"
+  },
+  "ui.show_source": {
+    "text": "Où est-ce dans le message ?",
+    "status": "draft"
+  },
+  "ui.history": {
+    "text": "Mes messages",
+    "status": "draft"
+  },
+  "ui.settings": {
+    "text": "Réglages",
+    "status": "draft"
+  },
+  "ui.language": {
+    "text": "Langue",
+    "status": "draft"
+  },
+  "ui.delete": {
+    "text": "Supprimer",
+    "status": "draft"
+  },
+  "ui.back": {
+    "text": "Retour",
+    "status": "draft"
+  },
+  "ui.privacy": {
+    "text": "Vos messages ne quittent jamais ce téléphone.",
+    "status": "draft"
+  },
+  "ui.not_advice": {
+    "text": "SabiTori explique les messages. Il ne donne pas de conseils.",
+    "status": "draft"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "formatVersion": 1,
+  "tag": "fub",
+  "name": "Adamawa Fulfulde",
+  "autonym": "Fulfulde",
+  "script": "Latn",
+  "direction": "ltr",
+  "fallback": ["fr", "en"],
+  "voice": { "kind": "recorded" },
+  "reads": false,
+  "status": "in_recording",
+  "regions": ["CM"],
+  "license": "LicenseRef-community-decides",
+  "contributors": [],
+  "version": "0.1.0"
+}

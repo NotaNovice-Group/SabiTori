@@ -1,0 +1,278 @@
+{
+  "scam.likely": {
+    "text": "This looks like a trick. Do not send money. Do not share your PIN.",
+    "status": "reviewed"
+  },
+  "scam.caution": {
+    "text": "Be careful. Check before you do anything.",
+    "status": "reviewed"
+  },
+  "scam.no_signs": {
+    "text": "We found no warning signs. Never share your PIN with anyone.",
+    "status": "reviewed"
+  },
+  "scam.check_balance": {
+    "text": "Check your balance with your operator's own code, not with a number from this message.",
+    "status": "reviewed"
+  },
+  "scam.signal.asks_pin": {
+    "text": "This message asks for your secret code.",
+    "status": "reviewed"
+  },
+  "scam.signal.wrong_transfer": {
+    "text": "This message says money was sent to you by mistake.",
+    "status": "reviewed"
+  },
+  "scam.signal.prize_fee": {
+    "text": "This message says you won something, but you must pay first.",
+    "status": "reviewed"
+  },
+  "scam.signal.account_block_threat": {
+    "text": "This message threatens to block your account or SIM card.",
+    "status": "reviewed"
+  },
+  "scam.signal.link": {
+    "text": "This message has a link. Do not open it.",
+    "status": "reviewed"
+  },
+  "scam.signal.time_pressure": {
+    "text": "This message pushes you to act very fast.",
+    "status": "reviewed"
+  },
+  "scam.signal.sender_mismatch": {
+    "text": "It says it is from {sender}, but it does not come from {sender}'s real number.",
+    "status": "reviewed"
+  },
+  "scam.signal.fake_balance": {
+    "text": "This balance message does not come from your operator.",
+    "status": "reviewed"
+  },
+  "scam.signal.asks_to_call_number": {
+    "text": "This message asks you to call a number. Use the official number instead.",
+    "status": "reviewed"
+  },
+  "sender.known": {
+    "text": "This message is from {sender}.",
+    "status": "reviewed"
+  },
+  "sender.claimed": {
+    "text": "This message says it is from {sender}.",
+    "status": "reviewed"
+  },
+  "sender.unknown": {
+    "text": "We do not know who sent this message.",
+    "status": "reviewed"
+  },
+  "about.electricity_bill": {
+    "text": "It is about your electricity bill.",
+    "status": "reviewed"
+  },
+  "about.water_bill": {
+    "text": "It is about your water bill.",
+    "status": "reviewed"
+  },
+  "about.mobile_money": {
+    "text": "It is about mobile money.",
+    "status": "reviewed"
+  },
+  "about.telecom": {
+    "text": "It is about your phone line or airtime.",
+    "status": "reviewed"
+  },
+  "about.bank": {
+    "text": "It is about your bank account.",
+    "status": "reviewed"
+  },
+  "about.health": {
+    "text": "It is about your health or a hospital visit.",
+    "status": "reviewed"
+  },
+  "about.school": {
+    "text": "It is about school.",
+    "status": "reviewed"
+  },
+  "about.administrative": {
+    "text": "It is about an official paper.",
+    "status": "reviewed"
+  },
+  "about.legal": {
+    "text": "It is about a legal matter, such as court or police.",
+    "status": "reviewed"
+  },
+  "about.other": {
+    "text": "We could not tell what this message is about.",
+    "status": "reviewed"
+  },
+  "action.pay": {
+    "text": "You must pay.",
+    "status": "reviewed"
+  },
+  "action.bring_document": {
+    "text": "You must bring or send a paper.",
+    "status": "reviewed"
+  },
+  "action.go_to_place": {
+    "text": "You must go to an office or a place.",
+    "status": "reviewed"
+  },
+  "action.call": {
+    "text": "You must call them.",
+    "status": "reviewed"
+  },
+  "action.reply": {
+    "text": "You must answer this message.",
+    "status": "reviewed"
+  },
+  "action.collect": {
+    "text": "You can collect something.",
+    "status": "reviewed"
+  },
+  "action.take_medicine": {
+    "text": "Take your medicine as the paper says.",
+    "status": "reviewed"
+  },
+  "action.nothing": {
+    "text": "You do not need to do anything.",
+    "status": "reviewed"
+  },
+  "action.unclear": {
+    "text": "We are not sure what you must do. Ask someone you trust.",
+    "status": "reviewed"
+  },
+  "deadline.by": {
+    "text": "Do it by {date}.",
+    "status": "reviewed"
+  },
+  "deadline.passed": {
+    "text": "The date {date} has already passed.",
+    "status": "reviewed"
+  },
+  "deadline.none": {
+    "text": "There is no date in this message.",
+    "status": "reviewed"
+  },
+  "money.amount": {
+    "text": "The amount is {amount}.",
+    "status": "reviewed"
+  },
+  "money.none": {
+    "text": "This message does not say an amount of money.",
+    "status": "reviewed"
+  },
+  "help.call": {
+    "text": "To ask questions, call {phone}.",
+    "status": "reviewed"
+  },
+  "help.none": {
+    "text": "If you are not sure, ask someone you trust.",
+    "status": "reviewed"
+  },
+  "urgency.info": {
+    "text": "This is only information.",
+    "status": "reviewed"
+  },
+  "urgency.soon": {
+    "text": "Do this soon.",
+    "status": "reviewed"
+  },
+  "urgency.urgent": {
+    "text": "This is urgent.",
+    "status": "reviewed"
+  },
+  "facts_only.intro": {
+    "text": "We could not understand all of this message. Here is what we found.",
+    "status": "reviewed"
+  },
+  "ui.welcome": {
+    "text": "Choose your language.",
+    "status": "reviewed"
+  },
+  "ui.take_photo": {
+    "text": "Take a photo of a message",
+    "status": "reviewed"
+  },
+  "ui.paste": {
+    "text": "Paste a message",
+    "status": "reviewed"
+  },
+  "ui.reading": {
+    "text": "Reading your message.",
+    "status": "reviewed"
+  },
+  "ui.camera_closer": {
+    "text": "Move closer.",
+    "status": "reviewed"
+  },
+  "ui.camera_hold": {
+    "text": "Hold still.",
+    "status": "reviewed"
+  },
+  "ui.camera_ok": {
+    "text": "Got it.",
+    "status": "reviewed"
+  },
+  "ui.retake": {
+    "text": "The photo is not clear. Please take it again.",
+    "status": "reviewed"
+  },
+  "ui.listen": {
+    "text": "Listen",
+    "status": "reviewed"
+  },
+  "ui.again": {
+    "text": "Again",
+    "status": "reviewed"
+  },
+  "ui.slower": {
+    "text": "Slower",
+    "status": "reviewed"
+  },
+  "ui.stop": {
+    "text": "Stop",
+    "status": "reviewed"
+  },
+  "ui.call": {
+    "text": "Call",
+    "status": "reviewed"
+  },
+  "ui.remind": {
+    "text": "Remind me",
+    "status": "reviewed"
+  },
+  "ui.show_helper": {
+    "text": "Show someone",
+    "status": "reviewed"
+  },
+  "ui.show_source": {
+    "text": "Where is this in the message?",
+    "status": "reviewed"
+  },
+  "ui.history": {
+    "text": "My messages",
+    "status": "reviewed"
+  },
+  "ui.settings": {
+    "text": "Settings",
+    "status": "reviewed"
+  },
+  "ui.language": {
+    "text": "Language",
+    "status": "reviewed"
+  },
+  "ui.delete": {
+    "text": "Delete",
+    "status": "reviewed"
+  },
+  "ui.back": {
+    "text": "Back",
+    "status": "reviewed"
+  },
+  "ui.privacy": {
+    "text": "Your messages never leave this phone.",
+    "status": "reviewed"
+  },
+  "ui.not_advice": {
+    "text": "SabiTori explains messages. It does not give advice.",
+    "status": "reviewed"
+  }
+}
