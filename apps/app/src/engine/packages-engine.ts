@@ -1,0 +1,221 @@
+/**
+ * The adapter: the only module that touches @sabitori/core, @sabitori/speech and
+ * @sabitori/understand. It loads the region, the reading lexicons and the packs,
+ * and exposes analyze / plan / render / play to the UI as one small Engine.
+ *
+ *   core.analyze(input, { region, lexicons, classifier })      -> Engine.analyze
+ *   core.buildSpeechPlan(card, { today })                      -> Engine.renderCard (step 1)
+ *   speech.renderPlan(plan, lang, registry, { region, today }) -> Engine.renderCard (step 2)
+ *   speech.renderPhrase(key, slots, lang, registry, ctx)       -> Engine.phrase / bundle / speak
+ *   speech.createBrowserPlayer()                               -> Engine.playSections / stop
+ *   understand.createLlmClassifier / modelStore                -> Engine.model (engine/model.ts)
+ */
+import {
+  CATALOG, PHRASE_KEYS, analyze, buildSpeechPlan, createRulesClassifier,
+  type Card, type Classifier, type LangTag, type MessageInput, type PackManifest, type PhraseKey,
+  type ReadingLexicon, type RegionConfig, type SlotValue,
+} from '@sabitori/core';
+import { createBrowserPlayer, createPackRegistry, renderPhrase, renderPlan, type PackRegistry } from '@sabitori/speech';
+import { EXTRA, EXTRA_KEYS, isExtraKey } from './extra';
+import { BUNDLE_KEYS, fallbackChain, fillSlots, resolveExtra } from './shared';
+import { createModelController } from './model';
+import { todayIso } from '../lib/format';
+import type { Bundle, Engine, PlayOptions, Rendered, RenderedSection, SectionView, UiKey } from './types';
+
+export interface EngineDeps {
+  region: RegionConfig;
+  registry: PackRegistry;
+  lexicons: ReadingLexicon[];
+  /** Base URL of the app, for the wllama wasm. */
+  baseUrl: string;
+  /** Override for tests (the browser player needs speechSynthesis). */
+  player?: { play(s: RenderedSection[], o: PlayOptions): void; stop(): void; readonly playing: boolean };
+  today?: () => string;
+}
+
+async function getJson(url: string): Promise<unknown> {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
+  // A dev server answers unknown paths with index.html: that is "not found", not JSON.
+  return JSON.parse(await res.text());
+}
+
+/** Load region, packs index and reading lexicons from the app's own origin. */
+export async function createEngine(baseUrl: string, regionCode: string): Promise<Engine> {
+  let region: RegionConfig;
+  try {
+    region = (await getJson(`${baseUrl}regions/${regionCode}/region.json`)) as RegionConfig;
+  } catch {
+    region = (await getJson(`${baseUrl}regions/CM/region.json`)) as RegionConfig;
+  }
+  const registry = createPackRegistry({ baseUrl: `${baseUrl}packs` });
+  const manifests = await registry.list().catch(() => [] as PackManifest[]);
+  const lexicons: ReadingLexicon[] = [];
+  await Promise.all(
+    manifests
+      .filter((m) => m.reads)
+      .map(async (m) => {
+        try {
+          const lx = (await getJson(`${baseUrl}packs/${m.tag}/reading.json`)) as ReadingLexicon;
+          if (lx && lx.formatVersion === 1) lexicons.push(lx);
+        } catch {
+          /* this language cannot be read yet: rules use the others */
+        }
+      }),
+  );
+  return createEngineFrom({ region, registry, lexicons, baseUrl });
+}
+
+export function createEngineFrom(deps: EngineDeps): Engine {
+  const { region, registry, lexicons } = deps;
+  const today = () => deps.today?.() ?? todayIso(region.timezone);
+  const ctx = () => ({ region, today: today() });
+  const rules: Classifier = createRulesClassifier(region, lexicons);
+  const model = createModelController(rules, deps.baseUrl);
+  const player = deps.player ?? createBrowserPlayer();
+
+  let manifestsP: Promise<PackManifest[]> | null = null;
+  const allManifests = () => (manifestsP ??= registry.list().catch(() => []));
+  const manifestMap = async () => new Map((await allManifests()).map((m) => [m.tag, m] as const));
+
+  /** First language in [tag, ...fallbacks] whose pack actually loads (a pack without rules.json cannot render). */
+  const loadable = new Map<LangTag, Promise<LangTag>>();
+  function renderLang(tag: LangTag): Promise<LangTag> {
+    let p = loadable.get(tag);
+    if (!p) {
+      p = (async () => {
+        const chain = [tag, ...fallbackChain(await manifestMap(), tag)];
+        for (const t of chain) {
+          try {
+            await registry.get(t);
+            return t;
+          } catch {
+            /* try the next */
+          }
+        }
+        return tag;
+      })();
+      loadable.set(tag, p);
+    }
+    return p;
+  }
+
+  async function voiceOf(tag: LangTag): Promise<string> {
+    const m = (await manifestMap()).get(tag);
+    return m?.voice.kind === 'tts' ? m.voice.bcp47 : tag;
+  }
+
+  async function packText(tag: LangTag, key: string): Promise<string | undefined> {
+    try {
+      return (((await registry.get(tag)).phrases as Record<string, { text?: string }>)[key])?.text;
+    } catch {
+      return undefined;
+    }
+  }
+
+  async function phrase(key: UiKey, lang: LangTag, slots?: Record<string, string>): Promise<Rendered> {
+    if (isExtraKey(key)) {
+      const chain = fallbackChain(await manifestMap(), lang);
+      const own = new Map<LangTag, string>();
+      for (const t of [lang, ...chain]) {
+        const x = await packText(t, key);
+        if (x) own.set(t, x);
+      }
+      const r = resolveExtra(key, lang, chain, (t) => own.get(t));
+      const text = fillSlots(r.text, slots);
+      return { text, parts: [{ kind: 'tts', text, bcp47: await voiceOf(r.lang) }], lang: r.lang };
+    }
+    const s: Record<string, SlotValue> = {};
+    for (const [k, v] of Object.entries(slots ?? {})) s[k] = { type: 'text', value: v, lang: 'unknown' };
+    try {
+      return await renderPhrase(key, Object.keys(s).length ? s : undefined, await renderLang(lang), registry, ctx());
+    } catch {
+      const text = CATALOG[key].en;
+      return { text, parts: [{ kind: 'tts', text, bcp47: 'en-GB' }], lang: 'en' };
+    }
+  }
+
+  const bundles = new Map<LangTag, Promise<Bundle>>();
+  function bundle(lang: LangTag): Promise<Bundle> {
+    let p = bundles.get(lang);
+    if (!p) {
+      p = (async () => {
+        const out = {} as Bundle;
+        await Promise.all(
+          BUNDLE_KEYS.map(async (k) => {
+            if (!isExtraKey(k) && (CATALOG[k] as { slots?: readonly string[] }).slots?.length) return;
+            const r = await phrase(k, lang);
+            out[k] = { text: r.text, lang: r.lang };
+          }),
+        );
+        return out;
+      })();
+      bundles.set(lang, p);
+    }
+    return p;
+  }
+
+  async function renderCard(card: Card, lang: LangTag): Promise<SectionView[]> {
+    const t = today();
+    const plan = buildSpeechPlan(card, { today: t });
+    const use = await renderLang(lang);
+    const sections = await renderPlan(plan, use, registry, ctx());
+    const views: SectionView[] = [];
+    for (let i = 0; i < sections.length; i++) {
+      const lines: SectionView['lines'] = [];
+      for (const u of plan.sections[i]!.utterances) {
+        try {
+          const r = await renderPhrase(u.key, u.slots, use, registry, ctx());
+          lines.push({ key: u.key, text: r.text, lang: r.lang });
+        } catch {
+          /* the section text above still has it */
+        }
+      }
+      // keep the requested language visible when we had to render in another one
+      views.push({ ...sections[i]!, lang: sections[i]!.lang === use && use !== lang ? use : sections[i]!.lang, lines });
+    }
+    return views;
+  }
+
+  return {
+    region,
+    source: 'packages',
+    async languages() {
+      const m = await manifestMap();
+      const offered = region.languages.map((t) => m.get(t)).filter((x): x is PackManifest => !!x);
+      return offered;
+    },
+    bundle,
+    phrase,
+    analyze: (input: MessageInput) => analyze(input, { region, lexicons, classifier: rules }),
+    async analyzeDeeper(input: MessageInput, timeoutMs: number) {
+      const t0 = Date.now();
+      const llm = await model.llm(timeoutMs);
+      if (!llm) return null;
+      const left = Math.max(1000, timeoutMs - (Date.now() - t0));
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      const limit = new Promise<null>((res) => { timer = setTimeout(() => res(null), left); });
+      try {
+        return await Promise.race([analyze(input, { region, lexicons, classifier: llm }), limit]);
+      } catch {
+        return null;
+      } finally {
+        clearTimeout(timer);
+      }
+    },
+    renderCard,
+    playSections: (s, o) => player.play(s, o),
+    speak(r, rate = 1) {
+      player.play([{ section: 'about', text: r.text, parts: r.parts, lang: r.lang }], { rate });
+    },
+    stop: () => player.stop(),
+    get playing() {
+      return player.playing;
+    },
+    model,
+    classifier: () => model.classifier(),
+  };
+}
+
+void PHRASE_KEYS; void EXTRA; void EXTRA_KEYS;
+export type { PhraseKey };

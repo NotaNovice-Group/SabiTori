@@ -47,7 +47,10 @@ export interface Engine {
   bundle(lang: LangTag): Promise<Bundle>;
   /** One interface string with optional text slots, rendered with the pack's fallback chain. */
   phrase(key: UiKey, lang: LangTag, slots?: Record<string, string>): Promise<Rendered>;
+  /** Instant card from the rules classifier. */
   analyze(input: MessageInput): Promise<Card>;
+  /** Re-read with the on-device model (null when there is no model or it timed out). */
+  analyzeDeeper(input: MessageInput, timeoutMs: number): Promise<Card | null>;
   renderCard(card: Card, lang: LangTag): Promise<SectionView[]>;
   playSections(sections: RenderedSection[], opts: PlayOptions): void;
   speak(rendered: Rendered, rate?: number): void;

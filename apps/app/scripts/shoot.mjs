@@ -108,7 +108,7 @@ for (const c of combos) {
   await page.keyboard.press('Escape');
   await go('#/example/prize'); await page.waitForSelector('.sec-scam'); await shot('card-prize', { fullPage: true });
   await go('#/example/hospital'); await page.waitForSelector('.sec'); await shot('card-hospital', { fullPage: true });
-  await page.locator('.topbar-right button').click(); await shot('card-helper');
+  await page.locator('.show-helper').click(); await shot('card-helper');
   await page.keyboard.press('Escape');
 
   await go('#/'); await shot('home-history');

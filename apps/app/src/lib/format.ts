@@ -46,7 +46,7 @@ export function formatSize(bytes: number, locale: string): string {
 /** +237677123456 -> 677 12 34 56 (display only). */
 export function formatPhone(e164: string, countryCode = '237'): string {
   const nat = e164.startsWith('+' + countryCode) ? e164.slice(countryCode.length + 1) : e164.replace(/^\+/, '');
-  return nat.replace(/^(\d)(\d{2})(\d{2})(\d{2})(\d{2})$/, '$1 $2 $3 $4 $5').replace(/^(\d{3})(\d{2})(\d{2})(\d{2})$/, '$1 $2 $3 $4');
+  return nat.replace(/^(\d{3})(\d{2})(\d{2})(\d{2})$/, '$1 $2 $3 $4');
 }
 
 export function todayIso(timeZone?: string): string {

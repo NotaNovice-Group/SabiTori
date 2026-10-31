@@ -135,7 +135,6 @@ a { color: inherit; text-decoration: none; }
 .topbar { flex-wrap: wrap; justify-content: space-between; }
 .topbar .btn-quiet { padding-inline: var(--s3); text-decoration: none; }
 .topbar-right .btn-quiet { background: var(--surface); }
-.sec-deadline .sec-text, .sec-money .sec-text, .sec-help .sec-text { font-weight: 700; font-variant-numeric: tabular-nums; }
 
 .screen-body { flex: 1; display: flex; flex-direction: column; gap: var(--s5); padding-bottom: var(--s5); }
 
@@ -391,7 +390,13 @@ a { color: inherit; text-decoration: none; }
 .fact { display: flex; flex-direction: column; align-items: flex-start; gap: 0; width: 100%; }
 .fact-line { display: flex; flex-direction: column; }
 .fact-label { font-size: var(--fs-small); color: var(--ink-2); }
-.fact-value { font-size: var(--fs-lead); line-height: 1.2; }
+.fact-value { font-size: var(--fs-lead); line-height: 1.15; overflow-wrap: anywhere; }
+.fact > .sec-text { margin-top: var(--s1); }
+.show-helper { align-self: flex-start; margin-top: var(--s3); }
+.sec-scam[data-level='no_signs'] { --tint: var(--surface-2); background: var(--surface-2); }
+.sec-scam[data-level='no_signs'] .sec-ic { color: var(--ink-2); }
+.sec-scam[data-level='no_signs'][data-active] { background: var(--surface); }
+.sec-scam[data-level='no_signs'][data-active]::before { background: var(--ink); }
 .fact-source { min-height: var(--target); padding-inline: 0; font-size: var(--fs-small); text-align: start; justify-content: flex-start; }
 .sec-action { margin-top: var(--s1); }
 .fallback { font-size: var(--fs-small); color: var(--ink-2); }
@@ -448,3 +453,11 @@ a { color: inherit; text-decoration: none; }
   .sec, .sec::before { transition: none !important; }
   .sec[data-active]::before { transform: scaleY(1); }
 }
+
+/* ---------- Careful re-read ---------- */
+.checking { display: flex; flex-direction: column; gap: var(--s2); padding: var(--s3) var(--s4); background: var(--surface-2); border-radius: var(--radius); font-size: var(--fs-small); font-weight: 700; }
+.bar-small { height: 6px; }
+.bar-run { display: block; width: 35%; height: 100%; background: var(--ink); border-radius: 999px; animation: run 1.8s ease-in-out infinite alternate; }
+@keyframes run { from { margin-inline-start: 0; } to { margin-inline-start: 65%; } }
+@media (prefers-reduced-motion: reduce) { .bar-run { animation: none; width: 100%; } }
+.improved { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s3); padding: var(--s4); background: var(--info-tint); border-radius: var(--radius); font-weight: 700; }

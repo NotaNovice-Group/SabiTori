@@ -112,6 +112,13 @@ export const EXTRA = x({
   'app.settings.model.err.not_gguf': { en: 'This file is not a model file.', fr: 'Ce fichier n’est pas un fichier modèle.', context: 'Error.' },
   'app.settings.model.err.unavailable': { en: 'This phone cannot keep a model file.', fr: 'Ce téléphone ne peut pas garder un fichier modèle.', context: 'Error.' },
   'app.settings.model.err.write_failed': { en: 'The file was not saved. The phone may be full.', fr: 'Le fichier n’a pas été enregistré. Le téléphone est peut-être plein.', context: 'Error.' },
+  'app.settings.model.note': {
+    en: 'This extra model is optional. It can be slow on some phones. Without it, SabiTori still reads messages with simple rules.',
+    fr: 'Ce modèle supplémentaire est facultatif. Il peut être lent sur certains téléphones. Sans lui, SabiTori lit quand même les messages avec des règles simples.',
+    context: 'Plain statement under the understanding model setting.',
+  },
+  'app.card.checking': { en: 'Checking more carefully', fr: 'Vérification plus attentive', context: 'Quiet line on a card while the extra model re-reads a message the simple rules could not understand.' },
+  'app.card.improved': { en: 'We understood more of this message. You can listen again.', fr: 'Nous avons mieux compris ce message. Vous pouvez écouter encore.', context: 'Shown when the careful check produced a better card.' },
   'app.settings.privacy': { en: 'Privacy', fr: 'Confidentialité', context: 'Section name.' },
   'app.settings.privacy_body': {
     en: 'Photos, texts and voices stay on this phone. SabiTori does not use the internet to read a message. Your history can be deleted at any time.',

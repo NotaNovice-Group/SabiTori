@@ -109,7 +109,8 @@ export function SettingsScreen() {
       {available && (
         <section className="panel" aria-labelledby="s-model">
           <h2 id="s-model" className="panel-title">{t('app.settings.model')}</h2>
-          <p className="panel-hint" role="status">{status}</p>
+          <p className="panel-hint">{t('app.settings.model.note')}</p>
+          <p className="panel-strong" role="status">{status}</p>
           {err && <p className="error" role="alert">{t(err as never)}</p>}
           <input ref={input} type="file" accept=".gguf" hidden onChange={pick} tabIndex={-1} />
           <SpeakingButton speakKey="app.settings.model.add" variant="secondary" icon={<FileUp size={24} strokeWidth={2} aria-hidden />} disabled={busy} onAct={() => input.current?.click()} />

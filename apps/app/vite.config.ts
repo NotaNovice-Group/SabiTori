@@ -44,7 +44,7 @@ function sabitoriAssets(): Plugin {
       // wllama wasm (understanding model), resolved from the understand package.
       try {
         const reqU = createRequire(resolve(repo, 'packages/understand/package.json'));
-        const wasm = resolve(dirname(reqU.resolve('@wllama/wllama')), 'wasm/wllama.wasm');
+        const wasm = resolve(dirname(reqU.resolve('@wllama/wllama/package.json')), 'esm/wasm/wllama.wasm');
         if (existsSync(wasm)) {
           mkdirSync(resolve(pub, 'wllama'), { recursive: true });
           copyFileSync(wasm, resolve(pub, 'wllama/wllama.wasm'));

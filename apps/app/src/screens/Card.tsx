@@ -11,7 +11,7 @@ import { navigate } from '../lib/router';
 import { getCard, deleteCard } from '../lib/db';
 import { session } from '../lib/session';
 import { buildIcs, downloadIcs } from '../lib/ics';
-import { formatMoney, formatPhone } from '../lib/format';
+import { formatLongDate, formatMoney, formatPhone } from '../lib/format';
 import { senderName } from './Home';
 import { SPEEDS } from '../lib/settings';
 
@@ -42,8 +42,11 @@ export function CardRoute({ id }: { id: string }) {
   return <CardScreen card={card} />;
 }
 
-export function CardScreen({ card, example }: { card: Card; example?: boolean }) {
-  const { engine, settings, t, locale, manifest, refreshHistory } = useApp();
+export function CardScreen({ card: first, example }: { card: Card; example?: boolean }) {
+  const { engine, settings, t, locale, manifest, refreshHistory, saveCard } = useApp();
+  const [card, setCard] = useState(first);
+  const [checking, setChecking] = useState(false);
+  const [improved, setImproved] = useState(false);
   const [views, setViews] = useState<SectionView[] | null>(null);
   const [active, setActive] = useState<number | null>(null);
   const [speedStep, setSpeedStep] = useState<number>(settings.speed);
@@ -60,6 +63,27 @@ export function CardScreen({ card, example }: { card: Card; example?: boolean })
   }, [engine, card, settings.lang]);
 
   useEffect(() => () => engine.stop(), [engine]);
+
+  // Rules built this card instantly. If they were not confident, quietly let the model try (45 s at most).
+  useEffect(() => {
+    if (first.degradedReason !== 'low_confidence') return;
+    const st = engine.model.state().status;
+    if (st !== 'ready' && st !== 'loading') return;
+    let live = true;
+    setChecking(true);
+    void engine.analyzeDeeper(first.input, 45_000).then(async (better) => {
+      if (!live) return;
+      setChecking(false);
+      if (better && better.mode === 'full') {
+        const next = { ...better, id: first.id, createdAt: first.createdAt };
+        setCard(next);
+        setImproved(true);
+        if (!example) await saveCard(next);
+      }
+    });
+    return () => { live = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [first.id]);
 
   const play = useCallback(
     (from = 0, withRate = rate) => {
@@ -125,7 +149,7 @@ export function CardScreen({ card, example }: { card: Card; example?: boolean })
     const fallback = v.lang !== settings.lang ? manifest(v.lang)?.autonym : undefined;
     const noticeOnly = v.lines.length > 0 && v.lines.every((l) => l.key === 'facts_only.intro');
     const cls = `sec sec-${v.section}${mode === 'band' ? ' band' : ''}${noticeOnly ? ' notice' : ''}`;
-    const common = { ref: (el: HTMLElement | null) => { els.current[i] = el; }, 'data-active': isActive || undefined, 'data-urgency': mode === 'band' ? card.understanding.urgency : undefined, className: cls } as const;
+    const common = { ref: (el: HTMLElement | null) => { els.current[i] = el; }, 'data-active': isActive || undefined, 'data-urgency': mode === 'band' ? card.understanding.urgency : undefined, 'data-level': v.section === 'scam' ? scamLevel : undefined, className: cls } as const;
     let body;
     if (v.section === 'scam') {
       const [head, ...rest] = v.lines;
@@ -133,7 +157,7 @@ export function CardScreen({ card, example }: { card: Card; example?: boolean })
       const advice = rest.filter((l) => !l.key.startsWith('scam.signal.'));
       body = (
         <>
-          <p className="sec-text sz-lead"><b>{head?.text}</b></p>
+          <p className={`sec-text ${scamLevel === 'no_signs' ? 'sz-title' : 'sz-lead'}`}>{scamLevel === 'no_signs' ? head?.text : <b>{head?.text}</b>}</p>
           {signals.length > 0 && <ul className="signals">{signals.map((l) => <li key={l.key}>{l.text}</li>)}</ul>}
           {advice.map((l) => <p key={l.key} className="advice">{l.text}</p>)}
         </>
@@ -148,23 +172,33 @@ export function CardScreen({ card, example }: { card: Card; example?: boolean })
     } else {
       body = (
         <>
-          {v.lines.map((l) => (
-            <p key={l.key} className={`sec-text ${sizeFor(v.section, noticeOnly)}`}>{l.text}</p>
-          ))}
-          {v.section === 'about' && card.reference && !facts && <FactRow onSource={setSource} raw={card.reference.raw} span={card.reference.span} label={t('app.fact.reference')} />}
-          {v.section === 'deadline' && card.deadline && (
-            <>
-              <FactRow onSource={setSource} raw={card.deadline.raw} span={card.deadline.span} />
-              <SpeakingButton speakKey="ui.remind" variant="secondary" className="sec-action" icon={<CalendarPlus size={24} strokeWidth={2} aria-hidden />} onAct={remind} />
-            </>
-          )}
-          {v.section === 'money' && card.amount && <FactRow onSource={setSource} raw={card.amount.raw} span={card.amount.span} text={formatMoney(card.amount.value.amount, card.amount.value.currency, locale)} />}
-          {v.section === 'help' && card.contactPhone && (
-            <>
-              <FactRow onSource={setSource} raw={card.contactPhone.raw} span={card.contactPhone.span} text={formatPhone(card.contactPhone.value, engine.region.phone.countryCode)} />
-              <SpeakingButton speakKey="ui.call" variant="secondary" className="sec-action" icon={<Phone size={24} strokeWidth={2} aria-hidden />} onAct={call} />
-            </>
-          )}
+          {(() => {
+            const sentences = v.lines.map((l) => (
+              <p key={l.key} className={`sec-text ${sizeFor(v.section, noticeOnly, !!(v.section === 'deadline' && card.deadline) || !!(v.section === 'money' && card.amount) || !!(v.section === 'help' && card.contactPhone))}`}>{l.text}</p>
+            ));
+            if (v.section === 'deadline' && card.deadline)
+              return (
+                <>
+                  <FactRow onSource={setSource} raw={card.deadline.raw} span={card.deadline.span} text={formatLongDate(card.deadline.value, locale)}>{sentences}</FactRow>
+                  <SpeakingButton speakKey="ui.remind" variant="secondary" className="sec-action" icon={<CalendarPlus size={24} strokeWidth={2} aria-hidden />} onAct={remind} />
+                </>
+              );
+            if (v.section === 'money' && card.amount)
+              return <FactRow onSource={setSource} raw={card.amount.raw} span={card.amount.span} text={formatMoney(card.amount.value.amount, card.amount.value.currency, locale)}>{sentences}</FactRow>;
+            if (v.section === 'help' && card.contactPhone)
+              return (
+                <>
+                  <FactRow onSource={setSource} raw={card.contactPhone.raw} span={card.contactPhone.span} text={formatPhone(card.contactPhone.value, engine.region.phone.countryCode)}>{sentences}</FactRow>
+                  <SpeakingButton speakKey="ui.call" variant="secondary" className="sec-action" icon={<Phone size={24} strokeWidth={2} aria-hidden />} onAct={call} />
+                </>
+              );
+            return (
+              <>
+                {sentences}
+                {v.section === 'about' && card.reference && !facts && <FactRow onSource={setSource} raw={card.reference.raw} span={card.reference.span} label={t('app.fact.reference')} />}
+              </>
+            );
+          })()}
         </>
       );
     }
@@ -208,15 +242,27 @@ export function CardScreen({ card, example }: { card: Card; example?: boolean })
       quietTitle
       back={() => { engine.stop(); navigate('/'); }}
       className={`cardscreen`}
-      right={<SpeakingButton speakKey="ui.show_helper" variant="quiet" icon={<Eye size={24} strokeWidth={2} aria-hidden />} onAct={() => { engine.stop(); setHelper(true); }} />}
       dock={dock}
     >
       <article className="card" data-mode={card.mode} data-scam={scamLevel} aria-busy={!views}>
         {example && <p className="badge-line">{t('app.practice.badge')}</p>}
+        {checking && (
+          <div className="checking" role="status">
+            <span>{t('app.card.checking')}</span>
+            <span className="bar bar-small"><span className="bar-run" /></span>
+          </div>
+        )}
+        {improved && !playing && (
+          <div className="improved" role="status">
+            <p>{t('app.card.improved')}</p>
+            <SpeakingButton speakKey="ui.listen" variant="secondary" icon={<Play size={24} strokeWidth={2} fill="currentColor" aria-hidden />} onAct={() => { setImproved(false); play(0); }} />
+          </div>
+        )}
         {views?.filter((v) => v.section === 'scam').map((v) => renderSection(views.indexOf(v), 'normal'))}
         {views && ordered.band !== undefined && renderSection(ordered.band, 'band')}
         {views && scamLevel === 'no_signs' && null}
         {views && ordered.rest.filter((i) => views[i]!.section !== 'scam').map((i) => renderSection(i, 'normal'))}
+        <SpeakingButton speakKey="ui.show_helper" variant="secondary" className="show-helper" icon={<Eye size={24} strokeWidth={2} aria-hidden />} onAct={() => { engine.stop(); setHelper(true); }} />
         <p className="footer-note">{t('ui.not_advice')}</p>
         {!example && (
           <SpeakingButton speakKey="ui.delete" variant="quiet" className="danger-quiet" icon={<Trash2 size={24} strokeWidth={2} aria-hidden />} onAct={remove} />
@@ -236,22 +282,21 @@ export function CardScreen({ card, example }: { card: Card; example?: boolean })
   );
 }
 
-function FactRow({ raw, span, label, text, onSource }: { raw: string; span: SourceSpan; label?: string; text?: string; onSource: (s: Source) => void }) {
+function FactRow({ raw, span, label, text, onSource, children }: { raw: string; span: SourceSpan; label?: string; text?: string; onSource: (s: Source) => void; children?: React.ReactNode }) {
   return (
     <div className="fact">
-      {label && (
-        <span className="fact-line">
-          <span className="fact-label">{label}</span>
-          <b className="fact-value num">{text ?? raw}</b>
-        </span>
-      )}
+      <span className="fact-line">
+        {label && <span className="fact-label">{label}</span>}
+        <b className="fact-value num">{text ?? raw}</b>
+      </span>
+      {children}
       <SpeakingButton speakKey="ui.show_source" variant="quiet" className="fact-source" icon={<Search size={24} strokeWidth={2} aria-hidden />} onAct={() => onSource({ label: text ?? raw, span })} />
     </div>
   );
 }
 
-function sizeFor(section: string, notice: boolean): string {
-  if (notice) return 'sz-body';
+function sizeFor(section: string, notice: boolean, hasFact = false): string {
+  if (notice || hasFact) return 'sz-body';
   switch (section) {
     case 'about': return 'sz-headline';
     case 'action': case 'deadline': case 'money': return 'sz-lead';

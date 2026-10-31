@@ -1,4 +1,5 @@
-import { createStandInEngine } from './stand-in';
+import { createEngine } from './packages-engine';
+import { loadSettings } from '../lib/settings';
 import type { Engine, PlayOptions, Rendered, RenderedSection } from './types';
 
 let engine: Promise<Engine> | null = null;
@@ -58,7 +59,7 @@ export function withLifecycle(inner: Engine): Engine {
 
 /** The one door to @sabitori/core, speech and understand. */
 export function getEngine(): Promise<Engine> {
-  engine ??= createStandInEngine(import.meta.env.BASE_URL).then(withLifecycle);
+  engine ??= createEngine(import.meta.env.BASE_URL, loadSettings().region).then(withLifecycle);
   return engine;
 }
 
