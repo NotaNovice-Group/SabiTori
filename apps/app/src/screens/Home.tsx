@@ -21,6 +21,8 @@ function Row({ card }: { card: Card }) {
   const scam = card.scam.level !== 'no_signs' && card.scam.level !== undefined;
   const level = scam ? 'urgent' : card.understanding.urgency;
   const Chip = scam ? URGENCY_ICON.urgent : U;
+  // a card we could not fully understand has no urgency to claim
+  const chip = scam || card.mode !== 'facts_only';
   return (
     <li>
       <a className="row" href={`#/card/${card.id}`}>
@@ -31,10 +33,12 @@ function Row({ card }: { card: Card }) {
             <span className="row-ago">{formatAgo(card.createdAt, locale)}</span>
           </span>
           <span className="row-meta">
-            <span className="chip" data-level={level}>
-              <Chip size={18} strokeWidth={2} aria-hidden />
-              {scam ? t('app.scam.title') : t(`app.urgency.${card.understanding.urgency}`)}
-            </span>
+            {chip && (
+              <span className="chip" data-level={level}>
+                <Chip size={18} strokeWidth={2} aria-hidden />
+                {scam ? t('app.scam.title') : t(`app.urgency.${card.understanding.urgency}`)}
+              </span>
+            )}
             {card.deadline && (
               <span className="row-fact"><CalendarClock size={18} strokeWidth={2} aria-hidden />{formatShortDate(card.deadline.value, locale)}</span>
             )}

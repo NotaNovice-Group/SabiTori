@@ -30,12 +30,12 @@ export function LanguageList({ onPick }: { onPick?: (tag: string) => void }) {
         return (
           <li key={m.tag} className="lang" data-chosen={chosen || undefined}>
             <button type="button" className="lang-pick" role="radio" aria-checked={chosen} onClick={() => pick(m)} lang={m.tag}>
-              <span className="lang-main">
+              <span className="lang-head">
                 <span className="lang-autonym">{m.autonym}</span>
-                <span className="lang-names">{names}</span>
-                {soon && <span className="lang-note">{t('app.lang.soon', { name: meanwhile ?? 'Français' })}</span>}
+                <span className="lang-check" aria-hidden>{chosen && <Check size={28} strokeWidth={2.5} />}</span>
               </span>
-              <span className="lang-check" aria-hidden>{chosen && <Check size={28} strokeWidth={2.5} />}</span>
+              <span className="lang-names">{names}</span>
+              {soon && <span className="lang-note">{t('app.lang.soon', { name: meanwhile ?? 'Français' })}</span>}
             </button>
             <button type="button" className="btn btn-round lang-play" aria-label={`${t('ui.listen')}: ${m.autonym}`} onClick={() => say('ui.welcome', undefined, m.tag)}>
               <span className="round-ic"><Play size={24} strokeWidth={2} aria-hidden /></span>

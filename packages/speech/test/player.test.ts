@@ -94,12 +94,14 @@ describe('player', () => {
     expect(f.log.filter((l) => l.startsWith('tts'))).toEqual(['tts:a@1', 'tts:z@1']);
     expect(p.playing).toBe(false);
   });
-  it('skips a failing clip and keeps going', async () => {
+  it('a failing clip aborts its section, reports it, and later sections still play', async () => {
     const f = fakes();
     const p = createPlayer(f);
-    p.play([sec('about', C('bad'), T('after'))], { rate: 1 });
-    await f.finish('tts:after');
-    expect(f.log.filter((l) => !l.startsWith('cancel'))).toEqual(['clip:bad', 'tts:after@1']);
+    const errors: [number, string][] = [];
+    p.play([sec('about', C('bad'), T('after')), sec('action', T('next'))], { rate: 1, onError: (i, e) => errors.push([i, e.message]) });
+    await f.finish('tts:next');
+    expect(f.log.filter((l) => !l.startsWith('cancel'))).toEqual(['clip:bad', 'tts:next@1']);
+    expect(errors).toEqual([[0, 'x']]);
     expect(p.playing).toBe(false);
   });
   it('empty sections report full progress; empty plan ends immediately', async () => {

@@ -22,5 +22,5 @@ export async function analyze(
   }
   const { sender } = matchSender(input, region, lexicons);
   const scam = assessScam(input, facts, region, lexicons);
-  return buildCard({ input, facts, understanding, scam, sender, lexicons });
+  return buildCard({ input, facts, understanding, scam, sender, lexicons, region });
 }

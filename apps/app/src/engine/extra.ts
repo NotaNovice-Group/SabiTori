@@ -31,8 +31,8 @@ export const EXTRA = x({
     context: 'Explains read mode.',
   },
   'app.lang.soon': {
-    en: 'Voice coming soon, {name} for now',
-    fr: 'Voix bientôt disponible, {name} pour le moment',
+    en: 'Voice coming soon. Spoken in {name} for now.',
+    fr: 'Voix bientôt prête. Dit en {name} pour l’instant.',
     context: 'Language whose recording is not finished. {name} is the language that is spoken meanwhile.',
   },
   'app.tap_again': { en: 'Tap again to do it', fr: 'Appuyez encore pour le faire', context: 'Shown on a button after its first tap in listen-first mode.' },

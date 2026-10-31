@@ -7,8 +7,11 @@ import { wordToken } from './words.js';
 export function moneyTokens(rules: PackRules, m: Money): Token[] {
   const mr = rules.money;
   if (!mr) throw new SpeechRuleError('rules.money is missing');
-  const cur = mr.currencies[m.currency];
-  const singular = (mr.singularFor ?? [1]).includes(m.amount);
+  const cur = Object.prototype.hasOwnProperty.call(mr.currencies, m.currency) ? mr.currencies[m.currency] : undefined;
+  if (cur !== undefined && (typeof cur.text !== 'string' || (cur.plural !== undefined && typeof cur.plural !== 'string'))) {
+    throw new SpeechRuleError(`rules.money.currencies.${m.currency} has no text`);
+  }
+  const singular = (Array.isArray(mr.singularFor) ? mr.singularFor : [1]).includes(m.amount);
   const curText = cur ? (singular ? cur.text : (cur.plural ?? cur.text)) : m.currency;
   const out: Token[] = [];
   for (const part of parseTemplate(mr.template)) {

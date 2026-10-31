@@ -274,5 +274,13 @@
   "ui.not_advice": {
     "text": "SabiTori explains messages. It does not give advice.",
     "status": "reviewed"
+  },
+  "scam.signal.ussd_instruction": {
+    "text": "This message tells you to dial a code. Codes like this can send your money away.",
+    "status": "reviewed"
+  },
+  "scam.signal.pay_to_personal_number": {
+    "text": "This message asks you to send money to a personal phone number.",
+    "status": "reviewed"
   }
 }

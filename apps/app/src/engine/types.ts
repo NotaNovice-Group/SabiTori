@@ -1,4 +1,4 @@
-import type { Card, CardSection, Classifier, LangTag, MessageInput, PackManifest, PhraseKey, RegionConfig } from '@sabitori/core';
+import type { Card, CardSection, Classifier, LangTag, MessageInput, PackManifest, PhraseKey, RegionConfig, Utterance } from '@sabitori/core';
 import type { ExtraKey } from './extra';
 
 export type UiKey = PhraseKey | ExtraKey;
@@ -14,6 +14,8 @@ export interface RenderedSection {
 /** A rendered section plus its sentences one by one (for the card's own layout). */
 export interface SectionView extends RenderedSection {
   lines: { key: PhraseKey; text: string; lang: LangTag }[];
+  /** The plan this section was rendered from, so it can be rendered again in another language. */
+  utterances?: Utterance[];
 }
 export interface Rendered {
   text: string;
@@ -28,6 +30,10 @@ export interface PlayOptions {
   from?: number;
   onSection?: (index: number | null) => void;
   onProgress?: (index: number, fraction: number) => void;
+  /** A part of section `index` could not be played; the engine then tries the next language of the chain. */
+  onError?: (index: number, error: Error) => void;
+  /** Section `index` is now spoken from `section` (rendered in a fallback language) instead of the one given. */
+  onFallback?: (index: number, section: SectionView) => void;
 }
 
 export type ModelStatus = 'unsupported' | 'none' | 'loading' | 'ready' | 'failed';

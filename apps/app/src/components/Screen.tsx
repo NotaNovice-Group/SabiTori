@@ -12,10 +12,12 @@ interface Props {
   className?: string;
   /** Hide the visual title (the h1 stays for screen readers and focus). */
   quietTitle?: boolean;
+  /** Content above the title row (the product mark on the first screen). */
+  above?: ReactNode;
 }
 
 /** One screen: back button, h1 that takes focus on arrival, scrolling content, optional bottom dock. */
-export function Screen({ title, back, right, children, dock, className, quietTitle }: Props) {
+export function Screen({ title, back, right, children, dock, className, quietTitle, above }: Props) {
   const h1 = useRef<HTMLHeadingElement>(null);
   const { t } = useApp();
   const root = useRef<HTMLDivElement>(null);
@@ -36,6 +38,7 @@ export function Screen({ title, back, right, children, dock, className, quietTit
   }, []);
   return (
     <div ref={root} className={`screen${dock ? ' has-dock' : ''}${className ? ' ' + className : ''}`}>
+      {above}
       <header className="topbar">
         {back && (
           <SpeakingButton speakKey="ui.back" variant="quiet" icon={<ArrowLeft size={24} strokeWidth={2} aria-hidden />} label={t('ui.back')} onAct={back} className="topbar-back" />
@@ -46,7 +49,11 @@ export function Screen({ title, back, right, children, dock, className, quietTit
         {right && <div className="topbar-right">{right}</div>}
       </header>
       <main className="screen-body">{children}</main>
-      {dock && <div className="dock" ref={dockEl}>{dock}</div>}
+      {dock && (
+        <div className="dock" ref={dockEl}>
+          <div className="dock-inner">{dock}</div>
+        </div>
+      )}
     </div>
   );
 }

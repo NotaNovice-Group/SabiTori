@@ -1,3 +1,5 @@
+import { SpeechRuleError } from './errors.js';
+
 /**
  * A token is the smallest unit the rules produce. `id` is the deterministic
  * clip id (null when nothing is recorded, e.g. a hyphen). `text` is what TTS
@@ -32,7 +34,7 @@ export function parseTemplate(template: string): TemplatePart[] {
   const parts: TemplatePart[] = [];
   for (const raw of template.split(/\s+/).filter(Boolean)) {
     const m = /^\{(w:)?([A-Za-z0-9_.-]+)\}$/.exec(raw);
-    if (!m) throw new Error(`template part "${raw}" must be {name} or {w:word}; literal text is not allowed`);
+    if (!m) throw new SpeechRuleError(`template part "${raw}" must be {name} or {w:word}; literal text is not allowed`);
     parts.push(m[1] ? { kind: 'word', key: m[2]! } : { kind: 'slot', name: m[2]! });
   }
   return parts;

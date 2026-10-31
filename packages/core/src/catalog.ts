@@ -80,6 +80,15 @@ export const CATALOG = c({
     context: 'Reason: asks the person to call an unofficial number.',
   },
 
+  'scam.signal.ussd_instruction': {
+    en: 'This message tells you to dial a code. Codes like this can send your money away.',
+    context: 'Reason: the message asks the person to dial a USSD code such as *126*...#.',
+  },
+  'scam.signal.pay_to_personal_number': {
+    en: 'This message asks you to send money to a personal phone number.',
+    context: 'Reason: money is requested to an ordinary mobile number, not an official account.',
+  },
+
   /* ---------- Sender ---------- */
   'sender.known': {
     en: 'This message is from {sender}.',

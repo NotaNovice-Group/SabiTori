@@ -38,6 +38,8 @@ export interface RegionConfig {
     countryCode: string; // "237"
     /** Regex source for a national significant number, without country code. */
     nationalPattern: string;
+    /** National-number prefixes of personal mobile lines, e.g. ["6"] in Cameroon. */
+    mobilePrefixes?: string[];
   };
   /** Languages offered in this region, in display order. */
   languages: LangTag[];

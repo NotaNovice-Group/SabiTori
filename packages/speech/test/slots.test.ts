@@ -70,8 +70,8 @@ describe('phones', () => {
   it('fr says leading zeros', () => {
     expect(assemble(phoneTokens(frRules, '+237600500500', '237'))).toBe('six, zéro zéro, cinquante, zéro cinq, zéro zéro');
   });
-  it('en digit by digit in threes', () => {
-    expect(assemble(phoneTokens(enRules, '+237677123456', '237'))).toBe('six seven seven, one two three, four five six');
+  it('en phones read first digit then pairs as numbers (Cameroonian English)', () => {
+    expect(assemble(phoneTokens(enRules, '+237677123456', '237'))).toBe('six, seventy-seven, twelve, thirty-four, fifty-six');
   });
   it('pause is an optional token', () => {
     const t = phoneTokens(frRules, '677123456', '237');

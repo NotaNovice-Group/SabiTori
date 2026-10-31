@@ -92,8 +92,8 @@ describe('amounts', () => {
     expect(f('En 2026 les frais').amounts).toEqual([]);
     expect(f('5 frais de dossier').amounts).toEqual([]);
   });
-  it('reads decimals as whole francs', () => {
-    expect(amounts('2,50 FCFA')).toEqual([3]);
+  it('rejects amounts with a minor unit instead of rounding them', () => {
+    expect(amounts('2,50 FCFA')).toEqual([]);
   });
   it('finds several amounts in order', () => {
     expect(amounts('Total 10 000 FCFA dont taxe 1 500 FCFA')).toEqual([10000, 1500]);

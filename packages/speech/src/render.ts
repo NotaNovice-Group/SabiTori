@@ -30,6 +30,11 @@ export interface RenderedSection {
 export interface RenderContext {
   region: RegionConfig;
   today: IsoDate;
+  /**
+   * Language tried last when the requested pack and its fallbacks cannot say a phrase.
+   * Default: the region's offered languages in order, or "en" when the region lists none.
+   */
+  terminalFallback?: LangTag;
 }
 
 type Piece = { kind: 'tts'; text: string; bcp47: string } | { kind: 'clip'; id: string };
@@ -40,13 +45,21 @@ interface Env {
   chain: SpeechPack[];
   registry: PackRegistry;
   ctx: RenderContext;
+  terminal: LangTag;
+}
+
+/** Languages appended after the pack's own fallbacks. */
+function terminals(ctx: RenderContext): LangTag[] {
+  if (ctx.terminalFallback) return [ctx.terminalFallback];
+  const langs = ctx.region?.languages;
+  return Array.isArray(langs) && langs.length > 0 ? langs : ['en'];
 }
 
 const ttsOf = (p: LanguagePack): string | undefined => (p.manifest.voice.kind === 'tts' ? p.manifest.voice.bcp47 : undefined);
 const hasClip = (p: SpeechPack, id: string): boolean => (p.hasClip ? p.hasClip(id) : true);
 const clipUrl = (p: LanguagePack, id: string): string => p.clipUrl?.(id) ?? `${p.manifest.tag}/audio/${id}.webm`;
 
-async function resolveChain(tag: LangTag, registry: PackRegistry): Promise<SpeechPack[]> {
+async function resolveChain(tag: LangTag, registry: PackRegistry, ctx: RenderContext): Promise<SpeechPack[]> {
   const first = await registry.get(tag);
   const out: SpeechPack[] = [first];
   const seen = new Set<string>([tag]);
@@ -64,17 +77,29 @@ async function resolveChain(tag: LangTag, registry: PackRegistry): Promise<Speec
     }
   };
   await visit(first);
-  if (!seen.has('en')) {
+  for (const t of terminals(ctx)) {
+    if (seen.has(t)) continue;
+    seen.add(t);
     try {
-      out.push(await registry.get('en'));
+      out.push(await registry.get(t));
     } catch {
-      /* no English pack */
+      /* the terminal pack is not available */
     }
   }
   return out;
 }
 
 function slotTokens(slot: SlotValue, env: Env): Token[] | null {
+  try {
+    return slotTokensRaw(slot, env);
+  } catch (e) {
+    // Rules are untrusted data: any internal failure is a rule problem, so the fallback chain takes over.
+    if (e instanceof SpeechRuleError || e instanceof MissingResourceError) throw e;
+    throw new SpeechRuleError(`rules of ${env.pack.manifest.tag} failed: ${(e as Error).message}`);
+  }
+}
+
+function slotTokensRaw(slot: SlotValue, env: Env): Token[] | null {
   const { rules } = env.pack;
   switch (slot.type) {
     case 'number':
@@ -92,7 +117,7 @@ function slotTokens(slot: SlotValue, env: Env): Token[] | null {
 
 async function bcp47For(lang: string, env: Env): Promise<string> {
   const own = ttsOf(env.pack) ?? env.chain.map(ttsOf).find(Boolean);
-  if (lang === 'unknown') return own ?? 'en';
+  if (lang === 'unknown') return own ?? env.terminal;
   try {
     const p = await env.registry.get(lang);
     return ttsOf(p) ?? lang;
@@ -187,11 +212,13 @@ async function renderRecorded(key: PhraseKey, slots: Slots, env: Env): Promise<{
       pieces.push({ kind: 'clip', id: a.clip });
     } else pieces.push(...(await getSlot(a.slot, slots, env)).pieces);
   }
-  let text = entry.text;
+  const shown = new Map<string, string>();
   for (const m of entry.text.matchAll(/\{(\w+)\}/g)) {
     const s = slots?.[m[1]!];
-    if (s) text = text.replace(m[0], (await slotResult(s, env).catch(() => ({ display: '' }))).display);
+    if (s && !shown.has(m[1]!)) shown.set(m[1]!, (await slotResult(s, env).catch(() => ({ display: '' }))).display);
   }
+  // A replacer function: a display such as "$&" must stay literal.
+  const text = entry.text.replace(/\{(\w+)\}/g, (whole, name: string) => shown.get(name) ?? whole);
   return finish(pieces, text, env.pack);
 }
 
@@ -199,26 +226,27 @@ async function renderInChain(key: PhraseKey, slots: Slots, chain: SpeechPack[], 
   for (const pack of chain) {
     const entry = pack.phrases[key];
     if (!entry) continue;
-    const env: Env = { pack, chain, registry, ctx };
+    const env: Env = { pack, chain, registry, ctx, terminal: terminals(ctx)[0] ?? 'en' };
     try {
       const v = pack.manifest.voice;
       const r = v.kind === 'tts' ? await renderTts(entry.text, slots, env, v.bcp47) : await renderRecorded(key, slots, env);
       return { ...r, lang: pack.manifest.tag };
     } catch (e) {
-      if (e instanceof MissingResourceError || e instanceof SpeechRuleError) continue;
-      throw e;
+      // Any failure of a pack (even an unexpected TypeError from hostile data) moves on to the next language.
+      void e;
+      continue;
     }
   }
   // Last resort: the catalog's English source text, spoken with English rules if we have them.
   const en = chain.find((p) => p.manifest.tag === 'en');
   if (en) {
-    const env: Env = { pack: en, chain, registry, ctx };
+    const env: Env = { pack: en, chain, registry, ctx, terminal: terminals(ctx)[0] ?? 'en' };
     const bcp47 = ttsOf(en);
     if (bcp47) {
       try {
         return { ...(await renderTts(CATALOG[key].en, slots, env, bcp47)), lang: 'en' };
-      } catch (e) {
-        if (!(e instanceof MissingResourceError || e instanceof SpeechRuleError)) throw e;
+      } catch {
+        /* fall through to the final error */
       }
     }
   }
@@ -232,11 +260,11 @@ export async function renderPhrase(
   registry: PackRegistry,
   ctx: RenderContext,
 ): Promise<{ text: string; parts: RenderedPart[]; lang: LangTag }> {
-  return renderInChain(key, slots, await resolveChain(tag, registry), registry, ctx);
+  return renderInChain(key, slots, await resolveChain(tag, registry, ctx), registry, ctx);
 }
 
 export async function renderPlan(plan: SpeechPlan, tag: LangTag, registry: PackRegistry, ctx: RenderContext): Promise<RenderedSection[]> {
-  const chain = await resolveChain(tag, registry);
+  const chain = await resolveChain(tag, registry, ctx);
   const out: RenderedSection[] = [];
   for (const s of plan.sections) {
     const texts: string[] = [];

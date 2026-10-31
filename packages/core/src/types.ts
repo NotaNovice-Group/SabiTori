@@ -112,6 +112,8 @@ export const SCAM_SIGNALS = [
   'sender_mismatch',
   'fake_balance',
   'asks_to_call_number',
+  'ussd_instruction',
+  'pay_to_personal_number',
 ] as const;
 export type ScamSignal = (typeof SCAM_SIGNALS)[number];
 

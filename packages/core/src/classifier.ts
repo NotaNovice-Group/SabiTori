@@ -11,7 +11,7 @@ import { MESSAGE_KINDS } from './types.js';
 import type { RegionConfig } from './region.js';
 import type { ReadingLexicon } from './reading.js';
 import { collect, countTerms, daysBetween, fold, hasTerm } from './text.js';
-import { matchSender } from './sender.js';
+import { channelSpans, matchSender } from './sender.js';
 
 /** Order used to break ties between actions with the same score. */
 const ACTION_PRIORITY: ActionKind[] = [
@@ -46,15 +46,19 @@ export function createRulesClassifier(region: RegionConfig, lexicons: ReadingLex
     async classify(input: MessageInput, facts: Facts): Promise<Understanding> {
       const n = fold(input.text);
 
+      // Payment channels named in the text ("via Orange Money ou MTN MoMo") do not say what it is about.
+      let nk = n;
+      for (const c of channelSpans(input, region, lexicons)) nk = nk.slice(0, c.start) + ' '.repeat(c.end - c.start) + nk.slice(c.end);
       const kindScores = new Map<MessageKind, number>();
       for (const kind of MESSAGE_KINDS) {
         if (kind === 'other') continue;
-        const s = countTerms(n, collect(lexicons, (l) => l.kinds[kind]));
+        const s = countTerms(nk, collect(lexicons, (l) => l.kinds[kind]));
         if (s) kindScores.set(kind, s);
       }
       const { claimedSenderId } = matchSender(input, region, lexicons);
       const claimed = region.officialSenders.find((o) => o.id === claimedSenderId);
-      if (claimed && claimed.kind !== 'other') kindScores.set(claimed.kind, (kindScores.get(claimed.kind) ?? 0) + 1);
+      // The company the message is from outweighs payment channels it names ("via Orange Money").
+      if (claimed && claimed.kind !== 'other') kindScores.set(claimed.kind, (kindScores.get(claimed.kind) ?? 0) + 2);
       const k = pickBest(kindScores, MESSAGE_KINDS);
       const kind: MessageKind = k.key ?? 'other';
       let confidence = k.key ? 0.25 + (0.75 * (k.top - k.second)) / (k.top + 1) : 0.2;

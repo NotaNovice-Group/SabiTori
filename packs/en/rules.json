@@ -162,30 +162,39 @@
   "phones": {
     "countryCode": "omit",
     "groups": [
-      3,
-      3,
-      3
+      1,
+      2,
+      2,
+      2,
+      2
     ],
     "groupsByLength": {
+      "3": [
+        3
+      ],
       "4": [
         2,
         2
       ],
       "5": [
-        3,
+        1,
+        2,
         2
       ],
       "6": [
-        3,
-        3
+        2,
+        2,
+        2
       ],
       "8": [
-        4,
-        4
+        2,
+        2,
+        2,
+        2
       ]
     },
-    "defaultGroupSize": 3,
-    "read": "digits",
+    "defaultGroupSize": 2,
+    "read": "number",
     "pause": {
       "text": ","
     }

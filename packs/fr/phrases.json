@@ -40,7 +40,7 @@
     "status": "draft"
   },
   "scam.signal.sender_mismatch": {
-    "text": "Il dit qu'il vient de {sender}, mais il ne vient pas du vrai numéro de {sender}.",
+    "text": "Il dit être envoyé par {sender}, mais il ne vient pas de son vrai numéro.",
     "status": "draft"
   },
   "scam.signal.fake_balance": {
@@ -52,11 +52,11 @@
     "status": "draft"
   },
   "sender.known": {
-    "text": "Ce message vient de {sender}.",
+    "text": "Ce message est envoyé par {sender}.",
     "status": "draft"
   },
   "sender.claimed": {
-    "text": "Ce message dit qu'il vient de {sender}.",
+    "text": "Ce message dit être envoyé par {sender}.",
     "status": "draft"
   },
   "sender.unknown": {
@@ -273,6 +273,14 @@
   },
   "ui.not_advice": {
     "text": "SabiTori explique les messages. Il ne donne pas de conseils.",
+    "status": "draft"
+  },
+  "scam.signal.ussd_instruction": {
+    "text": "Ce message vous demande de composer un code. Ce genre de code peut envoyer votre argent à quelqu'un d'autre.",
+    "status": "draft"
+  },
+  "scam.signal.pay_to_personal_number": {
+    "text": "Ce message vous demande d'envoyer de l'argent à un numéro de téléphone personnel.",
     "status": "draft"
   }
 }

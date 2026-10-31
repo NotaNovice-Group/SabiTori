@@ -72,7 +72,10 @@ for (const c of combos) {
   const shot = async (name, opts = {}) => {
     if (wanted && !wanted.includes(name)) return;
     await page.waitForTimeout(250);
+    // A full-page shot shows the dock where it rests after the last content, as it does on a phone.
+    const full = opts.fullPage ? await page.addStyleTag({ content: '.dock{position:static !important}' }) : null;
     await page.screenshot({ path: resolve(out, `${tag}-${name}.png`), ...opts });
+    if (full) await full.evaluate((el) => el.remove());
   };
   const scaleCss = c.scale !== 1 ? `html{font-size:${c.scale * 100}% !important}` : '';
   const go = async (hash) => { await page.goto(base + hash); await page.reload(); if (scaleCss) await page.addStyleTag({ content: scaleCss }); await page.waitForSelector('h1', { state: 'attached' }); };
@@ -94,7 +97,12 @@ for (const c of combos) {
     if (who) { await page.getByRole('radio', { name: /nom/i }).click(); await page.fill('#who', who); }
     await page.locator('.dock .btn-primary').click();
     await page.waitForURL(/#\/card\//);
-    if (text === BILL) { await page.waitForSelector('.sec'); await shot('card-bill'); await page.waitForSelector('.sec'); await shot('card-bill-full', { fullPage: true }); }
+    if (text === BILL) {
+      await page.waitForSelector('.sec'); await shot('card-bill'); await shot('card-bill-full', { fullPage: true });
+      // the message with one fact highlighted (tap the date)
+      await page.locator('.btn.fact').nth(1).click(); await page.waitForSelector('.sheet'); await shot('card-source-sheet');
+      await page.keyboard.press('Escape');
+    }
     else { await page.waitForSelector('.sec'); await shot('card-facts-only'); await shot('card-facts-only-full', { fullPage: true }); }
   }
   // scam card from the practice list
@@ -103,9 +111,6 @@ for (const c of combos) {
   await shot('card-scam'); await shot('card-scam-full', { fullPage: true });
   await page.locator('.dock .play-main').click(); await page.waitForTimeout(2500);
   await shot('card-scam-playing');
-  await page.locator('.fact-source').first().click().catch(() => {});
-  await shot('card-source-sheet');
-  await page.keyboard.press('Escape');
   await go('#/example/prize'); await page.waitForSelector('.sec-scam'); await shot('card-prize', { fullPage: true });
   await go('#/example/hospital'); await page.waitForSelector('.sec'); await shot('card-hospital', { fullPage: true });
   await page.locator('.show-helper').click(); await shot('card-helper');

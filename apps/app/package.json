@@ -8,7 +8,9 @@
     "build": "tsc --noEmit -p . && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p .",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "shoot": "node scripts/shoot.mjs",
+    "icons": "node scripts/icons.mjs"
   },
   "dependencies": {
     "@capacitor/core": "^8.6.0",

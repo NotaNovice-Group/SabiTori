@@ -172,9 +172,77 @@ export function createEngineFrom(deps: EngineDeps): Engine {
         }
       }
       // keep the requested language visible when we had to render in another one
-      views.push({ ...sections[i]!, lang: sections[i]!.lang === use && use !== lang ? use : sections[i]!.lang, lines });
+      views.push({ ...sections[i]!, lang: sections[i]!.lang === use && use !== lang ? use : sections[i]!.lang, lines, utterances: plan.sections[i]!.utterances });
     }
     return views;
+  }
+
+  /** Render one section again in the next language of its fallback chain that was not tried yet. */
+  async function fallbackSection(sec: RenderedSection, tried: Set<LangTag>): Promise<SectionView | null> {
+    const utterances = (sec as SectionView).utterances;
+    if (!utterances) return null;
+    tried.add(sec.lang);
+    for (const tag of fallbackChain(await manifestMap(), sec.lang)) {
+      if (tried.has(tag)) continue;
+      tried.add(tag);
+      try {
+        const [r] = await renderPlan({ sections: [{ section: sec.section, utterances }] }, tag, registry, ctx());
+        if (!r || (r.lang !== tag && tried.has(r.lang))) continue;
+        tried.add(r.lang);
+        const lines: SectionView['lines'] = [];
+        for (const u of utterances) {
+          try {
+            const x = await renderPhrase(u.key, u.slots, tag, registry, ctx());
+            lines.push({ key: u.key, text: x.text, lang: x.lang });
+          } catch {
+            /* the section text still has it */
+          }
+        }
+        return { ...r, lines, utterances };
+      } catch {
+        /* this language cannot render it either */
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Plays sections. When a part fails (a missing clip, a voice error) the player aborts that
+   * section; we render it again in the next fallback language and resume from it, so the
+   * listener hears the whole sentence in one language, never half of one.
+   */
+  let swap = 0;
+  function playSections(sections: RenderedSection[], opts: PlayOptions): void {
+    const tried = new Map<number, Set<LangTag>>();
+    let swapping = false;
+    const mine: PlayOptions = {
+      ...opts,
+      onSection: (i) => {
+        if (i === null && swapping) return;
+        opts.onSection?.(i);
+      },
+      onError: (i, err) => {
+        opts.onError?.(i, err);
+        const me = ++swap;
+        swapping = true;
+        player.stop();
+        swapping = false;
+        const set = tried.get(i) ?? new Set<LangTag>();
+        tried.set(i, set);
+        void fallbackSection(sections[i]!, set).then((next) => {
+          if (swap !== me) return;
+          if (next) {
+            sections = sections.slice();
+            sections[i] = next;
+            opts.onFallback?.(i, next);
+            player.play(sections, { ...mine, from: i });
+          } else if (i + 1 < sections.length) player.play(sections, { ...mine, from: i + 1 });
+          else opts.onSection?.(null);
+        });
+      },
+    };
+    swap++;
+    player.play(sections, mine);
   }
 
   return {
@@ -204,11 +272,15 @@ export function createEngineFrom(deps: EngineDeps): Engine {
       }
     },
     renderCard,
-    playSections: (s, o) => player.play(s, o),
+    playSections,
     speak(r, rate = 1) {
+      swap++;
       player.play([{ section: 'about', text: r.text, parts: r.parts, lang: r.lang }], { rate });
     },
-    stop: () => player.stop(),
+    stop: () => {
+      swap++;
+      player.stop();
+    },
     get playing() {
       return player.playing;
     },

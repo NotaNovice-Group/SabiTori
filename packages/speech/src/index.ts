@@ -4,7 +4,7 @@ export { numberTokens, digitTokens, maxNumber } from './numbers.js';
 export { moneyTokens } from './money.js';
 export { dateTokens, isoWeekday } from './dates.js';
 export { phoneTokens, splitPhone } from './phones.js';
-export { validateManifest, validatePhrases, validateRules, validatePack } from './validate.js';
+export { validateManifest, validatePhrases, validateRules, validatePack, rulesWarnings } from './validate.js';
 export { createPackRegistry, createMemoryRegistry, type PackRegistry, type SpeechPack, type FetchLike } from './registry.js';
 export { renderPlan, renderPhrase, type RenderedPart, type RenderedSection, type RenderContext } from './render.js';
 export { requiredClips } from './required.js';
