@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.vite/
+*.gguf
+*.log
+.DS_Store
+apps/app/android/app/build/
+apps/app/android/.gradle/
+coverage/

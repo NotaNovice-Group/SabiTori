@@ -1,0 +1,19 @@
+{
+  "name": "sabitori",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "dev": "pnpm --filter @sabitori/app dev",
+    "dev:recorder": "pnpm --filter @sabitori/recorder dev",
+    "packs:check": "node scripts/check-packs.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}
