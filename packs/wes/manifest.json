@@ -2,14 +2,21 @@
   "formatVersion": 1,
   "tag": "wes",
   "name": "Cameroonian Pidgin",
-  "autonym": "Pidgin",
+  "autonym": "Cameroonian Pidgin",
   "script": "Latn",
   "direction": "ltr",
-  "fallback": ["en", "fr"],
-  "voice": { "kind": "recorded" },
+  "fallback": [
+    "en",
+    "fr"
+  ],
+  "voice": {
+    "kind": "recorded"
+  },
   "reads": false,
   "status": "in_recording",
-  "regions": ["CM"],
+  "regions": [
+    "CM"
+  ],
   "license": "LicenseRef-community-decides",
   "contributors": [],
   "version": "0.1.0"

@@ -42,7 +42,10 @@ describe('engine adapter over the real packages', () => {
   it('offers the region languages in order, with manifests', async () => {
     const { e } = engine();
     const langs = await e.languages();
-    expect(langs.map((l) => l.tag)).toEqual(['fr', 'en', 'wes', 'dua', 'ewo', 'fub']);
+    // The list is data: whatever regions/CM/region.json offers, in that order.
+    const region = JSON.parse(readFileSync(`${process.cwd()}/../../regions/CM/region.json`, 'utf8'));
+    expect(langs.map((l) => l.tag)).toEqual(region.languages);
+    expect(langs.map((l) => l.tag)).toEqual(expect.arrayContaining(['wes', 'lns', 'lmp', 'pny']));
     expect(langs[0]!.autonym).toBe('Français');
   });
 

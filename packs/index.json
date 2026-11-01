@@ -1,3 +1,13 @@
 {
-  "packs": ["fr", "en", "wes", "dua", "ewo", "fub"]
+  "packs": [
+    "fr",
+    "en",
+    "wes",
+    "dua",
+    "ewo",
+    "fub",
+    "lns",
+    "lmp",
+    "pny"
+  ]
 }

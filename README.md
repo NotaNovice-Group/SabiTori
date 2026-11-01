@@ -33,7 +33,10 @@ See [`packs/README.md`](packs/README.md).
 | Pack | Status |
 | --- | --- |
 | French, English | Text complete, spoken with the phone's offline voice |
-| Cameroonian Pidgin, Duala, Ewondo, Fulfulde | Waiting for native speakers to translate and record; speak French or English meanwhile |
+| Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum, Pinyin | Waiting for native speakers to translate and record; speak their fallback language meanwhile |
+
+Add any language with one command (`node scripts/new-language.mjs`). How languages are recorded,
+and when we train our own voices: [`docs/languages.md`](docs/languages.md).
 
 ## Repository
 
