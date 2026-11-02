@@ -1,3 +1,4 @@
+import { TtsVoiceUnavailableError } from './errors.js';
 import { createPlayer, type ClipBackend, type Player, type TtsBackend } from './player.js';
 
 /** Split text at sentence/clause boundaries into chunks of at most `max` characters. */
@@ -57,7 +58,12 @@ export interface SynthLike {
   removeEventListener?(type: 'voiceschanged', cb: () => void): void;
 }
 
-export function createBrowserTts(opts?: { synth?: SynthLike; makeUtterance?: (text: string) => UtteranceLike }): TtsBackend {
+/**
+ * The phone's own voices (Web Speech / Android TextToSpeech). When the phone lists voices but none speaks
+ * this language, `speak` rejects with TtsVoiceUnavailableError instead of reading the text with another
+ * language's voice (nonsense to the listener). Set `strictVoice: false` to speak with the default voice anyway.
+ */
+export function createBrowserTts(opts?: { synth?: SynthLike; makeUtterance?: (text: string) => UtteranceLike; strictVoice?: boolean }): TtsBackend {
   const getSynth = (): SynthLike | undefined => opts?.synth ?? (globalThis as { speechSynthesis?: SynthLike }).speechSynthesis;
   const makeU =
     opts?.makeUtterance ??
@@ -116,6 +122,8 @@ export function createBrowserTts(opts?: { synth?: SynthLike; makeUtterance?: (te
       const list = await voices(synth);
       if (my !== token) return;
       const voice = pickVoice(list, bcp47);
+      // Voices known, none for this language: tell the caller so it can speak the next fallback language.
+      if (!voice && list.length > 0 && opts?.strictVoice !== false) throw new TtsVoiceUnavailableError(bcp47);
       const chunks = chunkText(text);
       const total = chunks.reduce((n, c) => n + c.length, 0) || 1;
       synth.cancel(); // Android WebView keeps stale queued utterances unless cancelled first

@@ -163,6 +163,9 @@ importers:
       '@noble/hashes':
         specifier: ^2.4.0
         version: 2.4.0
+      '@sabitori/speech':
+        specifier: workspace:*
+        version: link:../speech
     devDependencies:
       fake-indexeddb:
         specifier: ^6.2.7

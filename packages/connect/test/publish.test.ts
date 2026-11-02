@@ -4,6 +4,7 @@ import { mkdtempSync, readFileSync, existsSync, writeFileSync, mkdirSync } from 
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { createMemoryStore, createOverlayFetch, createUpdateClient, isAllowedPath, type FetchFn } from '../src/index.js';
+import { phrasesJson, REGION } from './helpers.js';
 
 const repo = resolve(__dirname, '../../..');
 const run = (script: string, args: string[], env: Record<string, string> = {}) =>
@@ -25,7 +26,7 @@ describe('publisher to client round trip', () => {
 
     // a small source tree so the test does not depend on the real packs
     const src = mkdtempSync(join(tmpdir(), 'src-'));
-    for (const [p, c] of Object.entries({ 'packs/index.json': '{"packs":["fr"]}', 'packs/fr/phrases.json': '{"a":{"text":"un"}}', 'packs/fr/README.md': 'x', 'regions/CM/region.json': '{"code":"CM"}', 'packs/fr/notes.txt': 'x' })) {
+    for (const [p, c] of Object.entries({ 'packs/index.json': '{"packs":["fr"]}', 'packs/fr/phrases.json': phrasesJson('un'), 'packs/fr/README.md': 'x', 'regions/CM/region.json': REGION, 'packs/fr/notes.txt': 'x' })) {
       mkdirSync(join(src, p, '..'), { recursive: true });
       writeFileSync(join(src, p), c);
     }
@@ -41,7 +42,7 @@ describe('publisher to client round trip', () => {
     const client = createUpdateClient({ baseUrl: 'https://cdn.example/sabi', publicKeyBase64: pub, store, fetch: dirFetch(out) });
     expect(await client.check()).toMatchObject({ status: 'updated', sequence: 1 });
     const overlay = createOverlayFetch(store, async () => new Response('bundled'));
-    expect(await (await overlay('./packs/fr/phrases.json')).json()).toEqual({ a: { text: 'un' } });
+    expect(await (await overlay('./packs/fr/phrases.json')).json()).toEqual({ 'deadline.none': { text: 'un', status: 'reviewed' } });
 
     // next publish increments from --previous
     const out2 = mkdtempSync(join(tmpdir(), 'upd-'));

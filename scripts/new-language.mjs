@@ -5,7 +5,7 @@
  *   node scripts/new-language.mjs --tag lns --name "Lamnso'" --autonym "Lamnsoʼ" \
  *     --fallback wes,en,fr --region CM
  *
- * Creates packs/<tag>/ (manifest, empty phrases, empty audio index), lists it in
+ * Creates packs/<tag>/ (manifest, empty phrases, minimal rules, empty audio index), lists it in
  * packs/index.json and in regions/<REGION>/region.json. The pack starts as
  * "in_recording": the app offers it with its fallback voice until native speakers
  * translate and record it with the Recorder app (apps/recorder).
@@ -63,6 +63,10 @@ write(join(dir, 'manifest.json'), {
 });
 write(join(dir, 'phrases.json'), {});
 write(join(dir, 'audio', 'index.json'), { clips: [] });
+// A minimal valid rules.json: the digits 0-9 (the least a pack must define) and nothing else. Phrases that need
+// numbers, money, dates or phone numbers are spoken in the fallback language until the speakers write the real
+// rules (the Recorder's Numbers page). Same file the Recorder exports.
+write(join(dir, 'rules.json'), { formatVersion: 1, numbers: { atoms: Object.fromEntries([...'0123456789'].map((d) => [d, d])) } });
 
 const indexFile = join(root, 'packs', 'index.json');
 const index = JSON.parse(readFileSync(indexFile, 'utf8'));

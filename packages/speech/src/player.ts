@@ -9,6 +9,8 @@ export interface PlayOptions {
    * A part of section `index` could not be played (missing clip, speech error). The rest of that
    * section is NOT played, so a half-spoken amount never reaches the listener; later sections still play.
    * The caller can re-render the section (for example in a fallback language) and play it again.
+   * `error` is a TtsVoiceUnavailableError when the phone has no voice at all for the section's language:
+   * render the section again in the next language of the fallback chain and play that.
    */
   onError?: (index: number, error: Error) => void;
 }
@@ -21,7 +23,7 @@ export interface Player {
 
 export interface TtsBackend {
   /** Speak one text. Resolves when finished or cancelled; rejects on a real error. `onProgress` gets 0..1 within this text. */
-  speak(req: { text: string; bcp47: string; rate: number; onProgress?: (fraction: number) => void }): Promise<void>;
+  speak(req: { text: string; bcp47: string; rate: number; onProgress?: (fraction: number) => void; tag?: string; voice?: string }): Promise<void>;
   cancel(): void;
 }
 
@@ -46,7 +48,7 @@ export function createPlayer(backends: { tts: TtsBackend; clips: ClipBackend }):
   };
 
   async function playPart(part: RenderedPart, rate: number, onFrac: (f: number) => void): Promise<void> {
-    if (part.kind === 'tts') await backends.tts.speak({ text: part.text, bcp47: part.bcp47, rate, onProgress: onFrac });
+    if (part.kind === 'tts') await backends.tts.speak({ text: part.text, bcp47: part.bcp47, rate, onProgress: onFrac, ...(part.tag ? { tag: part.tag } : {}), ...(part.voice ? { voice: part.voice } : {}) });
     else await backends.clips.play({ url: part.url, rate });
   }
 

@@ -29,8 +29,8 @@ describe('French numbers', () => {
     expect(() => sayFr(-1)).toThrow();
     expect(() => sayFr(1.5)).toThrow();
   });
-  it('reads numbers above the supported range digit by digit', () => {
-    expect(sayFr(1e12)).toBe('un zéro zéro zéro zéro zéro zéro zéro zéro zéro zéro zéro zéro');
+  it('composes trillions from the scales (the cap is derived, not 1000 x the largest scale)', () => {
+    expect(sayFr(1e12)).toBe('mille milliards');
   });
   it('produces clip ids per token', () => {
     const ids = numberTokens(frRules.numbers, 71_000).map((t) => t.id);

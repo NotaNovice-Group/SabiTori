@@ -43,14 +43,31 @@ export function createIdbStore(factory?: IDBFactory): UpdateStore {
     return v instanceof Uint8Array ? v : new Uint8Array(v);
   }
 
+  async function quarantined(): Promise<boolean> {
+    const d = await db();
+    const v = (await done(d.transaction(META, 'readonly').objectStore(META).get('state'))) as InstalledState | undefined;
+    return !!v?.quarantined;
+  }
+
   return {
     async getState() {
       const d = await db();
       const v = await done(d.transaction(META, 'readonly').objectStore(META).get('state'));
       return (v as InstalledState | undefined) ?? null;
     },
-    getFile: (path) => read(ACTIVE, path),
+    async getFile(path) {
+      return (await quarantined()) ? null : read(ACTIVE, path);
+    },
+    async quarantine(reason) {
+      const d = await db();
+      const tx = d.transaction(META, 'readwrite');
+      const meta = tx.objectStore(META);
+      const prev = (await done(meta.get('state'))) as InstalledState | undefined;
+      if (prev) meta.put({ ...prev, quarantined: { at: new Date().toISOString(), reason } }, 'state');
+      await finished(tx);
+    },
     async hasFile(path) {
+      if (await quarantined()) return false;
       const d = await db();
       const n = await done(d.transaction(ACTIVE, 'readonly').objectStore(ACTIVE).count(path));
       return n > 0;

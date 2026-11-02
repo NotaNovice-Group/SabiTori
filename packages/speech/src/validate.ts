@@ -1,6 +1,7 @@
 import { CATALOG, type LanguagePack, type PackManifest, type PackPhrases, type PackRules } from '@sabitori/core';
 import { PackLoadError } from './errors.js';
 import { maxNumber, numberTokens } from './numbers.js';
+import { asX, NUMBER_CONTEXTS, type NumberContext } from './rules-ext.js';
 import { parseTemplate } from './tokens.js';
 
 const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -11,7 +12,7 @@ const isBool = (v: unknown): boolean => typeof v === 'boolean';
 const MAX_TEXT = 500;
 /** Ids that become clip names ("word.<key>", "currency.<code>", "join.<key>") or URL parts. */
 const ID = /^[A-Za-z0-9_.-]+$/;
-const isId = (v: unknown): v is string => typeof v === 'string' && ID.test(v) && !v.includes('..');
+export const isId = (v: unknown): v is string => typeof v === 'string' && ID.test(v) && !v.includes('..');
 const TAG = /^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/;
 export const isLangTag = (v: unknown): v is string => typeof v === 'string' && v.length <= 35 && TAG.test(v);
 const keysOf = (o: Record<string, unknown>): string[] => Object.keys(o);
@@ -80,36 +81,42 @@ export function validatePhrases(ph: unknown, tag?: string): PackPhrases {
   return ph as PackPhrases;
 }
 
-/** Collects problems for validateRules. */
-function checkNumbers(num: unknown, p: string[]): void {
-  if (!isObj(num) || !isObj(num.atoms)) return void p.push('numbers.atoms is required');
-  const atoms = num.atoms;
-  for (let d = 0; d <= 9; d++) if (!has(atoms, String(d))) p.push(`numbers.atoms is missing "${d}" (0-9 are required)`);
-  for (const [k, w] of Object.entries(atoms)) {
-    if (!/^(0|[1-9]\d{0,14})$/.test(k)) p.push(`numbers.atoms key "${k}" must be a whole number`);
-    if (isStr(w) && w.length <= MAX_TEXT) continue;
-    if (isObj(w) && isStr(w.text) && (w.bound === undefined || isStr(w.bound))) continue;
-    p.push(`numbers.atoms["${k}"] must be a non-empty string or {"text": string, "bound"?: string}`);
+/**
+ * Collects problems for validateRules. `w` is the path used in messages. For a context overlay (`base` given)
+ * atoms 0-9 are not required and joiners, scales and atoms of the base can be referenced.
+ */
+function checkNumbers(num: unknown, p: string[], w = 'numbers', base?: { atoms: Record<string, unknown>; joiners: Record<string, unknown>; scales: Set<number> }): void {
+  if (!isObj(num)) return void p.push(`${w}${base ? ' must be an object' : '.atoms is required'}`);
+  if (!base && !isObj(num.atoms)) return void p.push(`${w}.atoms is required`);
+  const own = isObj(num.atoms) ? num.atoms : {};
+  if (base && num.atoms !== undefined && !isObj(num.atoms)) p.push(`${w}.atoms must be an object`);
+  const atoms: Record<string, unknown> = { ...(base?.atoms ?? {}), ...own };
+  if (!base) for (let d = 0; d <= 9; d++) if (!has(atoms, String(d))) p.push(`${w}.atoms is missing "${d}" (0-9 are required)`);
+  for (const [k, f] of Object.entries(own)) {
+    if (!/^(0|[1-9]\d{0,14})$/.test(k)) p.push(`${w}.atoms key "${k}" must be a whole number`);
+    if (isStr(f) && f.length <= MAX_TEXT) continue;
+    if (isObj(f) && isStr(f.text) && (f.bound === undefined || isStr(f.bound)) && (f.boundClip === undefined || isBool(f.boundClip))) continue;
+    p.push(`${w}.atoms["${k}"] must be a non-empty string or {"text": string, "bound"?: string, "boundClip"?: boolean}`);
   }
 
-  let joiners: Record<string, unknown> = {};
+  let joiners: Record<string, unknown> = { ...(base?.joiners ?? {}) };
   if (num.joiners !== undefined) {
-    if (!isObj(num.joiners)) p.push('numbers.joiners must be an object');
+    if (!isObj(num.joiners)) p.push(`${w}.joiners must be an object`);
     else {
-      joiners = num.joiners;
-      for (const [k, j] of Object.entries(joiners)) {
-        if (!isId(k)) p.push(`numbers.joiners key "${k}" is not a valid id`);
+      joiners = { ...joiners, ...num.joiners };
+      for (const [k, j] of Object.entries(num.joiners)) {
+        if (!isId(k)) p.push(`${w}.joiners key "${k}" is not a valid id`);
         if (!isObj(j) || !isStr(j.text) || (j.silent !== undefined && !isBool(j.silent))) {
-          p.push(`numbers.joiners["${k}"] must be {"text": non-empty string, "silent"?: boolean}`);
+          p.push(`${w}.joiners["${k}"] must be {"text": non-empty string, "silent"?: boolean}`);
         }
       }
     }
   }
-  const checkWhen = (where: string, w: unknown): void => {
-    if (w === undefined) return;
-    if (!isObj(w)) return void p.push(`${where}.when must be an object`);
-    if (w.remainderEq !== undefined && (!Array.isArray(w.remainderEq) || w.remainderEq.some((x) => !isInt(x, 0)))) p.push(`${where}.when.remainderEq must be an array of integers`);
-    for (const f of ['remainderLt', 'remainderGte'] as const) if (w[f] !== undefined && !isInt(w[f], 0)) p.push(`${where}.when.${f} must be an integer`);
+  const checkWhen = (where: string, x: unknown): void => {
+    if (x === undefined) return;
+    if (!isObj(x)) return void p.push(`${where}.when must be an object`);
+    if (x.remainderEq !== undefined && (!Array.isArray(x.remainderEq) || x.remainderEq.some((v) => !isInt(v, 0)))) p.push(`${where}.when.remainderEq must be an array of integers`);
+    for (const f of ['remainderLt', 'remainderGte'] as const) if (x[f] !== undefined && !isInt(x[f], 0)) p.push(`${where}.when.${f} must be an integer`);
   };
   const checkJoin = (where: string, js: unknown): void => {
     if (js === undefined) return;
@@ -119,62 +126,79 @@ function checkNumbers(num: unknown, p: string[]): void {
       else checkWhen(`${where}[${i}]`, j.when);
     });
   };
-  checkJoin('numbers.join', num.join);
+  checkJoin(`${w}.join`, num.join);
 
-  const scaleValues = new Set<number>();
+  const scaleValues = new Set<number>(base?.scales ?? []);
+  const ownScales = new Set<number>();
   if (num.scales !== undefined) {
-    if (!Array.isArray(num.scales)) p.push('numbers.scales must be an array');
+    if (!Array.isArray(num.scales)) p.push(`${w}.scales must be an array`);
     else
       num.scales.forEach((s, i) => {
-        const w = `numbers.scales[${i}]`;
-        if (!isObj(s)) return void p.push(`${w} must be an object`);
-        if (!isInt(s.value, 2) || s.value > Number.MAX_SAFE_INTEGER / 1000) p.push(`${w}.value must be a whole number of at least 2`);
-        else if (scaleValues.has(s.value)) p.push(`${w}.value ${s.value} is repeated`);
-        else scaleValues.add(s.value);
-        if (!isStr(s.word)) p.push(`${w}.word must be a non-empty string`);
-        if (s.plural !== undefined && !isStr(s.plural)) p.push(`${w}.plural must be a non-empty string`);
-        if (s.pluralWhen !== undefined && !['never', 'multiple', 'multiple_final'].includes(s.pluralWhen as string)) p.push(`${w}.pluralWhen is not valid`);
-        if (s.order !== undefined && s.order !== 'multiplier_first' && s.order !== 'scale_first') p.push(`${w}.order is not valid`);
-        for (const f of ['omitOne', 'multiplierFinal']) if (s[f] !== undefined && !isBool(s[f])) p.push(`${w}.${f} must be true or false`);
-        checkJoin(`${w}.join`, s.join);
+        const sw = `${w}.scales[${i}]`;
+        if (!isObj(s)) return void p.push(`${sw} must be an object`);
+        if (!isInt(s.value, 2) || s.value > Number.MAX_SAFE_INTEGER / 1000) p.push(`${sw}.value must be a whole number of at least 2`);
+        else if (ownScales.has(s.value)) p.push(`${sw}.value ${s.value} is repeated`);
+        else {
+          ownScales.add(s.value);
+          scaleValues.add(s.value);
+        }
+        if (!isStr(s.word)) p.push(`${sw}.word must be a non-empty string`);
+        if (s.plural !== undefined && !isStr(s.plural)) p.push(`${sw}.plural must be a non-empty string`);
+        if (s.pluralWhen !== undefined && !['never', 'multiple', 'multiple_final'].includes(s.pluralWhen as string)) p.push(`${sw}.pluralWhen is not valid`);
+        if (s.order !== undefined && s.order !== 'multiplier_first' && s.order !== 'scale_first') p.push(`${sw}.order is not valid`);
+        for (const f of ['omitOne', 'multiplierFinal', 'pluralClip']) if (s[f] !== undefined && !isBool(s[f])) p.push(`${sw}.${f} must be true or false`);
+        checkJoin(`${sw}.join`, s.join);
       });
   }
 
   if (num.overrides !== undefined) {
-    if (!isObj(num.overrides)) return void p.push('numbers.overrides must be an object');
+    if (!isObj(num.overrides)) return void p.push(`${w}.overrides must be an object`);
     for (const [k, o] of Object.entries(num.overrides)) {
-      const w = `numbers.overrides["${k}"]`;
+      const ow = `${w}.overrides["${k}"]`;
       const m = /^(\d{1,15})(?:-(\d{1,15}))?$/.exec(k);
-      if (!m) p.push(`numbers.overrides key "${k}" must be "n" or "lo-hi"`);
-      else if (m[2] !== undefined && Number(m[1]) > Number(m[2])) p.push(`${w}: range start is above its end`);
+      if (!m) p.push(`${w}.overrides key "${k}" must be "n" or "lo-hi"`);
+      else if (m[2] !== undefined && Number(m[1]) > Number(m[2])) p.push(`${ow}: range start is above its end`);
       if (!isObj(o) || (o.say === undefined && o.base === undefined)) {
-        p.push(`${w} needs say or base`);
+        p.push(`${ow} needs say or base`);
         continue;
       }
       const lo = m ? Number(m[1]) : 0;
       if (o.base !== undefined) {
-        if (!isInt(o.base, 1)) p.push(`${w}.base must be a whole number of at least 1`);
-        else if (m && o.base >= lo) p.push(`${w}.base ${o.base} must be below ${lo}`);
-        checkJoin(`${w}.join`, o.join);
+        if (!isInt(o.base, 1)) p.push(`${ow}.base must be a whole number of at least 1`);
+        else if (m && o.base >= lo) p.push(`${ow}.base ${o.base} must be below ${lo}`);
+        checkJoin(`${ow}.join`, o.join);
       }
       if (o.say !== undefined) {
-        if (!Array.isArray(o.say) || o.say.length === 0) p.push(`${w}.say must be a non-empty array`);
+        if (!Array.isArray(o.say) || o.say.length === 0) p.push(`${ow}.say must be a non-empty array`);
         else
           o.say.forEach((it, i) => {
-            const iw = `${w}.say[${i}]`;
+            const iw = `${ow}.say[${i}]`;
             const ks = isObj(it) ? keysOf(it) : [];
             if (!isObj(it) || ks.length !== 1) return void p.push(`${iw} must have exactly one of atom, scale, join, number`);
             const v = it[ks[0]!];
             if (ks[0] === 'atom') {
-              if (!isInt(v, 0) || !has(atoms, String(v))) p.push(`${iw}.atom ${JSON.stringify(v)} is not in numbers.atoms`);
+              if (!isInt(v, 0) || !has(atoms, String(v))) p.push(`${iw}.atom ${JSON.stringify(v)} is not in ${w}.atoms`);
             } else if (ks[0] === 'scale') {
-              if (!isInt(v, 2) || !scaleValues.has(v)) p.push(`${iw}.scale ${JSON.stringify(v)} is not in numbers.scales`);
+              if (!isInt(v, 2) || !scaleValues.has(v)) p.push(`${iw}.scale ${JSON.stringify(v)} is not in ${w}.scales`);
             } else if (ks[0] === 'join') {
-              if (typeof v !== 'string' || !has(joiners, v)) p.push(`${iw}.join ${JSON.stringify(v)} is not in numbers.joiners`);
+              if (typeof v !== 'string' || !has(joiners, v)) p.push(`${iw}.join ${JSON.stringify(v)} is not in ${w}.joiners`);
             } else if (ks[0] === 'number') {
               if (!isInt(v, 0)) p.push(`${iw}.number must be a non-negative integer`);
             } else p.push(`${iw} has unknown key "${ks[0]}"`);
           });
+      }
+    }
+  }
+
+  // Context overlays (only on the base): each may add or change words, scales, joiners and overrides.
+  if (!base && num.contexts !== undefined) {
+    if (!isObj(num.contexts)) p.push(`${w}.contexts must be an object`);
+    else {
+      const baseScales = new Set<number>();
+      if (Array.isArray(num.scales)) for (const s of num.scales) if (isObj(s) && isInt(s.value, 2)) baseScales.add(s.value);
+      for (const [c, ov] of Object.entries(num.contexts)) {
+        if (!(NUMBER_CONTEXTS as readonly string[]).includes(c)) p.push(`${w}.contexts.${c} is not one of ${NUMBER_CONTEXTS.join(', ')}`);
+        else checkNumbers(ov, p, `${w}.contexts.${c}`, { atoms, joiners, scales: baseScales });
       }
     }
   }
@@ -224,8 +248,8 @@ export function validateRules(r: unknown, tag?: string): PackRules {
       else
         for (const [c, w] of Object.entries(m.currencies)) {
           if (!isId(c)) p.push(`money.currencies key "${c}" is not a valid code`);
-          if (!isObj(w) || !isStr(w.text) || (w.plural !== undefined && !isStr(w.plural))) {
-            p.push(`money.currencies["${c}"] must be {"text": non-empty string, "plural"?: non-empty string}`);
+          if (!isObj(w) || !isStr(w.text) || (w.plural !== undefined && !isStr(w.plural)) || (w.pluralClip !== undefined && !isBool(w.pluralClip))) {
+            p.push(`money.currencies["${c}"] must be {"text": non-empty string, "plural"?: non-empty string, "pluralClip"?: boolean}`);
           }
         }
       tpl('money.template', m.template, ['amount', 'currency', 'link'], ['amount', 'currency']);
@@ -294,6 +318,7 @@ export function validateRules(r: unknown, tag?: string): PackRules {
           }
       }
       if (ph.groupRead !== undefined && (!Array.isArray(ph.groupRead) || ph.groupRead.some((x) => x !== 'number' && x !== 'digits'))) p.push('phones.groupRead must be an array of "number" or "digits"');
+      if (ph.foreignGroupSize !== undefined && (!isInt(ph.foreignGroupSize, 1) || ph.foreignGroupSize > 20)) p.push('phones.foreignGroupSize must be a whole number from 1 to 20');
       if (ph.countryCode !== undefined && ph.countryCode !== 'omit' && ph.countryCode !== 'say') p.push('phones.countryCode must be "omit" or "say"');
       if (ph.pause !== undefined && (!isObj(ph.pause) || typeof ph.pause.text !== 'string')) p.push('phones.pause must be {"text": string}');
     }
@@ -304,22 +329,30 @@ export function validateRules(r: unknown, tag?: string): PackRules {
   // Structure is sound. Probe the number rules so cycles and holes surface now, not in front of a user.
   const rules = r as unknown as PackRules;
   const q: string[] = [];
-  const ov = Object.keys(rules.numbers.overrides ?? {}).flatMap((k) => k.split('-').map(Number));
-  for (const n of ov) {
-    try {
-      numberTokens(rules.numbers, n);
-    } catch (e) {
-      q.push(`numbers.overrides: cannot say ${n} (${(e as Error).message})`);
+  for (const ctx of [undefined, ...NUMBER_CONTEXTS] as (NumberContext | undefined)[]) {
+    const nums = ctx ? asX(rules.numbers).contexts?.[ctx] : asX(rules.numbers);
+    if (!nums) continue;
+    const ov = Object.keys(nums.overrides ?? {}).flatMap((k) => k.split('-').map(Number));
+    for (const n of ov) {
+      try {
+        numberTokens(rules.numbers, n, ctx ? { context: ctx } : {});
+      } catch (e) {
+        q.push(`numbers${ctx ? `.contexts.${ctx}` : ''}.overrides: cannot say ${n} (${(e as Error).message})`);
+      }
     }
   }
   if (q.length) throw new PackLoadError(`Invalid rules.json for "${tag}": ${q.join('; ')}`, tag);
   return rules;
 }
 
+/** Amounts and numbers a phone may meet: the rules should compose all of them (bills and transfers reach hundreds of millions). */
+export const PROBE_LIMIT = 1_000_000_000;
+const PROBES = [2000, 9999, 10_000, 99_999, 100_000, 999_999, 1_000_000, 9_999_999, 99_999_999, 999_999_999, PROBE_LIMIT];
+
 /**
- * Non-fatal problems in rules that are structurally valid: numbers that the
- * rules cannot say (they fall back to another language) and atoms that stop
- * below 10 with nothing to build larger numbers from.
+ * Non-fatal problems in rules that are structurally valid: numbers that the rules cannot say (they fall back
+ * to another language), atoms that stop below 10 with nothing to build larger numbers from, and a largest
+ * composable number below 1 000 000 000 (probed per number context).
  */
 export function rulesWarnings(rules: PackRules): string[] {
   const out: string[] = [];
@@ -327,19 +360,35 @@ export function rulesWarnings(rules: PackRules): string[] {
   const top = Math.max(...Object.keys(n.atoms).map(Number));
   if (!n.scales || n.scales.length === 0) {
     if (top < 10) {
-      out.push(`numbers: atoms stop at ${top} and there are no scales: numbers above ${top} are read digit by digit (add atoms or scales)`);
-    } else out.push(`numbers: no scales, so numbers above ${maxNumber(n)} are read digit by digit`);
+      out.push(`numbers: atoms stop at ${top} and there are no scales: numbers above ${top} cannot be said as amounts or dates (add atoms or scales)`);
+    } else out.push(`numbers: no scales, so numbers above ${maxNumber(n)} cannot be said as amounts (add scales)`);
   }
-  const bad: number[] = [];
-  const limit = Math.min(maxNumber(n), 1999);
-  for (let i = 0; i <= limit && bad.length < 5; i++) {
-    try {
-      numberTokens(n, i);
-    } catch {
-      bad.push(i);
+  for (const ctx of [undefined, ...NUMBER_CONTEXTS] as (NumberContext | undefined)[]) {
+    if (ctx && !asX(n).contexts?.[ctx]) continue;
+    const where = ctx ? `numbers.contexts.${ctx}` : 'numbers';
+    const cap = maxNumber(n, ctx);
+    const bad: number[] = [];
+    const limit = Math.min(cap, 1999);
+    for (let i = 0; i <= limit && bad.length < 5; i++) {
+      try {
+        numberTokens(n, i, { context: ctx, overflow: 'throw' });
+      } catch {
+        bad.push(i);
+      }
+    }
+    for (const x of PROBES) {
+      if (x > cap || bad.length >= 5) continue;
+      try {
+        numberTokens(n, x, { context: ctx, overflow: 'throw' });
+      } catch {
+        bad.push(x);
+      }
+    }
+    if (bad.length) out.push(`${where}: cannot say ${bad.join(', ')}${bad.length >= 5 ? ' ...' : ''}: those numbers fall back to another language`);
+    if (cap < PROBE_LIMIT) {
+      out.push(`${where}: the largest number the rules can compose is ${cap}; amounts above it (up to ${PROBE_LIMIT}) fall back to another language (add a larger scale)`);
     }
   }
-  if (bad.length) out.push(`numbers: cannot say ${bad.join(', ')}${bad.length === 5 ? ' ...' : ''}: those numbers fall back to another language`);
   return out;
 }
 

@@ -11,7 +11,7 @@ import { ClipControls } from './ClipRow';
 import { useRecorder } from './useRecorder';
 
 export function Work({ itemKey, onSelect, onBack }: { itemKey: string; onSelect: (k: string) => void; onBack: () => void }) {
-  const { project, clips, setPhrase, update } = useProject();
+  const { project, clips, setPhrase, update, unsaved } = useProject();
   const item = ITEM_BY_KEY.get(itemKey)!;
   const idx = ITEMS.findIndex((i) => i.key === itemKey);
   const w = project.phrases[itemKey];
@@ -68,7 +68,8 @@ export function Work({ itemKey, onSelect, onBack }: { itemKey: string; onSelect:
     wasSaving.current = rec.st.saving;
   }, [rec.st.saving]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const setText = (t: string) => setPhrase(itemKey, (x) => ({ ...x, text: t }));
+  // New wording: any earlier review no longer applies to it.
+  const setText = (t: string) => setPhrase(itemKey, (x) => ({ ...x, text: t, ...(x.review === 'reviewed' ? { review: 'none' as const, reviewedBy: undefined } : {}) }));
   const insertSlot = (s: string) => ta.current && insertAtCaret(ta.current, `{${s}}`);
 
   let pieceNo = -1;
@@ -167,11 +168,12 @@ export function Work({ itemKey, onSelect, onBack }: { itemKey: string; onSelect:
                 return (
                   <li key={p.id} className="piece" data-active={n === active} data-state={clip ? (stale ? 'stale' : 'done') : 'empty'} onClick={() => setActive(n)}>
                     <p className="piece-text" lang={project.tag}>{p.text}</p>
-                    <p className="piece-state">{clip ? (stale ? 'The words changed. Record this part again.' : 'Recorded') : 'Not recorded'}</p>
+                    <p className="piece-state">{clip ? (stale ? 'The words changed. Record this part again.' : unsaved.has(p.id) ? 'Recorded, not saved on this device' : 'Recorded') : 'Not recorded'}</p>
                     <ClipControls
                       id={p.id}
                       clip={clip}
                       stale={stale}
+                      unsaved={unsaved.has(p.id)}
                       st={rec.st}
                       label={pieces.length > 1 ? `part ${n + 1}` : undefined}
                       onToggle={() => { setActive(n); rec.toggle(p.id, p.text, itemKey); }}

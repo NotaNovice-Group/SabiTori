@@ -1,6 +1,6 @@
 import { Plus, X } from 'lucide-react';
 import { useState } from 'react';
-import { LICENSES, uid, type Speaker } from '../lib/model';
+import { LICENSES, today, uid, type Speaker } from '../lib/model';
 import { knownPacks } from '../lib/catalogRef';
 
 export function SpeakersEditor({ speakers, onChange }: { speakers: Speaker[]; onChange: (s: Speaker[]) => void }) {
@@ -32,9 +32,26 @@ export function SpeakersEditor({ speakers, onChange }: { speakers: Speaker[]; on
             <input type="checkbox" checked={s.consent} onChange={(e) => set(s.id, { consent: e.target.checked })} />
             <span>{s.name.trim() || 'This person'} agrees to be named as a contributor. Without a tick, the name stays in this project and is not published.</span>
           </label>
+          <label className="check">
+            <input
+              type="checkbox"
+              checked={!!s.voiceConsent}
+              onChange={(e) => set(s.id, { voiceConsent: e.target.checked, voiceConsentDate: e.target.checked ? (s.voiceConsentDate ?? today()) : undefined })}
+            />
+            <span>
+              {s.name.trim() || 'This person'} agrees in writing to be recorded and to have their voice published in the language pack (this is separate from being named).
+              Recordings of a person without a tick stay on this device and are left out of the pack.
+            </span>
+          </label>
+          {s.voiceConsent && (
+            <div className="fieldwrap">
+              <label htmlFor={`vc-${s.id}`}>Date of the written agreement</label>
+              <input id={`vc-${s.id}`} className="field" type="date" value={s.voiceConsentDate ?? ''} max={today()} onChange={(e) => set(s.id, { voiceConsentDate: e.target.value || undefined })} />
+            </div>
+          )}
         </div>
       ))}
-      <button type="button" className="btn btn-quiet" onClick={() => onChange([...speakers, { id: uid(), name: '', role: 'speaker', consent: false }])}>
+      <button type="button" className="btn btn-quiet" onClick={() => onChange([...speakers, { id: uid(), name: '', role: 'speaker', consent: false, voiceConsent: false }])}>
         <Plus size={22} aria-hidden /> Add a person
       </button>
     </div>

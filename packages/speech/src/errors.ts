@@ -23,3 +23,18 @@ export class MissingResourceError extends Error {
     this.name = 'MissingResourceError';
   }
 }
+
+/**
+ * The phone has no text-to-speech voice for this language. Thrown by the system TTS backend instead of
+ * speaking the text with a voice of another language (which would sound like nonsense). The player passes it
+ * to `onError(sectionIndex, error)`; the app should then re-render that section in the next language of the
+ * fallback chain (`renderPhrase`/`renderPlan` with that tag) and play it again.
+ */
+export class TtsVoiceUnavailableError extends Error {
+  readonly bcp47: string;
+  constructor(bcp47: string) {
+    super(`this phone has no voice for ${bcp47}`);
+    this.name = 'TtsVoiceUnavailableError';
+    this.bcp47 = bcp47;
+  }
+}

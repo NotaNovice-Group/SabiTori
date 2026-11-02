@@ -7,40 +7,40 @@
  * Also validates rules.json with the speech package's validateRules (stable and beta packs must have
  * one; in_recording packs get a warning) and requires reading.json for packs with reads: true.
  *
+ * Status is enforced (see packs/README.md):
+ *   stable  every catalog key reviewed, with audio (recorded packs) or text (tts packs); a real SPDX licence;
+ *           at least one contributor; no stale clips; every clip a phrase uses is in audio/index.json
+ *   beta    a real SPDX licence, rules.json
+ *   all     audio/index.json and the clip files match one to one, only .webm and .m4a clips,
+ *           no recorder-notes.json (it lists speakers and review notes)
+ *
  * Exit code 0 when there are no errors, 1 otherwise. Warnings never fail.
+ *   node scripts/check-packs.mjs [--packs <dir>]
  */
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-import { register } from 'node:module';
-import { join, dirname } from 'node:path';
+import { join, resolve } from 'node:path';
 import { CATALOG } from '../packages/core/src/catalog.ts';
+import { findForbiddenPackFiles, forbiddenMessage } from './lib/guard.mjs';
+import { importTs, root } from './lib/ts.mjs';
 
-const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-
-// The speech package is TypeScript with ".js" import specifiers and a workspace import of
-// @sabitori/core. Node strips types but does not map those, so a tiny resolver does:
-// "./x.js" -> "./x.ts" when only the .ts exists, "@sabitori/core" -> packages/core/src/index.ts.
-const hooks = `
-import { existsSync } from 'node:fs';
-import { fileURLToPath, pathToFileURL } from 'node:url';
-export async function resolve(spec, context, next) {
-  if (spec === '@sabitori/core') return { url: ${JSON.stringify(pathToFileURL(join(root, 'packages/core/src/index.ts')).href)}, shortCircuit: true };
-  if (/^\\.\\.?\\//.test(spec) && spec.endsWith('.js') && context.parentURL) {
-    const ts = new URL(spec.slice(0, -3) + '.ts', context.parentURL);
-    if (existsSync(fileURLToPath(ts))) return { url: ts.href, shortCircuit: true };
-  }
-  return next(spec, context);
-}
-`;
-register('data:text/javascript,' + encodeURIComponent(hooks));
-const { validateRules, rulesWarnings } = await import(pathToFileURL(join(root, 'packages/speech/src/validate.ts')).href);
-const packsDir = join(root, 'packs');
+// The validators are the speech package's own (TypeScript): the same code the app runs when it loads a pack.
+const { validateRules, rulesWarnings, parseAudioIndex, CLIP_EXTENSIONS } = await importTs('packages/speech/src/contract.ts');
+const { requiredClips } = await importTs('packages/speech/src/required.ts');
+// `--packs <dir>` checks another directory (tests, a pack under review) instead of packs/.
+const argIdx = process.argv.indexOf('--packs');
+const packsDir = argIdx >= 0 && process.argv[argIdx + 1] ? resolve(process.argv[argIdx + 1]) : join(root, 'packs');
 
 const PACK_STATUS = ['stable', 'beta', 'in_recording', 'planned'];
 const PHRASE_STATUS = ['draft', 'reviewed'];
 const CONTRIB_ROLES = ['translator', 'speaker', 'reviewer', 'maintainer'];
 const LANG_TAG = /^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/;
-const CLIP_EXT = /\.(webm|opus|m4a|ogg|wav|mp3)$/i;
+/** SPDX identifiers a community may choose (and the project uses). `LicenseRef-community-decides` is the placeholder, not a licence. */
+const SPDX = new Set([
+  'CC0-1.0', 'CC-BY-4.0', 'CC-BY-SA-4.0', 'CC-BY-NC-4.0', 'CC-BY-NC-SA-4.0', 'CC-BY-ND-4.0', 'CC-BY-NC-ND-4.0',
+  'CC-BY-3.0', 'CC-BY-SA-3.0', 'MIT', 'Apache-2.0', 'MPL-2.0', 'BSD-2-Clause', 'BSD-3-Clause', 'ISC', 'Unlicense',
+  'GPL-3.0-only', 'GPL-3.0-or-later', 'LGPL-3.0-only', 'LGPL-3.0-or-later', 'AGPL-3.0-only', 'AGPL-3.0-or-later', 'ODbL-1.0', 'ODC-By-1.0', 'PDDL-1.0',
+]);
+const isRealLicense = (l) => typeof l === 'string' && SPDX.has(l);
 
 const errors = [];
 const warnings = [];
@@ -105,7 +105,7 @@ function checkManifest(tag, m, listedTags) {
   }
 }
 
-function checkPhrases(tag, phrases, declaredClips) {
+function checkPhrases(tag, phrases, declaredClips, status) {
   if (!isObj(phrases)) return err(tag, 'phrases.json is not an object');
   for (const [key, entry] of Object.entries(phrases)) {
     if (!(key in CATALOG)) {
@@ -132,7 +132,12 @@ function checkPhrases(tag, phrases, declaredClips) {
           if (!want.has(part.slot)) err(tag, `${key}: audio refers to undeclared slot "${part.slot}"`);
         } else if (isObj(part) && 'clip' in part) {
           if (!isStr(part.clip)) err(tag, `${key}: audio clip id must be a string`);
-          else if (!declaredClips.has(part.clip)) warn(tag, `${key}: clip "${part.clip}" has no file in audio/`);
+          else if (!declaredClips.has(part.clip)) {
+            // The registry treats a clip that audio/index.json does not list as missing: the phrase falls back to another language.
+            const msg = `${key}: clip "${part.clip}" is not in audio/index.json (with its file), so the phrase falls back to another language`;
+            if (status === 'stable') err(tag, msg);
+            else warn(tag, msg);
+          }
         } else {
           err(tag, `${key}: audio part must be {clip} or {slot}`);
         }
@@ -146,7 +151,7 @@ function checkRules(tag, manifest, dir) {
   const status = manifest?.status;
   if (!existsSync(path)) {
     if (status === 'stable' || status === 'beta') err(tag, `rules.json is required for ${status} packs`);
-    else warn(tag, `rules.json is missing (allowed while status is ${status ?? 'unknown'}; numbers, money, dates and phones cannot be spoken yet)`);
+    else warn(tag, `rules.json is missing: the pack is read as having no rules, so every phrase with {amount}, {date} or {phone} is spoken in the next fallback language (allowed while status is ${status ?? 'unknown'}; a Recorder export always includes a minimal rules.json)`);
     return;
   }
   const rules = readJson(path, tag);
@@ -181,6 +186,100 @@ function checkReading(tag, manifest, dir) {
   lists('weekdays', 7);
 }
 
+/**
+ * audio/: clip files are .webm or .m4a only, and audio/index.json lists exactly the clips that have a file, each
+ * with the file name (`{"id","file"}`; a plain string means <id>.webm). The registry refuses a recorded pack
+ * without the index, and plays only what the index lists.
+ */
+function checkAudio(tag, manifest, dir) {
+  const result = { files: new Set(), indexed: new Set(), map: new Map(), ok: false };
+  const audioDir = join(dir, 'audio');
+  const recorded = manifest?.voice?.kind === 'recorded';
+  const names = existsSync(audioDir) ? readdirSync(audioDir) : [];
+  const exts = CLIP_EXTENSIONS.map((e) => `.${e}`);
+  for (const f of names) {
+    if (f === 'index.json') continue;
+    if (!exts.some((e) => f.endsWith(e))) err(tag, `audio/${f}: only .webm and .m4a clips are allowed`);
+    else result.files.add(f);
+  }
+  const indexPath = join(audioDir, 'index.json');
+  if (!existsSync(indexPath)) {
+    if (recorded) err(tag, 'audio/index.json is missing: a recorded pack must list its clips there ({"clips":[{"id":"num.1","file":"num.1.webm"}]})');
+    else if (result.files.size) err(tag, 'audio/ has clips but no audio/index.json');
+    return result;
+  }
+  const idx = readJson(indexPath, tag);
+  if (idx === undefined) return result;
+  let map;
+  try {
+    map = parseAudioIndex(idx, tag);
+  } catch (e) {
+    err(tag, e.message);
+    return result;
+  }
+  result.map = map;
+  result.ok = true;
+  for (const [id, file] of map) {
+    if (result.files.has(file)) result.indexed.add(id);
+    else err(tag, `audio/index.json lists ${file} (clip "${id}") but audio/${file} does not exist`);
+  }
+  const listed = new Set(map.values());
+  for (const f of result.files) if (!listed.has(f)) err(tag, `audio/${f} is not in audio/index.json (a clip the index does not list is never played)`);
+  return result;
+}
+
+/** What each status promises (see packs/README.md). */
+function checkStatus(tag, manifest, phrases, audio, dir) {
+  const status = manifest.status;
+  const recorded = manifest.voice?.kind === 'recorded';
+  if (status === 'stable' || status === 'beta') {
+    if (!isRealLicense(manifest.license)) err(tag, `a ${status} pack needs a real SPDX licence (such as CC-BY-SA-4.0), not "${manifest.license}"`);
+  }
+  if (recorded && audio.ok) {
+    // Clips that nothing plays: not in any phrase and not needed by the rules.
+    let rules;
+    try {
+      rules = existsSync(join(dir, 'rules.json')) ? JSON.parse(readFileSync(join(dir, 'rules.json'), 'utf8')) : undefined;
+    } catch {
+      rules = undefined;
+    }
+    const used = new Set();
+    for (const e of Object.values(phrases)) for (const a of Array.isArray(e?.audio) ? e.audio : []) if (isObj(a) && isStr(a.clip)) used.add(a.clip);
+    if (rules) {
+      let region;
+      try {
+        region = JSON.parse(readFileSync(join(root, 'regions', manifest.regions?.[0] ?? 'CM', 'region.json'), 'utf8'));
+      } catch {
+        region = undefined;
+      }
+      try {
+        for (const id of requiredClips({ manifest, phrases, rules }, region ? { region } : undefined)) used.add(id);
+      } catch {
+        /* rules errors are reported by checkRules */
+      }
+    }
+    const stale = [...audio.indexed].filter((id) => !used.has(id));
+    if (stale.length) {
+      const msg = `${stale.length} clip(s) are not used by any phrase or rule (stale): ${stale.slice(0, 5).join(', ')}${stale.length > 5 ? ' ...' : ''}`;
+      if (status === 'stable') err(tag, msg);
+      else warn(tag, msg);
+    }
+    const drafts = Object.values(phrases).filter((e) => e?.status === 'draft').length;
+    if (drafts && status !== 'in_recording') warn(tag, `${drafts} phrase(s) are still "draft": a recorded pack does not speak drafts, those phrases fall back to another language`);
+  }
+  if (status === 'stable') {
+    if (!Array.isArray(manifest.contributors) || manifest.contributors.length === 0) err(tag, 'a stable pack needs at least one contributor in manifest.contributors (consented names)');
+    const missing = [];
+    for (const key of Object.keys(CATALOG)) {
+      const e = phrases[key];
+      if (!isObj(e) || !isStr(e.text)) missing.push(`${key} (no text)`);
+      else if (e.status !== 'reviewed') missing.push(`${key} (not reviewed)`);
+      else if (recorded && !(Array.isArray(e.audio) && e.audio.length > 0)) missing.push(`${key} (no audio)`);
+    }
+    if (missing.length) err(tag, `a stable pack needs every catalog key reviewed${recorded ? ' with audio' : ' with text'}; ${missing.length} are not: ${missing.slice(0, 5).join(', ')}${missing.length > 5 ? ' ...' : ''}`);
+  }
+}
+
 // ---- main -----------------------------------------------------------------
 
 const index = readJson(join(packsDir, 'index.json'), 'index');
@@ -193,6 +292,9 @@ const folders = existsSync(packsDir)
 for (const f of folders) {
   if (!listed.includes(f)) err(f, `folder packs/${f} is not listed in packs/index.json`);
 }
+
+// Working files of the Recorder must never be in a pack (they list speakers and review notes).
+for (const f of findForbiddenPackFiles(packsDir)) err(f.split('/')[0], forbiddenMessage(`packs/${f}`));
 
 const total = Object.keys(CATALOG).length;
 const rows = [];
@@ -207,16 +309,15 @@ for (const tag of listed) {
   checkRules(tag, manifest, dir);
   checkReading(tag, manifest, dir);
 
-  const audioDir = join(dir, 'audio');
-  const clipFiles = existsSync(audioDir) ? readdirSync(audioDir).filter((f) => CLIP_EXT.test(f)) : [];
-  const declaredClips = new Set(clipFiles.map((f) => f.replace(/\.[^.]+$/, '')));
+  const audio = checkAudio(tag, manifest, dir);
 
   const phrases = readJson(join(dir, 'phrases.json'), tag);
-  if (phrases) checkPhrases(tag, phrases, declaredClips);
+  if (phrases) checkPhrases(tag, phrases, audio.indexed, manifest?.status);
 
   const translated = isObj(phrases) ? Object.keys(phrases).filter((k) => k in CATALOG) : [];
   const reviewed = translated.filter((k) => phrases[k]?.status === 'reviewed').length;
   const withAudio = translated.filter((k) => Array.isArray(phrases[k]?.audio)).length;
+  if (isObj(phrases) && manifest) checkStatus(tag, manifest, phrases, audio, dir);
   rows.push({
     tag,
     name: manifest?.name ?? '?',
@@ -224,7 +325,7 @@ for (const tag of listed) {
     keys: `${translated.length}/${total}`,
     reviewed: `${reviewed}/${total}`,
     audioPhrases: manifest?.voice?.kind === 'recorded' ? `${withAudio}/${total}` : 'n/a (tts)',
-    clips: clipFiles.length,
+    clips: audio.files.size,
   });
 }
 

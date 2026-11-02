@@ -58,6 +58,14 @@ export interface Speaker {
   role: 'speaker' | 'translator' | 'reviewer';
   /** Written consent to be named as a contributor. Without it the name is not exported. */
   consent: boolean;
+  /**
+   * Written consent to be recorded AND to have the voice published in the pack (and so in the app, offline copies
+   * and updates). Separate from being named: a speaker may agree to the voice and stay anonymous, or the reverse.
+   * Clips of a speaker without it are never exported.
+   */
+  voiceConsent?: boolean;
+  /** Day (YYYY-MM-DD) the voice consent was given. Exported in working notes only when the speaker agreed to be named. */
+  voiceConsentDate?: string;
 }
 
 export interface PhraseWork {
@@ -65,7 +73,10 @@ export interface PhraseWork {
   review: 'none' | 'reviewed' | 'sent_back';
   note?: string;
   reviewedBy?: string;
+  /** The speaker who recorded last. Every recorder of the phrase is found from its clips (see recordersOf). */
   recordedBy?: string;
+  /** An imported pack said "reviewed" but there is no record of who reviewed it: not trusted, reviewed again here. */
+  importedReviewed?: boolean;
 }
 
 export interface Project {
@@ -85,6 +96,8 @@ export interface Project {
   rulesText?: string;
   version: string;
   exportStatus: 'in_recording' | 'beta';
+  /** Clips saved since the last export: after EXPORT_PROMPT_EVERY the Recorder asks to download the pack. */
+  clipsSinceExport?: number;
   createdAt: number;
   updatedAt: number;
 }
@@ -132,6 +145,16 @@ export function newProject(init: Pick<Project, 'tag' | 'name' | 'autonym' | 'fal
     updatedAt: now,
   };
 }
+
+/** After this many new clips without an export the Recorder asks to download the pack (the browser may clear its storage). */
+export const EXPORT_PROMPT_EVERY = 10;
+export const shouldPromptExport = (p: Pick<Project, 'clipsSinceExport'>): boolean => (p.clipsSinceExport ?? 0) >= EXPORT_PROMPT_EVERY;
+
+/** Today as YYYY-MM-DD in the device's own calendar. */
+export const today = (): string => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
 
 export const uid = () => Math.random().toString(36).slice(2, 10);
 

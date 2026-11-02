@@ -180,7 +180,7 @@ describe('2. validation rejects crashing input', () => {
     ['override base not below range', (r) => (r.numbers.overrides = { '60-79': { base: 60 } }), /base 60 must be below 60/],
     ['override say unknown atom', (r) => (r.numbers.overrides = { '13': { say: [{ atom: 999 }] } }), /atom 999/],
     ['override say two keys', (r) => (r.numbers.overrides = { '13': { say: [{ atom: 1, scale: 100 }] } }), /exactly one/],
-    ['unknown template word', (r) => (r.dates.templates.full = '{day} {w:of} {month}'), /not in words/],
+    ['unknown template word', (r) => (r.dates.templates.full = '{day} {w:zzz} {month}'), /not in words/],
   ];
   for (const [name, mut, re] of bad) {
     it(`rejects: ${name}`, () => {
@@ -298,10 +298,11 @@ describe('3. atoms-only packs', () => {
     expect(rulesWarnings(enRules)).toEqual([]);
     expect(rulesWarnings(frRules)).toEqual([]);
   });
-  it('rendering with an atoms-only pack speaks digits and keeps the amount right', async () => {
+  it('an amount the rules cannot compose is never spoken digit by digit: the phrase falls back', async () => {
     const p = ttsPack('zz', 'zz', { ...only9(), money: { template: '{amount} {currency}', currencies: { XAF: { text: 'F' } } } }, { 'money.amount': e('zz {amount}') });
-    const r = await renderPhrase('money.amount', moneySlot(12), 'zz', rawRegistry(p), ctx);
-    expect(r.text).toBe('zz b c F');
+    const r = await renderPhrase('money.amount', moneySlot(12), 'zz', rawRegistry(p, en), ctx);
+    expect(r.lang).toBe('en');
+    expect((await renderPhrase('money.amount', moneySlot(7), 'zz', rawRegistry(p, en), ctx)).text).toBe('zz h F');
   });
 });
 

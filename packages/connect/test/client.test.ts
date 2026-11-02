@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { createMemoryStore, createUpdateClient, generateKeypair, isAllowedPath, MAX_FILE_BYTES } from '../src/index.js';
-import { BASE, buildSite, makeKeys, PHRASES, sha, siteFetch } from './helpers.js';
+import { BASE, buildSite, makeKeys, PHRASES, phrasesJson, REGION, regionJson, sha, siteFetch } from './helpers.js';
 
-const content = { 'packs/fr/phrases.json': PHRASES, 'regions/CM/region.json': '{"code":"CM"}' };
+const content = { 'packs/fr/phrases.json': PHRASES, 'regions/CM/region.json': REGION };
 const client = (keys: { publicKey: string }, site: { fetch: never }, store = createMemoryStore()) =>
   ({ store, c: createUpdateClient({ baseUrl: BASE, publicKeyBase64: keys.publicKey, store, fetch: site.fetch, now: () => Date.parse('2026-10-31T12:00:00Z') }) });
 
@@ -23,7 +23,7 @@ describe('update client', () => {
     const store = createMemoryStore();
     const s1 = buildSite({ keys, sequence: 1, content });
     await client(keys, s1 as never, store).c.check();
-    const s2 = buildSite({ keys, sequence: 2, content: { ...content, 'packs/fr/phrases.json': '{"a":1}' } });
+    const s2 = buildSite({ keys, sequence: 2, content: { ...content, 'packs/fr/phrases.json': phrasesJson('a1') } });
     const r = await client(keys, s2 as never, store).c.check();
     expect(r.changed).toEqual(['packs/fr/phrases.json']);
     expect(s2.requests.map((q) => q.url.slice(BASE.length + 1)).sort()).toEqual(['index.json', 'index.json.sig', 'packs/fr/phrases.json']);
@@ -124,7 +124,7 @@ describe('update client', () => {
     const keys = makeKeys();
     const store = createMemoryStore();
     await client(keys, buildSite({ keys, sequence: 5, content }) as never, store).c.check();
-    const old = buildSite({ keys, sequence: 4, content: { 'packs/fr/phrases.json': '{"old":1}' } });
+    const old = buildSite({ keys, sequence: 4, content: { 'packs/fr/phrases.json': phrasesJson('old') } });
     const r = await client(keys, old as never, store).c.check();
     expect(r).toMatchObject({ status: 'failed', reason: 'rollback', sequence: 5 });
     expect(new TextDecoder().decode((await store.getFile('packs/fr/phrases.json'))!)).toBe(PHRASES);
@@ -134,7 +134,7 @@ describe('update client', () => {
     const keys = makeKeys();
     const store = createMemoryStore();
     await client(keys, buildSite({ keys, sequence: 1, content }) as never, store).c.check();
-    const next = { 'packs/fr/phrases.json': '{"v":2}', 'regions/CM/region.json': '{"code":"CM","v":2}' };
+    const next = { 'packs/fr/phrases.json': phrasesJson('v2'), 'regions/CM/region.json': regionJson({ name: 'Cameroun' }) };
     const site = buildSite({ keys, sequence: 2, content: next });
     const base = site.fetch;
     site.fetch = async (u, i) => {
@@ -156,7 +156,7 @@ describe('update client', () => {
     const store = createMemoryStore();
     await client(keys, buildSite({ keys, sequence: 1, content }) as never, store).c.check();
     store.failOnStage = (p) => p.startsWith('regions');
-    const r = await client(keys, buildSite({ keys, sequence: 2, content: { ...content, 'packs/fr/phrases.json': '{"v":2}', 'regions/CM/region.json': '{"v":2}' } }) as never, store).c.check();
+    const r = await client(keys, buildSite({ keys, sequence: 2, content: { ...content, 'packs/fr/phrases.json': phrasesJson('v2'), 'regions/CM/region.json': regionJson({ name: 'v2' }) } }) as never, store).c.check();
     expect(r).toMatchObject({ status: 'failed', reason: 'store', sequence: 1 });
     expect(new TextDecoder().decode((await store.getFile('packs/fr/phrases.json'))!)).toBe(PHRASES);
   });
@@ -263,7 +263,7 @@ describe('update client: hostile servers', () => {
     const store = createMemoryStore();
     await client(keys, buildSite({ keys, sequence: 1, content }) as never, store).c.check();
     store.dropActive!('regions/CM/region.json');
-    const site = buildSite({ keys, sequence: 2, content: { ...content, 'packs/fr/phrases.json': '{"v":2}' } });
+    const site = buildSite({ keys, sequence: 2, content: { ...content, 'packs/fr/phrases.json': phrasesJson('v2') } });
     const r = await client(keys, site as never, store).c.check();
     expect(r.status).toBe('updated');
     expect(r.changed.sort()).toEqual(['packs/fr/phrases.json', 'regions/CM/region.json']);

@@ -26,6 +26,8 @@ export function isoWeekday(d: IsoDate): number {
   return ((((n + 3) % 7) + 7) % 7) + 1;
 }
 
+const Y = { context: 'year', overflow: 'throw' } as const;
+
 export function dateTokens(rules: PackRules, date: IsoDate, anchor: IsoDate): Token[] {
   const dr = rules.dates;
   if (!dr) throw new SpeechRuleError('rules.dates is missing');
@@ -53,7 +55,7 @@ export function dateTokens(rules: PackRules, date: IsoDate, anchor: IsoDate): To
       case 'day': {
         const w = dr.days && Object.prototype.hasOwnProperty.call(dr.days, String(p.d)) ? dr.days[String(p.d)] : undefined;
         if (typeof w === 'string') out.push({ id: `day.${p.d}`, text: w });
-        else out.push(...numberTokens(rules.numbers, p.d));
+        else out.push(...numberTokens(rules.numbers, p.d, { context: 'day', overflow: 'throw' }));
         break;
       }
       case 'month': {
@@ -72,8 +74,8 @@ export function dateTokens(rules: PackRules, date: IsoDate, anchor: IsoDate): To
       case 'year': {
         const lo = p.y % 100;
         if (dr.yearStyle === 'century_pairs' && p.y >= 1100 && !(p.y >= 2000 && p.y <= 2009) && lo !== 0) {
-          out.push(...numberTokens(rules.numbers, Math.floor(p.y / 100)), ...numberTokens(rules.numbers, lo));
-        } else out.push(...numberTokens(rules.numbers, p.y));
+          out.push(...numberTokens(rules.numbers, Math.floor(p.y / 100), Y), ...numberTokens(rules.numbers, lo, Y));
+        } else out.push(...numberTokens(rules.numbers, p.y, Y));
         break;
       }
       default:

@@ -1,4 +1,4 @@
-import type { PiperAudio, PiperEngine, PiperEngineFactory, PiperVoiceSpec } from './engine.js';
+import { voiceKey, type PiperAudio, type PiperEngine, type PiperEngineFactory, type PiperVoiceSpec } from './engine.js';
 import type { WorkerRequest, WorkerResponse } from './worker-protocol.js';
 
 export interface WorkerLike {
@@ -59,23 +59,28 @@ export function createWorkerEngines(opts: { createWorker: () => WorkerLike; asse
       }
     });
 
-  const factory = ((voice: PiperVoiceSpec): PiperEngine => ({
+  const factory = ((voice: PiperVoiceSpec): PiperEngine => {
+    const key = voiceKey(voice);
+    return {
     async load() {
       const r = await call((id) => ({ id, type: 'load', voice, assetBase: opts.assetBase, ortBase: opts.ortBase }));
       if (!r.ok) throw new Error(r.error);
-      live.add(voice.id);
+      live.add(key);
     },
+    /** False after the worker was stopped or crashed (it took every loaded model with it): the voice must be loaded again. */
+    alive: () => live.has(key),
     async synthesize(text, { lengthScale }): Promise<PiperAudio> {
-      const r = await call((id) => ({ id, type: 'synth', voiceId: voice.id, text, lengthScale }));
+      const r = await call((id) => ({ id, type: 'synth', voiceId: key, text, lengthScale }));
       if (!r.ok) throw new Error(r.error);
       return { samples: r.samples ?? new Float32Array(0), sampleRate: r.sampleRate ?? 22050 };
     },
     dispose() {
-      if (!live.delete(voice.id) && !worker) return;
-      void call((id) => ({ id, type: 'dispose', voiceId: voice.id })).catch(() => undefined);
+      if (!live.delete(key) && !worker) return;
+      void call((id) => ({ id, type: 'dispose', voiceId: key })).catch(() => undefined);
       if (live.size === 0) setTimeout(() => live.size === 0 && terminate(), 0);
     },
-  })) as PiperEngineFactory & { terminate(): void };
+    };
+  }) as PiperEngineFactory & { terminate(): void };
   factory.terminate = terminate;
   return factory;
 }

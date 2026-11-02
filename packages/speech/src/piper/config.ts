@@ -64,19 +64,58 @@ export function symbolsToIds(symbols: Iterable<string>, map: Record<string, numb
   return ids;
 }
 
+export interface TextIds {
+  ids: number[];
+  /** Letters, digits and number-like characters in the text (what must be spoken). */
+  letters: number;
+  /** Of those, how many the voice does not know and had to drop. */
+  dropped: number;
+}
+
+const SPOKEN = /[\p{L}\p{N}]/u;
+
 /**
  * phoneme_type "text": characters are the symbols. NFD first because Piper's text voices are trained
  * on decomposed text; a symbol missing from the map is retried in its composed form (NFC) so a voice
- * trained on precomposed letters still works.
+ * trained on precomposed letters still works. A character the voice does not know is retried in lower case
+ * (voices trained on lower-case text do not know "E" of "ENEO") before it is dropped.
+ * Reports how many letters and digits were dropped, so a caller can refuse mostly-unknown text.
  */
-export function textToIds(text: string, map: Record<string, number[]>): number[] {
-  const known = (form: 'NFD' | 'NFC'): string[] => [...text.normalize(form)].filter((ch) => map[ch]);
-  const nfd = known('NFD');
-  const nfc = known('NFC');
-  // Whichever form leaves fewer characters unknown to the model (ties: NFD, as Piper's own text voices are trained).
-  const dropped = (form: 'NFD' | 'NFC', k: string[]): number => [...text.normalize(form)].length - k.length;
-  return symbolsToIds(dropped('NFC', nfc) < dropped('NFD', nfd) ? nfc : nfd, map);
+export function textToIdsChecked(text: string, map: Record<string, number[]>): TextIds {
+  const run = (form: 'NFD' | 'NFC'): { symbols: string[]; letters: number; dropped: number; lost: number } => {
+    const symbols: string[] = [];
+    let letters = 0;
+    let dropped = 0;
+    let lost = 0;
+    for (const ch of text.normalize(form)) {
+      const spoken = SPOKEN.test(ch);
+      if (spoken) letters += 1;
+      let use: string | undefined = map[ch] ? ch : undefined;
+      if (!use) {
+        const lower = ch.toLowerCase().normalize(form);
+        if (lower !== ch && map[lower]) use = lower;
+      }
+      if (use) symbols.push(use);
+      else {
+        lost += 1;
+        if (spoken) dropped += 1;
+      }
+    }
+    return { symbols, letters, dropped, lost };
+  };
+  const nfd = run('NFD');
+  const nfc = run('NFC');
+  // Whichever form leaves fewer letters unknown to the model (ties: NFD, as Piper's own text voices are trained).
+  const best = nfc.dropped < nfd.dropped || (nfc.dropped === nfd.dropped && nfc.lost < nfd.lost) ? nfc : nfd;
+  return { ids: symbolsToIds(best.symbols, map), letters: best.letters, dropped: best.dropped };
 }
+
+export function textToIds(text: string, map: Record<string, number[]>): number[] {
+  return textToIdsChecked(text, map).ids;
+}
+
+/** Text of which the voice knows at most this share of the letters is not spoken: the caller falls back to another voice. */
+export const MIN_KNOWN_SHARE = 0.5;
 
 /** Phonemes from espeak (already split into symbols) to ids. */
 export function phonemesToIds(phonemes: string[], map: Record<string, number[]>): number[] {

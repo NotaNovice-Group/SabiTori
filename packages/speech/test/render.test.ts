@@ -43,7 +43,7 @@ describe('renderPhrase, TTS packs', () => {
   it('fills slots into one tts part with the same display and spoken text', async () => {
     const r = await renderPhrase('money.amount', { amount: { type: 'money', value: { amount: 15000, currency: 'XAF' } } }, 'fr', reg(fr, en), ctx);
     expect(r.text).toBe('Le montant est quinze mille francs CFA.');
-    expect(r.parts).toEqual([{ kind: 'tts', text: r.text, bcp47: 'fr-FR' }]);
+    expect(r.parts).toEqual([{ kind: 'tts', text: r.text, bcp47: 'fr-FR', tag: 'fr' }]);
     expect(r.lang).toBe('fr');
   });
   it('fr date has no article of its own; relative dates are not used', async () => {
@@ -76,8 +76,8 @@ describe('renderPhrase, TTS packs', () => {
     const p = ttsPack('fr', 'fr-FR', frRules, { 'sender.known': e('Résumé : {sender}') });
     const r = await renderPhrase('sender.known', { sender: { type: 'text', value: 'Your bill is due', lang: 'en' } }, 'fr', reg(p, en), ctx);
     expect(r.parts).toEqual([
-      { kind: 'tts', text: 'Résumé :', bcp47: 'fr-FR' },
-      { kind: 'tts', text: 'Your bill is due', bcp47: 'en-GB' },
+      { kind: 'tts', text: 'Résumé :', bcp47: 'fr-FR', tag: 'fr' },
+      { kind: 'tts', text: 'Your bill is due', bcp47: 'en-GB', tag: 'en' },
     ]);
   });
   it('missing slot value in every language is a clear error', async () => {
@@ -148,7 +148,7 @@ describe('recorded packs', () => {
     expect(a.parts).toEqual([{ kind: 'clip', url: '/x/p.from.webm' }, { kind: 'clip', url: '/x/sender.mtn-momo.webm' }]);
     const b = await renderPhrase('sender.known', slots, 'xx', reg(recorded((id) => id !== 'sender.mtn-momo', phrases), fr), ctx);
     expect(b.lang).toBe('xx');
-    expect(b.parts[1]).toEqual({ kind: 'tts', text: 'MTN MoMo', bcp47: 'fr-FR' });
+    expect(b.parts[1]).toEqual({ kind: 'tts', text: 'MTN MoMo', bcp47: 'fr-FR', tag: 'fr' });
   });
   it('uses the default clip url when the pack has none', async () => {
     const x = { ...recorded(all), clipUrl: undefined };

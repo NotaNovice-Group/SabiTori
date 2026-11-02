@@ -2,6 +2,7 @@ import type { PiperVoiceSpec } from './engine.js';
 
 export type WorkerRequest =
   | { id: number; type: 'load'; voice: PiperVoiceSpec; assetBase: string; ortBase?: string }
+  /** voiceId is the voice's key: id and version (see voiceKey). */
   | { id: number; type: 'synth'; voiceId: string; text: string; lengthScale: number }
   | { id: number; type: 'dispose'; voiceId: string };
 

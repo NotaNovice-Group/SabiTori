@@ -45,10 +45,10 @@ describe('dates', () => {
     expect(date(enRules, '2026-10-31')).toBe('today');
     expect(date(enRules, '2026-11-01')).toBe('tomorrow');
     expect(date(enRules, '2026-10-30')).toBe('yesterday');
-    expect(date(enRules, '2026-11-12')).toBe('twelve November');
-    expect(date(enRules, '2027-11-12')).toBe('twelve November twenty twenty-seven');
-    expect(date(enRules, '2005-03-04', '2005-03-01')).toBe('four March');
-    expect(date(enRules, '2003-03-04', '2005-03-01')).toBe('four March two thousand and three');
+    expect(date(enRules, '2026-11-12')).toBe('the twelfth of November');
+    expect(date(enRules, '2027-11-12')).toBe('the twelfth of November twenty twenty-seven');
+    expect(date(enRules, '2005-03-04', '2005-03-01')).toBe('the fourth of March');
+    expect(date(enRules, '2003-03-04', '2005-03-01')).toBe('the fourth of March two thousand and three');
   });
   it('relative ids and month ids', () => {
     expect(dateTokens(enRules, '2026-11-01', '2026-10-31').map((t) => t.id)).toEqual(['rel.tomorrow']);

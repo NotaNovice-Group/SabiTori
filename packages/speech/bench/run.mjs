@@ -11,6 +11,8 @@
  * Prints per sentence: time to first audio (speak() to the first sample going to the audio device),
  * and real-time factor (synthesis seconds per second of audio). Never runs `playwright install`:
  * point CHROMIUM at an installed browser (default: /opt/pw-browsers).
+ * Exits with status 1 when any fallback happened (a `fallback` event, an utterance spoken by the system
+ * voice, or Piper disabled for the session): a run with a fallback did not measure Piper.
  */
 import { chromium } from '../../../apps/app/node_modules/@playwright/test/index.mjs'; // playwright lives in apps/app
 const FR = ['Vous avez reçu 5 000 francs de votre opérateur.', 'Ne partagez jamais votre code secret avec personne.', 'Le rendez-vous est prévu demain à dix heures au centre de santé.'];
@@ -30,3 +32,12 @@ for (const [lang, sents] of [['fr-FR', FR], ['en-GB', EN]]) {
 }
 console.log(JSON.stringify({ throttle, mode, ...out }, null, 1));
 await b.close();
+const fallbacks = Object.entries(out).flatMap(([lang, r]) => [
+  ...(r.rows ?? []).flatMap((row) => (row.events ?? []).filter((e) => e.type === 'fallback').map((e) => `${lang}: fallback ${e.reason}${e.detail ? ` (${e.detail})` : ''}`)),
+  ...(r.systemFallbackUtterances ? [`${lang}: ${r.systemFallbackUtterances} utterance(s) spoken by the system voice`] : []),
+  ...(r.disabled ? [`${lang}: Piper disabled for the session`] : []),
+]);
+if (fallbacks.length) {
+  console.error(`FAIL: ${fallbacks.length} fallback event(s); these numbers are not Piper measurements:\n  ${fallbacks.join('\n  ')}`);
+  process.exit(1);
+}

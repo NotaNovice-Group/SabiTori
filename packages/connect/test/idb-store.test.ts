@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { IDBFactory } from 'fake-indexeddb';
 import { createIdbStore, createUpdateClient } from '../src/index.js';
-import { BASE, buildSite, makeKeys } from './helpers.js';
+import { BASE, buildSite, makeKeys, phrasesJson, REGION } from './helpers.js';
 
 describe('IndexedDB store', () => {
   it('works through the update client and survives re-opening', async () => {
@@ -9,11 +9,11 @@ describe('IndexedDB store', () => {
     const keys = makeKeys();
     const store = createIdbStore(factory);
     const mk = (s: ReturnType<typeof buildSite>, st = store) => createUpdateClient({ baseUrl: BASE, publicKeyBase64: keys.publicKey, store: st, fetch: s.fetch });
-    expect((await mk(buildSite({ keys, sequence: 1, content: { 'packs/fr/phrases.json': '{"a":1}', 'regions/CM/region.json': '{}' } })).check()).status).toBe('updated');
+    expect((await mk(buildSite({ keys, sequence: 1, content: { 'packs/fr/phrases.json': phrasesJson('a1'), 'regions/CM/region.json': REGION } })).check()).status).toBe('updated');
     const again = createIdbStore(factory);
     expect((await again.getState())!.sequence).toBe(1);
-    expect(new TextDecoder().decode((await again.getFile('packs/fr/phrases.json'))!)).toBe('{"a":1}');
-    const r = await mk(buildSite({ keys, sequence: 2, content: { 'packs/fr/phrases.json': '{"a":2}' } }), again).check();
+    expect(new TextDecoder().decode((await again.getFile('packs/fr/phrases.json'))!)).toBe(phrasesJson('a1'));
+    const r = await mk(buildSite({ keys, sequence: 2, content: { 'packs/fr/phrases.json': phrasesJson('a2') } }), again).check();
     expect(r.changed).toEqual(['packs/fr/phrases.json']);
     expect(await again.getFile('regions/CM/region.json')).toBeNull();
     expect(await again.getStaged('packs/fr/phrases.json')).toBeNull();
@@ -36,7 +36,7 @@ describe('IndexedDB store: self-heal', () => {
     const factory = new IDBFactory();
     const keys = makeKeys();
     const store = createIdbStore(factory);
-    const content = { 'packs/fr/phrases.json': '{"a":1}', 'regions/CM/region.json': '{}' };
+    const content = { 'packs/fr/phrases.json': phrasesJson('a1'), 'regions/CM/region.json': REGION };
     const mk = (s: ReturnType<typeof buildSite>) => createUpdateClient({ baseUrl: BASE, publicKeyBase64: keys.publicKey, store, fetch: s.fetch });
     expect((await mk(buildSite({ keys, sequence: 1, content })).check()).status).toBe('updated');
     expect(await store.hasFile('regions/CM/region.json')).toBe(true);
@@ -50,7 +50,7 @@ describe('IndexedDB store: self-heal', () => {
       tx.oncomplete = () => res();
     });
     expect(await store.hasFile('regions/CM/region.json')).toBe(false);
-    const r = await mk(buildSite({ keys, sequence: 2, content: { ...content, 'packs/fr/phrases.json': '{"a":2}' } })).check();
+    const r = await mk(buildSite({ keys, sequence: 2, content: { ...content, 'packs/fr/phrases.json': phrasesJson('a2') } })).check();
     expect(r.status).toBe('updated');
     expect(r.changed.sort()).toEqual(['packs/fr/phrases.json', 'regions/CM/region.json']);
     expect(await store.hasFile('regions/CM/region.json')).toBe(true);

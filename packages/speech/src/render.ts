@@ -17,7 +17,11 @@ import { phoneTokens } from './phones.js';
 import type { PackRegistry, SpeechPack } from './registry.js';
 import { assemble, type Token } from './tokens.js';
 
-export type RenderedPart = { kind: 'tts'; text: string; bcp47: string } | { kind: 'clip'; url: string };
+/**
+ * `tag` and `voice` say which pack's voice speaks a tts part (its pack tag and `voice.voiceHint`), so two packs
+ * that share a BCP 47 tag can have separate Piper voices. The player hands them to the TTS backend.
+ */
+export type RenderedPart = { kind: 'tts'; text: string; bcp47: string; tag?: string; voice?: string } | { kind: 'clip'; url: string };
 
 export interface RenderedSection {
   section: CardSection;
@@ -35,9 +39,17 @@ export interface RenderContext {
    * Default: the region's offered languages in order, or "en" when the region lists none.
    */
   terminalFallback?: LangTag;
+  /**
+   * Tester builds only. Phrases whose status is "draft" (not yet confirmed by a second speaker) are skipped like a
+   * missing phrase, so users never hear unreviewed recordings or text: that language's next fallback speaks.
+   * Skipped in recorded packs and in packs below `beta`; a `beta` or `stable` pack with a synthetic voice keeps
+   * speaking its drafts (the French and English packs). `includeDrafts: true` plays every draft.
+   */
+  includeDrafts?: boolean;
 }
 
-type Piece = { kind: 'tts'; text: string; bcp47: string } | { kind: 'clip'; id: string };
+type Ref = { bcp47: string; tag?: string; voice?: string };
+type Piece = ({ kind: 'tts'; text: string } & Ref) | { kind: 'clip'; id: string };
 type Slots = Record<string, SlotValue> | undefined;
 
 interface Env {
@@ -55,7 +67,15 @@ function terminals(ctx: RenderContext): LangTag[] {
   return Array.isArray(langs) && langs.length > 0 ? langs : ['en'];
 }
 
-const ttsOf = (p: LanguagePack): string | undefined => (p.manifest.voice.kind === 'tts' ? p.manifest.voice.bcp47 : undefined);
+const refOf = (p: LanguagePack): Ref | undefined => {
+  const v = p.manifest.voice;
+  return v.kind === 'tts' ? { bcp47: v.bcp47, tag: p.manifest.tag, ...(v.voiceHint ? { voice: v.voiceHint } : {}) } : undefined;
+};
+/** Draft phrases are not spoken from recorded packs or from packs below beta (see RenderContext.includeDrafts). */
+function skipsDrafts(p: LanguagePack): boolean {
+  const st = p.manifest.status;
+  return p.manifest.voice.kind === 'recorded' || !(st === 'beta' || st === 'stable');
+}
 const hasClip = (p: SpeechPack, id: string): boolean => (p.hasClip ? p.hasClip(id) : true);
 const clipUrl = (p: LanguagePack, id: string): string => p.clipUrl?.(id) ?? `${p.manifest.tag}/audio/${id}.webm`;
 
@@ -103,7 +123,7 @@ function slotTokensRaw(slot: SlotValue, env: Env): Token[] | null {
   const { rules } = env.pack;
   switch (slot.type) {
     case 'number':
-      return numberTokens(rules.numbers, slot.value);
+      return numberTokens(rules.numbers, slot.value, { overflow: 'throw' });
     case 'money':
       return moneyTokens(rules, slot.value);
     case 'date':
@@ -115,14 +135,14 @@ function slotTokensRaw(slot: SlotValue, env: Env): Token[] | null {
   }
 }
 
-async function bcp47For(lang: string, env: Env): Promise<string> {
-  const own = ttsOf(env.pack) ?? env.chain.map(ttsOf).find(Boolean);
-  if (lang === 'unknown') return own ?? env.terminal;
+async function refFor(lang: string, env: Env): Promise<Ref> {
+  const own = refOf(env.pack) ?? env.chain.map(refOf).find(Boolean);
+  if (lang === 'unknown') return own ?? { bcp47: env.terminal };
   try {
     const p = await env.registry.get(lang);
-    return ttsOf(p) ?? lang;
+    return refOf(p) ?? { bcp47: lang };
   } catch {
-    return lang;
+    return { bcp47: lang };
   }
 }
 
@@ -131,7 +151,7 @@ async function slotResult(slot: SlotValue, env: Env): Promise<{ display: string;
   const tokens = slotTokens(slot, env);
   if (tokens) {
     const display = assemble(tokens);
-    if (!recorded) return { display, pieces: [{ kind: 'tts', text: display, bcp47: ttsOf(env.pack)! }] };
+    if (!recorded) return { display, pieces: [{ kind: 'tts', text: display, ...refOf(env.pack)! }] };
     const pieces: Piece[] = [];
     for (const t of tokens) {
       if (t.id === null) continue;
@@ -144,7 +164,7 @@ async function slotResult(slot: SlotValue, env: Env): Promise<{ display: string;
     return { display, pieces };
   }
   if (slot.type === 'text') {
-    return { display: slot.value, pieces: [{ kind: 'tts', text: slot.value, bcp47: await bcp47For(slot.lang, env) }] };
+    return { display: slot.value, pieces: [{ kind: 'tts', text: slot.value, ...(await refFor(slot.lang, env)) }] };
   }
   if (slot.type === 'sender') {
     const name =
@@ -153,9 +173,9 @@ async function slotResult(slot: SlotValue, env: Env): Promise<{ display: string;
     if (recorded && slot.officialId && hasClip(env.pack, `sender.${slot.officialId}`)) {
       return { display: name, pieces: [{ kind: 'clip', id: `sender.${slot.officialId}` }] };
     }
-    const bcp47 = ttsOf(env.pack) ?? env.chain.map(ttsOf).find(Boolean);
-    if (!bcp47) throw new MissingResourceError(`no voice to say sender name in ${env.pack.manifest.tag}`);
-    return { display: name, pieces: [{ kind: 'tts', text: name, bcp47 }] };
+    const ref = refOf(env.pack) ?? env.chain.map(refOf).find(Boolean);
+    if (!ref) throw new MissingResourceError(`no voice to say sender name in ${env.pack.manifest.tag}`);
+    return { display: name, pieces: [{ kind: 'tts', text: name, ...ref }] };
   }
   throw new SpeechRuleError('unsupported slot');
 }
@@ -170,26 +190,26 @@ function finish(pieces: Piece[], text: string, pack: LanguagePack): { text: stri
   const merged: Piece[] = [];
   for (const p of pieces) {
     const last = merged.at(-1);
-    if (p.kind === 'tts' && last?.kind === 'tts' && last.bcp47 === p.bcp47) last.text += p.text;
+    if (p.kind === 'tts' && last?.kind === 'tts' && last.bcp47 === p.bcp47 && last.tag === p.tag && last.voice === p.voice) last.text += p.text;
     else merged.push({ ...p });
   }
   const parts: RenderedPart[] = [];
   for (const p of merged) {
     if (p.kind === 'clip') parts.push({ kind: 'clip', url: clipUrl(pack, p.id) });
-    else if (p.text.trim()) parts.push({ kind: 'tts', text: p.text.trim().replace(/\s+/g, ' '), bcp47: p.bcp47 });
+    else if (p.text.trim()) parts.push({ kind: 'tts', text: p.text.trim().replace(/\s+/g, ' '), bcp47: p.bcp47, ...(p.tag ? { tag: p.tag } : {}), ...(p.voice ? { voice: p.voice } : {}) });
   }
   return { text: text.replace(/\s+/g, ' ').trim(), parts };
 }
 
 /** Fill "{slot}" placeholders of `template`, speaking everything with the pack's own voice. */
-async function renderTts(template: string, slots: Slots, env: Env, bcp47: string): Promise<{ text: string; parts: RenderedPart[] }> {
+async function renderTts(template: string, slots: Slots, env: Env, ref: Ref): Promise<{ text: string; parts: RenderedPart[] }> {
   const pieces: Piece[] = [];
   let text = '';
   const re = /\{(\w+)\}/g;
   let last = 0;
   for (let m = re.exec(template); m; m = re.exec(template)) {
     const lit = template.slice(last, m.index);
-    pieces.push({ kind: 'tts', text: lit, bcp47 });
+    pieces.push({ kind: 'tts', text: lit, ...ref });
     text += lit;
     const r = await getSlot(m[1]!, slots, env);
     pieces.push(...r.pieces);
@@ -197,7 +217,7 @@ async function renderTts(template: string, slots: Slots, env: Env, bcp47: string
     last = m.index + m[0].length;
   }
   const tail = template.slice(last);
-  pieces.push({ kind: 'tts', text: tail, bcp47 });
+  pieces.push({ kind: 'tts', text: tail, ...ref });
   text += tail;
   return finish(pieces, text, env.pack);
 }
@@ -226,10 +246,11 @@ async function renderInChain(key: PhraseKey, slots: Slots, chain: SpeechPack[], 
   for (const pack of chain) {
     const entry = pack.phrases[key];
     if (!entry) continue;
+    if (entry.status === 'draft' && !ctx.includeDrafts && skipsDrafts(pack)) continue;
     const env: Env = { pack, chain, registry, ctx, terminal: terminals(ctx)[0] ?? 'en' };
     try {
-      const v = pack.manifest.voice;
-      const r = v.kind === 'tts' ? await renderTts(entry.text, slots, env, v.bcp47) : await renderRecorded(key, slots, env);
+      const ref = refOf(pack);
+      const r = ref ? await renderTts(entry.text, slots, env, ref) : await renderRecorded(key, slots, env);
       return { ...r, lang: pack.manifest.tag };
     } catch (e) {
       // Any failure of a pack (even an unexpected TypeError from hostile data) moves on to the next language.
@@ -241,10 +262,10 @@ async function renderInChain(key: PhraseKey, slots: Slots, chain: SpeechPack[], 
   const en = chain.find((p) => p.manifest.tag === 'en');
   if (en) {
     const env: Env = { pack: en, chain, registry, ctx, terminal: terminals(ctx)[0] ?? 'en' };
-    const bcp47 = ttsOf(en);
-    if (bcp47) {
+    const ref = refOf(en);
+    if (ref) {
       try {
-        return { ...(await renderTts(CATALOG[key].en, slots, env, bcp47)), lang: 'en' };
+        return { ...(await renderTts(CATALOG[key].en, slots, env, ref)), lang: 'en' };
       } catch {
         /* fall through to the final error */
       }
