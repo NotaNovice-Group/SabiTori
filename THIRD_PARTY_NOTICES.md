@@ -32,7 +32,7 @@ Notes on the understanding model:
 
 | Component | Version | Licence | Source |
 | --- | --- | --- | --- |
-| Andika typeface (SIL) via `@fontsource/andika` | 5.3.0 | SIL Open Font License 1.1 | https://software.sil.org/andika/ |
+| Andika typeface (SIL), full font, unmodified, in `apps/app/src/fonts/` (the Recorder uses `@fontsource/andika` 5.3.0) | 7.000 | SIL Open Font License 1.1 | https://software.sil.org/andika/ |
 | lucide-react icons | 1.65.0 | ISC | https://lucide.dev |
 | React, React DOM | 19.3.1 | MIT | https://react.dev |
 | Capacitor core, camera, local notifications, splash screen | 8.x | MIT | https://capacitorjs.com |

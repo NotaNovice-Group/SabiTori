@@ -12,7 +12,7 @@ Everything else stays quiet so that this moment carries the screen.
 
 ## Type
 
-- **Andika** (SIL, OFL), self-hosted via `@fontsource/andika`, weights 400 and 700.
+- **Andika** (SIL, OFL) 7.000, the full unmodified font self-hosted from the SIL release (`apps/app/src/fonts/`), weights 400 and 700. The `@fontsource` subsets lack the combining circumflex and caron used as tone marks.
   Chosen because it was designed for beginning readers (single-storey a and g, clear I/l/1),
   and because it covers African Latin letters (ɓ ɗ ŋ ɛ ɔ ə ƴ, combining tone marks)
   that most UI faces cannot render. Never fall back to Inter/Roboto for content.

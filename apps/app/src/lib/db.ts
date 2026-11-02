@@ -1,9 +1,16 @@
-import type { Card } from '@sabitori/core';
-import { expiredIds } from './retention';
+import type { Card, IsoDate } from '@sabitori/core';
+import { expiredIds, isCardRecord } from './retention';
+import { cancelReminders } from './reminders';
 
 /** History in IndexedDB. Small wrapper, no dependency. Every call degrades to a no-op. */
 const DB = 'sabitori';
 const STORE = 'cards';
+
+/** A card as kept in history. `keepUntil` (the deadline) is set while a reminder is pending. */
+export type StoredCard = Card & { keepUntil?: IsoDate };
+
+/** Cancels the reminders of a card that is deleted (replaceable in tests). */
+export type CancelFn = (cardId: string) => Promise<void>;
 
 function open(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -34,32 +41,43 @@ function run<T>(mode: IDBTransactionMode, fn: (s: IDBObjectStore) => IDBRequest<
   );
 }
 
-export async function listCards(): Promise<Card[]> {
+async function rawList(): Promise<unknown[]> {
   try {
-    const all = await run('readonly', (s) => s.getAll() as IDBRequest<Card[]>);
-    return all.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+    return await run('readonly', (s) => s.getAll() as IDBRequest<unknown[]>);
   } catch {
     return [];
   }
 }
 
-export async function getCard(id: string): Promise<Card | undefined> {
+const byNewest = (a: StoredCard, b: StoredCard) => (b.createdAt < a.createdAt ? -1 : b.createdAt > a.createdAt ? 1 : 0);
+
+/** Cards in history, newest first. Records that are not cards (a bug, an old format) are left out. */
+export async function listCards(): Promise<StoredCard[]> {
+  return ((await rawList()).filter(isCardRecord) as StoredCard[]).sort(byNewest);
+}
+
+export async function getCard(id: string): Promise<StoredCard | undefined> {
   try {
-    return await run('readonly', (s) => s.get(id) as IDBRequest<Card | undefined>);
+    const c = await run('readonly', (s) => s.get(id) as IDBRequest<unknown>);
+    return isCardRecord(c) ? (c as StoredCard) : undefined;
   } catch {
     return undefined;
   }
 }
 
-export async function putCard(card: Card): Promise<void> {
+/** True when the card is in history. Never throws. */
+export async function putCard(card: StoredCard): Promise<boolean> {
   try {
     await run('readwrite', (s) => s.put(card));
+    return true;
   } catch {
     /* storage unavailable: the card still shows this session */
+    return false;
   }
 }
 
-export async function deleteCard(id: string): Promise<void> {
+export async function deleteCard(id: string, cancel: CancelFn = cancelReminders): Promise<void> {
+  await cancel(id).catch(() => undefined);
   try {
     await run('readwrite', (s) => s.delete(id));
   } catch {
@@ -67,7 +85,10 @@ export async function deleteCard(id: string): Promise<void> {
   }
 }
 
-export async function clearCards(): Promise<void> {
+/** Delete every card, and every reminder of those cards. */
+export async function clearCards(cancel: CancelFn = cancelReminders): Promise<void> {
+  const ids = (await rawList()).map((r) => (r as { id?: unknown })?.id).filter((id): id is string => typeof id === 'string');
+  await Promise.all(ids.map((id) => cancel(id).catch(() => undefined)));
   try {
     await run('readwrite', (s) => s.clear());
   } catch {
@@ -75,10 +96,15 @@ export async function clearCards(): Promise<void> {
   }
 }
 
-/** Delete what the retention setting says is too old. Returns the remaining cards. */
-export async function applyRetention(days: number): Promise<Card[]> {
-  const all = await listCards();
-  const old = expiredIds(all, days);
-  await Promise.all(old.map(deleteCard));
-  return all.filter((c) => !old.includes(c.id));
+/**
+ * Delete what the retention setting says is too old, and any record that is not a valid card or is dated
+ * in the future (they would break the history list). Their reminders go too. Returns the remaining cards.
+ */
+export async function applyRetention(days: number, now = Date.now(), cancel: CancelFn = cancelReminders): Promise<StoredCard[]> {
+  const raw = await rawList();
+  const bad = raw.filter((r) => !isCardRecord(r)).map((r) => (r as { id?: unknown })?.id).filter((id): id is string => typeof id === 'string');
+  const cards = raw.filter(isCardRecord) as StoredCard[];
+  const old = new Set([...expiredIds(cards, days, now), ...bad]);
+  await Promise.all([...old].map((id) => deleteCard(id, cancel)));
+  return cards.filter((c) => !old.has(c.id)).sort(byNewest);
 }

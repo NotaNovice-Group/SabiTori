@@ -1,7 +1,8 @@
 import type { IsoDate } from '@sabitori/core';
 
-function esc(s: string): string {
-  return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/;/g, '\;').replace(/,/g, '\\,');
+/** RFC 5545 3.3.11 TEXT: backslash, semicolon and comma are escaped with a backslash; a newline is "\n". */
+export function esc(s: string): string {
+  return s.replace(/\\/g, '\\\\').replace(/\r\n|\r|\n/g, '\\n').replace(/;/g, '\\;').replace(/,/g, '\\,');
 }
 
 /** RFC 5545 says lines over 75 octets are folded with CRLF + space. */

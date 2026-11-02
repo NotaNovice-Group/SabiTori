@@ -58,6 +58,8 @@ export interface Engine {
   /** Re-read with the on-device model (null when there is no model or it timed out). */
   analyzeDeeper(input: MessageInput, timeoutMs: number): Promise<Card | null>;
   renderCard(card: Card, lang: LangTag): Promise<SectionView[]>;
+  /** Dates, amounts and phone numbers the pipeline finds in a text (decides the OCR half-turn retry). */
+  countFacts(text: string): number;
   playSections(sections: RenderedSection[], opts: PlayOptions): void;
   speak(rendered: Rendered, rate?: number): void;
   stop(): void;

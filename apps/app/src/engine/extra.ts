@@ -35,6 +35,7 @@ export const EXTRA = x({
     fr: 'Voix bientôt prête. Dit en {name} pour l’instant.',
     context: 'Language whose recording is not finished. {name} is the language that is spoken meanwhile.',
   },
+  'app.lang.soon_plain': { en: 'Voice coming soon.', fr: 'Voix bientôt prête.', context: 'Language whose recording is not finished, when no other language speaks for it.' },
   'app.tap_again': { en: 'Tap again to do it', fr: 'Appuyez encore pour le faire', context: 'Shown on a button after its first tap in listen-first mode.' },
   'app.home.empty': { en: 'No messages yet', fr: 'Pas encore de message', context: 'Empty history.' },
   'app.home.empty_hint': {
@@ -203,6 +204,83 @@ export const EXTRA = x({
   'app.settings.version': { en: 'Version', fr: 'Version', context: 'Label.' },
   'app.settings.clear': { en: 'Delete all my messages', fr: 'Effacer tous mes messages', context: 'Button.' },
   'app.settings.cleared': { en: 'Deleted', fr: 'Effacé', context: 'Confirmation.' },
+  'app.settings.clear_hint': {
+    en: 'This deletes every message kept on this phone, and their reminders. It cannot be undone.',
+    fr: 'Cela efface tous les messages gardés sur ce téléphone, et leurs rappels. On ne peut pas revenir en arrière.',
+    context: 'Explanation shown before confirming "Delete all my messages".',
+  },
+  'app.settings.clear_confirm': { en: 'Yes, delete all my messages', fr: 'Oui, effacer tous mes messages', context: 'Confirmation button (destructive). Names the action.' },
+  'app.settings.clear_keep': { en: 'Keep my messages', fr: 'Garder mes messages', context: 'Button: close the confirmation without deleting.' },
+  'app.settings.history.0_hint': {
+    en: 'Messages are not kept. A message with a reminder is kept until its reminder, then deleted.',
+    fr: 'Les messages ne sont pas gardés. Un message avec un rappel est gardé jusqu’au rappel, puis effacé.',
+    context: 'Shown under "Keep my messages" when "Do not keep" is chosen.',
+  },
+  'app.remind.kept': {
+    en: 'This message is kept on this phone until the reminder, then deleted.',
+    fr: 'Ce message est gardé sur ce téléphone jusqu’au rappel, puis effacé.',
+    context: 'On a card with a reminder, when the person chose not to keep messages.',
+  },
+  'app.remind.passed': { en: 'This date has already passed.', fr: 'Cette date est déjà passée.', context: 'Shown instead of a reminder when the deadline is in the past.' },
+  'app.card.not_saved': {
+    en: 'This message could not be kept on this phone. You can still read it now.',
+    fr: 'Ce message n’a pas pu être gardé sur ce téléphone. Vous pouvez quand même le lire maintenant.',
+    context: 'Quiet line on a card when saving to the history failed or took too long.',
+  },
+  'app.share.first_only': { en: 'Only the first photo is read.', fr: 'Seule la première photo est lue.', context: 'Several photos were shared at once.' },
+  'app.share.too_long': {
+    en: 'This text is very long. Only the beginning is read.',
+    fr: 'Ce texte est très long. Seul le début est lu.',
+    context: 'A shared text was cut to a maximum length.',
+  },
+  'app.share.too_big': { en: 'This file is too big to read.', fr: 'Ce fichier est trop gros pour être lu.', context: 'A shared photo was over the size limit.' },
+  'app.share.unsupported': {
+    en: 'SabiTori reads photos and texts. This file is neither, so it was not opened.',
+    fr: 'SabiTori lit les photos et les textes. Ce fichier n’est ni l’un ni l’autre, il n’a donc pas été ouvert.',
+    context: 'Something other than a picture or text was shared into the app.',
+  },
+  'app.capture.no_ocr': {
+    en: 'This phone cannot read photos. You can paste or type the message instead.',
+    fr: 'Ce téléphone ne peut pas lire les photos. Vous pouvez coller ou écrire le message à la place.',
+    context: 'The phone’s web engine is too old for text recognition (no WebAssembly SIMD).',
+  },
+  'app.fatal.title': { en: 'Something went wrong', fr: 'Un problème est survenu', context: 'Title of the screen shown when the app could not continue.' },
+  'app.fatal.body': {
+    en: 'SabiTori could not continue. Your messages are still on this phone.',
+    fr: 'SabiTori n’a pas pu continuer. Vos messages sont toujours sur ce téléphone.',
+    context: 'Calm explanation on the error screen.',
+  },
+  'app.fatal.restart': { en: 'Start again', fr: 'Recommencer', context: 'Button on the error screen: restart the app.' },
+  'app.fatal.remove_updates': {
+    en: 'Remove downloaded updates',
+    fr: 'Retirer les mises à jour téléchargées',
+    context: 'Button on the error screen: go back to the built-in languages and warnings, then restart.',
+  },
+  'app.fatal.listen': { en: 'Listen', fr: 'Écouter', context: 'Button on the error screen: hear the explanation.' },
+  'app.settings.updates.bad_file': {
+    en: 'The file that was refused: {file}',
+    fr: 'Le fichier refusé : {file}',
+    context: 'Small line under "This update could not be trusted". {file} is a path such as regions/CM/region.json.',
+  },
+  'app.settings.updates.quarantined': {
+    en: 'A downloaded update could not be used, so SabiTori went back to its built-in languages and warnings.',
+    fr: 'Une mise à jour téléchargée n’a pas pu servir, SabiTori est donc revenu à ses langues et alertes d’origine.',
+    context: 'Status in Settings after the app set aside an update that stopped it from starting.',
+  },
+  'app.settings.model.testing': { en: 'Checking the model file', fr: 'Vérification du fichier modèle', context: 'Model status while a new file is being test-loaded.' },
+  'app.settings.model.err.not_usable': {
+    en: 'This model file could not be started, so it was not kept. Nothing else changed.',
+    fr: 'Ce fichier modèle n’a pas pu démarrer, il n’a donc pas été gardé. Rien d’autre n’a changé.',
+    context: 'Error: the file looked like a model but failed its load test.',
+  },
+  'app.settings.about': { en: 'About and open licences', fr: 'À propos et licences libres', context: 'Settings entry: credits and licences of the parts SabiTori is built with.' },
+  'app.about.intro': {
+    en: 'SabiTori is free software. It is built with the work of many people. Their names and licences are below.',
+    fr: 'SabiTori est un logiciel libre. Il est fait avec le travail de beaucoup de personnes. Leurs noms et licences sont ci-dessous.',
+    context: 'First paragraph of the About screen.',
+  },
+  'app.about.voices': { en: 'Voices', fr: 'Voix', context: 'Heading: credits of the voices that speak in the app.' },
+  'app.about.notices': { en: 'Open licences', fr: 'Licences libres', context: 'Heading: third-party notices.' },
 } as const);
 
 export type ExtraKey = keyof typeof EXTRA;

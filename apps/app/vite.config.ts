@@ -151,8 +151,11 @@ export default defineConfig(({ mode }) => ({
     sabitoriCsp(mode),
     react(),
     VitePWA({
-      registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      // 'prompt': a new service worker waits until every page of the app is closed (no skipWaiting /
+      // clientsClaim), so an open page keeps the precache its lazy chunks come from. Registered by
+      // src/lib/sw.ts, and never inside the Android app (everything is in the APK there).
+      registerType: 'prompt',
+      injectRegister: false,
       includeAssets: ['mark.svg', 'icons/*.png'],
       workbox: {
         globPatterns: ['**/*.{js,mjs,css,html,svg,png,woff2,json,wasm,gz,webm,m4a,mp3,ogg}', 'models/**/*.onnx', 'piper/*.data', 'ocr/*.traineddata'],

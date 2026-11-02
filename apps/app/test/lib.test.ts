@@ -60,7 +60,7 @@ describe('ics', () => {
     expect(ics).not.toMatch(/[^\r]\n/);
   });
   it('escapes text and rolls over month ends', () => {
-    expect(ics).toContain('SUMMARY:ENEO\\, facture\; à payer');
+    expect(ics).toContain('SUMMARY:ENEO\\, facture\\; à payer');
     expect(ics).toContain('DESCRIPTION:ligne 1\\nligne 2');
     expect(buildIcs({ uid: 'x', date: '2026-12-31', title: 't' })).toContain('DTEND;VALUE=DATE:20270101');
   });

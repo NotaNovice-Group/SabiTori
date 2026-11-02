@@ -531,3 +531,21 @@ a { color: inherit; text-decoration: none; }
 @keyframes run { from { margin-inline-start: 0; } to { margin-inline-start: 65%; } }
 @media (prefers-reduced-motion: reduce) { .bar-run { animation: none; width: 100%; } }
 .improved { display: flex; flex-direction: column; align-items: flex-start; gap: var(--s3); padding: var(--s4); background: var(--info-tint); border-radius: var(--radius); font-weight: 700; }
+
+/* Error screen (components/Fatal.tsx): ink on stone, no hue; the symbol sits beside the words. */
+.fatal-body { display: flex; gap: var(--s3); align-items: flex-start; font-size: var(--fs-body); }
+.fatal-body > svg { flex: none; width: 1.75rem; height: 1.75rem; margin-top: 2px; }
+
+/* About and open licences (screens/About.tsx, lib/markdown.tsx): plain text blocks, no tables (narrow phones, large text). */
+.md { display: flex; flex-direction: column; gap: var(--s3); }
+.md-h { font-size: var(--fs-body); font-weight: 700; line-height: 1.2; margin-top: var(--s3); }
+.md-ul { padding-inline-start: 1.25em; display: flex; flex-direction: column; gap: var(--s2); }
+.md-table { list-style: none; display: flex; flex-direction: column; gap: var(--s3); }
+.md-table > li { background: var(--surface); border-radius: var(--radius); padding: var(--s3) var(--s4); display: flex; flex-direction: column; gap: var(--s1); overflow-wrap: anywhere; }
+.md-row-head { font-weight: 700; }
+.md-k { color: var(--ink-2); }
+.md code, .md-table code { font-family: inherit; font-weight: 700; overflow-wrap: anywhere; }
+.panel .md-table > li { background: var(--ground); }
+.panel > .md-table, .panel > div { align-self: stretch; min-width: 0; }
+.about .screen-body { gap: var(--s4); }
+.notice { background: var(--surface); border-radius: var(--radius); padding: var(--s4); display: flex; flex-direction: column; gap: var(--s2); align-items: flex-start; font-weight: 700; }

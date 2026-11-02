@@ -635,21 +635,34 @@ export function estimateLineHeight(g: GreyImage): number {
 /**
  * Light text on a dark background (dark-mode screenshots). A photographed page is never this dark:
  * cameras expose for the paper, so its median stays well above the median of a dark UI.
+ *
+ * Measured at the working resolution, not on a thumbnail: thin light strokes on a large dark screen are a
+ * fraction of a percent of the pixels, and a 200 px thumbnail averages them away (the reviewer's dark SMS
+ * screenshot: 99.8th percentile 238 at full size, under 130 at 200 px). Conditions: most of the image is
+ * dark (median < 80 and at least half the pixels under 80), and there is a real amount of clearly bright
+ * ink (at least 0.1 % of the pixels above max(130, 2.2 x median)).
  */
 export function isLightOnDark(g: GreyImage): boolean {
-  const s = fitSide(g, 200);
+  const n = g.data.length;
+  if (!n) return false;
   const hist = new Uint32Array(256);
-  for (let i = 0; i < s.data.length; i++) hist[s.data[i]!]!++;
-  const at = (q: number) => {
-    let acc = 0;
-    for (let t = 0; t < 256; t++) {
-      acc += hist[t]!;
-      if (acc >= s.data.length * q) return t;
+  for (let i = 0; i < n; i++) hist[g.data[i]!]!++;
+  let acc = 0;
+  let med = 255;
+  for (let t = 0; t < 256; t++) {
+    acc += hist[t]!;
+    if (acc >= n * 0.5) {
+      med = t;
+      break;
     }
-    return 255;
-  };
-  const med = at(0.5);
-  return med < 80 && at(0.998) > Math.max(130, med * 2.2);
+  }
+  if (med >= 80) return false;
+  let dark = 0;
+  for (let t = 0; t < 80; t++) dark += hist[t]!;
+  const brightFrom = Math.max(130, Math.ceil(med * 2.2));
+  let bright = 0;
+  for (let t = brightFrom; t < 256; t++) bright += hist[t]!;
+  return dark >= n * 0.5 && bright >= n * 0.001;
 }
 
 /* ------------------------------ pipeline ------------------------------ */

@@ -8,15 +8,15 @@ import { Sheet } from '../components/Sheet';
 import { SpeakingButton } from '../components/SpeakingButton';
 import { SECTION_ICON, URGENCY_ICON } from '../components/icons';
 import { navigate } from '../lib/router';
-import { getCard, deleteCard } from '../lib/db';
+import { getCard, deleteCard, putCard, type StoredCard } from '../lib/db';
 import { session } from '../lib/session';
 import { buildIcs, downloadIcs } from '../lib/ics';
 import { isNative, openSystemSettings } from '../lib/native';
 import { cancelReminders, hasReminders, scheduleReminders } from '../lib/reminders';
-import { formatLongDate, formatMoney, formatPhone } from '../lib/format';
+import { formatLongDate, formatMoney, formatPhone, todayIso } from '../lib/format';
 import { senderName } from './Home';
 import { SPEEDS } from '../lib/settings';
-import { rememberMessage } from '../lib/crash';
+import { rememberMessage, rememberNames } from '../lib/crash';
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -28,7 +28,7 @@ interface Source {
 /** Loads a card by id from this session or history, then shows it. */
 export function CardRoute({ id }: { id: string }) {
   const { t } = useApp();
-  const [card, setCard] = useState<Card | undefined | null>(() => session.getCard(id) ?? null);
+  const [card, setCard] = useState<StoredCard | undefined | null>(() => session.getCard(id) ?? null);
   useEffect(() => {
     if (card) return;
     let live = true;
@@ -51,9 +51,12 @@ export function CardRoute({ id }: { id: string }) {
  * when there is one, comes before everything. Sender and subject are a compact header.
  * "No warning signs" is spoken first but shown as a quiet line at the end: it is never a badge.
  */
-export function CardScreen({ card: first, example }: { card: Card; example?: boolean }) {
-  const { engine, settings, t, locale, manifest, refreshHistory, saveCard } = useApp();
+export function CardScreen({ card: first, example }: { card: StoredCard; example?: boolean }) {
+  const { engine, settings, t, locale, manifest, refreshHistory, saveCard, uiLang } = useApp();
   const [card, setCard] = useState(first);
+  /** Set while a reminder keeps this card in history (kept apart from `card` so the card is not rendered again). */
+  const keepUntil = useRef(first.keepUntil);
+  const [notice] = useState(() => session.takeNotice());
   const [checking, setChecking] = useState(false);
   const [improved, setImproved] = useState(false);
   const [views, setViews] = useState<SectionView[] | null>(null);
@@ -61,7 +64,10 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
   const [speedStep, setSpeedStep] = useState<number>(settings.speed);
   const [source, setSource] = useState<Source | null>(null);
   const [helper, setHelper] = useState(false);
-  useEffect(() => rememberMessage(card.input.text, card.input.sender?.value), [card]);
+  useEffect(() => {
+    rememberMessage(card.input.text, card.input.sender?.value);
+    rememberNames(card.input.sender?.value, card.sender.displayName);
+  }, [card]);
   const els = useRef<(HTMLElement | null)[]>([]);
   const last = useRef(0);
   const rate = SPEEDS[speedStep] ?? 1;
@@ -85,7 +91,7 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
       if (!live) return;
       setChecking(false);
       if (better && better.mode === 'full') {
-        const next = { ...better, id: first.id, createdAt: first.createdAt };
+        const next: StoredCard = { ...better, id: first.id, createdAt: first.createdAt, ...(keepUntil.current ? { keepUntil: keepUntil.current } : {}) };
         setCard(next);
         setImproved(true);
         if (!example) await saveCard(next);
@@ -145,7 +151,7 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
   }, [views, facts]);
 
   const native = isNative();
-  type ReminderState = 'unknown' | 'none' | 'set' | 'past' | 'denied' | 'failed';
+  type ReminderState = 'unknown' | 'none' | 'set' | 'past' | 'passed' | 'denied' | 'failed';
   const [reminder, setReminder] = useState<ReminderState>('unknown');
   useEffect(() => {
     if (!native || !card.deadline) return;
@@ -168,7 +174,20 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
         route: example ? '/practice' : undefined,
         channelName: t('app.remind.channel'),
       });
-      setReminder(r.status === 'set' ? 'set' : r.status);
+      if (r.status === 'set') {
+        setReminder('set');
+        // Keep the card (and its history entry) until the reminder, whatever "Keep my messages" says;
+        // otherwise a tapped reminder would open a card that is gone.
+        if (!example) {
+          keepUntil.current = card.deadline.value;
+          const kept: StoredCard = { ...card, keepUntil: keepUntil.current };
+          session.putCard(kept);
+          await putCard(kept);
+          void refreshHistory();
+        }
+      } else if (r.status === 'past') {
+        setReminder(card.deadline.value < todayIso(engine.region.timezone) ? 'passed' : 'past');
+      } else setReminder(r.status);
       return;
     }
     const about = views.find((v) => v.section === 'about')?.text ?? '';
@@ -178,19 +197,31 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
   const unremind = async () => {
     await cancelReminders(card.id);
     setReminder('none');
+    if (keepUntil.current && !example) {
+      keepUntil.current = undefined;
+      const { keepUntil: _drop, ...rest } = card;
+      void _drop;
+      session.putCard(rest);
+      // Not kept any more: with "Do not keep", it goes at the next clean-up; otherwise it ages as usual.
+      if (settings.retention > 0) await putCard(rest);
+      else await deleteCard(card.id);
+      void refreshHistory();
+    }
   };
   const call = () => {
     if (card.contactPhone) location.href = `tel:${card.contactPhone.value}`;
   };
   const remove = async () => {
     engine.stop();
+    // deleteCard cancels the card's reminders too; the session copy goes so the card cannot be reopened.
+    session.dropCard(card.id);
     await deleteCard(card.id);
     await refreshHistory();
     navigate('/', { replace: true });
   };
 
   /** lang attribute only where the text is in another language than the interface (a phrase that fell back). */
-  const langOf = (l: string) => (l && l !== settings.lang ? l : undefined);
+  const langOf = (l: string) => (l && l !== uiLang ? l : undefined);
 
   const fallbackNote = (v: SectionView) => {
     const fb = v.lang !== settings.lang ? manifest(v.lang)?.autonym : undefined;
@@ -245,7 +276,7 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
 
   const renderUrgency = (i: number) => {
     const u = card.understanding.urgency;
-    const Icon = URGENCY_ICON[u];
+    const Icon = URGENCY_ICON[u] ?? URGENCY_ICON.info;
     const v = views![i]!;
     return frame(i, { 'data-urgency': u }, 'sec-urgency', (
       <>
@@ -350,6 +381,7 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
     >
       <article className="card" data-mode={card.mode} data-scam={scamLevel} data-urgency={facts ? undefined : card.understanding.urgency} aria-busy={!views}>
         {example && <p className="badge-line">{t('app.practice.badge')}</p>}
+        {notice && <p className="note" role="status">{t(notice)}</p>}
         {checking && (
           <div className="checking" role="status">
             <span>{t('app.card.checking')}</span>
@@ -380,9 +412,10 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
                     ) : (
                       <SpeakingButton speakKey="ui.remind" variant="secondary" icon={<CalendarPlus size={24} strokeWidth={2} aria-hidden />} onAct={() => void remind()} />
                     )}
-                    {native && (reminder === 'past' || reminder === 'denied' || reminder === 'failed') && (
+                    {native && (reminder === 'past' || reminder === 'passed' || reminder === 'denied' || reminder === 'failed') && (
                       <p className="note" role="status">{t(`app.remind.${reminder}`)}</p>
                     )}
+                    {native && reminder === 'set' && settings.retention === 0 && !example && <p className="note">{t('app.remind.kept')}</p>}
                     {native && reminder === 'denied' && (
                       <SpeakingButton speakKey="app.settings.open" variant="secondary" onAct={() => void openSystemSettings('notifications')} />
                     )}
@@ -464,15 +497,15 @@ export function SourceText({ text, span }: { text: string; span: SourceSpan }) {
 }
 
 function HelperView({ card, views, locale, phoneCc }: { card: Card; views: SectionView[]; locale: string; phoneCc: string }) {
-  const { settings } = useApp();
-  const lg = (l: string) => (l && l !== settings.lang ? l : undefined);
+  const { uiLang } = useApp();
+  const lg = (l: string) => (l && l !== uiLang ? l : undefined);
   const noSigns = card.scam.level === 'no_signs';
   // the quiet "no warning signs" line goes last for a helper too
   const order = noSigns ? [...views.filter((v) => v.section !== 'scam'), ...views.filter((v) => v.section === 'scam')] : views;
   return (
     <div className="helper">
       {order.map((v, i) => {
-        const Icon = v.section === 'urgency' ? URGENCY_ICON[card.understanding.urgency] : SECTION_ICON[v.section];
+        const Icon = (v.section === 'urgency' ? URGENCY_ICON[card.understanding.urgency] : SECTION_ICON[v.section]) ?? SECTION_ICON.about;
         if (v.section === 'urgency' && card.mode === 'facts_only') return null;
         if (v.section === 'scam' && noSigns)
           return (

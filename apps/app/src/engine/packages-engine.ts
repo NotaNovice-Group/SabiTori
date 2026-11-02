@@ -12,7 +12,7 @@
  *   understand.createLlmClassifier / modelStore                -> Engine.model (engine/model.ts), the optional deeper path
  */
 import {
-  CATALOG, PHRASE_KEYS, analyze, buildSpeechPlan, createRulesClassifier,
+  CATALOG, PHRASE_KEYS, analyze, buildSpeechPlan, createRulesClassifier, extractFacts,
   type Card, type Classifier, type LangTag, type MessageInput, type PackManifest, type PhraseKey,
   type ReadingLexicon, type RegionConfig, type SlotValue,
 } from '@sabitori/core';
@@ -56,14 +56,22 @@ export async function createEngine(
   assets?: { fetch: FetchFn; resolveClip: (url: string) => Promise<string | null> } | null,
 ): Promise<Engine> {
   const f = assets?.fetch;
+  const loadRegion = async (code: string) => {
+    const r = await getJson(`${baseUrl}regions/${code}/region.json`, f);
+    if (!isRegionConfig(r)) throw new Error(`regions/${code}/region.json is not a region`);
+    return r;
+  };
   let region: RegionConfig;
   try {
-    region = (await getJson(`${baseUrl}regions/${regionCode}/region.json`, f)) as RegionConfig;
+    region = await loadRegion(regionCode);
   } catch {
-    region = (await getJson(`${baseUrl}regions/CM/region.json`, f)) as RegionConfig;
+    region = await loadRegion('CM');
   }
   const registry = createPackRegistry({ baseUrl: `${baseUrl}packs`, ...(f ? { fetch: f } : {}) });
   const manifests = await registry.list().catch(() => [] as PackManifest[]);
+  // Without one language of the region the app has nothing to show: fail now, so the caller can retry
+  // without downloaded files (or show the error screen), instead of a blank page.
+  if (!manifests.some((m) => m && region.languages.includes(m.tag))) throw new Error('no language pack of the region could be loaded');
   const lexicons: ReadingLexicon[] = [];
   await Promise.all(
     manifests
@@ -72,12 +80,39 @@ export async function createEngine(
         try {
           const lx = (await getJson(`${baseUrl}packs/${m.tag}/reading.json`, f)) as ReadingLexicon;
           if (lx && lx.formatVersion === 1) lexicons.push(lx);
-        } catch {
+          else if (assets) throw new Error(`packs/${m.tag}/reading.json is not a reading lexicon`);
+        } catch (e) {
+          // With downloaded files a broken lexicon must not quietly switch reading off: let the caller retry.
+          if (assets) throw e;
           /* this language cannot be read yet: rules use the others */
         }
       }),
   );
-  return createEngineFrom({ region, registry, lexicons, baseUrl, ...(assets ? { player: createAppPlayer(assets.resolveClip, (u) => getJson(u, assets.fetch)) } : {}) });
+  const list = registry.manifests?.bind(registry);
+  return createEngineFrom({ region, registry, lexicons, baseUrl, player: assets ? createAppPlayer(assets.resolveClip, (u) => getJson(u, assets.fetch), list) : createAppPlayer(undefined, undefined, list) });
+}
+
+function validRegex(src: string): boolean {
+  try {
+    new RegExp(src);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** Enough of a region for the app to run (a signed but malformed file must not get further). */
+export function isRegionConfig(v: unknown): v is RegionConfig {
+  const r = v as Partial<RegionConfig> | null;
+  return (
+    !!r && typeof r === 'object' &&
+    typeof r.code === 'string' && !!r.code &&
+    typeof r.timezone === 'string' &&
+    Array.isArray(r.languages) && r.languages.length > 0 && r.languages.every((t) => typeof t === 'string') &&
+    !!r.phone && typeof r.phone.countryCode === 'string' && typeof r.phone.nationalPattern === 'string' && validRegex(r.phone.nationalPattern) &&
+    !!r.currency && typeof r.currency.code === 'string' && Array.isArray(r.currency.aliases) &&
+    (r.officialSenders === undefined || Array.isArray(r.officialSenders))
+  );
 }
 
 export function createEngineFrom(deps: EngineDeps): Engine {
@@ -103,7 +138,8 @@ export function createEngineFrom(deps: EngineDeps): Engine {
         const chain = [tag, ...fallbackChain(await manifestMap(), tag)];
         for (const t of chain) {
           try {
-            await registry.get(t);
+            // A pack without rules.json (noRules) cannot say numbers, dates or amounts yet: use the next one.
+            if ((await registry.get(t) as { noRules?: boolean }).noRules) continue;
             return t;
           } catch {
             /* try the next */
@@ -285,6 +321,14 @@ export function createEngineFrom(deps: EngineDeps): Engine {
         return null;
       } finally {
         clearTimeout(timer);
+      }
+    },
+    countFacts(text: string) {
+      try {
+        const f = extractFacts(text, { region, lexicons, receivedAt: today() });
+        return f.dates.length + f.amounts.length + f.phones.length;
+      } catch {
+        return 0;
       }
     },
     renderCard,

@@ -124,10 +124,33 @@ phone with relaxed SIMD) and checks SIMD support first, so a WebView without it 
 on a phone without SIMD, photo reading (OCR) stops working; pasted and shared text still works through the rules. To bring that case back, copy
 `tesseract-core-lstm.wasm.js` as well in `vite.config.ts` and choose the file in `ocr.ts` by the same SIMD check (+3.9 MB).
 
+## Review 3: dark-mode detection and the half-turn retry
+
+Dark-mode detection (`isLightOnDark`) now measures the working-size image instead of a 200 px thumbnail, which averaged the thin light strokes
+of a dark SMS screenshot away (a reviewer's screenshot: 99.8th percentile 238 at full size, under 130 at 200 px, so it was never inverted and the
+phone number was lost). The half-turn retry now runs only when the first pass is very unsure (confidence under 40), or unsure (under 55) and found
+fewer than 2 facts. Same 30 pages, one worker at a time (`OCR_BENCH=review3 OCR_PAR=1`); both rows use the new detection:
+
+| Variant | CER % | Fact recall % | Fact precision % | Fact F1 % | Pages with every fact right | Prep ms | OCR ms | Total ms (max) |
+|---|---|---|---|---|---|---|---|---|
+| default fra+eng +retry (every page < 55) | 25.7 | 75.0 | 97.2 | 84.7 | 16/30 | 266 | 3943 | 4209 (12353) |
+| default fra+eng +capped retry (shipped) | 25.7 | 75.0 | 97.2 | 84.7 | 16/30 | 286 | 3543 | 3829 (11763) |
+
+No loss of fact F1 against the rule before (every page under 55); the mean OCR time per page drops because confidently-read facts are no longer re-read
+upside down. The F1 here is 1 point above the "final" table because fact extraction gives fewer false facts on three ENEO pages than when that table was made (same OCR text, no page was inverted differently); compare rows within a table.
+
+The reviewer's SMS screenshots (light, dark with a message bubble, dark without; `OCR_BENCH=screens OCR_BENCH_DIR=screens`), with and without the invert step:
+
+| Variant | CER % | Fact recall % | Fact precision % | Fact F1 % | Pages with every fact right | Prep ms | OCR ms | Total ms (max) |
+|---|---|---|---|---|---|---|---|---|
+| screens: default +capped retry | 0.0 | 100.0 | 100.0 | 100.0 | 3/3 | 329 | 538 | 867 (1001) |
+| screens: no invert step | 1.4 | 83.3 | 100.0 | 90.9 | 2/3 | 291 | 604 | 895 (924) |
+
 ## Chosen defaults
 
-`PREP_DEFAULT`: invert (dark-mode screenshots) on, crop on, illumination normalisation on, sideways detection on, deskew (+-15 deg) on, rescale to 34 px
-text lines (max 3x up, 2000 px longest side) on, Sauvola off. Language fra+eng. Half-turn retry below 55 % confidence.
+`PREP_DEFAULT`: invert (dark-mode screenshots, detected at working size) on, crop on, illumination normalisation on, sideways detection on, deskew (+-15 deg) on, rescale to 34 px
+text lines (max 3x up, 2000 px longest side) on, Sauvola off. Language fra+eng. Half-turn retry below 40 % confidence, or below 55 % when the first
+pass found fewer than 2 facts.
 
 ## Known limits
 

@@ -1,0 +1,5 @@
+[
+  { "id": "sms-light", "file": "sms-light.png", "kind": "momo", "lang": "fr", "severity": 0, "turn": 0, "must": [], "text": "Vous avez reçu 25 000 FCFA de\nJean Paul. Il s'agit d'une erreur,\nmerci de me renvoyer l'argent\nimmédiatement. Appelez-moi vite\nau 650 55 66 77." },
+  { "id": "sms-dark", "file": "sms-dark.png", "kind": "momo", "lang": "fr", "severity": 0, "turn": 0, "must": [], "text": "Vous avez reçu 25 000 FCFA de\nJean Paul. Il s'agit d'une erreur,\nmerci de me renvoyer l'argent\nimmédiatement. Appelez-moi vite\nau 650 55 66 77." },
+  { "id": "sms-dark-nobubble", "file": "sms-dark-nobubble.png", "kind": "momo", "lang": "fr", "severity": 0, "turn": 0, "must": [], "text": "Vous avez reçu 25 000 FCFA de\nJean Paul. Il s'agit d'une erreur,\nmerci de me renvoyer l'argent\nimmédiatement. Appelez-moi vite\nau 650 55 66 77." }
+]

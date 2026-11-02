@@ -1,5 +1,5 @@
 import { config } from '../config';
-import { noteMessageText, scrubEvent } from './scrub';
+import { noteMessageText, noteName, scrubEvent } from './scrub';
 
 declare const __APP_VERSION__: string;
 
@@ -16,6 +16,12 @@ let starting: Promise<void> | null = null;
 export function rememberMessage(...texts: (string | null | undefined)[]): void {
   if (!config.crashReports) return;
   for (const t of texts) noteMessageText(t);
+}
+
+/** Names on screen (a sender typed in, the senders of history rows): a report never contains them either. */
+export function rememberNames(...names: (string | null | undefined)[]): void {
+  if (!config.crashReports) return;
+  for (const n of names) noteName(n);
 }
 
 export const crashReportingActive = (): boolean => sentry !== null;

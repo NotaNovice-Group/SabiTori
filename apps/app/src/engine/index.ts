@@ -1,6 +1,6 @@
 import { createEngine } from './packages-engine';
 import { loadSettings } from '../lib/settings';
-import { connectedAssets } from '../lib/updates';
+import { connectedAssets, quarantineUpdates, verifyDownloadedOnce } from '../lib/updates';
 import type { Engine, PlayOptions, Rendered, RenderedSection } from './types';
 
 let engine: Promise<Engine> | null = null;
@@ -58,9 +58,54 @@ export function withLifecycle(inner: Engine): Engine {
   }) as Engine;
 }
 
+type Assets = Parameters<typeof createEngine>[2];
+export interface StartDeps {
+  create: (baseUrl: string, region: string, assets: Assets) => Promise<Engine>;
+  assets: () => Assets;
+  quarantine: (reason: string) => Promise<void>;
+  /** Re-checks the downloaded files (once per installed update) and sets a damaged set aside before it is used. */
+  verify?: () => Promise<void>;
+  /** How long the start with downloaded files may take before the built-in files are used instead. */
+  timeoutMs?: number;
+}
+
+/**
+ * Start the engine. With the optional update channel, downloaded files are tried first; if they make
+ * the start fail (a malformed region or pack that passed its signature), they are set aside with the
+ * reason and the engine starts again from the built-in files only, so a bad update can never brick the
+ * app. A start that hangs (storage that never answers) falls back to the built-in files for this session.
+ */
+export async function startEngine(baseUrl: string, region: string, deps: StartDeps): Promise<Engine> {
+  const assets = deps.assets();
+  if (assets && deps.verify) {
+    let t: ReturnType<typeof setTimeout> | undefined;
+    await Promise.race([deps.verify().catch(() => undefined), new Promise((r) => { t = setTimeout(r, deps.timeoutMs ?? 10_000); })]);
+    clearTimeout(t);
+  }
+  if (assets) {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<'timeout'>((res) => { timer = setTimeout(() => res('timeout'), deps.timeoutMs ?? 10_000); });
+    try {
+      const r = await Promise.race([deps.create(baseUrl, region, assets), timeout]);
+      if (r !== 'timeout') return r;
+    } catch (e) {
+      await deps.quarantine(String((e as Error)?.message ?? e)).catch(() => undefined);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+  return deps.create(baseUrl, region, null);
+}
+
 /** The one door to @sabitori/core, speech and understand. */
 export function getEngine(): Promise<Engine> {
-  engine ??= createEngine(import.meta.env.BASE_URL, loadSettings().region, connectedAssets()).then(withLifecycle);
+  engine ??= startEngine(import.meta.env.BASE_URL, loadSettings().region, {
+    create: createEngine,
+    assets: connectedAssets,
+    quarantine: quarantineUpdates,
+    verify: verifyDownloadedOnce,
+  }).then(withLifecycle);
+  engine.catch(() => { engine = null; });
   return engine;
 }
 

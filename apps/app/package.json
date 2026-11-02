@@ -21,7 +21,6 @@
     "@capacitor/local-notifications": "^8.3.1",
     "@capacitor/splash-screen": "^8.0.2",
     "@capgo/capacitor-share-target": "^8.0.64",
-    "@fontsource/andika": "^5.3.0",
     "@sabitori/connect": "workspace:*",
     "@sabitori/core": "workspace:*",
     "@sabitori/speech": "workspace:*",

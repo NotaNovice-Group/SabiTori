@@ -23,8 +23,32 @@ export function noteMessageText(text: string | null | undefined): void {
   messages = [t, ...messages.filter((m) => !m.includes(t) && !t.includes(m))].slice(0, KEEP_MESSAGES);
 }
 
+/** Sender names and other short personal words on screen (history rows, the sender box): scrubbed as whole words. */
+const KEEP_NAMES = 100;
+let names: string[] = [];
+
+export function noteName(name: string | null | undefined): void {
+  const n = norm(name ?? '').trim();
+  if (n.length < 2 || !/\p{L}|\d/u.test(n)) return;
+  // typing a name letter by letter replaces its earlier, shorter versions
+  names = [n, ...names.filter((x) => !n.startsWith(x) && !x.startsWith(n))].slice(0, KEEP_NAMES);
+}
+
+const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/** Replace every remembered name (case-insensitive, whole words only, any spacing). */
+export function scrubNames(s: string, list: string[] = names): string {
+  let out = s;
+  for (const n of [...list].sort((a, b) => b.length - a.length)) {
+    const re = new RegExp(`(?<![\\p{L}\\p{N}])${n.split(' ').map(escapeRe).join('\\s+')}(?![\\p{L}\\p{N}])`, 'giu');
+    out = out.replace(re, '[name]');
+  }
+  return out;
+}
+
 export function forgetMessageTexts(): void {
   messages = [];
+  names = [];
 }
 
 export function currentMessageTexts(): string[] {
@@ -95,8 +119,18 @@ export function scrubMessageOverlap(s: string, texts: string[] = messages): stri
 }
 
 /** Scrub one free-text string. */
+/**
+ * Names nobody saw on screen can still reach an error text ("... pour Jean Paul Mbarga"): two or more
+ * capitalised words in a row ("Jean Paul", "Marie-Claire Ngo") are treated as a name. Code identifiers such
+ * as TypeError or NetworkError have an inner capital and are not touched.
+ */
+const NAME_LIKE = /(?<![\p{L}\p{N}])\p{Lu}\p{Ll}+(?:[ \-\u00a0]+\p{Lu}\p{Ll}+)+(?![\p{L}\p{N}])/gu;
+export function scrubNameLike(s: string): string {
+  return s.replace(NAME_LIKE, '[name]');
+}
+
 export function scrubString(s: string, texts: string[] = messages): string {
-  let out = scrubMessageOverlap(s, texts);
+  let out = scrubNameLike(scrubNames(scrubMessageOverlap(s, texts)));
   for (const [re, to] of PATTERNS) out = out.replace(re, to);
   // replacements may have glued or created new runs next to message markers; one more pass is cheap
   return out;
@@ -110,7 +144,7 @@ const str = (v: unknown, max = 200): string | undefined => (typeof v === 'string
 /** Version-like and name-like values (OS, device, release, pack versions): letters, digits, dots, dashes, spaces. */
 const simple = (v: unknown, texts: string[] = messages): string | undefined => {
   const s = str(v, 64);
-  return s && /^[\w .+\-:()/]+$/.test(s) ? scrubMessageOverlap(s, texts) : undefined;
+  return s && /^[\w .+\-:()/]+$/.test(s) ? scrubNames(scrubMessageOverlap(s, texts)) : undefined;
 };
 
 function scrubFrame(f: unknown, texts: string[]): Json | null {
@@ -119,7 +153,7 @@ function scrubFrame(f: unknown, texts: string[]): Json | null {
   for (const k of ['filename', 'function', 'module'] as const) {
     const v = str(f[k], 300);
     // a file name is our own bundle path: keep it readable, still drop message overlaps and long numbers
-    if (v) out[k] = k === 'filename' ? scrubMessageOverlap(v.replace(/^[a-z]+:\/\/[^/]*/i, ''), texts).replace(/\d{3,}/g, '#') : scrubString(v, texts);
+    if (v) out[k] = k === 'filename' ? scrubNames(scrubMessageOverlap(v.replace(/^[a-z]+:\/\/[^/]*/i, ''), texts).replace(/\d{3,}/g, '#')) : scrubString(v, texts);
   }
   for (const k of ['lineno', 'colno'] as const) if (typeof f[k] === 'number') out[k] = f[k];
   if (typeof f.in_app === 'boolean') out.in_app = f.in_app;

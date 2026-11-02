@@ -258,8 +258,9 @@ for (const scheme of SCHEMES) for (const scale of SCALES) {
     console.log(`  ${combo} ${name}: axe ${res.violations.length}`);
   };
 
-  // ---- first run (no settings)
-  await go('#/welcome');
+  // ---- first run (no settings), opened at the bare address with no reload: the language screen must appear by itself
+  await go('');
+  if (!(await page.locator('.welcome').count())) report.manual.push({ combo, state: 'welcome-language', type: 'first-run', target: '', detail: 'first run at "/" did not show the language screen' });
   await audit('welcome-language');
   await page.goto(base + '#/mode'); await page.waitForSelector('h1'); await audit('welcome-mode');
 
@@ -403,8 +404,14 @@ for (const scheme of SCHEMES) for (const scale of SCALES) {
   // text that fell back to another language is marked with that language
   await page.evaluate((s) => localStorage.setItem('sabitori.settings.v1', JSON.stringify({ ...s, lang: 'ewo' })), SEED);
   await go('#/example/eneo'); await page.waitForSelector('.sec');
-  const fb = await page.evaluate(() => ({ notes: document.querySelectorAll('.fallback').length, marked: [...document.querySelectorAll('.card [lang]')].filter((e) => e.getAttribute('lang') !== document.documentElement.lang).length, html: document.documentElement.lang }));
-  ok('fallback text carries its own lang (ewondo card)', fb.notes === 0 || fb.marked > 0, JSON.stringify(fb));
+  // Ewondo has no words of its own yet: the screen is in French, so <html lang> must say fr (not ewo), and no
+  // text may resolve to "ewo" (a screen reader would read French words with an Ewondo voice).
+  const fb = await page.evaluate(() => ({
+    notes: document.querySelectorAll('.fallback').length,
+    html: document.documentElement.lang,
+    ewoText: [...document.querySelectorAll('.card .sec')].filter((e) => (e.closest('[lang]')?.getAttribute('lang') ?? '') === 'ewo').length,
+  }));
+  ok('fallback text carries the language it is really in (ewondo card)', fb.html !== 'ewo' && fb.ewoText === 0, JSON.stringify(fb));
   await page.evaluate((s) => localStorage.setItem('sabitori.settings.v1', JSON.stringify(s)), SEED);
   await go('#/example/eneo'); await page.waitForSelector('.sec');
   // sections: no raw English aria-labels; the lit section is aria-current, with no extra live region speaking over TTS

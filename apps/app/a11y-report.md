@@ -1,6 +1,6 @@
 # Accessibility audit
 
-Generated 2026-11-01T06:11:48.468Z. 163 screen-state runs at 360x780, font scales 100%/150%/200%, light+dark. axe-core tags: wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa, best-practice.
+Generated 2026-11-02T17:33:46.290Z. 163 screen-state runs at 360x780, font scales 100%/150%/200%, light+dark. axe-core tags: wcag2a, wcag2aa, wcag21a, wcag21aa, wcag22aa, best-practice.
 
 ## axe-core
 

@@ -5,6 +5,7 @@ import { Screen } from '../components/Screen';
 import { SpeakingButton } from '../components/SpeakingButton';
 import { Mark } from '../components/Mark';
 import { navigate } from '../lib/router';
+import { session } from '../lib/session';
 
 export function LanguageScreen() {
   const { t } = useApp();
@@ -29,7 +30,8 @@ export function ModeScreen() {
   const { t, setSettings } = useApp();
   const choose = (listenFirst: boolean) => {
     setSettings({ listenFirst, onboarded: true });
-    navigate('/', { replace: true });
+    // A message shared into the app before it was set up opens now.
+    navigate(session.takeResume() ?? '/', { replace: true });
   };
   return (
     <Screen title={t('app.mode.title')} back={() => navigate('/welcome')} className="mode">

@@ -1,5 +1,5 @@
 import { SplashScreen } from '@capacitor/splash-screen';
-import { isNative, forgetSharedFiles, fileFromNativePath } from './native';
+import { isNative, forgetSharedFiles, fileFromNativePath, takeShareNotes } from './native';
 import { listenShares } from './share';
 import { listenReminderTaps } from './reminders';
 import { session } from './session';
@@ -19,6 +19,8 @@ export function startNativeShell(): () => void {
     listenShares({
       setPhoto: (f) => session.setPhoto(f),
       setSharedText: (t) => session.setSharedText(t),
+      setNotice: (k) => session.setNotice(k),
+      notes: () => takeShareNotes(),
       navigate: (p) => navigate(p),
       loadImage: (f) => fileFromNativePath(f.uri, f.name, f.mimeType),
       done: () => void forgetSharedFiles(),
