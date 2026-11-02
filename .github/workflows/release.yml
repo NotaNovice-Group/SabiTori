@@ -31,7 +31,6 @@ jobs:
         with:
           packages: platform-tools platforms;android-36 build-tools;36.0.0
       - uses: gradle/actions/setup-gradle@v4.4.1
-        with:
       - run: pnpm install --frozen-lockfile
       - run: pnpm -r test
       - run: pnpm -r typecheck
