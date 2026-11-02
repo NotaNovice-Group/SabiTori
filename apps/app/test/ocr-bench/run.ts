@@ -1,6 +1,6 @@
 /** Benchmark engine: preprocessing variants x tesseract.js (Node) x fact extraction. */
 import { createCanvas, loadImage } from '@napi-rs/canvas';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createWorker, type Worker } from 'tesseract.js';
 import { extractFacts, type FactsContext, type ReadingLexicon, type RegionConfig } from '@sabitori/core';
@@ -71,6 +71,8 @@ export interface Variant {
   psm?: string;
   /** use the app's low-confidence half-turn retry */
   retry?: boolean;
+  /** directory holding <lang>.traineddata.gz (default: the app's public/ocr) */
+  langPath?: string;
 }
 
 export async function loadRgba(file: string): Promise<{ data: Uint8ClampedArray; width: number; height: number }> {
@@ -123,8 +125,8 @@ export function prepare(rgba: { data: Uint8ClampedArray; width: number; height: 
 
 /* ------------------------------ ocr pool ------------------------------ */
 
-export async function makeWorker(langs: string[], psm?: string): Promise<Worker> {
-  const w = await createWorker(langs, 1, { langPath: LANG_PATH, gzip: true, cacheMethod: 'none' });
+export async function makeWorker(langs: string[], psm?: string, langPath = LANG_PATH): Promise<Worker> {
+  const w = await createWorker(langs, 1, { langPath, gzip: existsSync(resolve(langPath, 'fra.traineddata.gz')), cacheMethod: 'none' });
   if (psm) await w.setParameters({ tessedit_pageseg_mode: psm as never });
   return w;
 }
@@ -172,7 +174,7 @@ export async function runVariant(v: Variant, entries: TruthEntry[], dir: string,
   }
   const results = new Map<string, ImageResult>();
   for (const [k, list] of groups) {
-    const workers = await Promise.all(Array.from({ length: Math.min(parallel, list.length) }, () => makeWorker(k.split('+'), v.psm)));
+    const workers = await Promise.all(Array.from({ length: Math.min(parallel, list.length) }, () => makeWorker(k.split('+'), v.psm, v.langPath)));
     let next = 0;
     await Promise.all(
       workers.map(async (w) => {

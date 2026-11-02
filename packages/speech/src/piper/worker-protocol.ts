@@ -1,7 +1,7 @@
 import type { PiperVoiceSpec } from './engine.js';
 
 export type WorkerRequest =
-  | { id: number; type: 'load'; voice: PiperVoiceSpec; assetBase: string }
+  | { id: number; type: 'load'; voice: PiperVoiceSpec; assetBase: string; ortBase?: string }
   | { id: number; type: 'synth'; voiceId: string; text: string; lengthScale: number }
   | { id: number; type: 'dispose'; voiceId: string };
 

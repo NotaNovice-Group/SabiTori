@@ -65,7 +65,15 @@ export async function loadManifests(packsBase: string, fetchJson?: (url: string)
 }
 
 /** The resolver the app uses: manifests read from `<packsBase>`, re-read until every one of them could be read. */
-export function createPacksVoiceResolver(packsBase: string, fetchJson?: (url: string) => Promise<unknown>): (bcp47: string) => Promise<PiperVoiceSpec | null> {
+export function createPacksVoiceResolver(
+  packsBase: string,
+  fetchJson?: (url: string) => Promise<unknown>,
+  /**
+   * Maps a voice file URL to a local copy when one exists (a voice delivered by the signed update channel,
+   * kept in the update store), else null. The worker then loads that copy instead of the bundled path.
+   */
+  resolveUrl?: (url: string) => Promise<string | null>,
+): (bcp47: string) => Promise<PiperVoiceSpec | null> {
   let done: PackManifest[] | null = null;
   return async (bcp47) => {
     let list = done;
@@ -74,6 +82,13 @@ export function createPacksVoiceResolver(packsBase: string, fetchJson?: (url: st
       list = r.manifests;
       if (r.complete) done = list;
     }
-    return createManifestVoiceResolver(async () => list!, packsBase)(bcp47);
+    const spec = await createManifestVoiceResolver(async () => list!, packsBase)(bcp47);
+    if (!spec || !resolveUrl) return spec;
+    const [model, config] = await Promise.all([
+      resolveUrl(spec.modelUrl).catch(() => null),
+      resolveUrl(spec.configUrl).catch(() => null),
+    ]);
+    // Use the update only when both files arrived; a half-delivered voice keeps the bundled one.
+    return model && config ? { ...spec, modelUrl: model, configUrl: config } : spec;
   };
 }

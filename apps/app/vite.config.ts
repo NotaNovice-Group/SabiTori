@@ -1,7 +1,8 @@
 import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
-import { cpSync, existsSync, mkdirSync, copyFileSync, rmSync, readFileSync, readdirSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, copyFileSync, rmSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { gunzipSync } from 'node:zlib';
 import { spawnSync } from 'node:child_process';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
@@ -12,7 +13,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repo = resolve(here, '../..');
 
 /**
- * Copies the language packs, regions, OCR engine/data and the wllama wasm into
+ * Copies the language packs, regions, OCR engine/data, the shared onnxruntime-web files and the wllama wasm into
  * public/ so the engine fetches everything from the app's own origin, offline.
  * Runs at config time, so dev, build and preview all see the same files.
  */
@@ -30,19 +31,24 @@ function sabitoriAssets(): Plugin {
           cpSync(from, to, { recursive: true, filter: (p) => !p.endsWith('README.md') && !/\.onnx$/.test(p) });
         }
       }
-      // OCR: worker, three LSTM-only cores (the loader picks the best one the phone supports), fra + eng data.
+      // OCR: worker, ONE LSTM-only core (SIMD build; ocr.ts names it explicitly, so the loader never asks for the
+      // non-SIMD or relaxed-SIMD ones), fra + eng data in the integer-quantised "best" format (4.0.0_best_int).
+      // Why these choices: apps/app/test/ocr-bench/RESULTS.md ("Model files" and "Core variants").
       const reqApp = createRequire(resolve(here, 'package.json'));
       const ocr = resolve(pub, 'ocr');
+      rmSync(ocr, { recursive: true, force: true }); // drop files staged by older builds
       mkdirSync(ocr, { recursive: true });
       const tessDist = dirname(reqApp.resolve('tesseract.js/dist/worker.min.js'));
       copyFileSync(resolve(tessDist, 'worker.min.js'), resolve(ocr, 'worker.min.js'));
       const coreDir = dirname(reqApp.resolve('tesseract.js-core/package.json', { paths: [dirname(reqApp.resolve('tesseract.js/package.json'))] }));
-      for (const f of ['tesseract-core-lstm.wasm.js', 'tesseract-core-simd-lstm.wasm.js', 'tesseract-core-relaxedsimd-lstm.wasm.js']) {
+      for (const f of ['tesseract-core-simd-lstm.wasm.js']) {
         copyFileSync(resolve(coreDir, f), resolve(ocr, f));
       }
       for (const lang of ['fra', 'eng']) {
         const pkg = dirname(reqApp.resolve(`@tesseract.js-data/${lang}/package.json`));
-        copyFileSync(resolve(pkg, '4.0.0', `${lang}.traineddata.gz`), resolve(ocr, `${lang}.traineddata.gz`));
+        // Stored un-gzipped on purpose: the Android build (AGP mergeAssets) strips ".gz" from asset names and
+        // un-gzips them, so a "eng.traineddata.gz" would not exist inside the APK. The APK and the web host compress anyway.
+        writeFileSync(resolve(ocr, `${lang}.traineddata`), gunzipSync(readFileSync(resolve(pkg, '4.0.0_best_int', `${lang}.traineddata.gz`))));
       }
       // wllama wasm (understanding model), resolved from the understand package.
       try {
@@ -60,7 +66,8 @@ function sabitoriAssets(): Plugin {
         const reqU = createRequire(resolve(repo, 'packages/understand/package.json'));
         const ortDist = dirname(reqU.resolve('onnxruntime-web/wasm'));
         mkdirSync(resolve(pub, 'ort'), { recursive: true });
-        for (const f of ['ort-wasm-simd-threaded.wasm', 'ort-wasm-simd-threaded.mjs']) copyFileSync(resolve(ortDist, f), resolve(pub, 'ort', f));
+        // One onnxruntime-web (1.22.0, pinned in both packages) and one wasm serve the encoder AND the Piper worker.
+        for (const f of ['ort-wasm-simd-threaded.wasm', 'ort-wasm-simd-threaded.mjs', 'ort.wasm.min.mjs']) copyFileSync(resolve(ortDist, f), resolve(pub, 'ort', f));
         const modelSrc = resolve(repo, 'packages/understand/model/minilm');
         mkdirSync(resolve(pub, 'models/minilm'), { recursive: true });
         for (const f of ['encoder.int8.onnx', 'tokenizer.json', 'heads.json']) copyFileSync(resolve(modelSrc, f), resolve(pub, 'models/minilm', f));
@@ -89,6 +96,7 @@ function sabitoriAssets(): Plugin {
             }
           }
         }
+        rmSync(resolve(pub, 'piper'), { recursive: true, force: true }); // drop files staged by older builds
         if (run('piper-assets.mjs', resolve(pub, 'piper')).status !== 0) console.warn('[sabitori] Piper runtime not staged: the app will use the phone voice');
       } catch (e) {
         console.warn('[sabitori] Piper voices not staged:', e);
@@ -147,7 +155,7 @@ export default defineConfig(({ mode }) => ({
       injectRegister: 'auto',
       includeAssets: ['mark.svg', 'icons/*.png'],
       workbox: {
-        globPatterns: ['**/*.{js,mjs,css,html,svg,png,woff2,json,wasm,gz,webm,m4a,mp3,ogg}', 'models/**/*.onnx', 'piper/*.data'],
+        globPatterns: ['**/*.{js,mjs,css,html,svg,png,woff2,json,wasm,gz,webm,m4a,mp3,ogg}', 'models/**/*.onnx', 'piper/*.data', 'ocr/*.traineddata'],
         maximumFileSizeToCacheInBytes: 40 * 1024 * 1024,
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,

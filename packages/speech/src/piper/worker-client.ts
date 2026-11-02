@@ -12,9 +12,10 @@ export interface WorkerLike {
  * Engines that run in one shared Web Worker (one worker, so the ORT runtime and the espeak-ng
  * phonemizer are loaded once however many voices are used). `createWorker` is the app's
  * `() => new Worker(new URL('.../worker.ts', import.meta.url), { type: 'module' })`.
- * `assetBase` is an absolute URL ending in "/" where the wasm and data files are served.
+ * `assetBase` is an absolute URL ending in "/" where the espeak-ng wasm and data are served; `ortBase` is where the
+ * onnxruntime-web files are (the app shares one copy with the encoder; defaults to `assetBase`).
  */
-export function createWorkerEngines(opts: { createWorker: () => WorkerLike; assetBase: string }): PiperEngineFactory & { terminate(): void } {
+export function createWorkerEngines(opts: { createWorker: () => WorkerLike; assetBase: string; ortBase?: string }): PiperEngineFactory & { terminate(): void } {
   let worker: WorkerLike | null = null;
   let seq = 0;
   const pending = new Map<number, { resolve: (r: WorkerResponse) => void; reject: (e: Error) => void }>();
@@ -60,7 +61,7 @@ export function createWorkerEngines(opts: { createWorker: () => WorkerLike; asse
 
   const factory = ((voice: PiperVoiceSpec): PiperEngine => ({
     async load() {
-      const r = await call((id) => ({ id, type: 'load', voice, assetBase: opts.assetBase }));
+      const r = await call((id) => ({ id, type: 'load', voice, assetBase: opts.assetBase, ortBase: opts.ortBase }));
       if (!r.ok) throw new Error(r.error);
       live.add(voice.id);
     },

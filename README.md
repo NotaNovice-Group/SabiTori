@@ -13,14 +13,16 @@ address ([`docs/updates.md`](docs/updates.md)).
 
 ## How it works
 
-Three small neural models run on the phone for every message, and none of them needs the internet:
+Small neural models run on the phone, and none of them needs the internet: text recognition for photos, an
+understanding model for every message, and a neural voice:
 
 ```
 photo ─► OCR (Tesseract LSTM, French + English) ─┐
 shared text ─────────────────────────────────────┤
                                                  ├─► facts found by code (dates, FCFA, phones, codes)
                                                  ├─► message understood: multilingual MiniLM encoder
-                                                 │   (33M parameters, 36 MB, ~0.2 s on a cheap phone)
+                                                 │   (33M parameters, 36 MB; ~0.25 s per message at 4x CPU throttling,
+                                                 │   phone measurements pending)
                                                  │   with keyword rules as the safety net
                                                  ├─► scam signals checked (code)
                                                  └─► card built; every fact verified against the text
@@ -33,7 +35,7 @@ The model decides what kind of message it is, what the person must do and how ur
 produces a date, an amount or a phone number: code reads those and every one is checked against the
 original text. SabiTori never calls a message safe.
 
-On our evaluation set, the on-device model plus rules gets all three labels right on 70% of held-out
+On our evaluation set, the on-device model plus rules gets all three labels right on about 70% of held-out
 messages, against 44% for keyword rules alone
 ([`packages/understand/eval`](packages/understand/eval)). The set is synthetic for now; real,
 consented messages from the pilot will replace it.
@@ -47,7 +49,8 @@ See [`packs/README.md`](packs/README.md).
 
 | Pack | Status |
 | --- | --- |
-| French, English | Text complete, spoken with the phone's offline voice |
+| French | Text complete, spoken by the bundled Piper neural voice (phone voice as fallback) |
+| English | Text complete, spoken with the phone's offline voice; its Piper voice is delivered by signed update |
 | Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum, Pinyin | Waiting for native speakers to translate and record; speak their fallback language meanwhile |
 
 Add any language with one command (`node scripts/new-language.mjs`). How languages are recorded,

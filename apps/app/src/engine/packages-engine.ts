@@ -77,7 +77,7 @@ export async function createEngine(
         }
       }),
   );
-  return createEngineFrom({ region, registry, lexicons, baseUrl, ...(assets ? { player: createAppPlayer(assets.resolveClip) } : {}) });
+  return createEngineFrom({ region, registry, lexicons, baseUrl, ...(assets ? { player: createAppPlayer(assets.resolveClip, (u) => getJson(u, assets.fetch)) } : {}) });
 }
 
 export function createEngineFrom(deps: EngineDeps): Engine {

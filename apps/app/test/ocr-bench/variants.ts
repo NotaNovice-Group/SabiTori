@@ -40,6 +40,17 @@ export const VARIANT_SETS: Record<string, Variant[]> = {
     { name: 'default eng only', prep: PREP_DEFAULT, langs: ['eng'] },
     { name: 'default by-page lang (oracle)', prep: PREP_DEFAULT, langs: (e) => [e.lang === 'fr' ? 'fra' : 'eng'] },
   ],
+  /**
+   * Traineddata comparison, shipped pipeline (default prep + half-turn retry), fra+eng. The two alternative dirs are
+   * given by env (each holds fra.traineddata.gz and eng.traineddata.gz): OCR_DIR_BEST_INT (the `4.0.0_best_int`
+   * folders of @tesseract.js-data/*) and OCR_DIR_FAST (tessdata_fast, gzipped). The first entry is what public/ocr held
+   * before (the float "best" models, 4.0.0).
+   */
+  models: [
+    { name: 'best float (4.0.0)', prep: PREP_DEFAULT, retry: true, langPath: process.env.OCR_DIR_BEST },
+    { name: 'best_int (4.0.0_best_int)', prep: PREP_DEFAULT, retry: true, langPath: process.env.OCR_DIR_BEST_INT },
+    { name: 'fast (tessdata_fast)', prep: PREP_DEFAULT, retry: true, langPath: process.env.OCR_DIR_FAST },
+  ],
   timing: [
     { name: 'legacy fra+eng', prep: 'legacy' },
     { name: 'default fra+eng +retry', prep: PREP_DEFAULT, retry: true },

@@ -11,19 +11,25 @@ export const OCR_LANGS = ['fra', 'eng'];
 /** Below this mean word confidence (0..100) the page may be upside down: try a half turn too. */
 export const LOW_CONFIDENCE = 55;
 
+/** The one tesseract core the app ships (see vite.config.ts). Relaxed SIMD was measured no faster; no non-SIMD build is shipped. */
+export const OCR_CORE_FILE = 'tesseract-core-simd-lstm.wasm.js';
+/** Smallest module that uses a 128-bit SIMD instruction: WebAssembly.validate() is true only when the WebView supports it (Chrome / WebView 91+). */
+const SIMD_PROBE = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11]);
+
 function ocrBase(): string {
   return new URL(import.meta.env.BASE_URL + 'ocr/', location.href).href;
 }
 
 async function getWorker(): Promise<TessWorker> {
   worker ??= (async () => {
+    if (typeof WebAssembly === 'object' && !WebAssembly.validate(SIMD_PROBE)) throw new Error('OCR needs WebAssembly SIMD (Android System WebView or Chrome 91 or newer)');
     const { createWorker } = await import('tesseract.js');
     const base = ocrBase();
     return createWorker(OCR_LANGS, 1, {
       workerPath: base + 'worker.min.js',
-      corePath: base,
+      corePath: base + OCR_CORE_FILE, // a .js path is used as is: the loader's own SIMD detection (and its other core files) is bypassed
       langPath: base,
-      gzip: true,
+      gzip: false, // the data files are served as plain <lang>.traineddata (see vite.config.ts)
       workerBlobURL: false,
       logger: (m: { status: string; progress: number }) => {
         if (m.status === 'recognizing text') onProgress?.(m.progress);

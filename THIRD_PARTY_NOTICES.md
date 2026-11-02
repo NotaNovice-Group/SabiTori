@@ -1,8 +1,36 @@
 # Third-party notices
 
 SabiTori's own code is MPL-2.0 (`LICENSE`); language packs are under the licence in each manifest.
-This file lists the third-party components that ship inside the app, with their licences. It covers the
-on-device voices (Piper) added so far; add a section here whenever you bundle another component.
+This file lists the third-party components that ship inside the app, with their licences. Add a row here
+whenever you bundle another component.
+
+## Models and engines that run on the phone
+
+| Component | What it does in SabiTori | Licence | Source |
+| --- | --- | --- | --- |
+| `paraphrase-multilingual-MiniLM-L12-v2` (vocabulary pruned to 30k pieces, int8; `packages/understand/model/minilm/`) | Understands every message (kind, action, urgency) | Apache-2.0 | https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 |
+| onnxruntime-web (runs MiniLM and the Piper voices; versions in `packages/understand/package.json` and `packages/speech/package.json`) | Model runtime, WebAssembly, single thread | MIT | https://github.com/microsoft/onnxruntime |
+| `@huggingface/tokenizers` 0.2.0 | Tokenizer for MiniLM | Apache-2.0 | https://github.com/huggingface/tokenizers |
+| tesseract.js 7.0.0 and tesseract.js-core 7.0.0 | Text recognition (OCR) of photos | Apache-2.0 | https://github.com/naptha/tesseract.js |
+| Tesseract LSTM models `eng` and `fra` (packaged as `@tesseract.js-data/eng` and `/fra` 1.0.0, MIT packaging) | OCR language data | Apache-2.0 | https://github.com/tesseract-ocr/tessdata |
+| `@wllama/wllama` 3.8.1, a WebAssembly build of llama.cpp | Runs the optional, side-loaded Qwen model | MIT (llama.cpp: MIT) | https://github.com/ngxson/wllama , https://github.com/ggml-org/llama.cpp |
+| Qwen2.5-1.5B-Instruct (NOT bundled; a person may side-load it) | Optional second opinion on unclear messages | Apache-2.0 | https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct |
+
+## App, fonts and libraries
+
+| Component | Version | Licence | Source |
+| --- | --- | --- | --- |
+| Andika typeface (SIL) via `@fontsource/andika` | 5.3.0 | SIL Open Font License 1.1 | https://software.sil.org/andika/ |
+| lucide-react icons | 1.65.0 | ISC | https://lucide.dev |
+| React, React DOM | 19.3.1 | MIT | https://react.dev |
+| Capacitor core, camera, local notifications, splash screen | 8.x | MIT | https://capacitorjs.com |
+| `@capacitor-community/text-to-speech` | 8.0.2 | MIT | https://github.com/capacitor-community/text-to-speech |
+| `@capgo/capacitor-share-target` | 8.0.64 | MPL-2.0 | https://github.com/Cap-go/capacitor-share-target |
+| `@noble/ed25519` (update signatures) | 3.2.0 | MIT | https://github.com/paulmillr/noble-ed25519 |
+| `@sentry/browser` (only loaded if crash reports are configured and switched on) | 11.10.0 | MIT | https://github.com/getsentry/sentry-javascript |
+
+The full dependency list, with every transitive package and its licence, is in `pnpm-lock.yaml`; run
+`pnpm licenses list --prod` for a report.
 
 ## On-device voices (Piper)
 

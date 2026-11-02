@@ -12,8 +12,8 @@ function mainThreadEngines(assetBase: string) {
   let ortP: Promise<any> | null = null;
   let phonP: Promise<any> | null = null;
   const loadOrt = async () => {
-    const ort: any = await import(/* @vite-ignore */ `${assetBase}ort.wasm.min.mjs`);
-    ort.env.wasm.wasmPaths = assetBase; ort.env.wasm.numThreads = 1; ort.env.wasm.proxy = false;
+    const ort: any = await import(/* @vite-ignore */ `${assetBase}../ort/ort.wasm.min.mjs`);
+    ort.env.wasm.wasmPaths = `${assetBase}../ort/`; ort.env.wasm.numThreads = 1; ort.env.wasm.proxy = false;
     return ort;
   };
   const loadPhon = async () => {
@@ -44,7 +44,7 @@ function make(opts: { realAudio: boolean; mode: string }) {
     play(a: any, p: any) { if (!firstPlayAt) firstPlayAt = performance.now(); return opts.realAudio ? real.play(a, p) : { done: Promise.resolve(), stop() {} }; },
   };
   const tts = createPiperTts({
-    engines: opts.mode === 'main' ? (mainThreadEngines(`${base}piper/`) as any) : createPiperWorkerEngines(`${base}piper/`),
+    engines: opts.mode === 'main' ? (mainThreadEngines(`${base}piper/`) as any) : createPiperWorkerEngines(`${base}piper/`, `${base}ort/`),
     resolveVoice: createManifestVoiceResolver(() => createPackRegistry({ baseUrl: packs }).list(), packs),
     fallback: fakeSystem,
     output,

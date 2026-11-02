@@ -1,8 +1,8 @@
 /**
  * Web Worker entry: runs onnxruntime-web (single thread, so no COOP/COEP is needed) and the espeak-ng
  * phonemizer off the UI thread. The app bundles this file with Vite; everything else it needs is plain
- * static files under `<assetBase>` (see scripts/piper-assets.mjs): the ORT wasm, the trimmed
- * espeak-ng wasm + data. Nothing is fetched from a network origin other than the app's own.
+ * static files: the ORT wasm under `<ortBase>` (one copy shared with the MiniLM encoder, staged by
+ * apps/app/vite.config.ts) and the trimmed espeak-ng wasm + data under `<assetBase>` (scripts/piper-assets.mjs). Nothing is fetched from a network origin other than the app's own.
  */
 import { createPiperRuntime, type LoadedVoice, type OrtLike, type PhonemizerLike } from './runtime.js';
 import type { WorkerRequest, WorkerResponse } from './worker-protocol.js';
@@ -18,6 +18,7 @@ const scope = self as unknown as {
 };
 
 let assetBase = '';
+let ortBase = '';
 const voices = new Map<string, Promise<LoadedVoice>>();
 
 async function fetchBytes(url: string): Promise<Uint8Array> {
@@ -27,8 +28,8 @@ async function fetchBytes(url: string): Promise<Uint8Array> {
 }
 
 async function loadOrt(): Promise<OrtLike> {
-  const ort = (await import(/* @vite-ignore */ `${assetBase}ort.wasm.min.mjs`)) as unknown as OrtLike & { env: { wasm: Record<string, unknown> } };
-  ort.env.wasm.wasmPaths = assetBase;
+  const ort = (await import(/* @vite-ignore */ `${ortBase}ort.wasm.min.mjs`)) as unknown as OrtLike & { env: { wasm: Record<string, unknown> } };
+  ort.env.wasm.wasmPaths = ortBase;
   ort.env.wasm.numThreads = 1; // single thread: works without cross-origin isolation
   ort.env.wasm.proxy = false;
   return ort;
@@ -71,6 +72,7 @@ scope.onmessage = (e) => {
     try {
       if (msg.type === 'load') {
         assetBase = msg.assetBase;
+        ortBase = msg.ortBase ?? msg.assetBase;
         ortP ??= loadOrt();
         const ort = await ortP;
         const rt = createPiperRuntime({ ort, loadPhonemizer: sharedPhonemizer, fetchBytes });

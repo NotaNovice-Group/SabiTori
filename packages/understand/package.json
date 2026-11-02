@@ -17,7 +17,7 @@
     "@huggingface/tokenizers": "^0.2.0",
     "@sabitori/core": "workspace:*",
     "@wllama/wllama": "^3.8.1",
-    "onnxruntime-web": "^1.31.1"
+    "onnxruntime-web": "1.22.0"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

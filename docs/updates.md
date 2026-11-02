@@ -40,9 +40,19 @@ Rules the client enforces (all of them before a single file is kept):
 - `sequence` must not be lower than the installed one (rollback protection). Equal means "up to date".
 - Paths must match `^(packs|regions)/[a-z0-9_.\-/]+$`, contain no `..`, and be one of the files the
   app already reads: `packs/index.json`, `packs/<tag>/{manifest,phrases,rules,reading}.json`,
-  `packs/<tag>/audio/index.json`, `packs/<tag>/audio/<clip>.webm|.m4a`, `regions/<CODE>/region.json`.
+  `packs/<tag>/audio/index.json`, `packs/<tag>/audio/<clip>.webm|.m4a`,
+  `packs/<tag>/voice/<model id>.onnx` and `.onnx.json` (Piper voices), `regions/<CODE>/region.json`.
   Region codes are upper case (`CM`), so that one segment may use A-Z, as the app's own file does.
-- At most 20 MB per file and 300 MB in total (checked from the signed sizes, and again on download).
+- At most 20 MB per file (80 MB for a `voice/*.onnx` model) and 300 MB in total (checked from the
+  signed sizes, and again on download).
+
+### Delivering a voice by update
+
+The app bundles only the voices in `SABITORI_BUNDLE_VOICES` (French by default). To give English its
+Piper voice, or a language its community-trained voice, publish `packs/<tag>/voice/<id>.onnx` and
+`<id>.onnx.json` together with a `manifest.json` whose voice is `{ "kind": "tts", "engine": "piper",
+"voiceHint": "<id>" }`. On the next start the voice engine loads the downloaded copy; until both files
+have arrived, and whenever loading fails, that language keeps the phone's own voice.
 - Every downloaded file must match its signed size and sha256.
 - Downloads go to a staging area. Only when all files verified is the active set switched, in one
   IndexedDB transaction. A failed or partial update leaves the previous set active. A file the

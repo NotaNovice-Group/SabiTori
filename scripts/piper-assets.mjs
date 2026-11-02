@@ -1,7 +1,7 @@
 /**
  * Prepares the static files the on-device Piper runtime loads (packages/speech/src/piper/worker.ts):
  *
- *   <out>/ort.wasm.min.mjs, ort-wasm-simd-threaded.{mjs,wasm}   onnxruntime-web (MIT), single-thread CPU build
+ *   (onnxruntime-web is NOT staged here: the app serves one shared copy under /ort, see apps/app/vite.config.ts)
  *   <out>/piper_phonemize.{mjs,wasm,data}                          espeak-ng + piper-phonemize (GPL-3.0 / MIT)
  *
  * The espeak-ng data from @diffusionstudio/piper-wasm holds a dictionary for about 100 languages
@@ -74,8 +74,6 @@ export function toEsModule(js) {
 
 export function copyPiperRuntime(outDir, { dictionaries = neededDictionaries() } = {}) {
   mkdirSync(outDir, { recursive: true });
-  const ortDist = join(speechModules, 'onnxruntime-web/dist');
-  for (const f of ['ort.wasm.min.mjs', 'ort-wasm-simd-threaded.mjs', 'ort-wasm-simd-threaded.wasm']) copyFileSync(join(ortDist, f), join(outDir, f));
   const pw = join(speechModules, '@diffusionstudio/piper-wasm/build');
   const t = trimEspeakPackage(readFileSync(join(pw, 'piper_phonemize.js'), 'utf8'), readFileSync(join(pw, 'piper_phonemize.data')), dictionaries);
   writeFileSync(join(outDir, 'piper_phonemize.mjs'), toEsModule(t.js));

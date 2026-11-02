@@ -48,13 +48,18 @@ function withOverlay(inner: ClipBackend, resolveClip: (url: string) => Promise<s
 }
 
 /** Piper on top of the system voice, or just the system voice where Piper cannot run (no Worker/WebAssembly/Web Audio). */
-export function createAppTts(system: TtsBackend, opts?: { baseUrl?: string; piper?: boolean }): TtsBackend {
+export function createAppTts(
+  system: TtsBackend,
+  opts?: { baseUrl?: string; piper?: boolean; resolveUrl?: (url: string) => Promise<string | null>; fetchJson?: (url: string) => Promise<unknown> },
+): TtsBackend {
   if (!(opts?.piper ?? piperSupported())) return system;
   const base = new URL(opts?.baseUrl ?? import.meta.env.BASE_URL, globalThis.document?.baseURI ?? globalThis.location?.href).href;
   const packs = `${base}packs`;
   const tts = createPiperTts({
-    engines: createPiperWorkerEngines(`${base}piper/`),
-    resolveVoice: createPacksVoiceResolver(packs),
+    engines: createPiperWorkerEngines(`${base}piper/`, `${base}ort/`),
+    // Voices delivered by the signed update channel (an English voice, or a community-trained one) are
+    // read from the update store; manifests too, so an update can switch a language to its new voice.
+    resolveVoice: createPacksVoiceResolver(packs, opts?.fetchJson, opts?.resolveUrl),
     fallback: system,
   });
   // Load the voice of the phone's language while the person looks at the card, so the first sentence
@@ -64,8 +69,15 @@ export function createAppTts(system: TtsBackend, opts?: { baseUrl?: string; pipe
   return tts;
 }
 
-export function createAppPlayer(resolveClip?: (url: string) => Promise<string | null>): Player {
+export function createAppPlayer(
+  resolveClip?: (url: string) => Promise<string | null>,
+  fetchJson?: (url: string) => Promise<unknown>,
+): Player {
   const native = Capacitor.isNativePlatform();
   const clips = resolveClip ? withOverlay(createBrowserClips(), resolveClip) : createBrowserClips();
-  return createPlayer({ tts: createAppTts(native ? createNativeTts() : createBrowserTts()), clips });
+  const tts = createAppTts(native ? createNativeTts() : createBrowserTts(), {
+    ...(resolveClip ? { resolveUrl: resolveClip } : {}),
+    ...(fetchJson ? { fetchJson } : {}),
+  });
+  return createPlayer({ tts, clips });
 }

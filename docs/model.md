@@ -24,7 +24,7 @@ text -> tokenizer.json (Unigram, pure JS) -> encoder.int8.onnx (mean pooled, 384
 - Combination: thresholds per field (kind 0.85, action 0.55, urgency 0.65) are stored in `heads.json` and were picked on the train split only. Confidence is the lowest confidence among the sources used, capped at 0.95. Below that the rules answer. Any error (files missing, runtime fails) also gives the rules' answer. The encoder cannot create a fact.
 - App: `apps/app/src/engine/encoder.ts` loads it once, lazily, when the app calls `engine.model.init()` after first paint (about 1.2 s after start); until it is ready `Engine.analyze` uses rules. `Engine.analyzeDeeper` and the optional LLM are unchanged. Settings shows "Understanding model: built in (MiniLM, 118M)" and its status.
 - Assets (copied by `apps/app/vite.config.ts` into `public/`, all precached by the PWA service worker):
-  `models/minilm/{encoder.int8.onnx,tokenizer.json,heads.json}` and `ort/ort-wasm-simd-threaded.{wasm,mjs}` (onnxruntime-web, 14.8 MB wasm). A vite plugin maps `onnxruntime-web/wasm` to its "extern wasm" build so the wasm is not bundled twice. The app passes an absolute `wasmBaseUrl` (the runtime imports its loader from there).
+  `models/minilm/{encoder.int8.onnx,tokenizer.json,heads.json}` and `ort/ort-wasm-simd-threaded.{wasm,mjs}` (onnxruntime-web 1.22.0, 11.2 MB wasm, shared with the Piper voices). A vite plugin maps `onnxruntime-web/wasm` to its "extern wasm" build so the wasm is not bundled twice. The app passes an absolute `wasmBaseUrl` (the runtime imports its loader from there).
   Added to the APK: about 50 MB uncompressed (35.6 MB model + 14.9 MB runtime).
 - Node (tests, eval): the same code runs with onnxruntime-web's Node entry; pass `readFile` to read the files from disk.
 

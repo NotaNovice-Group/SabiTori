@@ -62,6 +62,43 @@ ${table(timing)}
 Phone CPUs are typically 3 to 6 times slower for WASM Tesseract, so expect roughly 10 to 20 s on a cheap phone; pre-processing (about 0.25 s here) is not the bottleneck.
 Pages that read confidently take one pass (~2 s); the 180-degree retry doubles the time only for pages that came back with low confidence.
 
+## Model files and core variants (app size)
+
+Same 30 pages, shipped pipeline (default prep + half-turn retry), fra+eng, 3 parallel workers. Only the traineddata differs
+(\`OCR_BENCH=models\`, see \`variants.ts\` for the env vars that point at each folder):
+
+${table(load('models'))}
+
+| Traineddata (fra + eng, gzip) | Size | Fact F1 vs \`best float\` |
+|---|---|---|
+| best float, \`@tesseract.js-data/*/4.0.0\` (what the app shipped: tessdata_best) | 17.2 MB | 0 |
+| **best_int, \`@tesseract.js-data/*/4.0.0_best_int\` (integer-quantised tessdata_best) -- shipped now** | **3.7 MB** | **0.0 points** (same recall, precision and CER to 0.1; 15 of 30 pages read byte-identical, the rest differ by a character or two) |
+| fast, tessdata_fast (Apache-2.0) | 2.6 MB | -1.9 points (recall 75.0 to 72.1) |
+
+The rule was: switch only if fact F1 drops by 1 point or less. \`fast\` loses 1.9, so it is **not** used. \`best_int\` loses nothing on this set, is
+already inside the \`@tesseract.js-data/*\` packages the app depends on (no new dependency, no download step), and saves 13.5 MB, so the app ships it
+(\`apps/app/vite.config.ts\` copies \`4.0.0_best_int/<lang>.traineddata.gz\`). Same OCR time or slightly less (4.4 s vs 5.3 s per page here). The set is
+synthetic and small (30 pages), so re-run the \`models\` set if the page set changes.
+
+**Tesseract core variants.** tesseract.js picks one of three LSTM-only cores at run time (non-SIMD, SIMD, relaxed SIMD, 3.9 MB each). Measured in Node 22, five of
+the benchmark photos, fra+eng, best_int, one worker:
+
+| Core | Time for 5 pages |
+|---|---|
+| relaxed SIMD | 4.8 s |
+| SIMD | 4.8 s (4.9 s on a second run) |
+| no SIMD | 15.5 s (14.9 s on a second run) |
+
+Relaxed SIMD is not faster for this model, so it is not shipped. The non-SIMD core is 3x slower and is only needed by an Android System WebView older than 91
+(May 2021), which lacks WebAssembly SIMD. Decision: **ship only \`tesseract-core-simd-lstm.wasm.js\`.** Reasons: the app's onnxruntime-web build (encoder and Piper) already needs WebAssembly SIMD, so
+on such an old WebView the app is degraded anyway (rules instead of the encoder, phone voice instead of Piper); Android System WebView is updated through Google Play, and
+the 3.9 MB is paid by every user to cover a shrinking minority. The minSdk is 24 and no minimum WebView version is enforced by the app, so this is a judgement, not a
+guarantee. \`ocr.ts\` names
+the SIMD core explicitly (a \`.js\` \`corePath\` bypasses the loader's own detection, which would otherwise ask for a file that is no longer there on a
+phone with relaxed SIMD) and checks SIMD support first, so a WebView without it gets a clear error instead of a failed download. Cost of the decision:
+on a phone without SIMD, photo reading (OCR) stops working; pasted and shared text still works through the rules. To bring that case back, copy
+\`tesseract-core-lstm.wasm.js\` as well in \`vite.config.ts\` and choose the file in \`ocr.ts\` by the same SIMD check (+3.9 MB).
+
 ## Chosen defaults
 
 \`PREP_DEFAULT\`: invert (dark-mode screenshots) on, crop on, illumination normalisation on, sideways detection on, deskew (+-15 deg) on, rescale to 34 px
