@@ -1,6 +1,6 @@
 # Fiche Google Play (français)
 
-Statut : brouillon. Les éléments marqués [TO CONFIRM] doivent être réglés avant l'envoi dans la Play Console.
+Statut : brouillon. Les éléments marqués [OWNER : ...] doivent être renseignés avant l'envoi dans la Play Console.
 
 ## Nom de l'application (30 caractères maximum)
 
@@ -12,7 +12,7 @@ Statut : brouillon. Les éléments marqués [TO CONFIRM] doivent être réglés 
 
 Longueur : 70 caractères (comptés).
 
-## Description complète (4000 caractères maximum, 2 693 caractères comptés)
+## Description complète (4000 caractères maximum, 2 783 caractères comptés)
 
 ```
 SabiTori explique les messages officiels à voix haute, dans votre langue.
@@ -36,7 +36,7 @@ Vos photos et le texte de vos messages ne quittent jamais votre téléphone. Sab
 
 LANGUES
 Le français et l'anglais sont disponibles aujourd'hui. Le pidgin camerounais, le duala, l'ewondo, le fulfulde de l'Adamaoua, le lamnso', le limbum et le pinyin sont en cours d'enregistrement avec des locuteurs natifs. Ils seront ajoutés par mise à jour, dès qu'ils seront prêts.
-[TO CONFIRM : supprimez cette ligne avant publication si la relecture du français décrite dans docs/release.md n'est pas terminée.]
+[OWNER : état de la relecture du français. Supprimez cette ligne avant publication si la relecture décrite dans docs/release.md n'est pas terminée.]
 
 LA VOIX EST CELLE DE VOTRE TÉLÉPHONE
 SabiTori parle avec la voix hors ligne de votre téléphone. Vous pouvez changer la vitesse de lecture. Les alertes arnaque passent en premier.
@@ -52,14 +52,14 @@ Vous activez chacune d'elles dans les Paramètres. La politique de confidentiali
 CE QUE SABITORI NE FAIT PAS
 SabiTori explique un message. Il ne remplace ni l'organisme qui l'a envoyé, ni un médecin, ni un avocat. Il ne dit jamais qu'un message est sûr. En cas de doute, ne payez pas, et appelez le numéro officiel de l'organisme, indiqué sur son propre site.
 
-POLITIQUE DE CONFIDENTIALITÉ : [PRIVACY POLICY URL]
-CONTACT : [CONTACT EMAIL]
-Publié par NotaNovice Group, [LEGAL NAME].
+POLITIQUE DE CONFIDENTIALITÉ : [OWNER : adresse publique de la politique de confidentialité]
+CONTACT : [OWNER : adresse e-mail de contact]
+Publié par NotaNovice Group, [OWNER : raison sociale].
 ```
 
 ## Catégorie suggérée
 
-Outils (principale). [TO CONFIRM : catégorie dans la Play Console au moment de l'envoi.]
+Outils (principale). [OWNER : catégorie dans la Play Console au moment de l'envoi.]
 
 ## Notes pour le classement du contenu
 
@@ -67,13 +67,13 @@ Répondez au questionnaire IARC dans la Play Console. Réponses attendues, d'apr
 
 - Pas de violence, pas de contenu sexuel, pas de grossièretés, pas de drogue ni de jeux d'argent.
 - Pas de contenu créé par les utilisateurs, et aucun moyen pour eux de se parler.
-- Pas de partage de position. Pas d'achats intégrés. [TO CONFIRM : aucun code de paiement n'existe dans le dépôt.]
+- Pas de partage de position. Pas d'achats intégrés (l'application n'a ni code de paiement ni autorisation de facturation).
 - Pas de publicité.
-- Les alertes arnaque décrivent des arnaques. [TO CONFIRM : le questionnaire peut demander si le contenu traite des arnaques financières.]
+- Les alertes arnaque décrivent des arnaques. [OWNER : réponse du questionnaire de classement sur le contenu qui traite des arnaques financières.]
 
-Classement attendu : Tout public (IARC). [TO CONFIRM : le classement renvoyé par le questionnaire.]
+Classement attendu : Tout public (IARC). [OWNER : résultat du questionnaire de classement.]
 
-Public cible : adultes et jeunes. Ne déclarez pas l'application comme destinée aux enfants. [TO CONFIRM : choix final du public cible.]
+Public cible : adultes et jeunes. Ne déclarez pas l'application comme destinée aux enfants. [OWNER : choix final du public cible et politique d'âge.]
 
 Accès à l'application : aucune connexion n'est nécessaire. Déclarez qu'aucun accès restreint n'est requis.
 
@@ -103,6 +103,6 @@ Gardez un texte court et lisible. N'ajoutez ni cadre de téléphone, ni promesse
 
 ## Autres champs de la fiche
 
-- Site web : [TO CONFIRM : site du produit, s'il existe]
-- E-mail : [CONTACT EMAIL]
-- Politique de confidentialité : [PRIVACY POLICY URL]. Publiez docs/privacy.md et docs/privacy.fr.md à une adresse publique (par exemple GitHub Pages).
+- Site web : [OWNER : site du produit, s'il existe]
+- E-mail : [OWNER : adresse e-mail de contact]
+- Politique de confidentialité : [OWNER : adresse publique de la politique de confidentialité]. Publiez docs/privacy.md et docs/privacy.fr.md à une adresse publique (par exemple GitHub Pages).

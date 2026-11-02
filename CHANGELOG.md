@@ -29,11 +29,11 @@ First public release on Google Play.
 
 - No accounts, no ads, no analytics and no sale of data.
 - Messages and photos never leave the phone.
-- Android permissions: internet access (only for the two optional features), camera (only when the person taps the camera button) and notifications (only when the person taps "Remind me").
+- Android permissions: internet access (only for the two optional features), camera (only when the person taps the camera button), notifications (only when the person taps "Remind me"), and two that come with the notification component so that reminders survive a restart: receive boot completed and wake lock.
 - HTTPS only. Cleartext traffic is not allowed.
 - Privacy policy in English and French: `docs/privacy.md` and `docs/privacy.fr.md`.
 
 ### Notes
 
-- French and English texts are complete. The French text is awaiting review by a native speaker. [TO CONFIRM: before release.]
-- Some official sender names and help numbers are still being verified. [TO CONFIRM: remove this note once every entry in `regions/CM/region.json` is verified.]
+- French and English texts are complete. The French text is awaiting review by a native speaker. [OWNER: French review status; resolve before release.]
+- Some official sender names and help numbers are still being verified. [OWNER: official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.]

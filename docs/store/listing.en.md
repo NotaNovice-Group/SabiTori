@@ -1,6 +1,6 @@
 # Google Play listing (English)
 
-Status: draft. Items marked [TO CONFIRM] must be settled before the Play Console submission.
+Status: draft. Items marked [OWNER: ...] must be filled in before the Play Console submission.
 
 ## App name (max 30 characters)
 
@@ -36,7 +36,7 @@ Your photos and the text of your messages never leave your phone. SabiTori has n
 
 LANGUAGES
 French and English are available now. Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum and Pinyin are being recorded with native speakers. They will be added as updates when they are ready.
-[TO CONFIRM: remove this line before publication if the French review in docs/release.md is not finished.]
+[OWNER: French review status. Remove this line before publication if the French review in docs/release.md is not finished.]
 
 THE VOICE IS YOUR PHONE'S OWN
 SabiTori speaks with the offline voice of your phone. You can change the speaking speed. Scam warnings come first.
@@ -52,16 +52,16 @@ You switch each one on in Settings. The privacy policy says exactly what is sent
 WHAT SABITORI DOES NOT DO
 SabiTori explains a message. It does not replace the office that sent it, a doctor or a lawyer. It never says that a message is safe. If you are not sure, do not pay, and call the official number of the organisation, found on its own website.
 
-PRIVACY POLICY: [PRIVACY POLICY URL]
-CONTACT: [CONTACT EMAIL]
-Published by NotaNovice Group, [LEGAL NAME].
+PRIVACY POLICY: [OWNER: public URL of the privacy policy]
+CONTACT: [OWNER: contact email]
+Published by NotaNovice Group, [OWNER: legal name].
 ```
 
-Character count of the full description above: 2,179 characters (limit 4000, counted with a script on the text between the fences). Recount after any edit.
+Character count of the full description above: 2,231 characters (limit 4000, counted with a script on the text between the fences). Recount after any edit.
 
 ## Suggested category
 
-Tools (primary). [TO CONFIRM: Play Console category at submission.]
+Tools (primary). [OWNER: Play Console category at submission.]
 
 ## Content rating notes
 
@@ -69,13 +69,13 @@ Answer the IARC questionnaire in the Play Console. Expected answers, based on th
 
 - No violence, no sexual content, no profanity, no drugs or gambling content.
 - No user-generated content and no way for users to talk to each other.
-- No location sharing. No in-app purchases. [TO CONFIRM: no billing code exists in the repository.]
+- No location sharing. No in-app purchases (the app has no billing code or billing permission).
 - No ads.
-- Scam warnings describe scams. [TO CONFIRM: the questionnaire may ask about content that discusses financial scams.]
+- Scam warnings describe scams. [OWNER: content-rating questionnaire answer about content that discusses financial scams.]
 
-Expected rating: Everyone (IARC). [TO CONFIRM: the rating the questionnaire returns.]
+Expected rating: Everyone (IARC). [OWNER: content-rating questionnaire result.]
 
-Target audience: adults and young people. Do not mark the app as designed for children. [TO CONFIRM: final target-audience choice.]
+Target audience: adults and young people. Do not mark the app as designed for children. [OWNER: final target audience and age policy.]
 
 App access: the app needs no login. Declare that no restricted access is needed.
 
@@ -105,6 +105,6 @@ Keep the text short and large. Do not add a phone frame or claims that are not i
 
 ## Other listing fields
 
-- Website: [TO CONFIRM: product website, if any]
-- Email: [CONTACT EMAIL]
-- Privacy policy: [PRIVACY POLICY URL]. Host docs/privacy.md and docs/privacy.fr.md at a public address (for example GitHub Pages).
+- Website: [OWNER: product website, if any]
+- Email: [OWNER: contact email]
+- Privacy policy: [OWNER: public URL of the privacy policy]. Host docs/privacy.md and docs/privacy.fr.md at a public address (for example GitHub Pages).

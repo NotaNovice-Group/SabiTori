@@ -87,5 +87,7 @@ modelStore: { has(): Promise<boolean>; save(file: Blob): Promise<void>; load(): 
 - Two OPTIONAL network features exist, both off by default, both absent unless the build was configured
   (apps/app/.env.example): signed updates (`packages/connect`, docs/updates.md: GET of files named in a
   signed index, nothing else) and scrubbed crash reports (apps/app/src/lib/scrub.ts). The Android app
-  has the INTERNET permission only for these, HTTPS only, and a CSP limits `connect-src`.
+  uses the INTERNET permission only for these, HTTPS only, and a CSP limits `connect-src`. Other Android
+  permissions: CAMERA (photos of papers), POST_NOTIFICATIONS (reminders), and RECEIVE_BOOT_COMPLETED +
+  WAKE_LOCK from the local-notifications plugin so reminders survive a restart.
 - Tests: vitest, next to each package in `test/`.
