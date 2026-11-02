@@ -20,21 +20,24 @@ export function LanguageList({ onPick }: { onPick?: (tag: string) => void }) {
     onPick?.(m.tag);
   };
   return (
-    <ul className="langs" role="radiogroup" aria-label={t('ui.language')}>
+    <div role="radiogroup" aria-label={t('ui.language')}>
+    <ul className="langs">
       {languages.map((m) => {
         const chosen = settings.lang === m.tag;
         const soon = m.status === 'in_recording' || m.status === 'planned';
         const meanwhile = soon ? manifest(m.fallback[0] ?? 'fr')?.autonym : undefined;
         const fr = frenchName(m.tag);
-        const names = [m.name, fr && fr !== m.name ? fr : undefined].filter(Boolean).join(' · ');
         return (
           <li key={m.tag} className="lang" data-chosen={chosen || undefined}>
-            <button type="button" className="lang-pick" role="radio" aria-checked={chosen} onClick={() => pick(m)} lang={m.tag}>
+            <button type="button" className="lang-pick" role="radio" aria-checked={chosen} onClick={() => pick(m)}>
               <span className="lang-head">
-                <span className="lang-autonym">{m.autonym}</span>
+                <span className="lang-autonym" lang={m.tag}>{m.autonym}</span>
                 <span className="lang-check" aria-hidden>{chosen && <Check size={28} strokeWidth={2.5} />}</span>
               </span>
-              <span className="lang-names">{names}</span>
+              <span className="lang-names">
+                <span lang="en">{m.name}</span>
+                {fr && fr !== m.name && <> · <span lang="fr">{fr}</span></>}
+              </span>
               {soon && <span className="lang-note">{t('app.lang.soon', { name: meanwhile ?? 'Français' })}</span>}
             </button>
             <button type="button" className="btn btn-round lang-play" aria-label={`${t('ui.listen')}: ${m.autonym}`} onClick={() => say('ui.welcome', undefined, m.tag)}>
@@ -44,5 +47,6 @@ export function LanguageList({ onPick }: { onPick?: (tag: string) => void }) {
         );
       })}
     </ul>
+    </div>
   );
 }

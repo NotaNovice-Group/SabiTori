@@ -1,22 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <!-- The app after the splash. Bars are the ground colour (API < 35) or transparent over the page
+         (API 35+, edge-to-edge); Capacitor's SystemBars plugin sets the icon contrast from the system theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/sabitori_ground</item>
+        <item name="android:statusBarColor">@color/sabitori_ground</item>
+        <item name="android:navigationBarColor">@color/sabitori_ground</item>
+        <item name="colorPrimary">@color/sabitori_ink</item>
+        <item name="colorPrimaryDark">@color/sabitori_ground</item>
+        <item name="colorAccent">@color/sabitori_ink</item>
     </style>
 
-    <style name="AppTheme.NoActionBar" parent="Theme.AppCompat.DayNight.NoActionBar">
+    <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="android:background">@null</item>
     </style>
 
-
+    <!-- Calm splash: the mark centred on the ground colour (dark in dark mode). -->
     <style name="AppTheme.NoActionBarLaunch" parent="Theme.SplashScreen">
-        <item name="android:background">@drawable/splash</item>
+        <item name="windowSplashScreenBackground">@color/sabitori_ground</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon</item>
+        <item name="postSplashScreenTheme">@style/AppTheme.NoActionBar</item>
+        <item name="android:statusBarColor">@color/sabitori_ground</item>
+        <item name="android:navigationBarColor">@color/sabitori_ground</item>
     </style>
 </resources>

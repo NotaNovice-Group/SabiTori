@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/sabitori_ground</item>
+        <item name="android:statusBarColor">@color/sabitori_ground</item>
+        <item name="android:navigationBarColor">@color/sabitori_ground</item>
+        <item name="android:enforceNavigationBarContrast">false</item>
+        <item name="android:enforceStatusBarContrast">false</item>
+        <item name="colorPrimary">@color/sabitori_ink</item>
+        <item name="colorPrimaryDark">@color/sabitori_ground</item>
+        <item name="colorAccent">@color/sabitori_ink</item>
+    </style>
+</resources>

@@ -16,7 +16,11 @@ interface Props {
   above?: ReactNode;
 }
 
-/** One screen: back button, h1 that takes focus on arrival, scrolling content, optional bottom dock. */
+/**
+ * One screen: back button, h1 that takes focus on arrival (so a screen reader starts at the new title after
+ * every route change), scrolling content, optional bottom dock. The whole screen is the one <main> landmark,
+ * dock included, so nothing sits outside a landmark.
+ */
 export function Screen({ title, back, right, children, dock, className, quietTitle, above }: Props) {
   const h1 = useRef<HTMLHeadingElement>(null);
   const { t } = useApp();
@@ -26,18 +30,23 @@ export function Screen({ title, back, right, children, dock, className, quietTit
     const d = dockEl.current;
     const r = root.current;
     if (!d || !r) return;
-    const set = () => r.style.setProperty('--dock-pad', `${d.offsetHeight + 16}px`);
+    const set = () => {
+      r.style.setProperty('--dock-pad', `${d.offsetHeight + 16}px`);
+      // at a large text size the dock can fill most of the screen: then it scrolls with the page instead of sticking
+      d.toggleAttribute('data-tall', d.offsetHeight > window.innerHeight * 0.4);
+    };
     set();
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(set) : null;
     ro?.observe(d);
-    return () => ro?.disconnect();
+    window.addEventListener('resize', set);
+    return () => { ro?.disconnect(); window.removeEventListener('resize', set); };
   }, [dock]);
   useEffect(() => {
     h1.current?.focus({ preventScroll: true });
     window.scrollTo(0, 0);
   }, []);
   return (
-    <div ref={root} className={`screen${dock ? ' has-dock' : ''}${className ? ' ' + className : ''}`}>
+    <main ref={root} className={`screen${dock ? ' has-dock' : ''}${className ? ' ' + className : ''}`}>
       {above}
       <header className="topbar">
         {back && (
@@ -48,12 +57,12 @@ export function Screen({ title, back, right, children, dock, className, quietTit
         </h1>
         {right && <div className="topbar-right">{right}</div>}
       </header>
-      <main className="screen-body">{children}</main>
+      <div className="screen-body">{children}</div>
       {dock && (
         <div className="dock" ref={dockEl}>
           <div className="dock-inner">{dock}</div>
         </div>
       )}
-    </div>
+    </main>
   );
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DESIGN.md: ground and ink. Dark values are in values-night. -->
+<resources>
+    <color name="sabitori_ground">#EEF0EC</color>
+    <color name="sabitori_ink">#121A16</color>
+    <color name="ic_launcher_background">#EEF0EC</color>
+</resources>

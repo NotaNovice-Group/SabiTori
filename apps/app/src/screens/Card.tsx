@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CalendarPlus, Phone, RotateCcw, Play, Square, Turtle, Eye, Search, Trash2, Shield, ShieldAlert } from 'lucide-react';
+import { CalendarPlus, CalendarCheck, Phone, RotateCcw, Play, Square, Turtle, Eye, Search, Trash2, Shield, ShieldAlert } from 'lucide-react';
 import type { Card, SourceSpan } from '@sabitori/core';
 import { useApp } from '../app-context';
 import type { SectionView } from '../engine';
@@ -11,6 +11,8 @@ import { navigate } from '../lib/router';
 import { getCard, deleteCard } from '../lib/db';
 import { session } from '../lib/session';
 import { buildIcs, downloadIcs } from '../lib/ics';
+import { isNative, openSystemSettings } from '../lib/native';
+import { cancelReminders, hasReminders, scheduleReminders } from '../lib/reminders';
 import { formatLongDate, formatMoney, formatPhone } from '../lib/format';
 import { senderName } from './Home';
 import { SPEEDS } from '../lib/settings';
@@ -142,11 +144,40 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
     return { scam, head, lead, urgency, help };
   }, [views, facts]);
 
-  const remind = () => {
+  const native = isNative();
+  type ReminderState = 'unknown' | 'none' | 'set' | 'past' | 'denied' | 'failed';
+  const [reminder, setReminder] = useState<ReminderState>('unknown');
+  useEffect(() => {
+    if (!native || !card.deadline) return;
+    let live = true;
+    void hasReminders(card.id).then((on) => live && setReminder(on ? 'set' : 'none'));
+    return () => { live = false; };
+  }, [native, card.id, card.deadline]);
+
+  const remind = async () => {
     if (!card.deadline || !views) return;
+    if (native) {
+      // Title: the sender, or "SabiTori". Body: the card's action and date, as already rendered in the person's language.
+      const who = card.sender.displayName ?? card.input.sender?.value;
+      const body = ['action', 'deadline'].map((s) => views.find((v) => v.section === s)?.text ?? '').filter(Boolean).join(' ');
+      const r = await scheduleReminders({
+        cardId: card.id,
+        deadline: card.deadline.value,
+        title: who || 'SabiTori',
+        body: body || t('ui.remind'),
+        route: example ? '/practice' : undefined,
+        channelName: t('app.remind.channel'),
+      });
+      setReminder(r.status === 'set' ? 'set' : r.status);
+      return;
+    }
     const about = views.find((v) => v.section === 'about')?.text ?? '';
     const deadlineText = views.find((v) => v.section === 'deadline')?.text ?? '';
     downloadIcs('sabitori-reminder.ics', buildIcs({ uid: card.id, date: card.deadline.value, title: `${name}. ${about}`.trim(), description: `${deadlineText}\n${card.input.text}` }));
+  };
+  const unremind = async () => {
+    await cancelReminders(card.id);
+    setReminder('none');
   };
   const call = () => {
     if (card.contactPhone) location.href = `tel:${card.contactPhone.value}`;
@@ -158,6 +189,9 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
     navigate('/', { replace: true });
   };
 
+  /** lang attribute only where the text is in another language than the interface (a phrase that fell back). */
+  const langOf = (l: string) => (l && l !== settings.lang ? l : undefined);
+
   const fallbackNote = (v: SectionView) => {
     const fb = v.lang !== settings.lang ? manifest(v.lang)?.autonym : undefined;
     return fb ? <p className="fallback">{t('app.card.fallback_note', { name: fb })}</p> : null;
@@ -167,16 +201,17 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
   const frame = (i: number, extra: Record<string, unknown>, className: string, children: React.ReactNode) => {
     const v = views![i]!;
     return (
-      <section
+      <div
         key={`${v.section}-${i}`}
         ref={(el) => { els.current[i] = el; }}
         data-active={active === i || undefined}
+        aria-current={active === i ? 'true' : undefined}
+        lang={langOf(v.lang)}
         className={`sec ${className}`}
-        aria-label={v.section}
         {...extra}
       >
         {children}
-      </section>
+      </div>
     );
   };
 
@@ -190,7 +225,7 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
         <>
           <Shield className="sec-ic" size={22} strokeWidth={2} aria-hidden />
           <div className="sec-body">
-            <p className="sec-text">{v.text}</p>
+            <p className="sec-text" lang={langOf(v.lang)}>{v.text}</p>
             {fallbackNote(v)}
           </div>
         </>
@@ -199,9 +234,9 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
       <>
         <ShieldAlert className="sec-ic" size={32} strokeWidth={2} aria-hidden />
         <div className="sec-body">
-          <p className="sec-text sz-lead"><b>{head?.text}</b></p>
-          {signals.length > 0 && <ul className="signals">{signals.map((l) => <li key={l.key}>{l.text}</li>)}</ul>}
-          {advice.map((l) => <p key={l.key} className="advice">{l.text}</p>)}
+          <p className="sec-text sz-lead" lang={head && langOf(head.lang)}><b>{head?.text}</b></p>
+          {signals.length > 0 && <ul className="signals">{signals.map((l) => <li key={l.key} lang={langOf(l.lang)}>{l.text}</li>)}</ul>}
+          {advice.map((l) => <p key={l.key} className="advice" lang={langOf(l.lang)}>{l.text}</p>)}
           {fallbackNote(v)}
         </div>
       </>
@@ -227,7 +262,7 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
     const v = views![i]!;
     const Icon = SECTION_ICON[v.section];
     const notice = v.lines.length > 0 && v.lines.every((l) => l.key === 'facts_only.intro');
-    const lines = (size: string) => v.lines.map((l) => <p key={l.key} className={`sec-text ${size}`}>{l.text}</p>);
+    const lines = (size: string) => v.lines.map((l) => <p key={l.key} className={`sec-text ${size}`} lang={langOf(l.lang)}>{l.text}</p>);
     let body: React.ReactNode;
     let cls = `sec-${v.section}`;
     if (notice) {
@@ -337,7 +372,20 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
                 {L.lead.map(renderSection)}
                 {card.deadline && L.lead.some((i) => views[i]!.section === 'deadline') && (
                   <div className="group-actions">
-                    <SpeakingButton speakKey="ui.remind" variant="secondary" icon={<CalendarPlus size={24} strokeWidth={2} aria-hidden />} onAct={remind} />
+                    {native && reminder === 'set' ? (
+                      <>
+                        <p className="note remind-note" role="status"><CalendarCheck size={24} strokeWidth={2} aria-hidden /> <b>{t('app.remind.set')}</b></p>
+                        <SpeakingButton speakKey="app.remind.cancel" variant="quiet" onAct={() => void unremind()} />
+                      </>
+                    ) : (
+                      <SpeakingButton speakKey="ui.remind" variant="secondary" icon={<CalendarPlus size={24} strokeWidth={2} aria-hidden />} onAct={() => void remind()} />
+                    )}
+                    {native && (reminder === 'past' || reminder === 'denied' || reminder === 'failed') && (
+                      <p className="note" role="status">{t(`app.remind.${reminder}`)}</p>
+                    )}
+                    {native && reminder === 'denied' && (
+                      <SpeakingButton speakKey="app.settings.open" variant="secondary" onAct={() => void openSystemSettings('notifications')} />
+                    )}
                   </div>
                 )}
               </div>
@@ -372,9 +420,11 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
  * button speaks "Where is this in the message?" on long-press.
  */
 function FactValue({ raw, span, label, text, size, onSource }: { raw: string; span: SourceSpan; label?: string; text?: string; size: string; onSource: (s: Source) => void }) {
+  const { t } = useApp();
   const shown = text ?? raw;
-  const cut = shown.lastIndexOf(' ');
-  const [head, tail] = cut > 0 ? [shown.slice(0, cut + 1), shown.slice(cut + 1)] : ['', shown];
+  // The last word stays with the glyph; the space before it is an ordinary one so a long amount can wrap there.
+  const cut = shown.search(/[\s\u00a0\u202f]\S*$/);
+  const [head, tail] = cut > 0 ? [shown.slice(0, cut) + ' ', shown.slice(cut + 1)] : ['', shown];
   return (
     <SpeakingButton
       speakKey="ui.show_source"
@@ -391,6 +441,8 @@ function FactValue({ raw, span, label, text, size, onSource }: { raw: string; sp
                 <Search className="fact-glyph" size={24} strokeWidth={2} aria-hidden />
               </span>
             </b>
+            {/* the glyph alone says nothing to a screen reader: name what the button does */}
+            <span className="sr-only">. {t('ui.show_source')}</span>
           </span>
         </span>
       }
@@ -412,6 +464,8 @@ export function SourceText({ text, span }: { text: string; span: SourceSpan }) {
 }
 
 function HelperView({ card, views, locale, phoneCc }: { card: Card; views: SectionView[]; locale: string; phoneCc: string }) {
+  const { settings } = useApp();
+  const lg = (l: string) => (l && l !== settings.lang ? l : undefined);
   const noSigns = card.scam.level === 'no_signs';
   // the quiet "no warning signs" line goes last for a helper too
   const order = noSigns ? [...views.filter((v) => v.section !== 'scam'), ...views.filter((v) => v.section === 'scam')] : views;
@@ -424,7 +478,7 @@ function HelperView({ card, views, locale, phoneCc }: { card: Card; views: Secti
           return (
             <section key={i} className="helper-sec helper-quiet">
               <Shield size={28} strokeWidth={2} aria-hidden />
-              <p>{v.text}</p>
+              <p lang={lg(v.lang)}>{v.text}</p>
             </section>
           );
         // numbers are read best as digits: show the fact itself, big
@@ -438,7 +492,7 @@ function HelperView({ card, views, locale, phoneCc }: { card: Card; views: Secti
         return (
           <section key={i} className={`helper-sec${v.section === 'scam' ? ' helper-scam' : ''}${weight}`}>
             {v.section === 'scam' ? <ShieldAlert size={40} strokeWidth={2} aria-hidden /> : <Icon size={40} strokeWidth={2} aria-hidden />}
-            <p className={digits ? 'num' : undefined}>{digits ?? v.text}</p>
+            <p className={digits ? 'num' : undefined} lang={digits ? undefined : lg(v.lang)}>{digits ?? v.text}</p>
           </section>
         );
       })}

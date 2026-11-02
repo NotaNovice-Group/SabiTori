@@ -14,6 +14,7 @@ import { SettingsScreen } from './screens/Settings';
 import { navigate } from './lib/router';
 import { config } from './config';
 import { maybeBackgroundCheck } from './lib/updates';
+import { hideSplash, startNativeShell } from './lib/native-shell';
 import { startCrashReporting, stopCrashReporting } from './lib/crash';
 
 function Routes() {
@@ -47,8 +48,9 @@ function Routes() {
   switch (head) {
     case 'welcome': return <LanguageScreen />;
     case 'mode': return <ModeScreen />;
-    case 'capture': return <CaptureScreen />;
-    case 'paste': return <PasteScreen />;
+    // `?s=` is set by a share into the app: a new share while the screen is open starts it afresh.
+    case 'capture': return <CaptureScreen key={route.query.get('s') ?? ''} />;
+    case 'paste': return <PasteScreen key={route.query.get('s') ?? ''} />;
     case 'practice': return <PracticeScreen />;
     case 'example': return <ExampleRoute key={arg} id={arg} />;
     case 'card': return <CardRoute key={arg} id={arg} />;
@@ -65,8 +67,13 @@ export function App() {
       session.setSharedText(shared);
       if (parseHash(location.hash).path[0] !== 'paste') location.hash = '#/paste';
     }
+    const stopShell = startNativeShell();
     void getEngine().then(setEngine);
+    return stopShell;
   }, []);
+  useEffect(() => {
+    if (engine) hideSplash();
+  }, [engine]);
   if (!engine) return null;
   return (
     <AppProvider engine={engine}>

@@ -36,6 +36,10 @@ export function SpeakingButton({ speakKey, slots, label, icon, variant = 'second
   const timer = useRef<number | undefined>(undefined);
   const press = useRef<number | undefined>(undefined);
   const longDone = useRef(false);
+  /** Set at a real pointerdown, cleared by its click. A click with no pointerdown, or detail 0, comes from
+   *  an assistive technology (TalkBack double-tap) or the keyboard: that person already chose this button
+   *  and already hears its name from the screen reader, so listen-first must not ask for another tap. */
+  const pointerAt = useRef(0);
 
   useEffect(
     () => () => {
@@ -46,6 +50,7 @@ export function SpeakingButton({ speakKey, slots, label, icon, variant = 'second
   );
 
   const start = () => {
+    pointerAt.current = Date.now();
     longDone.current = false;
     window.clearTimeout(press.current);
     press.current = window.setTimeout(() => {
@@ -55,12 +60,14 @@ export function SpeakingButton({ speakKey, slots, label, icon, variant = 'second
   };
   const cancel = () => window.clearTimeout(press.current);
 
-  const click = () => {
+  const click = (e: React.MouseEvent) => {
+    const touched = Date.now() - pointerAt.current < 30_000 && e.detail > 0;
+    pointerAt.current = 0;
     if (longDone.current) {
       longDone.current = false;
       return;
     }
-    if (settings.listenFirst && !immediate && !armed) {
+    if (settings.listenFirst && !immediate && !armed && touched) {
       say(speakKey, slots);
       setArmed(true);
       window.clearTimeout(timer.current);

@@ -1,6 +1,7 @@
 {
   "name": "@sabitori/app",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "androidVersionCode": 1,
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,7 +15,11 @@
   },
   "dependencies": {
     "@capacitor-community/text-to-speech": "^8.0.2",
+    "@capacitor/camera": "^8.2.6",
     "@capacitor/core": "^8.6.0",
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capgo/capacitor-share-target": "^8.0.64",
     "@fontsource/andika": "^5.3.0",
     "@sabitori/connect": "workspace:*",
     "@sabitori/core": "workspace:*",

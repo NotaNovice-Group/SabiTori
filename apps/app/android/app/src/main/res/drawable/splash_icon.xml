@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- The SabiTori mark (apps/app/public/mark.svg), drawn as a vector so it is crisp at every density. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="288dp"
+    android:height="288dp"
+    android:viewportWidth="288"
+    android:viewportHeight="288">
+    <group android:scaleX="2.58" android:scaleY="2.58" android:translateX="72.5" android:translateY="82">
+        <path android:strokeColor="@color/sabitori_ink" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M8 5h17l9 9v29H8z" />
+        <path android:strokeColor="@color/sabitori_ink" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M25 5v9h9" />
+        <path android:strokeColor="@color/sabitori_ink" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M14 25h14M14 32h9" />
+        <path android:strokeColor="@color/sabitori_ink" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M39 22.5a7 7 0 0 1 0 9" />
+        <path android:strokeColor="@color/sabitori_ink" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M43.5 17.5a13.5 13.5 0 0 1 0 19" />
+    </group>
+</vector>

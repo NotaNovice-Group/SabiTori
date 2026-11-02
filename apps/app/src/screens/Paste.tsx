@@ -54,8 +54,8 @@ export function PasteScreen() {
         />
         {kind !== 'unknown' && (
           <>
-            <label htmlFor="who" className="sr-only">{t(kind === 'name' ? 'app.paste.sender.name_label' : 'app.paste.sender.number_label')}</label>
-            <input id="who" className="input" value={who} onChange={(e) => setWho(e.target.value)} inputMode={kind === 'number' ? 'tel' : 'text'} placeholder={t(kind === 'name' ? 'app.paste.sender.name_label' : 'app.paste.sender.number_label')} autoComplete="off" />
+            <label htmlFor="who" className="field-sublabel">{t(kind === 'name' ? 'app.paste.sender.name_label' : 'app.paste.sender.number_label')}</label>
+            <input id="who" className="input" value={who} onChange={(e) => setWho(e.target.value)} inputMode={kind === 'number' ? 'tel' : 'text'} autoComplete="off" />
           </>
         )}
       </div>

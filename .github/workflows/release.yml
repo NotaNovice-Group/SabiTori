@@ -1,0 +1,73 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+
+jobs:
+  android-release:
+    name: Signed Android release (AAB + APK)
+    runs-on: ubuntu-24.04
+    env:
+      SABITORI_KEYSTORE_PASSWORD: ${{ secrets.SABITORI_KEYSTORE_PASSWORD }}
+      SABITORI_KEY_ALIAS: ${{ secrets.SABITORI_KEY_ALIAS }}
+      SABITORI_KEY_PASSWORD: ${{ secrets.SABITORI_KEY_PASSWORD }}
+      SABITORI_VERSION_CODE: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: pnpm/action-setup@v4.1.0
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-java@v4.7.1
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3.2.2
+        with:
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
+      - uses: gradle/actions/setup-gradle@v4.4.1
+        with:
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r test
+      - run: pnpm -r typecheck
+      - name: Check the tag matches the app version
+        run: |
+          v="$(node -p "require('./apps/app/package.json').version")"
+          [ "${GITHUB_REF_NAME}" = "v${v}" ] || { echo "Tag ${GITHUB_REF_NAME} does not match apps/app/package.json version ${v}" >&2; exit 1; }
+      - name: Restore the keystore
+        env:
+          SABITORI_KEYSTORE_BASE64: ${{ secrets.SABITORI_KEYSTORE_BASE64 }}
+        run: |
+          [ -n "${SABITORI_KEYSTORE_BASE64}" ] || { echo "Secret SABITORI_KEYSTORE_BASE64 is not set" >&2; exit 1; }
+          ks="${RUNNER_TEMP}/sabitori-upload.jks"
+          echo "${SABITORI_KEYSTORE_BASE64}" | base64 -d > "${ks}"
+          chmod 600 "${ks}"
+          echo "SABITORI_KEYSTORE_PATH=${ks}" >> "${GITHUB_ENV}"
+      - name: Build the web app
+        run: pnpm --filter @sabitori/app build
+      - name: Sync Capacitor
+        working-directory: apps/app
+        run: npx cap sync android
+      - name: Build signed AAB and APK
+        working-directory: apps/app/android
+        run: ./gradlew bundleRelease assembleRelease --no-daemon
+      - name: Verify the APK signature
+        run: |
+          apk="$(ls apps/app/android/app/build/outputs/apk/release/*.apk)"
+          "${ANDROID_HOME}/build-tools/36.0.0/apksigner" verify --print-certs "${apk}"
+      - name: Remove the keystore
+        if: always()
+        run: rm -f "${RUNNER_TEMP}/sabitori-upload.jks"
+      - uses: actions/upload-artifact@v4.6.2
+        with:
+          name: sabitori-release-${{ github.ref_name }}
+          path: |
+            apps/app/android/app/build/outputs/bundle/release/*.aab
+            apps/app/android/app/build/outputs/apk/release/*.apk
+            apps/app/android/app/build/outputs/mapping/release/mapping.txt
+          if-no-files-found: error

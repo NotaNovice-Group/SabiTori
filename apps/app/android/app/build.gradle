@@ -1,5 +1,20 @@
 apply plugin: 'com.android.application'
 
+import groovy.json.JsonSlurper
+
+// One source of truth for the version: apps/app/package.json.
+//   versionName = "version"            (1.0.0)
+//   versionCode = "androidVersionCode" (1), or SABITORI_VERSION_CODE when set (CI uses the run number)
+def appPackage = new JsonSlurper().parse(file('../../package.json'))
+def sabitoriVersionCode = (System.getenv('SABITORI_VERSION_CODE') ?: appPackage.androidVersionCode ?: 1) as int
+
+// Release signing comes from the environment only; nothing secret lives in the repository.
+def envKeystorePath = System.getenv('SABITORI_KEYSTORE_PATH')
+def envKeystorePassword = System.getenv('SABITORI_KEYSTORE_PASSWORD')
+def envKeyAlias = System.getenv('SABITORI_KEY_ALIAS')
+def envKeyPassword = System.getenv('SABITORI_KEY_PASSWORD')
+def hasSigning = envKeystorePath && envKeystorePassword && envKeyAlias && envKeyPassword && file(envKeystorePath).exists()
+
 android {
     namespace = "cm.sabitori.app"
     compileSdk = rootProject.ext.compileSdkVersion
@@ -7,8 +22,8 @@ android {
         applicationId "cm.sabitori.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode sabitoriVersionCode
+        versionName appPackage.version
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -16,11 +31,34 @@ android {
             ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        if (hasSigning) {
+            release {
+                storeFile file(envKeystorePath)
+                storePassword envKeystorePassword
+                keyAlias envKeyAlias
+                keyPassword envKeyPassword
+            }
+        }
+    }
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            if (hasSigning) signingConfig signingConfigs.release
         }
+    }
+    bundle {
+        // The web app is the same for every language; keep every language resource in the bundle.
+        language { enableSplit = false }
+    }
+}
+
+gradle.taskGraph.whenReady { graph ->
+    if (!hasSigning && graph.allTasks.any { it.path.startsWith(':app:') && (it.name == 'assembleRelease' || it.name == 'bundleRelease') }) {
+        logger.warn('\n*** SabiTori: release signing is NOT configured. The release build is UNSIGNED and cannot be installed or uploaded.\n' +
+            '*** Set SABITORI_KEYSTORE_PATH, SABITORI_KEYSTORE_PASSWORD, SABITORI_KEY_ALIAS and SABITORI_KEY_PASSWORD (see scripts/android-keystore.sh).\n')
     }
 }
 

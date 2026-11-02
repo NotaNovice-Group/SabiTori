@@ -2,8 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- The camera is optional: the app also reads pasted text, shared text and photos from the gallery. -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:fullBackupContent="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:networkSecurityConfig="@xml/network_security_config"
         android:usesCleartextTraffic="false"
         android:icon="@mipmap/ic_launcher"
@@ -25,6 +30,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Share into SabiTori: a text (SMS, WhatsApp) or a photo of a paper. Handled on the phone only. -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="image/*" />
+            </intent-filter>
+
         </activity>
 
         <provider
@@ -38,7 +60,7 @@
         </provider>
     </application>
 
-    <!-- Permissions -->
+    <!-- Permissions. Each is asked for only when the person uses the feature that needs it. -->
 
     <!-- SabiTori never sends a message, a photo or any text you read off this phone.
          The network is used only for two features a person must switch on in Settings:
@@ -46,4 +68,15 @@
          contain no message content. Traffic is HTTPS only (see res/xml/network_security_config.xml).
          If the app is built without update or error-report settings, it never opens a connection. -->
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <!-- Take a photo of a paper. Asked when the person taps "Take a photo". Choosing a photo from the
+         gallery uses the system photo picker and needs no media permission. -->
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <!-- Reminders (Android 13+). Asked when the person taps "Remind me". Reminders are scheduled with
+         inexact, idle-allowed alarms, so the exact-alarm permission that the plugin declares is removed. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove" />
+    <!-- Lets scheduled reminders survive a restart of the phone. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 </manifest>
