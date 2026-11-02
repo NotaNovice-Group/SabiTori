@@ -39,7 +39,8 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
           : undefined;
       s.push({ key: key(`scam.signal.${sig}`), ...(slots ? { slots } : {}) });
     }
-    if (u.kind === 'mobile_money' || scam.signals.includes('wrong_transfer') || scam.signals.includes('fake_balance'))
+    // Keyed on what the rules read (or the signals), never only on a learned classifier's kind.
+    if ((card.rulesKind ?? u.kind) === 'mobile_money' || scam.signals.includes('wrong_transfer') || scam.signals.includes('fake_balance'))
       s.push({ key: 'scam.check_balance' });
   }
   if (s.length) sections.scam = s;

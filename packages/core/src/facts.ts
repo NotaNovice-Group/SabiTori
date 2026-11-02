@@ -9,6 +9,7 @@ import {
   escapeRe,
   findTerms,
   fold,
+  isIsoDate,
   isValidYmd,
   overlaps,
   parseIso,
@@ -29,6 +30,8 @@ type Span = { start: number; end: number };
 /** A year-less date is the occurrence nearest to receivedAt: past if within PAST_DAYS before, else the next one. */
 const PAST_DAYS = 180;
 const SEP = '[ \\u00a0\\u202f.,]';
+/** Longest phone written as digits: 00 + country code (up to 3) + 9. */
+const MAX_PHONE_DIGITS = 15;
 /** Stands for an OCR line break removed from inside a digit group (amounts only). */
 const JOIN = '\u0001';
 const D3 = `\\d${JOIN}?\\d${JOIN}?\\d`;
@@ -68,7 +71,7 @@ function detectLang(norm: string, lexicons: ReadingLexicon[]): MessageLang {
 function extractUrls(text: string): Fact<string>[] {
   const out: Fact<string>[] = [];
   const re =
-    /\b(?:https?:\/\/|www\.)[^\s<>"'()]+|\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.[a-z]{2,}\/[^\s<>"'()]*/gi;
+    /\b(?:https?:\/\/|www\.)[^\s<>"'()]+|\b[a-z0-9][a-z0-9-]{0,62}(?:\.[a-z0-9-]{1,63}){0,8}\.[a-z]{2,24}\/[^\s<>"'()]*/gi;
   let m: RegExpExecArray | null;
   while ((m = re.exec(text))) {
     const raw = m[0].replace(/[.,;:!?]+$/, '');
@@ -144,17 +147,22 @@ function extractPhones(text: string, norm: string, ctx: FactsContext, blocked: S
     const yearLike = (d: string) => /^(19|20)\d\d$/.test(d);
     let hi = groups.length - 1;
     while (hi >= 0) {
-      let found = false;
-      for (let s = 0; s <= hi; s++) {
+      const last = groups[hi];
+      let chosen: { s: number; nat: string; span: Span } | undefined;
+      // Walk the window start DOWN from hi and stop once the joined digits exceed the longest possible
+      // phone (00 + country code + 9 digits): linear in the run, never cubic.
+      let len = 0;
+      for (let s = hi; s >= 0; s--) {
         const first = groups[s];
-        const last = groups[hi];
-        if (!first || !last) continue;
+        if (!first || !last) break;
+        len += first.d.length;
+        if (len > MAX_PHONE_DIGITS) break;
+        if (len < 9) continue;
+        if (yearLike(first.d) && s < hi) continue;
         const digits = groups
           .slice(s, hi + 1)
           .map((x) => x.d)
           .join('');
-        if (digits.length < 9) break;
-        if (yearLike(first.d) && s < hi) continue;
         const hasPlus = plus && s === 0;
         const nat = toNational(digits, hasPlus);
         if (!nat) continue;
@@ -162,14 +170,14 @@ function extractPhones(text: string, norm: string, ctx: FactsContext, blocked: S
         const span = { start, end: last.end };
         if (conflicts(span, blocked)) continue;
         if (!hasPlus && !digits.startsWith('00') && !digits.startsWith(cc)) {
-          if (after?.test(norm.slice(span.end)) || before?.test(norm.slice(Math.max(0, start - 14), start))) continue;
+          if (after?.test(norm.slice(span.end, span.end + 40)) || before?.test(norm.slice(Math.max(0, start - 14), start))) continue;
         }
-        out.push(mk(text, span.start, span.end, `+${cc}${nat}`));
-        hi = s - 1;
-        found = true;
-        break;
+        chosen = { s, nat, span }; // keep going: the longest valid window (smallest s) wins
       }
-      if (!found) hi--;
+      if (chosen) {
+        out.push(mk(text, chosen.span.start, chosen.span.end, `+${cc}${chosen.nat}`));
+        hi = chosen.s - 1;
+      } else hi--;
     }
   }
   return out.sort((a, b) => a.span.start - b.span.start);
@@ -178,7 +186,7 @@ function extractPhones(text: string, norm: string, ctx: FactsContext, blocked: S
 /* -------------------------------- dates -------------------------------- */
 
 function inferYear(m: number, d: number, receivedAt: IsoDate): number | undefined {
-  const r = parseIso(receivedAt);
+  const r = receivedAt ? parseIso(receivedAt) : undefined;
   if (!r) return undefined;
   let past: { y: number; delta: number } | undefined;
   let next: { y: number; delta: number } | undefined;
@@ -239,8 +247,12 @@ function extractDates(text: string, norm: string, ctx: FactsContext, blocked: Sp
   re = /(?<![\d/.\-])(\d{1,2})([/.\-])(\d{1,2})\2(\d{4}|\d{2})(?![\d])(?![/.\-]\d)/g;
   while ((m = re.exec(norm))) {
     let y = Number(m[4]);
-    if ((m[4] ?? '').length === 2) y += 2000;
-    else if (y < 1900 || y > 2100) continue;
+    if ((m[4] ?? '').length === 2) {
+      // "15/11/99" is 20YY only within 5 years of the day the message arrived; otherwise it is not read.
+      const ry = ctx.receivedAt ? parseIso(ctx.receivedAt)?.y : undefined;
+      y += 2000;
+      if (ry === undefined || Math.abs(y - ry) > 5) continue;
+    } else if (y < 1900 || y > 2100) continue;
     finish(m.index, m.index + m[0].length, y, Number(m[3]), Number(m[1]));
   }
 
@@ -289,6 +301,8 @@ function extractDates(text: string, norm: string, ctx: FactsContext, blocked: Sp
   }
 
   const explicit = [...out];
+
+  if (!ctx.receivedAt) return out.sort((a, b) => a.span.start - b.span.start);
 
   // 6. relative words ("demain", "tomorrow")
   const rel = new Map<string, number>();
@@ -341,8 +355,13 @@ function extractAmounts(text: string, norm0: string, ctx: FactsContext, blocked:
       l.length + r.length === 3 ? `${l}${JOIN}${r}` : all,
     );
   const cands: { start: number; end: number; amount: number }[] = [];
-  const add = (start: number, end: number, rawNum: string) => {
+  const add = (start: number, end: number, rawNum: string, aliasText = '') => {
     const digits = rawNum.replace(/\D/g, '');
+    // The one-letter alias ("F") needs real money digits: 3+ digits, not a bare year ("2026 F"), or a thousands group.
+    if (/^\p{L}$/u.test(aliasText.replace(/[\s:]+/g, ''))) {
+      const grouped = /\d[ \u00a0\u202f.,]\d{3}(?!\d)/.test(rawNum);
+      if (!grouped && (digits.length < 3 || /^(19|20)\d\d$/.test(digits))) return;
+    }
     if (digits.length > 12) return;
     // No leading zero ("00 FCFA", "05000"), no zero, no minor unit ("15,50": never rounded to 16).
     if (digits.startsWith('0')) return;
@@ -358,13 +377,13 @@ function extractAmounts(text: string, norm0: string, ctx: FactsContext, blocked:
   let m: RegExpExecArray | null;
   while ((m = A.exec(norm))) {
     const n = m[1] ?? '';
-    add(m.index, m.index + m[0].length, n);
+    add(m.index, m.index + m[0].length, n, m[0].slice(n.length));
   }
   while ((m = B.exec(norm))) {
     const n = m[1] ?? '';
     const prev = norm.charAt(m.index - 1);
     if (/[\d]/.test(prev)) continue;
-    add(m.index, m.index + m[0].length, n);
+    add(m.index, m.index + m[0].length, n, m[0].slice(0, m[0].length - n.length));
   }
 
   // Labelled amount near a currency word: "Montant: 2 500 (FCFA)"
@@ -433,12 +452,16 @@ function extractShortCodes(text: string, norm: string, ctx: FactsContext, blocke
 
 /* --------------------------------- main --------------------------------- */
 
-export function extractFacts(text: string, ctx: FactsContext): Facts {
+export function extractFacts(text: string, ctx0: FactsContext): Facts {
+  // An invalid receivedAt never reaches a fact: relative words, weekdays, year-less and 2-digit-year dates are skipped.
+  const ctx: FactsContext = { ...ctx0, receivedAt: isIsoDate(ctx0.receivedAt) ? ctx0.receivedAt : '' };
   const norm = fold(text);
   const urls = extractUrls(text);
   const ussd = extractUssd(text);
   const b1: Span[] = [...urls, ...ussd].map((f) => f.span);
-  const phones = extractPhones(text, norm, ctx, b1);
+  // A 9-digit token written as a reference ("N° compteur: 677123456") is a reference, not a phone.
+  const refTokens = extractReferences(text, norm, ctx, b1).map((f) => f.span);
+  const phones = extractPhones(text, norm, ctx, [...b1, ...refTokens]);
   const b2 = [...b1, ...phones.map((f) => f.span)];
   const dates = extractDates(text, norm, ctx, b2);
   const b3 = [...b2, ...dates.map((f) => f.span)];

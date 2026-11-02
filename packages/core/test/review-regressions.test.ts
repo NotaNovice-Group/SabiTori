@@ -199,10 +199,11 @@ describe('7. USSD instructions', () => {
     expect(c.scam.signals).toContain('ussd_instruction');
     expect(c.scam.level).toBe('likely_scam');
   });
-  it('a plain dial instruction is only caution', async () => {
+  it('a bare balance code with no money purpose is no longer a ussd_instruction (review 3)', async () => {
+    // Was: caution. A bare *NNN# to consult a balance or renew a bundle is what operators really send.
     const c = await run('Pour consulter votre solde composez *126#.');
-    expect(c.scam.signals).toEqual(['ussd_instruction']);
-    expect(c.scam.level).toBe('caution');
+    expect(c.scam.signals).toEqual([]);
+    expect(c.scam.level).toBe('no_signs');
   });
   it('"Composez le 126" and "Envoyer au 237" are not ussd codes', () => {
     expect(facts('Composez le 126').ussdCodes).toEqual([]);

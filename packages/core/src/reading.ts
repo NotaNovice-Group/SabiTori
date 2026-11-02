@@ -56,6 +56,8 @@ export interface ReadingLexicon {
   /** Keyword lists per action. */
   actions: Partial<Record<ActionKind, string[]>>;
   urgency: { urgent: string[]; soon: string[] };
+  /** Operator promotions ("doublez votre recharge", "special offer"): read as "nothing to do", never urgent. */
+  promoWords?: string[];
 
   scam: {
     /** "code secret", "pin": things a scammer wants. */
@@ -86,6 +88,10 @@ export interface ReadingLexicon {
     payVerbs?: string[];
     /** Verbs of dialling a USSD code ("composez", "dial"). */
     dialWords?: string[];
+    /** "j'ai changé de numéro", "changed my number": the opening of a family-impersonation scam. */
+    numberChangeWords?: string[];
+    /** "accident", "hospital emergency": the story used to rush someone into calling or paying a stranger. */
+    emergencyWords?: string[];
     /** Purposes a scam gives for dialling: receive, unlock, confirm, verify money or account. */
     ussdPurposeWords?: string[];
   };

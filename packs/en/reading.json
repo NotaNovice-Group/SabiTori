@@ -716,7 +716,12 @@
       "prize",
       "lucky",
       "bonus of",
-      "reward"
+      "reward",
+      "congrats",
+      "you don win",
+      "don win",
+      "win",
+      "promo"
     ],
     "feeWords": [
       "fee",
@@ -851,6 +856,32 @@
       "reactivat*",
       "claim",
       "recover"
+    ],
+    "numberChangeWords": [
+      "changed my number",
+      "i changed number",
+      "my new number",
+      "this is my new number",
+      "new phone number"
+    ],
+    "emergencyWords": [
+      "accident",
+      "hospital emergency",
+      "medical emergency",
+      "emergency at the hospital",
+      "is in hospital",
+      "is in the hospital"
     ]
-  }
+  },
+  "promoWords": [
+    "promo",
+    "promotion",
+    "special offer",
+    "exclusive offer",
+    "double your",
+    "bonus offer",
+    "recharge bonus",
+    "limited offer",
+    "free data"
+  ]
 }

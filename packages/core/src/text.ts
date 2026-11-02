@@ -31,11 +31,20 @@ export function escapeRe(s: string): string {
 const WORD = '\\p{L}\\p{N}';
 const sourceCache = new Map<string, string>();
 
+/** A longer term is not a phrase a person writes; it never matches (and cannot be used to slow the matcher). */
+export const MAX_TERM_LENGTH = 200;
+/** Matches nothing. */
+const NEVER = '(?!)';
+
 /** Regex source for one lexicon term (see ReadingLexicon for the syntax). */
 export function termSource(term: string): string {
   const hit = sourceCache.get(term);
   if (hit !== undefined) return hit;
   let t = fold(term).trim();
+  if (t.length > MAX_TERM_LENGTH) {
+    sourceCache.set(term, NEVER);
+    return NEVER;
+  }
   let prefix = false;
   if (t.endsWith('*')) {
     prefix = true;
@@ -43,7 +52,7 @@ export function termSource(term: string): string {
   }
   const body = t
     .split(/\s+/)
-    .map((tok) => escapeRe(tok.replace(/\{n\}/g, '\u0001')).replace(/\u0001/g, '\\d+'))
+    .map((tok) => escapeRe(tok.replace(/(?:\{n\})+/g, '\u0001')).replace(/\u0001/g, '\\d+'))
     .join('\\s+');
   const src = `(?<![${WORD}])${body}${prefix ? '' : `(?![${WORD}])`}`;
   sourceCache.set(term, src);
@@ -157,6 +166,13 @@ export function isValidYmd(y: number, m: number, d: number): boolean {
   if (m < 1 || m > 12 || d < 1 || d > 31) return false;
   const dt = new Date(Date.UTC(y, m - 1, d));
   return dt.getUTCFullYear() === y && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === d;
+}
+
+/** True for a real calendar day written YYYY-MM-DD. */
+export function isIsoDate(s: unknown): s is string {
+  if (typeof s !== 'string') return false;
+  const p = parseIso(s);
+  return !!p && isValidYmd(p.y, p.m, p.d);
 }
 
 export function toIso(y: number, m: number, d: number): string {

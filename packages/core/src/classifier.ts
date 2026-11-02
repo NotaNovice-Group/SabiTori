@@ -69,12 +69,17 @@ export function createRulesClassifier(region: RegionConfig, lexicons: ReadingLex
         if (s) actionScores.set(a, s);
       }
       const a = pickBest(actionScores, ACTION_PRIORITY);
-      const action: ActionKind = a.key ?? 'unclear';
-      if (!a.key) confidence *= 0.85;
+      // An operator promotion asks for nothing: it is "nothing to do", never urgent, unless the text names a real task.
+      const promo =
+        hasTerm(n, collect(lexicons, (l) => l.promoWords)) &&
+        !(a.key && ['pay', 'collect', 'go_to_place', 'bring_document', 'take_medicine'].includes(a.key));
+      const action: ActionKind = promo ? 'nothing' : (a.key ?? 'unclear');
+      if (!a.key && !promo) confidence *= 0.85;
 
       let urgency: Urgency = 'info';
       const future = facts.dates.map((d) => daysBetween(input.receivedAt, d.value)).filter((x) => x >= 0);
-      if (hasTerm(n, collect(lexicons, (l) => l.urgency.urgent))) urgency = 'urgent';
+      if (promo) urgency = 'info';
+      else if (hasTerm(n, collect(lexicons, (l) => l.urgency.urgent))) urgency = 'urgent';
       else if (future.length && Math.min(...future) <= 2 && action !== 'nothing') urgency = 'urgent';
       else if (hasTerm(n, collect(lexicons, (l) => l.urgency.soon)) || (future.length > 0 && action !== 'nothing'))
         urgency = 'soon';
