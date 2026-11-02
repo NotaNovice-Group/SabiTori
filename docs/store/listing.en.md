@@ -35,11 +35,11 @@ YOUR MESSAGES STAY ON YOUR PHONE
 Your photos and the text of your messages never leave your phone. SabiTori has no accounts, no ads and no analytics. We do not sell data.
 
 LANGUAGES
-French and English are available now. Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum and Pinyin are being recorded with native speakers. They will be added as updates when they are ready.
+French and English are available now. Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum and Pinyin are waiting for native speakers to translate and record them. Until then they speak French or English.
 [OWNER: French review status. Remove this line before publication if the French review in docs/release.md is not finished.]
 
-THE VOICE IS YOUR PHONE'S OWN
-SabiTori speaks with the offline voice of your phone. You can change the speaking speed. Scam warnings come first.
+A VOICE THAT WORKS OFFLINE
+French is spoken by a natural-sounding voice built into the app, which runs on your phone. English uses your phone's offline voice. If the built-in voice cannot run, your phone's voice speaks instead. You can change the speaking speed. Scam warnings come first.
 
 DEADLINES
 Tap "Remind me" on a card with a deadline. SabiTori reminds you the day before, and on the day. The reminder stays on your phone.
@@ -54,10 +54,10 @@ SabiTori explains a message. It does not replace the office that sent it, a doct
 
 PRIVACY POLICY: [OWNER: public URL of the privacy policy]
 CONTACT: [OWNER: contact email]
-Published by NotaNovice Group, [OWNER: legal name].
+Published by [OWNER: publisher — individual founder or charitable vehicle].
 ```
 
-Character count of the full description above: 2,231 characters (limit 4000, counted with a script on the text between the fences). Recount after any edit.
+Character count of the full description above: 2,410 characters (limit 4000, counted with a script on the text between the fences). Recount after any edit.
 
 ## Suggested category
 

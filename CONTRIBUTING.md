@@ -45,7 +45,8 @@ Use the language's ISO 639-3 code, and never invent one. Speakers record with th
 - A speaker or translator is named in `contributors` only after they agree in writing. Their voice
   is published only with that consent. They can ask for their recordings to be removed at any time.
 - Speakers are paid for every session. Most of what a language costs is fair pay for the people
-  who record it, so please budget for it.
+  who record it, so a language is recorded only once that pay is funded (see
+  [`docs/sustainability.md`](docs/sustainability.md)). No recording session has taken place yet.
 - Pack content is CC-BY-SA-4.0 unless the community picks another licence. See
   [`packs/LICENSE.md`](packs/LICENSE.md).
 

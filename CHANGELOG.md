@@ -4,9 +4,26 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Changed
+
+- Understanding model: the vocabulary of the bundled MiniLM encoder is now chosen with a general French and English
+  word-frequency list instead of Unigram scores. Same size (34.2 MB); much higher fidelity to the original model on
+  held-out text; accuracy changes are not statistically significant. The fidelity check now uses held-out text only.
+- Evaluation: a second, independent evaluation set (`packages/understand/eval/unseen.jsonl`, 100 messages written to
+  avoid the generator's templates); 95% bootstrap intervals, paired McNemar tests, per-language rows and calibration
+  in every published table; one machine-readable source of truth (`eval/results.json`) from which the README, docs and
+  model card tables are generated and checked by a test. Machine-specific latency removed from the results; the
+  latency harness is committed (`packages/understand/harness/encoder-bench.mjs`).
+- Dataset labels: genuine operator promotions are labelled `telecom`/`nothing`/`info`, and the Pidgin MTN prize-fee scam
+  `telecom` (see `packages/understand/eval/README.md`). The test split is now 96 messages.
+- `packages/speech/bench/run.mjs` exits with an error when any voice fallback happens during a benchmark.
+- Documentation: publisher placeholder instead of a company name, non-commercial sustainability plan
+  (`docs/sustainability.md`), pilot metrics (`docs/impact.md`), owner checklist (`docs/OWNER-TODO.md`).
+
 ## [1.0.0] - [YYYY-MM-DD]
 
-First public release on Google Play.
+Planned first public release on Google Play. Not released yet: there is no published build, no store listing
+and no users. [OWNER: release date, once released.]
 
 ### Added
 
@@ -14,14 +31,16 @@ First public release on Google Play.
 - Takes a photo of a paper with the phone's camera app, or reads text the person shares with the app.
 - Finds the facts in a message with code: dates, FCFA amounts, phone numbers, USSD codes and links. Each fact is checked against the original text.
 - Warns about likely scams. The app never says that a message is safe.
-- Speaks in French and English with the phone's offline voice. Speaking speed can be changed.
+- Speaks French with a bundled Piper neural voice that runs on the phone (the phone's offline voice is the automatic fallback). English uses the phone's offline voice; an English Piper voice (63 MB) is not bundled and can be delivered once an update server is set up. Speaking speed can be changed.
+- Understands every message on the phone with a small bundled neural model (multilingual MiniLM encoder, 33M parameters, int8), combined with keyword rules. It only chooses labels; facts come from code.
+- Reads photos of papers on the phone with Tesseract OCR (French and English).
 - Works fully offline. Reading, speaking and checks run on the phone.
-- Language folders for Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum and Pinyin. The recordings are in progress with native speakers, and will arrive as updates.
+- Language folders for Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum and Pinyin, waiting for native speakers to translate and record them. Until then they speak their fallback language.
 - Deadline reminders: "Remind me" schedules notifications on Android, the day before at 09:00 and on the day at 08:00. The web version saves a calendar file (`.ics`) instead.
 - Share a message or a photo to SabiTori from another app.
 - Practice message, to try the app without a real paper.
 - History of cards on the phone, kept for 30 days by default. The person can choose 7 days or keep nothing.
-- Optional signed updates (off by default). They download new languages, scam warnings and official numbers. Each file is checked with a signature and a checksum before use.
+- Optional signed updates (off by default, and only in a build given an update address; no update server is set up yet). Once one is, they can deliver new languages, voices, scam warnings and official numbers. Each file is checked with a signature and a checksum before use.
 - Optional error reports (off by default). They are sent to Sentry, scrubbed on the phone, and contain no messages, numbers, amounts, dates, phone numbers or device model.
 - "Delete downloaded updates" in Settings.
 

@@ -94,11 +94,11 @@ def main() -> None:
         W, b = fit(Xtr, y, len(labels), C)
         heads[field] = {"labels": labels, "W": np.round(W, 5).tolist(), "b": np.round(b, 5).tolist(), "temperature": round(T, 4), "C": C}
         p = softmax(oof / T, axis=1)
-        oof_out[field] = {"pred": [labels[i] for i in p.argmax(1)], "conf": np.round(p.max(1), 4).tolist(), "gold": [labels[i] for i in y]}
+        oof_out[field] = {"pred": [labels[i] for i in p.argmax(1)], "conf": np.round(p.max(1), 4).tolist(), "probs": np.round(p, 4).tolist(), "gold": [labels[i] for i in y]}
         report[field] = {"cv_accuracy": round(acc, 4), "C": C, "temperature": round(T, 3)}
         print(f"  -> {field}: C={C} T={T:.2f} cv-acc={acc:.3f}")
     (mdir / "heads.json").write_text(json.dumps({"version": 1, "dim": int(Xtr.shape[1]), "normalise": True, "heads": heads}, separators=(",", ":")), "utf8")
-    (mdir / "oof.json").write_text(json.dumps({"rows": [{k: r.get(k) for k in ("text", "source", "receivedAt", "sender")} for r in train], "fields": oof_out}, ensure_ascii=False), "utf8")
+    (mdir / "oof.json").write_text(json.dumps({"rows": [{k: r.get(k) for k in ("id", "text", "source", "receivedAt", "sender")} for r in train], "fields": oof_out}, ensure_ascii=False), "utf8")
     (mdir / "train-report.json").write_text(json.dumps({"n_train": len(train), "cv": report}, indent=1), "utf8")
 
     if Xte is not None and len(test):  # one look, for the model card; no choice depends on it

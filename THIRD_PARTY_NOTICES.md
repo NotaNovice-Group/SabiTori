@@ -12,9 +12,21 @@ whenever you bundle another component.
 | onnxruntime-web (runs MiniLM and the Piper voices; versions in `packages/understand/package.json` and `packages/speech/package.json`) | Model runtime, WebAssembly, single thread | MIT | https://github.com/microsoft/onnxruntime |
 | `@huggingface/tokenizers` 0.2.0 | Tokenizer for MiniLM | Apache-2.0 | https://github.com/huggingface/tokenizers |
 | tesseract.js 7.0.0 and tesseract.js-core 7.0.0 | Text recognition (OCR) of photos | Apache-2.0 | https://github.com/naptha/tesseract.js |
-| Tesseract LSTM models `eng` and `fra` (packaged as `@tesseract.js-data/eng` and `/fra` 1.0.0, MIT packaging) | OCR language data | Apache-2.0 | https://github.com/tesseract-ocr/tessdata |
+| Tesseract LSTM models `eng` and `fra`, integer-quantised `best_int` variant (`4.0.0_best_int`, packaged as `@tesseract.js-data/eng` and `/fra` 1.0.0, MIT packaging) | OCR language data | Apache-2.0 | https://github.com/tesseract-ocr/tessdata_best (via the `4.0.0_best_int` folder of the npm packages) |
 | `@wllama/wllama` 3.8.1, a WebAssembly build of llama.cpp | Runs the optional, side-loaded Qwen model | MIT (llama.cpp: MIT) | https://github.com/ngxson/wllama , https://github.com/ggml-org/llama.cpp |
 | Qwen2.5-1.5B-Instruct (NOT bundled; a person may side-load it) | Optional second opinion on unclear messages | Apache-2.0 | https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct |
+
+Notes on the understanding model:
+
+- The MiniLM files in the app (`encoder.int8.onnx`, `tokenizer.json`) contain only weights and vocabulary pieces
+  of the original Apache-2.0 model (a subset, quantised). The three heads (`heads.json`) are trained by this project
+  on its own synthetic dataset (`packages/understand/eval/messages.jsonl`, CC-BY-SA-4.0, written by this project);
+  they contain numbers, no text from the dataset, and the project releases them under Apache-2.0 with the encoder.
+  `model/minilm/oof.json` (a training artefact, not shipped in the app) quotes dataset text and stays CC-BY-SA-4.0.
+- Which vocabulary pieces are kept is chosen with general word-frequency lists (Hermit Dave, FrequencyWords,
+  OpenSubtitles 2018, content CC-BY-SA-4.0, https://github.com/hermitdave/FrequencyWords, pinned commit and sha256 in
+  `packages/understand/train/export.py`). The lists are downloaded at export time and not redistributed; no word or
+  count from them is in any shipped file.
 
 ## App, fonts and libraries
 

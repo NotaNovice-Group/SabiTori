@@ -21,13 +21,12 @@ photo ─► OCR (Tesseract LSTM, French + English) ─┐
 shared text ─────────────────────────────────────┤
                                                  ├─► facts found by code (dates, FCFA, phones, codes)
                                                  ├─► message understood: multilingual MiniLM encoder
-                                                 │   (33M parameters, 36 MB; ~0.25 s per message at 4x CPU throttling,
-                                                 │   phone measurements pending)
-                                                 │   with keyword rules as the safety net
+                                                 │   (33M parameters, 36 MB), with keyword rules as the
+                                                 │   safety net (speed: see below)
                                                  ├─► scam signals checked (code)
                                                  └─► card built; every fact verified against the text
-card ─► spoken from the language pack: Piper neural voice (French, English, and community-trained
-        voices later) or community recordings
+card ─► spoken from the language pack: Piper neural voice (French today), the phone's offline
+        voice (English today), community recordings or community-trained voices (planned)
 ```
 
 **A small model chooses labels, code finds and verifies facts, and a voice from the community speaks.**
@@ -35,10 +34,22 @@ The model decides what kind of message it is, what the person must do and how ur
 produces a date, an amount or a phone number: code reads those and every one is checked against the
 original text. SabiTori never calls a message safe.
 
-On our evaluation set, the on-device model plus rules gets all three labels right on about 70% of held-out
-messages, against 44% for keyword rules alone
-([`packages/understand/eval`](packages/understand/eval)). The set is synthetic for now; real,
-consented messages from the pilot will replace it.
+<!-- results:headline -->
+On the 96 held-out test messages of our synthetic evaluation set, the on-device model plus rules gets all three
+labels right on 69.8% [60.4–78.1] of messages, against 44.8% [34.4–54.2] for keyword rules alone:
+higher (p < 0.001). On 100 further messages written to avoid the generator's templates (the unseen
+set), it is 41.0% [31.0–51.0] against 25.0% [17.0–34.0]: higher (p = 0.007).
+Brackets are 95% bootstrap intervals; p is an exact McNemar test on the same messages. Both sets are synthetic and
+small, so treat these as development numbers, not field accuracy
+([`packages/understand/eval`](packages/understand/eval), generated from `eval/results.json`).
+<!-- /results:headline -->
+
+No real message has been evaluated yet: there is no pilot and no user so far. Real, consented, anonymised
+messages from a first pilot are meant to replace the synthetic sets ([`docs/impact.md`](docs/impact.md)
+lists what a pilot would measure).
+
+Speed: the understanding model takes 235 ms median per message in headless Chromium with a 4× CPU throttle,
+on the main thread, on a desktop CPU ([`docs/model.md`](docs/model.md)). Phone latency is not yet measured on a phone.
 
 ## Languages
 
@@ -50,7 +61,7 @@ See [`packs/README.md`](packs/README.md).
 | Pack | Status |
 | --- | --- |
 | French | Text complete, spoken by the bundled Piper neural voice (phone voice as fallback) |
-| English | Text complete, spoken with the phone's offline voice; its Piper voice is delivered by signed update |
+| English | Text complete, spoken with the phone's offline voice; its Piper voice (63 MB, not bundled) can be delivered once an update server is set up |
 | Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum, Pinyin | Waiting for native speakers to translate and record; speak their fallback language meanwhile |
 
 Add any language with one command (`node scripts/new-language.mjs`). How languages are recorded,
@@ -67,7 +78,7 @@ and when we train our own voices: [`docs/languages.md`](docs/languages.md).
 | `apps/app` | The SabiTori app (React PWA, wrapped for Android with Capacitor) |
 | `apps/recorder` | Tool for communities to translate and record a language |
 | `packs/`, `regions/` | Language and country data |
-| `docs/` | Architecture, pack rules, model notes |
+| `docs/` | Architecture, pack rules, model notes, privacy policy, sustainability and impact plans |
 | `DESIGN.md` | Design system |
 
 ## Develop
@@ -97,8 +108,16 @@ pnpm --filter @sabitori/app build && cd apps/app && npx cap sync android && cd a
 - Confirm official sender names, help lines and balance codes in `regions/CM/region.json`
   (all are marked unverified; SabiTori never vouches for a sender until they are).
 - Native review of the French text (`packs/fr/phrases.json`, status `draft`).
-- Test on real low-cost Android phones: voices, camera, OCR speed, model speed.
+- Test on real low-cost Android phones: voices, camera, OCR speed, model speed (nothing has been measured
+  on a phone yet).
+- Make the repository public, and fill the owner decisions listed in [`docs/OWNER-TODO.md`](docs/OWNER-TODO.md).
 - Release signing key for the Play Store build.
+
+## Free, non-commercial, community-owned
+
+SabiTori is free for everyone, with no ads, no paid tier and no sale of data, and it stays that way. Language
+packs belong to the communities that record them. How the work is meant to be funded (grants, partner
+programmes that fund language recording, community stewardship): [`docs/sustainability.md`](docs/sustainability.md).
 
 ## Contributing
 

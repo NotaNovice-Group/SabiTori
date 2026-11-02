@@ -6,8 +6,8 @@ SabiTori has two on-device understanding models. Both only **choose labels** fro
 | --- | --- | --- |
 | Model | paraphrase-multilingual-MiniLM-L12-v2 encoder (Apache-2.0), int8 ONNX, plus 3 linear heads | Qwen2.5-1.5B-Instruct Q4_K_M GGUF |
 | Size | about 35.6 MB, shipped inside the app | about 1 GB, side-loaded |
-| Parameters | 117.7M base; 33.0M after pruning the vocabulary to 30k pieces | 1.5B |
-| Speed | median about 60 ms per message on a laptop core; about 230 ms median, 400 ms p95 with the CPU throttled 4x (headless Chromium, one thread) | seconds |
+| Parameters | 33.0M as shipped (the base model has 117.7M, 96M of them in its 250k-piece vocabulary; pruned to 30k pieces) | 1.5B |
+| Speed | 235 ms median, 367 ms p95 per message in headless Chromium, 4× CPU throttle, main thread, one wasm thread (Intel Xeon 2.1 GHz desktop CPU; `packages/understand/harness/encoder-bench.mjs`). Not yet measured on a phone | 20–24 s per message on a desktop (wasm); not for every message |
 | Runtime | onnxruntime-web (wasm, one thread, no COOP/COEP) | wllama |
 | Classifier id | `minilm-l12-int8@1` | `qwen2.5-1.5b-q4@1` |
 
@@ -21,16 +21,27 @@ text -> tokenizer.json (Unigram, pure JS) -> encoder.int8.onnx (mean pooled, 384
 
 - Code: `src/encoder.ts` (`createEncoderClassifier({ baseUrl, fallback, wasmBaseUrl, threshold?, readFile?, ort? })`), `src/encoder-math.ts` (pure head and combination maths).
 - Files: `packages/understand/model/minilm/` (`encoder.int8.onnx`, `tokenizer.json`, `heads.json`, `model-card.md`); training and export in `packages/understand/train/` (see its README for the exact commands).
-- Combination: thresholds per field (kind 0.85, action 0.55, urgency 0.65) are stored in `heads.json` and were picked on the train split only. Confidence is the lowest confidence among the sources used, capped at 0.95. Below that the rules answer. Any error (files missing, runtime fails) also gives the rules' answer. The encoder cannot create a fact.
-- App: `apps/app/src/engine/encoder.ts` loads it once, lazily, when the app calls `engine.model.init()` after first paint (about 1.2 s after start); until it is ready `Engine.analyze` uses rules. `Engine.analyzeDeeper` and the optional LLM are unchanged. Settings shows "Understanding model: built in (MiniLM, 118M)" and its status.
+- Combination: thresholds per field are stored in `heads.json` and were picked on the train split only, out-of-fold (values and the full grid: `model/minilm/model-card.md`). Confidence is the lowest confidence among the sources used, capped at 0.95. Below that the rules answer. Any error (files missing, runtime fails) also gives the rules' answer. The encoder cannot create a fact.
+- App: `apps/app/src/engine/encoder.ts` loads it once, lazily, when the app calls `engine.model.init()` after first paint (about 1.2 s after start); until it is ready `Engine.analyze` uses rules. `Engine.analyzeDeeper` and the optional LLM are unchanged. Settings shows "Understanding model: built in (MiniLM, 33M)" and its status.
 - Assets (copied by `apps/app/vite.config.ts` into `public/`, all precached by the PWA service worker):
   `models/minilm/{encoder.int8.onnx,tokenizer.json,heads.json}` and `ort/ort-wasm-simd-threaded.{wasm,mjs}` (onnxruntime-web 1.22.0, 11.2 MB wasm, shared with the Piper voices). A vite plugin maps `onnxruntime-web/wasm` to its "extern wasm" build so the wasm is not bundled twice. The app passes an absolute `wasmBaseUrl` (the runtime imports its loader from there).
   Added to the APK: about 50 MB uncompressed (35.6 MB model + 14.9 MB runtime).
 - Node (tests, eval): the same code runs with onnxruntime-web's Node entry; pass `readFile` to read the files from disk.
 
-Evaluate: `node packages/understand/eval/run-encoder.mjs` (test split, writes `eval/results-encoder.md`; baseline numbers in `eval/results-rules.md`).
+Evaluate: `node packages/understand/eval/run-encoder.mjs` (test split and unseen set; writes `eval/results.json` and `eval/results-encoder.md`), then `node packages/understand/eval/model-card.mjs` (regenerates the tables below, in the README and in the model card from `results.json`).
 
-Known limits: the encoder runs on the main thread (about 0.2 to 0.4 s of CPU per message on a slow phone); `env.wasm.proxy` could move it to a worker later. Training data is synthetic and small; see `model/minilm/model-card.md`.
+<!-- results:model-summary -->
+| | test split | unseen set |
+| --- | --- | --- |
+| messages | 96 | 100 |
+| rules alone, all three labels | 44.8% [34.4–54.2] | 25.0% [17.0–34.0] |
+| encoder + rules (default), all three labels | 69.8% [60.4–78.1] | 41.0% [31.0–51.0] |
+| paired difference | +25.0 pts [14.6–35.4], 28 vs 4, p < 0.001 | +16.0 pts [5.0–27.0], 24 vs 8, p = 0.007 |
+
+Generated from `packages/understand/eval/results.json`; full tables, per-language rows and calibration in `packages/understand/model/minilm/model-card.md`.
+<!-- /results:model-summary -->
+
+Known limits: the encoder runs on the main thread; `env.wasm.proxy` could move it to a worker later. Its cost on a real low-cost phone is not yet measured on a phone; the only figures are the headless Chromium, 4× CPU throttle, main thread ones above. Training data is synthetic and small; see `model/minilm/model-card.md`.
 
 ---
 
@@ -39,7 +50,7 @@ Known limits: the encoder runs on the main thread (about 0.2 to 0.4 s of CPU per
 ## What it is
 
 - Default: **Qwen2.5-1.5B-Instruct, GGUF Q4_K_M** (about 1 GB). Optional: Qwen2.5-3B-Instruct Q4_K_M (about 2 GB; pass `id: 'qwen2.5-3b-q4@1'`).
-- Licence: Qwen2.5-1.5B-Instruct is **Apache-2.0**. Qwen2.5-3B is published under the Qwen Research licence (not Apache-2.0; check commercial terms before shipping it). Always verify the model card of the exact file you distribute. wllama is MIT.
+- Licence: Qwen2.5-1.5B-Instruct is **Apache-2.0**. Qwen2.5-3B is published under the Qwen Research licence (not Apache-2.0; its terms restrict redistribution, so check them before shipping it). Always verify the model card of the exact file you distribute. wllama is MIT.
 - Runs in the browser through `@wllama/wllama` (llama.cpp compiled to WebAssembly) in a worker. No network at runtime.
 - It is not a frontier model. It is a small open model used as a **classifier only**: it picks one label from each closed list in `@sabitori/core` (`kind`, `action`, `urgency`) and a confidence. A GBNF grammar makes any other output impossible. It never produces dates, amounts, phone numbers or free text; those come from code. If the model fails, times out (default 25 s) or the output does not validate, the rule-based classifier answers instead.
 - Confidence: model value capped at 0.9; multiplied by 0.6 when the rules classifier picks a different `kind`.
@@ -131,14 +142,14 @@ A pack points to its own model with `voice: { kind: 'tts', engine: 'piper', bcp4
 
 Headless Chromium (`/opt/pw-browsers/chromium`), real audio output, voices loaded, 3 sentences per language (`packages/speech/bench/`). Time to first audio (TTFA) is from `speak()` to the first sample reaching the audio device. RTF is synthesis time divided by audio length (below 1 means faster than real time). The CPU of the test machine is not a phone; treat the 4x column as a relative stress test.
 
-Chromium's 4x CPU throttling does not slow Web Workers, so the 4x rows run the same runtime on the main thread (the real app uses a worker).
+Chromium's 4× CPU throttling does not slow Web Workers, so the two "Main thread, 4× CPU throttling" rows run the same runtime on the page's main thread, while the real app synthesizes in a worker. They are main-thread measurements, not measurements of the app's worker path, and none of these rows is a phone measurement: voice latency is not yet measured on a phone.
 
 | Condition | Language | Model load | TTFA (3 sentences) | RTF |
 | --- | --- | --- | --- | --- |
 | Worker, no throttling | fr | 2.7 s | 665 / 498 / 607 ms | 0.27 / 0.18 / 0.17 |
 | Worker, no throttling | en | 2.5 s | 1344 / 753 / 1458 ms | 0.43 / 0.30 / 0.41 |
-| Main thread, 4x CPU throttling | fr | 9.9 s | 2736 / 2435 / 2481 ms | 1.06 / 0.84 / 0.78 |
-| Main thread, 4x CPU throttling | en | 8.3 s | 5292 / 4018 / 5118 ms | 1.53 / 1.56 / 1.29 |
+| Main thread, 4× CPU throttling | fr | 9.9 s | 2736 / 2435 / 2481 ms | 1.06 / 0.84 / 0.78 |
+| Main thread, 4× CPU throttling | en | 8.3 s | 5292 / 4018 / 5118 ms | 1.53 / 1.56 / 1.29 |
 
 Sentences: "Vous avez reçu 5 000 francs de votre opérateur.", "Ne partagez jamais votre code secret avec personne.", "Le rendez-vous est prévu demain à dix heures au centre de santé."; "You have received 5,000 francs from your operator.", "Never share your secret code with anyone.", "Your appointment is tomorrow at ten o'clock at the health centre."
 

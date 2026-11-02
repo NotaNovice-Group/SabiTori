@@ -1,19 +1,56 @@
 {
  "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
  "source_params": 117653760,
+ "exported_params": 33042912,
  "kept_vocab": 30000,
+ "fill": "freq",
+ "freq_lists": {
+  "repo": "hermitdave/FrequencyWords",
+  "commit": "525f9b560de45753a5ea01069454e72e9aa541c6",
+  "files": {
+   "fr": "content/2018/fr/fr_50k.txt",
+   "en": "content/2018/en/en_50k.txt"
+  },
+  "sha256": {
+   "fr": "f81f7c570b6433764da99aa30f4dfb08d81c5926301377b709af23a13b1f9596",
+   "en": "5351ff405b1126ef555791dd4d9798a48e3e9a501a9fc481a9da957752cfb458"
+  }
+ },
  "dim": 384,
  "onnx_bytes": 34195614,
  "cosine_vs_original": {
-  "n": 203,
-  "cosine_mean": 0.9856987472238212,
-  "cosine_min": 0.958932101726532
+  "heldout_only": true,
+  "n": 276,
+  "cosine_mean": 0.9821,
+  "cosine_min": 0.8613,
+  "sets": {
+   "messages.jsonl:test": {
+    "n": 96,
+    "cosine_mean": 0.9823,
+    "cosine_min": 0.9085,
+    "below_0.95": 4,
+    "same_tokenisation": 55
+   },
+   "unseen.jsonl": {
+    "n": 100,
+    "cosine_mean": 0.9759,
+    "cosine_min": 0.8613,
+    "below_0.95": 9,
+    "same_tokenisation": 53
+   },
+   "heldout-sentences.txt": {
+    "n": 80,
+    "cosine_mean": 0.9897,
+    "cosine_min": 0.9412,
+    "below_0.95": 2,
+    "same_tokenisation": 77
+   }
+  }
  },
  "max_len": 128,
  "pad_id": 1,
  "ids": {
   "bos": 0,
   "eos": 2
- },
- "exported_params": 33042912
+ }
 }

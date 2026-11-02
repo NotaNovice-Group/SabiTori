@@ -1,37 +1,38 @@
 # Rules baseline results
 
-Classifier: `rules@1` (region CM, lexicons fr + en, no `wes` lexicon exists yet). Split: `test` (97 messages).
+Classifier: `rules@1` (region CM, lexicons fr + en, no `wes` lexicon exists yet). Split: `test` (96 messages).
 Regenerate: see the header of `run-rules.mjs`. Deterministic: same dataset gives the same numbers.
+Brackets: 95% percentile bootstrap interval over messages (10000 resamples, seed 20261102; `stats.mjs`). The published comparison with the encoder is in `results-encoder.md` / `results.json`.
 
 ## Accuracy
 
-| Field | Accuracy |
+| Field | Accuracy [95% CI] |
 |---|---|
-| kind | 86.6% |
-| action | 63.9% |
-| urgency | 75.3% |
-| all three right | 44.3% |
-| scam level (assessScam) | 94.8% |
+| kind | 86.5% [79.2–92.7] |
+| action | 64.6% [55.2–74.0] |
+| urgency | 76.0% [66.7–84.4] |
+| all three right | 44.8% [34.4–54.2] |
+| scam level (assessScam) | 94.8% [89.6–99.0] |
 
 Mean rules confidence: 0.66. Classifier errors: 0.
 
 ## By language
 
-| Lang | n | kind | action | urgency | all three | scam level |
+| Lang | n | kind | action | urgency | all three [95% CI] | scam level |
 |---|---|---|---|---|---|---|
-| fr | 38 | 84.2% | 65.8% | 78.9% | 42.1% | 94.7% |
-| en | 44 | 93.2% | 72.7% | 77.3% | 56.8% | 93.2% |
-| wes | 15 | 73.3% | 33.3% | 60.0% | 13.3% | 100.0% |
+| fr | 38 | 84.2% | 65.8% | 78.9% | 42.1% [26.3–57.9] | 94.7% |
+| en | 43 | 93.0% | 74.4% | 79.1% | 58.1% [44.2–72.1] | 93.0% |
+| wes | 15 | 73.3% | 33.3% | 60.0% | 13.3% [0.0–33.3] | 100.0% |
 
 ## Scam level confusion (rows = expected, columns = predicted)
 
 | expected \ predicted | likely_scam | caution | no_signs | recall |
 |---|---|---|---|---|
-| likely_scam | 17 | 1 | 1 | 89.5% |
+| likely_scam | 16 | 1 | 1 | 88.9% |
 | caution | 0 | 4 | 0 | 100.0% |
 | no_signs | 1 | 2 | 71 | 95.9% |
 
-Any warning on scam/caution messages: 22/23 (95.7%). Warning on no-signs messages (false alarms): 3/74 (4.1%).
+Any warning on scam/caution messages: 21/22 (95.5%). Warning on no-signs messages (false alarms): 3/74 (4.1%).
 
 ## Confusion summary (most frequent errors, expected -> predicted)
 
@@ -48,7 +49,7 @@ Any warning on scam/caution messages: 22/23 (95.7%). Warning on no-signs message
 
 ### action
 
-- pay -> unclear: 14
+- pay -> unclear: 12
 - nothing -> unclear: 7
 - go_to_place -> unclear: 5
 - reply -> unclear: 3
@@ -60,7 +61,7 @@ Any warning on scam/caution messages: 22/23 (95.7%). Warning on no-signs message
 ### urgency
 
 - urgent -> soon: 11
-- info -> soon: 8
+- info -> soon: 7
 - info -> urgent: 3
 - urgent -> info: 2
 
@@ -84,7 +85,7 @@ Any warning on scam/caution messages: 22/23 (95.7%). Warning on no-signs message
 | electricity_bill | 9 | 100.0% |
 | health | 9 | 88.9% |
 | legal | 7 | 71.4% |
-| mobile_money | 17 | 94.1% |
+| mobile_money | 16 | 93.8% |
 | other | 5 | 60.0% |
 | school | 9 | 100.0% |
 | telecom | 12 | 100.0% |
@@ -98,20 +99,20 @@ Any warning on scam/caution messages: 22/23 (95.7%). Warning on no-signs message
 | call | 8 | 75.0% |
 | collect | 7 | 100.0% |
 | go_to_place | 11 | 54.5% |
-| nothing | 17 | 47.1% |
-| pay | 25 | 40.0% |
-| reply | 10 | 70.0% |
+| nothing | 19 | 52.6% |
+| pay | 23 | 43.5% |
+| reply | 9 | 66.7% |
 | take_medicine | 4 | 100.0% |
-| unclear | 6 | 100.0% |
+| unclear | 6 | 83.3% |
 
 ### urgency
 
 | Label | n | recall |
 |---|---|---|
-| info | 54 | 79.6% |
+| info | 54 | 81.5% |
 | soon | 18 | 100.0% |
-| urgent | 25 | 48.0% |
+| urgent | 24 | 45.8% |
 
 ## For reference: all 320 messages
 
-kind 86.6%, action 62.8%, urgency 78.4%, all three 45.0% (rules need no training, so train and test are comparable).
+kind 86.9%, action 62.2%, urgency 78.4%, all three 44.4% (rules need no training, so train and test are comparable).

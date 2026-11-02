@@ -153,6 +153,66 @@ describe('eval dataset: set-level properties', () => {
   });
 });
 
+describe('unseen set (unseen.jsonl): evaluation only, never training or thresholds', () => {
+  const unseen = load('unseen.jsonl');
+  const texts = new Set(rows.map((r) => r.text));
+
+  it('has 100 rows, all split "unseen", synthetic, author "reviewer"', () => {
+    expect(unseen.length).toBe(100);
+    for (const r of unseen) {
+      expect(Object.keys(r).sort(), r.id).toEqual([...KEYS, 'author'].sort());
+      expect(r.split, r.id).toBe('unseen');
+      expect(r.synthetic, r.id).toBe(true);
+      expect((r as Row & { author: string }).author, r.id).toBe('reviewer');
+    }
+  });
+
+  it.each(unseen.map((r) => [r.id, r] as const))('%s has closed labels and fictional numbers', (_id, r) => {
+    expect(r.id).toMatch(/^uns-\d{3}$/);
+    expect(LANGS).toContain(r.lang);
+    expect(SOURCES).toContain(r.source);
+    expect(r.receivedAt).toBe('2026-10-31');
+    expect(SENDER_KINDS).toContain(r.sender.kind);
+    expect(MESSAGE_KINDS as readonly string[]).toContain(r.expected.kind);
+    expect(ACTION_KINDS as readonly string[]).toContain(r.expected.action);
+    expect(URGENCIES as readonly string[]).toContain(r.expected.urgency);
+    expect(SCAM_LEVELS).toContain(r.scam);
+    if (r.sender.kind === 'number') expect(r.sender.value).toMatch(/^\+237(677|699)00\d{4}$/);
+    for (const m of r.text.matchAll(/(?<![\d])(?:\+?237\s?)?([62]\s?\d{2}\s\d{2}\s\d{2}\s\d{2})(?![\d])/g)) {
+      expect(m[1]!.replace(/\s/g, ''), `${r.id}: ${m[0]}`).toMatch(/^(677|699|233)00\d{4}$/);
+    }
+  });
+
+  it('shares no text and no id with messages.jsonl, and has unique texts', () => {
+    for (const r of unseen) expect(texts.has(r.text), r.id).toBe(false);
+    const ids = new Set(rows.map((r) => r.id));
+    for (const r of unseen) expect(ids.has(r.id), r.id).toBe(false);
+    expect(new Set(unseen.map((r) => r.text)).size).toBe(unseen.length);
+  });
+
+  it('covers all three languages, every kind and a fifth of Pidgin or more', () => {
+    const lang = count(unseen, (r) => r.lang);
+    expect(lang.wes ?? 0).toBeGreaterThanOrEqual(20);
+    expect(lang.fr ?? 0).toBeGreaterThanOrEqual(30);
+    expect(lang.en ?? 0).toBeGreaterThanOrEqual(30);
+    const kinds = count(unseen, (r) => r.expected.kind);
+    for (const k of MESSAGE_KINDS) expect(kinds[k] ?? 0, `kind ${k}`).toBeGreaterThan(0);
+  });
+
+  it('is never read by the training code, and export.py keeps vocabulary pieces from train rows only', () => {
+    expect(readFileSync(new URL('../train/train.py', import.meta.url), 'utf8')).not.toContain('unseen');
+    expect(readFileSync(new URL('../train/export.py', import.meta.url), 'utf8')).toContain('d.get("split", "train") != "train"');
+  });
+});
+
+describe('labelling rule: operator promotions', () => {
+  it('a genuine operator promotion is telecom / nothing / info (an offer is not an obligation)', () => {
+    const promos = rows.filter((r) => /Doublez votre recharge|Double your recharge|bonus de recharge|recharge bonus|You don win bonus/.test(r.text));
+    expect(promos.length).toBeGreaterThanOrEqual(4);
+    for (const r of promos) expect(r.expected, r.id).toEqual({ kind: 'telecom', action: 'nothing', urgency: 'info' });
+  });
+});
+
 describe('eval README', () => {
   const readme = readFileSync(new URL('../eval/README.md', import.meta.url), 'utf8');
   it('states the licence, synthetic origin and Pidgin review requirement', () => {

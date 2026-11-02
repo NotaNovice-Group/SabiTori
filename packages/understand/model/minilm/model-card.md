@@ -1,4 +1,4 @@
-# SabiTori built-in understanding model: minilm-l12-int8@1
+# SabiTori built-in understanding model: minilm-l12-int8
 
 Reads every message on the phone and picks three labels from closed lists: message kind, action,
 urgency. It never produces a date, amount, phone number or text; those come from code.
@@ -6,40 +6,157 @@ urgency. It never produces a date, amount, phone number or text; those come from
 | | |
 | --- | --- |
 | Base model | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (Reimers and Gurevych, Sentence-BERT; distilled multilingual MiniLM) |
-| Licence | Apache-2.0 (base model and this derivative). Heads: trained here on `eval/messages.jsonl` (CC-BY-SA-4.0, synthetic). onnxruntime-web is MIT, `@huggingface/tokenizers` is Apache-2.0 |
-| Parameters | 117.7M in the base model (96M of them the 250k-piece vocabulary table). Exported: 33.0M (vocabulary pruned to 30,000 pieces; 21.3M transformer, 11.5M embeddings) plus heads 4 x 384 x classes (about 8k weights) |
+| Licence | Apache-2.0 (base model and this derivative, heads included). onnxruntime-web is MIT, `@huggingface/tokenizers` is Apache-2.0 |
+| Parameters | 117.7M in the base model, of which about 96M are the 250k-piece vocabulary table. Exported: 33.0M (vocabulary pruned to 30,000 pieces: 21.3M transformer, 11.5M embeddings), plus heads of 4 x 384 x classes (about 8k weights). "33M" everywhere in SabiTori means the exported model |
 | Precision | int8 (dynamic MatMul quantisation; embedding table int8 with per-row scale), fp32 layer norms and biases |
-| Files | `encoder.int8.onnx` 34.2 MB, `tokenizer.json` 1.3 MB (pruned Unigram), `heads.json` 0.07 MB. Total about 35.6 MB |
-| Input | up to 128 tokens (longer text is cut), French, English and (poorly tested) Pidgin |
+| Files | `encoder.int8.onnx` (size below), `tokenizer.json` 1.3 MB (pruned Unigram), `heads.json` 0.07 MB. About 35.6 MB in total |
+| Input | up to 128 tokens (longer text is cut); French, English and (poorly tested) Cameroonian Pidgin |
 | Pooling | mean over tokens, then L2 normalisation, then three linear heads, softmax with a fitted temperature |
 | Runtime | onnxruntime-web, wasm, one thread (no COOP/COEP needed): Android WebView and desktop browsers; also runs in Node for tests |
-| Quantised vs original | mean cosine of sentence embeddings 0.986, min 0.959 (203 messages) |
+
+## Where the weights come from
+
+- **Encoder.** We did not train the encoder. According to its authors (Reimers and Gurevych, "Sentence-BERT", 2019, and
+  "Making Monolingual Sentence Embeddings Multilingual using Knowledge Distillation", 2020, and the Hugging Face model
+  card), it was distilled from the English `paraphrase-MiniLM-L12-v2` model, trained on public English paraphrase
+  datasets, into a multilingual student using public parallel sentences for 50+ languages. We have not audited
+  those datasets. SabiTori only prunes its vocabulary and quantises its weights; no SabiTori data changes them.
+- **Vocabulary.** The 30,000 kept pieces are a subset of the original tokenizer: every piece the train messages and
+  the fr/en pack lexicons use, every single Latin character, then every piece needed to spell the 50,000 most frequent
+  French and the 50,000 most frequent English words of a general word-frequency list (Hermit Dave FrequencyWords,
+  OpenSubtitles 2018, CC-BY-SA-4.0, pinned commit and sha256 in `train/export.py`), interleaved by rank, in
+  lower case and Capitalised; the few remaining places go to the best-scoring Unigram pieces. The word list only
+  chooses pieces; it is not redistributed and none of its content is in a shipped file.
+- **Heads.** Three logistic regressions trained by this project on the train split (224 messages) of
+  `eval/messages.jsonl`, a synthetic dataset this project wrote and publishes under CC-BY-SA-4.0. `heads.json`
+  holds only numbers, no dataset text; as the dataset's authors we release the heads under Apache-2.0 with the
+  encoder, so ShareAlike does not carry over to the weights. (`oof.json`, a training artefact that is not shipped,
+  quotes dataset text and stays CC-BY-SA-4.0.)
+
+## Export
+
+<!-- results:card-export -->
+| | |
+| --- | --- |
+| Exported parameters | 33.0M (source model 117.7M; vocabulary pruned to 30,000 pieces, fill strategy `freq`) |
+| `encoder.int8.onnx` | 34.2 MB |
+| Fidelity (held-out text only) | mean cosine 0.982, min 0.861 between exported and original fp32 sentence embeddings, n=276 |
+
+| Held-out set | n | mean cosine | min | below 0.95 | tokenised exactly as the original |
+| --- | --- | --- | --- | --- | --- |
+| messages.jsonl:test | 96 | 0.982 | 0.908 | 4 | 55 |
+| unseen.jsonl | 100 | 0.976 | 0.861 | 9 | 53 |
+| heldout-sentences.txt | 80 | 0.990 | 0.941 | 2 | 77 |
+<!-- /results:card-export -->
+
+Fidelity is measured only on text that chose nothing in the export: the test split, the unseen set and
+`train/heldout-sentences.txt` (80 general French and English sentences). The cosine includes both the
+pruning and the int8 quantisation.
+
+### Vocabulary fill: frequency list vs Unigram score
+
+The first published export filled the vocabulary budget with the best-scoring Unigram pieces. A review found
+that it split common words ("samedi", "cousin", "pièce", "Tuesday") into fragments on unseen text and checked
+fidelity on training text only. Both exports keep exactly the same train pieces, so the train embeddings, the
+heads and the thresholds are identical, and only held-out tokenisation differs. Same size (34.2 MB, 30,000
+pieces). Results of the two exports on the same rows are in [`eval/vocab-fill-comparison.md`](../../eval/vocab-fill-comparison.md)
+(paired bootstrap and McNemar, from `eval/compare.mjs`). Summary: held-out fidelity is much higher with the
+frequency fill (see that file); accuracy differences on the test split and the unseen set are small and not
+statistically significant in either direction, and the test split is not hurt. The frequency fill was kept for
+its fidelity; it is not claimed to improve accuracy.
 
 ## How it is used
 
 For each field the encoder's label replaces the rules' label only if its calibrated probability is at
-least that field's threshold; otherwise the rules' label stays. Thresholds (picked on the train split,
-out-of-fold, never on test): kind 0.85, action 0.55, urgency 0.65. The result's confidence is the lowest
-confidence among the sources used (capped at 0.95), so a card that leans on an unsure rules match still
-falls back to facts only. If the model cannot load or run, the rules answer.
+least that field's threshold; otherwise the rules' label stays. Thresholds are picked on the train split,
+out-of-fold, never on the test split or the unseen set (grid below). The result's confidence is the
+lowest confidence among the sources used (capped at 0.95), so a card that leans on an unsure rules match
+still falls back to facts only. If the model cannot load or run, the rules answer. The combination code is
+`combineWithRules` in `src/encoder-math.ts`.
 
-## Evaluation (97 test messages, synthetic; see `eval/results-encoder.md`)
+## Evaluation
 
-| System | kind | action | urgency | all three |
+Two synthetic sets, both labelled by the rules in `eval/README.md`:
+
+- **test split** of `eval/messages.jsonl`: held out from training, but written from the same generator
+  templates as the train split (different wording per message; nearest-train-neighbour character 4-gram
+  Jaccard median about 0.2, none above 0.5).
+- **unseen set**, `eval/unseen.jsonl`: 100 messages written by a reviewer to avoid the generator's templates
+  (new wording, senders, domains and Pidgin). Never used for training, thresholds or any model choice except
+  the single documented fill-strategy decision above.
+
+<!-- results:card-eval -->
+| Set | System | kind | action | urgency | all three |
+| --- | --- | --- | --- | --- | --- |
+| test split (n=96) | rules@1 (keyword rules) | 86.5% [79.2–92.7] | 64.6% [55.2–74.0] | 76.0% [66.7–84.4] | 44.8% [34.4–54.2] |
+| test split (n=96) | encoder alone | 88.5% [81.3–94.8] | 87.5% [80.2–93.8] | 84.4% [77.1–91.7] | 68.8% [59.4–77.1] |
+| test split (n=96) | **encoder + rules (default)** | 93.8% [88.5–97.9] | 83.3% [76.0–90.6] | 81.3% [72.9–88.5] | 69.8% [60.4–78.1] |
+| unseen set (n=100) | rules@1 (keyword rules) | 88.0% [81.0–94.0] | 45.0% [35.0–55.0] | 65.0% [56.0–74.0] | 25.0% [17.0–34.0] |
+| unseen set (n=100) | encoder alone | 78.0% [70.0–86.0] | 58.0% [48.0–68.0] | 58.0% [48.0–67.0] | 34.0% [25.0–43.0] |
+| unseen set (n=100) | **encoder + rules (default)** | 94.0% [89.0–98.0] | 57.0% [47.0–66.0] | 67.0% [58.0–76.0] | 41.0% [31.0–51.0] |
+
+Paired differences against rules on the same messages (points, 95% bootstrap interval, messages only that system gets right vs only rules gets right, exact McNemar p; `*` = p < 0.05):
+
+| Set | Comparison | kind | action | urgency | all three |
+| --- | --- | --- | --- | --- | --- |
+| test split | encoder + rules vs rules | +7.3 pts [2.1–13.5], 8 vs 1, p = 0.039 * | +18.8 pts [8.3–29.2], 24 vs 6, p = 0.001 * | +5.2 pts [-2.1–12.5], 9 vs 4, p = 0.267 | +25.0 pts [14.6–35.4], 28 vs 4, p < 0.001 * |
+| test split | encoder alone vs rules | +2.1 pts [-5.2–9.4], 8 vs 6, p = 0.790 | +22.9 pts [11.5–34.4], 29 vs 7, p < 0.001 * | +8.3 pts [-2.1–18.8], 17 vs 9, p = 0.169 | +24.0 pts [10.4–36.5], 34 vs 11, p < 0.001 * |
+| unseen set | encoder + rules vs rules | +6.0 pts [0.0–12.0], 8 vs 2, p = 0.109 | +12.0 pts [-1.0–25.0], 30 vs 18, p = 0.111 | +2.0 pts [-5.0–9.0], 7 vs 5, p = 0.774 | +16.0 pts [5.0–27.0], 24 vs 8, p = 0.007 * |
+| unseen set | encoder alone vs rules | -10.0 pts [-20.0–0.0], 8 vs 18, p = 0.075 | +13.0 pts [-2.0–27.0], 35 vs 22, p = 0.111 | -7.0 pts [-18.0–4.0], 12 vs 19, p = 0.281 | +9.0 pts [-3.0–21.0], 23 vs 14, p = 0.188 |
+
+By message language (all three labels right):
+
+| Set | Lang | n | rules, all three | encoder + rules, all three | difference |
+| --- | --- | --- | --- | --- | --- |
+| test split | fr | 38 | 42.1% [26.3–57.9] | 68.4% [52.6–81.6] | +26.3 pts [7.9–44.7], 12 vs 2, p = 0.013 * |
+| test split | en | 43 | 58.1% [44.2–72.1] | 74.4% [60.5–86.1] | +16.3 pts [2.3–30.2], 9 vs 2, p = 0.065 |
+| test split | wes | 15 | 13.3% [0.0–33.3] | 60.0% [33.3–86.7] | +46.7 pts [20.0–73.3], 7 vs 0, p = 0.016 * |
+| unseen set | fr | 40 | 22.5% [10.0–35.0] | 40.0% [25.0–55.0] | +17.5 pts [0.0–35.0], 11 vs 4, p = 0.118 |
+| unseen set | en | 38 | 28.9% [15.8–44.7] | 42.1% [26.3–57.9] | +13.2 pts [-2.6–28.9], 8 vs 3, p = 0.227 |
+| unseen set | wes | 22 | 22.7% [9.1–40.9] | 40.9% [22.7–63.6] | +18.2 pts [0.0–40.9], 5 vs 1, p = 0.219 |
+
+Scam level (`assessScam`, code, not changed by this model): test 94.8% [89.6–99.0], unseen 92.0% [86.0–97.0].
+Training: 224 train messages; 5-fold CV accuracy of the encoder heads alone: kind 89.3%, action 74.6%, urgency 73.7%.
+Statistics: 95% percentile bootstrap over rows, 10000 resamples, seed 20261102; exact two-sided McNemar on discordant pairs.
+<!-- /results:card-eval -->
+
+### Calibration and thresholds
+
+Expected calibration error (ECE) of each head alone (10 equal-width bins of the predicted label's
+probability):
+
+<!-- results:card-calibration -->
+| Set | Head | ECE | mean confidence | accuracy |
 | --- | --- | --- | --- | --- |
-| rules@1 | 86.6% | 63.9% | 75.3% | 44.3% |
-| encoder alone | 87.6% | 83.5% | 79.4% | 62.9% |
-| **encoder + rules (default)** | **92.8%** | **85.6%** | **84.5%** | **70.1%** |
+| test split | kind | 0.057 | 0.94 | 0.89 |
+| test split | action | 0.081 | 0.81 | 0.88 |
+| test split | urgency | 0.088 | 0.77 | 0.84 |
+| unseen set | kind | 0.096 | 0.87 | 0.78 |
+| unseen set | action | 0.108 | 0.69 | 0.58 |
+| unseen set | urgency | 0.190 | 0.77 | 0.58 |
 
-Training: 223 train messages; 5-fold CV accuracy of the encoder heads alone on train: kind 88.3%, action 75.8%, urgency 75.3%.
+Threshold grid (train split, out-of-fold, n=224): accuracy of each field when the encoder's label is used at or above t, through the app's own combination code. Chosen: the middle of the plateau within half a point of the best.
+
+| Field | 0.30 | 0.35 | 0.40 | 0.45 | 0.50 | 0.55 | 0.60 | 0.65 | 0.70 | 0.75 | 0.80 | 0.85 | 0.90 | 0.95 | never | chosen |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| kind | 89.3 | 90.2 | 90.6 | 90.6 | 91.1 | 92.0 | 92.0 | 92.0 | 92.4 | 93.8 | 92.4 | 93.3 | 93.8 | 93.3 | 87.1 | 0.85 |
+| action | 73.7 | 74.6 | 75.4 | 75.0 | 74.1 | 75.9 | 74.6 | 73.2 | 72.8 | 72.8 | 72.3 | 69.6 | 68.3 | 66.1 | 61.2 | 0.4 |
+| urgency | 78.6 | 78.6 | 78.6 | 79.0 | 80.8 | 83.0 | 84.4 | 82.6 | 83.0 | 84.4 | 82.6 | 81.7 | 80.8 | 80.4 | 79.5 | 0.6 |
+
+Thresholds shipped in `heads.json`: kind 0.85, action 0.4, urgency 0.6.
+<!-- /results:card-calibration -->
 
 ## Limits
 
-- The dataset is synthetic and small (223 train messages). Train and test messages share templates, so
-  these numbers are probably optimistic for real mail. Re-measure on real, consented, anonymised messages.
+- Both sets are synthetic, small and written by people who know the labelling rules; the unseen set is
+  the better guide to new wording, and it is much harder. Re-measure on real, consented, anonymised messages.
+- On the unseen set the encoder alone scores lower than the rules on `kind` (see the paired table; the
+  difference is not significant at 0.05, but it points the wrong way), and its urgency head is poorly
+  calibrated there (ECE above). The default combination keeps the rules' label unless the encoder is confident.
 - Urgency depends on dates relative to today, which a text embedding only approximates; the rules
   (which do the date arithmetic) stay in the loop.
 - Pidgin rows were written without a native speaker; treat `wes` numbers as a smoke test.
 - A scam message gets the kind of what it imitates; scam detection is separate code (`assessScam`) and is not
   changed by this model.
-- Latency (headless Chromium, single thread, 4x CPU throttle): see `docs/model.md`.
+- Latency: measured only in headless Chromium with a 4× CPU throttle on the main thread (see `docs/model.md`);
+  not yet measured on a phone.

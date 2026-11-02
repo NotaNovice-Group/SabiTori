@@ -27,3 +27,6 @@ keystore.properties
 # Piper voice models (fetched by scripts/fetch-voices.mjs; over 80 MB together)
 packs/*/voice/*.onnx
 apps/app/public/piper/
+
+# Recorder working notes: never commit or ship them
+packs/**/recorder-notes.json
