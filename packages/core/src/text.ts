@@ -51,45 +51,75 @@ export function termSource(term: string): string {
 }
 
 export interface TermHit {
+  /** The text that matched (folded). */
   term: string;
   start: number;
   end: number;
 }
 
-/** All occurrences of any term in already-folded text. */
+/* One alternation regex per list, compiled once and cached (by list identity, then by content). */
+const byIdentity = new WeakMap<readonly string[], RegExp | null>();
+const byContent = new Map<string, RegExp | null>();
+
+function listRegex(terms: readonly string[], flags: string): RegExp | null {
+  const idKey = terms;
+  const cacheKey = flags + '\u0000' + terms.join('\u0000');
+  const id = flags === 'u' ? byIdentity : undefined;
+  if (id && id.has(idKey)) return id.get(idKey) ?? null;
+  let re = byContent.get(cacheKey);
+  if (re === undefined) {
+    const srcs = [...new Set(terms.filter((t) => t.trim()).map((t) => fold(t).trim()))]
+      .sort((x, y) => y.length - x.length)
+      .map((t) => termSource(t));
+    re = srcs.length ? new RegExp(`(?:${srcs.join('|')})`, flags) : null;
+    byContent.set(cacheKey, re);
+  }
+  id?.set(idKey, re);
+  return re;
+}
+
+/**
+ * All occurrences of any term in already-folded text. At each start position
+ * the longest term wins; hits starting inside an earlier hit are also reported.
+ */
 export function findTerms(norm: string, terms: readonly string[] | undefined): TermHit[] {
   const hits: TermHit[] = [];
   if (!terms) return hits;
-  for (const term of terms) {
-    if (!term.trim()) continue;
-    const re = new RegExp(termSource(term), 'gu');
-    let m: RegExpExecArray | null;
-    while ((m = re.exec(norm))) {
-      if (m[0].length === 0) {
-        re.lastIndex++;
-        continue;
-      }
-      hits.push({ term, start: m.index, end: m.index + m[0].length });
+  const base = listRegex(terms, 'gu');
+  if (!base) return hits;
+  const re = new RegExp(base.source, 'gu');
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(norm))) {
+    if (m[0].length === 0) {
+      re.lastIndex++;
+      continue;
     }
+    hits.push({ term: m[0].replace(/\s+/g, ' '), start: m.index, end: m.index + m[0].length });
+    re.lastIndex = m.index + 1;
   }
-  return hits.sort((a, b) => a.start - b.start || b.end - a.end);
+  return hits;
 }
 
 export function hasTerm(norm: string, terms: readonly string[] | undefined): boolean {
   if (!terms) return false;
-  for (const term of terms) {
-    if (!term.trim()) continue;
-    if (new RegExp(termSource(term), 'u').test(norm)) return true;
-  }
-  return false;
+  const re = listRegex(terms, 'u');
+  return !!re && re.test(norm);
 }
+
+const singleCache = new Map<string, RegExp>();
 
 /** Number of distinct terms present. */
 export function countTerms(norm: string, terms: readonly string[] | undefined): number {
   if (!terms) return 0;
   let n = 0;
   for (const term of terms) {
-    if (term.trim() && new RegExp(termSource(term), 'u').test(norm)) n++;
+    if (!term.trim()) continue;
+    let re = singleCache.get(term);
+    if (!re) {
+      re = new RegExp(termSource(term), 'u');
+      singleCache.set(term, re);
+    }
+    if (re.test(norm)) n++;
   }
   return n;
 }

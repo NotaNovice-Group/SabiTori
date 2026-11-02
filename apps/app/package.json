@@ -1,21 +1,32 @@
 {
   "name": "@sabitori/app",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "androidVersionCode": 1,
   "private": true,
+  "license": "MPL-2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit -p . && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit -p .",
-    "test": "vitest run --passWithNoTests"
+    "test": "vitest run --passWithNoTests",
+    "shoot": "node scripts/shoot.mjs",
+    "icons": "node scripts/icons.mjs"
   },
   "dependencies": {
+    "@capacitor-community/text-to-speech": "^8.0.2",
+    "@capacitor/camera": "^8.2.6",
     "@capacitor/core": "^8.6.0",
+    "@capacitor/local-notifications": "^8.3.1",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capgo/capacitor-share-target": "^8.0.64",
     "@fontsource/andika": "^5.3.0",
+    "@sabitori/connect": "workspace:*",
     "@sabitori/core": "workspace:*",
     "@sabitori/speech": "workspace:*",
     "@sabitori/understand": "workspace:*",
+    "@sentry/browser": "^11.10.0",
     "@tesseract.js-data/eng": "^1.0.0",
     "@tesseract.js-data/fra": "^1.0.0",
     "lucide-react": "^1.65.0",
@@ -26,6 +37,7 @@
   "devDependencies": {
     "@capacitor/android": "^8.6.0",
     "@capacitor/cli": "^8.6.0",
+    "@napi-rs/canvas": "^1.1.0",
     "@playwright/test": "^1.64.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

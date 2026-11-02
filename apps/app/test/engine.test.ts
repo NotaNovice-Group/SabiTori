@@ -42,7 +42,10 @@ describe('engine adapter over the real packages', () => {
   it('offers the region languages in order, with manifests', async () => {
     const { e } = engine();
     const langs = await e.languages();
-    expect(langs.map((l) => l.tag)).toEqual(['fr', 'en', 'wes', 'dua', 'ewo', 'fub']);
+    // The list is data: whatever regions/CM/region.json offers, in that order.
+    const region = JSON.parse(readFileSync(`${process.cwd()}/../../regions/CM/region.json`, 'utf8'));
+    expect(langs.map((l) => l.tag)).toEqual(region.languages);
+    expect(langs.map((l) => l.tag)).toEqual(expect.arrayContaining(['wes', 'lns', 'lmp', 'pny']));
     expect(langs[0]!.autonym).toBe('Français');
   });
 
@@ -118,5 +121,45 @@ describe('playback lifecycle', () => {
     e.playSections([], { rate: 1, onSection: (i) => calls.push(i) });
     e.speak({ text: 'x', parts: [], lang: 'fr' });
     expect(calls).toEqual([0, null, 0, null]);
+  });
+});
+
+describe('clip failure fallback', () => {
+  it('re-renders a failed section in the next language and resumes from it', async () => {
+    const calls: { from: number | undefined; langs: string[] }[] = [];
+    let fail = true;
+    const player = {
+      playing: false,
+      stop() {},
+      play(s: RenderedSection[], o: PlayOptions) {
+        calls.push({ from: o.from, langs: s.map((x) => x.lang) });
+        if (fail) {
+          fail = false;
+          o.onSection?.(1);
+          o.onError?.(1, new Error('clip missing'));
+        }
+      },
+    };
+    const e = createEngineFrom({
+      region: json('regions/CM/region.json') as RegionConfig,
+      registry: createPackRegistry({ baseUrl: '/packs', fetch: diskFetch }),
+      lexicons,
+      baseUrl: './',
+      today: () => '2026-10-31',
+      player,
+    });
+    const card = await e.analyze(BILL);
+    const views = await e.renderCard(card, 'fr');
+    expect(views[1]!.utterances?.length).toBeGreaterThan(0);
+    const swapped: number[] = [];
+    const lit: (number | null)[] = [];
+    e.playSections(views, { rate: 1, onSection: (i) => lit.push(i), onFallback: (i) => swapped.push(i) });
+    await new Promise((r) => setTimeout(r, 300));
+    expect(swapped).toEqual([1]);
+    expect(calls).toHaveLength(2);
+    expect(calls[1]!.from).toBe(1);
+    expect(calls[1]!.langs[1]).toBe('en');
+    expect(calls[1]!.langs[0]).toBe('fr');
+    expect(lit).not.toContain(null);
   });
 });

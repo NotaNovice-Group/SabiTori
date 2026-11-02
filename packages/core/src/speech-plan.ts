@@ -14,6 +14,11 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
   const { scam, sender, understanding: u } = card;
   const factsOnly = card.mode === 'facts_only';
   const likely = scam.level === 'likely_scam';
+  const caution = scam.level === 'caution';
+  // Under caution a claimed (unverified) sender with an amount next to a personal number may be the
+  // trap itself: say no money or deadline either.
+  const trapShape =
+    caution && !!scam.claimedSenderId && !sender.verified && card.facts.amounts.length > 0 && card.facts.phones.length > 0;
   const sections: Partial<Record<CardSection, Utterance[]>> = {};
 
   // scam
@@ -62,17 +67,21 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
       ];
     else sections.sender = [{ key: 'sender.unknown' }];
     sections.about = [{ key: key(`about.${u.kind}`) }];
-    if (!likely) sections.action = [{ key: key(`action.${u.action}`) }];
+    // Under caution the message's own call or reply instruction is not repeated.
+    if (!likely && !(caution && (u.action === 'call' || u.action === 'reply')))
+      sections.action = [{ key: key(`action.${u.action}`) }];
   }
 
-  if (!likely) {
+  if (!likely && !trapShape) {
     if (card.deadline) {
       const date = { type: 'date' as const, value: card.deadline.value, relativeTo: today };
       sections.deadline = [{ key: card.deadline.value < today ? 'deadline.passed' : 'deadline.by', slots: { date } }];
     }
     if (card.amount) sections.money = [{ key: 'money.amount', slots: { amount: { type: 'money', value: card.amount.value } } }];
   }
-  sections.help = card.contactPhone
+  // Never a phone in facts_only mode; under caution only the number of a verified sender.
+  const speakPhone = !!card.contactPhone && !factsOnly && (!caution || sender.verified);
+  sections.help = speakPhone && card.contactPhone
     ? [{ key: 'help.call', slots: { phone: { type: 'phone', value: card.contactPhone.value } } }]
     : [{ key: 'help.none' }];
   if (!factsOnly && !likely) sections.urgency = [{ key: key(`urgency.${u.urgency}`) }];

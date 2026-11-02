@@ -8,17 +8,20 @@
  *   speech.renderPlan(plan, lang, registry, { region, today }) -> Engine.renderCard (step 2)
  *   speech.renderPhrase(key, slots, lang, registry, ctx)       -> Engine.phrase / bundle / speak
  *   speech.createBrowserPlayer()                               -> Engine.playSections / stop
- *   understand.createLlmClassifier / modelStore                -> Engine.model (engine/model.ts)
+ *   understand.createEncoderClassifier (built in, default)       -> Engine.analyze, Engine.understanding (engine/encoder.ts)
+ *   understand.createLlmClassifier / modelStore                -> Engine.model (engine/model.ts), the optional deeper path
  */
 import {
   CATALOG, PHRASE_KEYS, analyze, buildSpeechPlan, createRulesClassifier,
   type Card, type Classifier, type LangTag, type MessageInput, type PackManifest, type PhraseKey,
   type ReadingLexicon, type RegionConfig, type SlotValue,
 } from '@sabitori/core';
+import { createAppPlayer } from './native-player';
 import { createBrowserPlayer, createPackRegistry, renderPhrase, renderPlan, type PackRegistry } from '@sabitori/speech';
 import { EXTRA, EXTRA_KEYS, isExtraKey } from './extra';
 import { BUNDLE_KEYS, fallbackChain, fillSlots, resolveExtra } from './shared';
 import { createModelController } from './model';
+import { createEncoderController } from './encoder';
 import { todayIso } from '../lib/format';
 import type { Bundle, Engine, PlayOptions, Rendered, RenderedSection, SectionView, UiKey } from './types';
 
@@ -33,22 +36,33 @@ export interface EngineDeps {
   today?: () => string;
 }
 
-async function getJson(url: string): Promise<unknown> {
-  const res = await fetch(url);
+type FetchFn = (url: string) => Promise<Response>;
+
+async function getJson(url: string, doFetch: FetchFn = (u) => fetch(u)): Promise<unknown> {
+  const res = await doFetch(url);
   if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
   // A dev server answers unknown paths with index.html: that is "not found", not JSON.
   return JSON.parse(await res.text());
 }
 
-/** Load region, packs index and reading lexicons from the app's own origin. */
-export async function createEngine(baseUrl: string, regionCode: string): Promise<Engine> {
+/**
+ * Load region, packs index and reading lexicons from the app's own origin.
+ * `assets` (only when the optional update channel is configured) serves downloaded, verified
+ * files first and the bundled ones otherwise: packs, region.json, reading.json, audio clips.
+ */
+export async function createEngine(
+  baseUrl: string,
+  regionCode: string,
+  assets?: { fetch: FetchFn; resolveClip: (url: string) => Promise<string | null> } | null,
+): Promise<Engine> {
+  const f = assets?.fetch;
   let region: RegionConfig;
   try {
-    region = (await getJson(`${baseUrl}regions/${regionCode}/region.json`)) as RegionConfig;
+    region = (await getJson(`${baseUrl}regions/${regionCode}/region.json`, f)) as RegionConfig;
   } catch {
-    region = (await getJson(`${baseUrl}regions/CM/region.json`)) as RegionConfig;
+    region = (await getJson(`${baseUrl}regions/CM/region.json`, f)) as RegionConfig;
   }
-  const registry = createPackRegistry({ baseUrl: `${baseUrl}packs` });
+  const registry = createPackRegistry({ baseUrl: `${baseUrl}packs`, ...(f ? { fetch: f } : {}) });
   const manifests = await registry.list().catch(() => [] as PackManifest[]);
   const lexicons: ReadingLexicon[] = [];
   await Promise.all(
@@ -56,14 +70,14 @@ export async function createEngine(baseUrl: string, regionCode: string): Promise
       .filter((m) => m.reads)
       .map(async (m) => {
         try {
-          const lx = (await getJson(`${baseUrl}packs/${m.tag}/reading.json`)) as ReadingLexicon;
+          const lx = (await getJson(`${baseUrl}packs/${m.tag}/reading.json`, f)) as ReadingLexicon;
           if (lx && lx.formatVersion === 1) lexicons.push(lx);
         } catch {
           /* this language cannot be read yet: rules use the others */
         }
       }),
   );
-  return createEngineFrom({ region, registry, lexicons, baseUrl });
+  return createEngineFrom({ region, registry, lexicons, baseUrl, ...(assets ? { player: createAppPlayer(assets.resolveClip, (u) => getJson(u, assets.fetch)) } : {}) });
 }
 
 export function createEngineFrom(deps: EngineDeps): Engine {
@@ -72,7 +86,9 @@ export function createEngineFrom(deps: EngineDeps): Engine {
   const ctx = () => ({ region, today: today() });
   const rules: Classifier = createRulesClassifier(region, lexicons);
   const model = createModelController(rules, deps.baseUrl);
-  const player = deps.player ?? createBrowserPlayer();
+  /** Default understanding: the built-in small neural model (rules until it has loaded). */
+  const encoder = createEncoderController(rules, deps.baseUrl);
+  const player = deps.player ?? createAppPlayer();
 
   let manifestsP: Promise<PackManifest[]> | null = null;
   const allManifests = () => (manifestsP ??= registry.list().catch(() => []));
@@ -172,9 +188,77 @@ export function createEngineFrom(deps: EngineDeps): Engine {
         }
       }
       // keep the requested language visible when we had to render in another one
-      views.push({ ...sections[i]!, lang: sections[i]!.lang === use && use !== lang ? use : sections[i]!.lang, lines });
+      views.push({ ...sections[i]!, lang: sections[i]!.lang === use && use !== lang ? use : sections[i]!.lang, lines, utterances: plan.sections[i]!.utterances });
     }
     return views;
+  }
+
+  /** Render one section again in the next language of its fallback chain that was not tried yet. */
+  async function fallbackSection(sec: RenderedSection, tried: Set<LangTag>): Promise<SectionView | null> {
+    const utterances = (sec as SectionView).utterances;
+    if (!utterances) return null;
+    tried.add(sec.lang);
+    for (const tag of fallbackChain(await manifestMap(), sec.lang)) {
+      if (tried.has(tag)) continue;
+      tried.add(tag);
+      try {
+        const [r] = await renderPlan({ sections: [{ section: sec.section, utterances }] }, tag, registry, ctx());
+        if (!r || (r.lang !== tag && tried.has(r.lang))) continue;
+        tried.add(r.lang);
+        const lines: SectionView['lines'] = [];
+        for (const u of utterances) {
+          try {
+            const x = await renderPhrase(u.key, u.slots, tag, registry, ctx());
+            lines.push({ key: u.key, text: x.text, lang: x.lang });
+          } catch {
+            /* the section text still has it */
+          }
+        }
+        return { ...r, lines, utterances };
+      } catch {
+        /* this language cannot render it either */
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Plays sections. When a part fails (a missing clip, a voice error) the player aborts that
+   * section; we render it again in the next fallback language and resume from it, so the
+   * listener hears the whole sentence in one language, never half of one.
+   */
+  let swap = 0;
+  function playSections(sections: RenderedSection[], opts: PlayOptions): void {
+    const tried = new Map<number, Set<LangTag>>();
+    let swapping = false;
+    const mine: PlayOptions = {
+      ...opts,
+      onSection: (i) => {
+        if (i === null && swapping) return;
+        opts.onSection?.(i);
+      },
+      onError: (i, err) => {
+        opts.onError?.(i, err);
+        const me = ++swap;
+        swapping = true;
+        player.stop();
+        swapping = false;
+        const set = tried.get(i) ?? new Set<LangTag>();
+        tried.set(i, set);
+        void fallbackSection(sections[i]!, set).then((next) => {
+          if (swap !== me) return;
+          if (next) {
+            sections = sections.slice();
+            sections[i] = next;
+            opts.onFallback?.(i, next);
+            player.play(sections, { ...mine, from: i });
+          } else if (i + 1 < sections.length) player.play(sections, { ...mine, from: i + 1 });
+          else opts.onSection?.(null);
+        });
+      },
+    };
+    swap++;
+    player.play(sections, mine);
   }
 
   return {
@@ -187,7 +271,7 @@ export function createEngineFrom(deps: EngineDeps): Engine {
     },
     bundle,
     phrase,
-    analyze: (input: MessageInput) => analyze(input, { region, lexicons, classifier: rules }),
+    analyze: (input: MessageInput) => analyze(input, { region, lexicons, classifier: encoder.classifier }),
     async analyzeDeeper(input: MessageInput, timeoutMs: number) {
       const t0 = Date.now();
       const llm = await model.llm(timeoutMs);
@@ -204,16 +288,22 @@ export function createEngineFrom(deps: EngineDeps): Engine {
       }
     },
     renderCard,
-    playSections: (s, o) => player.play(s, o),
+    playSections,
     speak(r, rate = 1) {
+      swap++;
       player.play([{ section: 'about', text: r.text, parts: r.parts, lang: r.lang }], { rate });
     },
-    stop: () => player.stop(),
+    stop: () => {
+      swap++;
+      player.stop();
+    },
     get playing() {
       return player.playing;
     },
-    model,
-    classifier: () => model.classifier(),
+    // The optional deeper LLM keeps its own controller; init also starts the built-in encoder (once, after first paint).
+    model: { ...model, init: () => Promise.all([encoder.init(), model.init()]).then(() => undefined) },
+    understanding: { state: encoder.state, subscribe: encoder.subscribe },
+    classifier: () => encoder.classifier,
   };
 }
 

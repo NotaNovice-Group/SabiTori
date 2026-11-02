@@ -11,6 +11,8 @@ import { labelOf, parseRules } from './rulesLabels';
 import { ITEM_BY_KEY, type ClipRecord, type Project, type PhraseWork, type Speaker, DEFAULT_PALETTE } from './model';
 
 export const NOTES_FILE = 'recorder-notes.json';
+/** Lists every clip id in audio/ ({"clips":[...]}). Written on export, regenerated from the clips, ignored on import. */
+export const AUDIO_INDEX = 'audio/index.json';
 
 export function bumpPatch(v: string): string {
   const m = /^(\d+)\.(\d+)\.(\d+)$/.exec(v);
@@ -119,11 +121,15 @@ export async function exportPackZip(
     }
   }
   const ids = new Set<string>([...usedPhraseClips(phrases), ...opts.atomIds]);
+  const written: string[] = [];
   for (const id of ids) {
     const c = clips.get(id);
     if (!c) continue;
     files[`audio/${id}.${c.ext}`] = [new Uint8Array(await c.blob.arrayBuffer()), { level: 0 }];
+    written.push(id);
   }
+  // The speech package refuses recorded packs without this index of the clips present in audio/.
+  files[AUDIO_INDEX] = json({ clips: written.sort() });
   if (opts.includeNotes) {
     files[NOTES_FILE] = json({
       formatVersion: 1,
@@ -192,6 +198,7 @@ export function importPackZip(data: Uint8Array): ImportedPack {
 
   const clips: ClipRecord[] = [];
   for (const [name, bytes] of Object.entries(raw)) {
+    if (name === prefix + AUDIO_INDEX) continue; // regenerated on export
     const m = /^audio\/(.+)\.(webm|m4a)$/.exec(name.slice(prefix.length));
     if (!name.startsWith(prefix) || !m) continue;
     const id = m[1]!;

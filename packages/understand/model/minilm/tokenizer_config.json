@@ -1,0 +1,12 @@
+{
+ "tokenizer_class": "XLMRobertaTokenizerFast",
+ "model_max_length": 128,
+ "bos_token": "<s>",
+ "eos_token": "</s>",
+ "pad_token": "<pad>",
+ "unk_token": "<unk>",
+ "pad_token_id": 1,
+ "bos_token_id": 0,
+ "eos_token_id": 2,
+ "unk_token_id": 3
+}

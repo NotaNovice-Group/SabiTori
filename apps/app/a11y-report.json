@@ -1,0 +1,1480 @@
+{
+  "generatedAt": "2026-11-01T06:11:48.468Z",
+  "viewport": {
+    "width": 360,
+    "height": 780
+  },
+  "scales": [
+    1,
+    1.5,
+    2
+  ],
+  "schemes": [
+    "light",
+    "dark"
+  ],
+  "states": [
+    {
+      "combo": "light-100",
+      "state": "welcome-language",
+      "headings": [
+        "h1:Choisissez votre langue."
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "welcome-mode",
+      "headings": [
+        "h1:Comment utilisez-vous les messages ?"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "home-empty",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "paste-empty",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "paste-filled",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "card-bill",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "card-source-sheet",
+      "headings": [
+        "h2:Le message tel qu’il est écrit"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "card-facts-only",
+      "headings": [
+        "h1:Expéditeur inconnu"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "home-history",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "practice",
+      "headings": [
+        "h1:Messages d’entraînement"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "practice-eneo",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "practice-camwater",
+      "headings": [
+        "h1:CAMWATER"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "practice-momo",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "momo-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "practice-prize",
+      "headings": [
+        "h1:690 11 22 33"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "practice-hospital",
+      "headings": [
+        "h1:Hôpital Régional"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "hospital-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "practice-school",
+      "headings": [
+        "h1:Lycée Bilingue"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "card-playing",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "card-armed",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "paste-number",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "capture-blurry",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "capture-empty",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "capture-error",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "capture-reading",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "settings",
+      "headings": [
+        "h1:Réglages",
+        "h2:Langue",
+        "h2:Écouter d’abord",
+        "h2:Vitesse de la voix",
+        "h2:Garder mes messages",
+        "h2:Modèle de compréhension",
+        "h2:Fonctions connectées",
+        "h3:Recevoir de nouvelles langues et alertes",
+        "h3:Envoyer les rapports d’erreur",
+        "h2:Confidentialité"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "settings-confirm-sheet",
+      "headings": [
+        "h2:Supprimer les mises à jour téléchargées"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-100",
+      "state": "card-ewondo",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "welcome-language",
+      "headings": [
+        "h1:Choisissez votre langue."
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "welcome-mode",
+      "headings": [
+        "h1:Comment utilisez-vous les messages ?"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "home-empty",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "paste-empty",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "paste-filled",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "card-bill",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "card-source-sheet",
+      "headings": [
+        "h2:Le message tel qu’il est écrit"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "card-facts-only",
+      "headings": [
+        "h1:Expéditeur inconnu"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "home-history",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "practice",
+      "headings": [
+        "h1:Messages d’entraînement"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "practice-eneo",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "practice-camwater",
+      "headings": [
+        "h1:CAMWATER"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "practice-momo",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "momo-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "practice-prize",
+      "headings": [
+        "h1:690 11 22 33"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "practice-hospital",
+      "headings": [
+        "h1:Hôpital Régional"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "hospital-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "practice-school",
+      "headings": [
+        "h1:Lycée Bilingue"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "card-playing",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "card-armed",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "paste-number",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "capture-blurry",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "capture-empty",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "capture-error",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "capture-reading",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "settings",
+      "headings": [
+        "h1:Réglages",
+        "h2:Langue",
+        "h2:Écouter d’abord",
+        "h2:Vitesse de la voix",
+        "h2:Garder mes messages",
+        "h2:Modèle de compréhension",
+        "h2:Fonctions connectées",
+        "h3:Recevoir de nouvelles langues et alertes",
+        "h3:Envoyer les rapports d’erreur",
+        "h2:Confidentialité"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-150",
+      "state": "settings-confirm-sheet",
+      "headings": [
+        "h2:Supprimer les mises à jour téléchargées"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "welcome-language",
+      "headings": [
+        "h1:Choisissez votre langue."
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "welcome-mode",
+      "headings": [
+        "h1:Comment utilisez-vous les messages ?"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "home-empty",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "paste-empty",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "paste-filled",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "card-bill",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "card-source-sheet",
+      "headings": [
+        "h2:Le message tel qu’il est écrit"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "card-facts-only",
+      "headings": [
+        "h1:Expéditeur inconnu"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "home-history",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "practice",
+      "headings": [
+        "h1:Messages d’entraînement"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "practice-eneo",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "practice-camwater",
+      "headings": [
+        "h1:CAMWATER"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "practice-momo",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "momo-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "practice-prize",
+      "headings": [
+        "h1:690 11 22 33"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "practice-hospital",
+      "headings": [
+        "h1:Hôpital Régional"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "hospital-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "practice-school",
+      "headings": [
+        "h1:Lycée Bilingue"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "card-playing",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "card-armed",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "paste-number",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "capture-blurry",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "capture-empty",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "capture-error",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "capture-reading",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "settings",
+      "headings": [
+        "h1:Réglages",
+        "h2:Langue",
+        "h2:Écouter d’abord",
+        "h2:Vitesse de la voix",
+        "h2:Garder mes messages",
+        "h2:Modèle de compréhension",
+        "h2:Fonctions connectées",
+        "h3:Recevoir de nouvelles langues et alertes",
+        "h3:Envoyer les rapports d’erreur",
+        "h2:Confidentialité"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "light-200",
+      "state": "settings-confirm-sheet",
+      "headings": [
+        "h2:Supprimer les mises à jour téléchargées"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "welcome-language",
+      "headings": [
+        "h1:Choisissez votre langue."
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "welcome-mode",
+      "headings": [
+        "h1:Comment utilisez-vous les messages ?"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "home-empty",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "paste-empty",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "paste-filled",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "card-bill",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "card-source-sheet",
+      "headings": [
+        "h2:Le message tel qu’il est écrit"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "card-facts-only",
+      "headings": [
+        "h1:Expéditeur inconnu"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "home-history",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "practice",
+      "headings": [
+        "h1:Messages d’entraînement"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "practice-eneo",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "practice-camwater",
+      "headings": [
+        "h1:CAMWATER"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "practice-momo",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "momo-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "practice-prize",
+      "headings": [
+        "h1:690 11 22 33"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "practice-hospital",
+      "headings": [
+        "h1:Hôpital Régional"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "hospital-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "practice-school",
+      "headings": [
+        "h1:Lycée Bilingue"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "card-playing",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "card-armed",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "paste-number",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "capture-blurry",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "capture-empty",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "capture-error",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "capture-reading",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "settings",
+      "headings": [
+        "h1:Réglages",
+        "h2:Langue",
+        "h2:Écouter d’abord",
+        "h2:Vitesse de la voix",
+        "h2:Garder mes messages",
+        "h2:Modèle de compréhension",
+        "h2:Fonctions connectées",
+        "h3:Recevoir de nouvelles langues et alertes",
+        "h3:Envoyer les rapports d’erreur",
+        "h2:Confidentialité"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-100",
+      "state": "settings-confirm-sheet",
+      "headings": [
+        "h2:Supprimer les mises à jour téléchargées"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "welcome-language",
+      "headings": [
+        "h1:Choisissez votre langue."
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "welcome-mode",
+      "headings": [
+        "h1:Comment utilisez-vous les messages ?"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "home-empty",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "paste-empty",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "paste-filled",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "card-bill",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "card-source-sheet",
+      "headings": [
+        "h2:Le message tel qu’il est écrit"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "card-facts-only",
+      "headings": [
+        "h1:Expéditeur inconnu"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "home-history",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "practice",
+      "headings": [
+        "h1:Messages d’entraînement"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "practice-eneo",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "practice-camwater",
+      "headings": [
+        "h1:CAMWATER"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "practice-momo",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "momo-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "practice-prize",
+      "headings": [
+        "h1:690 11 22 33"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "practice-hospital",
+      "headings": [
+        "h1:Hôpital Régional"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "hospital-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "practice-school",
+      "headings": [
+        "h1:Lycée Bilingue"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "card-playing",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "card-armed",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "paste-number",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "capture-blurry",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "capture-empty",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "capture-error",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "capture-reading",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "settings",
+      "headings": [
+        "h1:Réglages",
+        "h2:Langue",
+        "h2:Écouter d’abord",
+        "h2:Vitesse de la voix",
+        "h2:Garder mes messages",
+        "h2:Modèle de compréhension",
+        "h2:Fonctions connectées",
+        "h3:Recevoir de nouvelles langues et alertes",
+        "h3:Envoyer les rapports d’erreur",
+        "h2:Confidentialité"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-150",
+      "state": "settings-confirm-sheet",
+      "headings": [
+        "h2:Supprimer les mises à jour téléchargées"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "welcome-language",
+      "headings": [
+        "h1:Choisissez votre langue."
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "welcome-mode",
+      "headings": [
+        "h1:Comment utilisez-vous les messages ?"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "home-empty",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "paste-empty",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "paste-filled",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "card-bill",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "card-source-sheet",
+      "headings": [
+        "h2:Le message tel qu’il est écrit"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "card-facts-only",
+      "headings": [
+        "h1:Expéditeur inconnu"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "home-history",
+      "headings": [
+        "h1:SabiTori",
+        "h2:Mes messages"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "practice",
+      "headings": [
+        "h1:Messages d’entraînement"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "practice-eneo",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "practice-camwater",
+      "headings": [
+        "h1:CAMWATER"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "practice-momo",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "momo-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "practice-prize",
+      "headings": [
+        "h1:690 11 22 33"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "practice-hospital",
+      "headings": [
+        "h1:Hôpital Régional"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "hospital-helper",
+      "headings": [
+        "h2:Montrer à quelqu'un"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "practice-school",
+      "headings": [
+        "h1:Lycée Bilingue"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "card-playing",
+      "headings": [
+        "h1:650 55 66 77"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "card-armed",
+      "headings": [
+        "h1:ENEO"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "paste-number",
+      "headings": [
+        "h1:Collez un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "capture-blurry",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "capture-empty",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "capture-error",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "capture-reading",
+      "headings": [
+        "h1:Prenez une photo d'un message"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "settings",
+      "headings": [
+        "h1:Réglages",
+        "h2:Langue",
+        "h2:Écouter d’abord",
+        "h2:Vitesse de la voix",
+        "h2:Garder mes messages",
+        "h2:Modèle de compréhension",
+        "h2:Fonctions connectées",
+        "h3:Recevoir de nouvelles langues et alertes",
+        "h3:Envoyer les rapports d’erreur",
+        "h2:Confidentialité"
+      ],
+      "axeViolations": 0
+    },
+    {
+      "combo": "dark-200",
+      "state": "settings-confirm-sheet",
+      "headings": [
+        "h2:Supprimer les mises à jour téléchargées"
+      ],
+      "axeViolations": 0
+    }
+  ],
+  "axe": [],
+  "manual": [],
+  "behaviours": [
+    {
+      "name": "html lang is the interface language (fr)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "route change moves focus to the new title",
+      "pass": true,
+      "detail": "#/paste"
+    },
+    {
+      "name": "keyboard focus ring visible on every stop",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "dialog takes focus",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "dialog is named",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "background is inert",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Tab stays inside the dialog",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Shift+Tab stays inside the dialog",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Escape closes the dialog and restores focus to the opener",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Back closes the dialog and stays on the card",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "Close button closes it and leaves no stray history entry",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "fallback text carries its own lang (ewondo card)",
+      "pass": true,
+      "detail": "{\"notes\":8,\"marked\":15,\"html\":\"ewo\"}"
+    },
+    {
+      "name": "card has no aria-live region that could double the app speech",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "listen-first: keyboard/AT activation acts at once (no second tap)",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "listen-first: a finger tap arms the button and says \"tap again\"",
+      "pass": true,
+      "detail": ""
+    },
+    {
+      "name": "reduced motion: no transitions and the bar shows full",
+      "pass": true,
+      "detail": "{\"tr\":\"0s\",\"trb\":\"0s\",\"p\":\"1\",\"tf\":\"matrix(1, 0, 0, 1, 0, 0)\"}"
+    }
+  ],
+  "summary": {
+    "stateRuns": 163,
+    "axeViolations": 0,
+    "axeSeriousOrCritical": 0,
+    "axeByRule": [],
+    "manualFailures": 0,
+    "manualByType": {}
+  }
+}

@@ -3,7 +3,7 @@ import { useApp } from '../app-context';
 import { LanguageList } from '../components/LanguageList';
 import { Screen } from '../components/Screen';
 import { SpeakingButton } from '../components/SpeakingButton';
-import { Wordmark } from '../components/Mark';
+import { Mark } from '../components/Mark';
 import { navigate } from '../lib/router';
 
 export function LanguageScreen() {
@@ -12,9 +12,14 @@ export function LanguageScreen() {
     <Screen
       title={t('ui.welcome')}
       className="welcome"
+      above={
+        <div className="welcome-brand">
+          <Mark size={56} />
+          <span className="wordmark">SabiTori</span>
+        </div>
+      }
       dock={<SpeakingButton speakKey="app.next" variant="primary" label={t('app.next')} onAct={() => navigate('/mode')} />}
     >
-      <div className="welcome-brand"><Wordmark /></div>
       <LanguageList />
     </Screen>
   );

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Camera } from 'lucide-react';
+import { Camera, Images } from 'lucide-react';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
 import { SpeakingButton } from '../components/SpeakingButton';
@@ -8,6 +8,9 @@ import { session } from '../lib/session';
 import { buildInput } from '../lib/open';
 import { isSharp, measureSharpness } from '../lib/sharpness';
 import { recognise } from '../lib/ocr';
+import { rememberMessage } from '../lib/crash';
+import { isNative } from '../lib/native';
+import { useNativePhoto } from '../components/PhotoPicker';
 
 type Phase = 'checking' | 'blurry' | 'reading' | 'empty' | 'error';
 
@@ -19,6 +22,8 @@ export function CaptureScreen() {
   const [progress, setProgress] = useState(0);
   const [forced, setForced] = useState(0);
   const input = useRef<HTMLInputElement>(null);
+  const native = isNative();
+  const photo = useNativePhoto((f) => { setForced(0); setFile(f); });
 
   useEffect(() => {
     if (!file) { navigate('/', { replace: true }); return; }
@@ -45,6 +50,7 @@ export function CaptureScreen() {
         setPhase('reading');
         setProgress(0);
         const text = await recognise(file, (f) => live && setProgress(f));
+        rememberMessage(text);
         if (!live) return;
         if (text.replace(/\s/g, '').length < 12) {
           setPhase('empty');
@@ -87,7 +93,8 @@ export function CaptureScreen() {
         failed ? (
           <>
             <input ref={input} type="file" accept="image/*" capture="environment" hidden onChange={retake} tabIndex={-1} />
-            <SpeakingButton speakKey="app.capture.again" variant="hero" className="btn-block" icon={<Camera size={32} strokeWidth={2} aria-hidden />} onAct={() => input.current?.click()} />
+            <SpeakingButton speakKey="app.capture.again" variant="hero" className="btn-block" icon={<Camera size={32} strokeWidth={2} aria-hidden />} onAct={() => (native ? void photo.pick('camera') : input.current?.click())} />
+            {native && <SpeakingButton speakKey="app.photo.choose" variant="secondary" className="btn-block" icon={<Images size={24} strokeWidth={2} aria-hidden />} onAct={() => void photo.pick('gallery')} />}
             {phase === 'blurry' && <SpeakingButton speakKey="app.capture.use" variant="secondary" className="btn-block" onAct={() => setForced((n) => n + 1)} />}
           </>
         ) : undefined
@@ -100,6 +107,7 @@ export function CaptureScreen() {
           <span style={{ width: `${Math.max(4, progress * 100)}%` }} />
         </div>
       )}
+      {photo.notice}
     </Screen>
   );
 }

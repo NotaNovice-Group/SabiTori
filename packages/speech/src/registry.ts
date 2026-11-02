@@ -1,6 +1,9 @@
 import type { LangTag, LanguagePack, PackManifest } from '@sabitori/core';
 import { PackLoadError } from './errors.js';
-import { validateManifest, validatePhrases, validateRules } from './validate.js';
+import { requiredClips } from './required.js';
+import { isLangTag, validateManifest, validatePhrases, validateRules } from './validate.js';
+
+const isObj = (v: unknown): v is Record<string, unknown> => typeof v === 'object' && v !== null && !Array.isArray(v);
 
 export interface PackRegistry {
   get(tag: LangTag): Promise<LanguagePack>;
@@ -9,10 +12,15 @@ export interface PackRegistry {
 
 /**
  * A pack that can tell which of its clips exist. Without `hasClip` every
- * clip is assumed present. The registry fills it from audio/index.json
- * ({"clips":["num.1",...]}) when that file exists.
+ * clip is assumed present (memory packs in tests). createPackRegistry
+ * requires audio/index.json ({"clips":["num.1",...]}) for recorded packs and
+ * fills `hasClip` and `missingClips` from it.
  */
-export type SpeechPack = LanguagePack & { hasClip?: (clipId: string) => boolean };
+export type SpeechPack = LanguagePack & {
+  hasClip?: (clipId: string) => boolean;
+  /** Recorded packs: clips the pack needs (requiredClips) that audio/index.json does not list. Phrases that need them fall back. */
+  missingClips?: string[];
+};
 
 export type FetchLike = (url: string) => Promise<{ ok: boolean; status: number; json(): Promise<unknown> }>;
 
@@ -64,21 +72,27 @@ export function createPackRegistry(opts: { baseUrl: string; fetch?: FetchLike })
       clipUrl: defaultClipUrl(baseUrl, tag),
     };
     if (manifest.voice.kind === 'recorded') {
+      // A recorded pack without a clip index cannot be checked before playback, so it is refused.
+      let idx: unknown;
       try {
-        const idx = (await getJson(`${baseUrl}/${tag}/audio/index.json`, tag)) as { clips?: unknown };
-        if (Array.isArray(idx.clips)) {
-          const set = new Set(idx.clips.filter((x): x is string => typeof x === 'string'));
-          pack.hasClip = (id) => set.has(id);
-        }
-      } catch {
-        /* no index: assume every clip exists */
+        idx = await getJson(`${baseUrl}/${tag}/audio/index.json`, tag);
+      } catch (e) {
+        throw new PackLoadError(`Recorded pack "${tag}" needs audio/index.json listing its clips: ${(e as Error).message}`, tag);
       }
+      const clips = isObj(idx) ? idx.clips : undefined;
+      if (!Array.isArray(clips) || clips.some((x) => typeof x !== 'string')) {
+        throw new PackLoadError(`audio/index.json of "${tag}" must look like {"clips":["num.1", ...]}`, tag);
+      }
+      const set = new Set<string>(clips as string[]);
+      pack.hasClip = (id) => set.has(id);
+      pack.missingClips = requiredClips(pack).filter((id) => !set.has(id));
     }
     return pack;
   }
 
   return {
     get(tag) {
+      if (!isLangTag(tag)) return Promise.reject(new PackLoadError(`"${String(tag)}" is not a valid language tag`));
       let p = packs.get(tag);
       if (!p) {
         p = load(tag);

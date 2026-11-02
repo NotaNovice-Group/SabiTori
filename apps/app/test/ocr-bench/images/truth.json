@@ -1,0 +1,636 @@
+[
+ {
+  "id": "01-eneo-fr",
+  "file": "01-eneo-fr.jpg",
+  "kind": "eneo",
+  "lang": "fr",
+  "text": "ENEO CAMEROON S.A.\nFACTURE D'ÉLECTRICITÉ\nClient : NKENG Christelle\nAdresse : Yaoundé, quartier Biyem-Assi\nN° de contrat : 0611312190\nRéférence facture : FA-2026-836175\nPériode de consommation : du 20/09/2026 au 07/10/2026\nDésignation  Quantité  P.U.  Montant\nConsommation (kWh)  430  50  21 500\nRedevance fixe  1  2 000  2 000\nTaxe communale et TVA      4 139\nTOTAL      27 639\nMontant net à payer : 27 639 FCFA\nDate limite de paiement : 05/11/2026\nPayez par Orange Money, MTN MoMo ou en agence avant la date limite pour éviter la\ncoupure et des pénalités de retard.\nService client : 690 50 55 04\nMerci de conserver cette facture.",
+  "must": {
+   "dates": [
+    "2026-11-05"
+   ],
+   "amounts": [
+    27639
+   ],
+   "phones": [
+    "+237690505504"
+   ]
+  },
+  "severity": 0.1,
+  "turn": 0
+ },
+ {
+  "id": "02-eneo-fr",
+  "file": "02-eneo-fr.jpg",
+  "kind": "eneo",
+  "lang": "fr",
+  "text": "ENEO CAMEROON S.A.\nFACTURE D'ÉLECTRICITÉ\nClient : MBARGA Emmanuel\nAdresse : Garoua, quartier Biyem-Assi\nN° de contrat : 0672910796\nRéférence facture : FA-2026-636943\nPériode de consommation : du 05/09/2026 au 27/10/2026\nDésignation  Quantité  P.U.  Montant\nConsommation (kWh)  435  61  26 535\nRedevance fixe  1  1 500  1 500\nTaxe communale et TVA      5 108\nTOTAL      33 143\nMontant net à payer : 33 143 FCFA\nDate limite de paiement : 25 novembre 2026\nPayez par Orange Money, MTN MoMo ou en agence avant la date limite pour éviter la coupure et des\npénalités de retard.\nService client : 690 68 52 17\nMerci de conserver cette facture.",
+  "must": {
+   "dates": [
+    "2026-11-25"
+   ],
+   "amounts": [
+    33143
+   ],
+   "phones": [
+    "+237690685217"
+   ]
+  },
+  "severity": 0.43,
+  "turn": 0
+ },
+ {
+  "id": "03-eneo-fr",
+  "file": "03-eneo-fr.jpg",
+  "kind": "eneo",
+  "lang": "fr",
+  "text": "ENEO CAMEROON S.A.\nFACTURE D'ÉLECTRICITÉ\nClient : FOTSO Samuel\nAdresse : Bertoua, quartier Bonamoussadi\nN° de contrat : 0842131140\nRéférence facture : FA-2026-511109\nPériode de consommation : du 12/09/2026 au 05/10/2026\nDésignation  Quantité  P.U.  Montant\nConsommation (kWh)  151  58  8 758\nRedevance fixe  1  2 000  2 000\nTaxe communale et TVA      1 686\nTOTAL      12 444\nMontant net à payer : 12 444 FCFA\nDate limite de paiement : 15/12/2026\nPayez par Orange Money, MTN MoMo ou en agence avant la date limite pour éviter la coupure et des\npénalités de retard.\nService client : 678 67 90 22\nMerci de conserver cette facture.",
+  "must": {
+   "dates": [
+    "2026-12-15"
+   ],
+   "amounts": [
+    12444
+   ],
+   "phones": [
+    "+237678679022"
+   ]
+  },
+  "severity": 0.77,
+  "turn": 0
+ },
+ {
+  "id": "04-eneo-fr",
+  "file": "04-eneo-fr.jpg",
+  "kind": "eneo",
+  "lang": "fr",
+  "text": "ENEO CAMEROON S.A.\nFACTURE D'ÉLECTRICITÉ\nClient : TABI Marie\nAdresse : Garoua, quartier Bonamoussadi\nN° de contrat : 0533076709\nRéférence facture : FA-2026-442235\nPériode de consommation : du 25/09/2026 au 09/10/2026\nDésignation  Quantité  P.U.  Montant\nConsommation (kWh)  317  74  23 458\nRedevance fixe  1  2 500  2 500\nTaxe communale et TVA      4 516\nTOTAL      30 474\nMontant net à payer : 30 474 FCFA\nDate limite de paiement : 15 décembre 2026\nPayez par Orange Money, MTN MoMo ou en agence avant la date limite pour éviter la\ncoupure et des pénalités de retard.\nService client : 677 99 73 42\nMerci de conserver cette facture.",
+  "must": {
+   "dates": [
+    "2026-12-15"
+   ],
+   "amounts": [
+    30474
+   ],
+   "phones": [
+    "+237677997342"
+   ]
+  },
+  "severity": 0.2,
+  "turn": 0
+ },
+ {
+  "id": "05-eneo-fr",
+  "file": "05-eneo-fr.jpg",
+  "kind": "eneo",
+  "lang": "fr",
+  "text": "ENEO CAMEROON S.A.\nFACTURE D'ÉLECTRICITÉ\nClient : ESSOMBA Christelle\nAdresse : Bertoua, quartier Biyem-Assi\nN° de contrat : 0715611501\nRéférence facture : FA-2026-223220\nPériode de consommation : du 23/09/2026 au 13/10/2026\nDésignation  Quantité  P.U.  Montant\nConsommation (kWh)  467  65  30 355\nRedevance fixe  1  2 000  2 000\nTaxe communale et TVA      5 843\nTOTAL      38 198\nMontant net à payer : 38 198 FCFA\nDate limite de paiement : 25/11/2026\nPayez par Orange Money, MTN MoMo ou en agence avant la date limite pour éviter la coupure et\ndes pénalités de retard.\nService client : 677 49 87 73\nMerci de conserver cette facture.",
+  "must": {
+   "dates": [
+    "2026-11-25"
+   ],
+   "amounts": [
+    38198
+   ],
+   "phones": [
+    "+237677498773"
+   ]
+  },
+  "severity": 0.53,
+  "turn": 0
+ },
+ {
+  "id": "06-eneo-fr",
+  "file": "06-eneo-fr.jpg",
+  "kind": "eneo",
+  "lang": "fr",
+  "text": "ENEO CAMEROON S.A.\nFACTURE D'ÉLECTRICITÉ\nClient : NJOYA Samuel\nAdresse : Buea, quartier Bonamoussadi\nN° de contrat : 0359366587\nRéférence facture : FA-2026-362615\nPériode de consommation : du 16/09/2026 au 07/10/2026\nDésignation  Quantité  P.U.  Montant\nConsommation (kWh)  318  79  25 122\nRedevance fixe  1  1 500  1 500\nTaxe communale et TVA      4 836\nTOTAL      31 458\nMontant net à payer : 31 458 FCFA\nDate limite de paiement : 16 décembre 2026\nPayez par Orange Money, MTN MoMo ou en agence avant la date limite pour éviter la\ncoupure et des pénalités de retard.\nService client : 690 36 91 49\nMerci de conserver cette facture.",
+  "must": {
+   "dates": [
+    "2026-12-16"
+   ],
+   "amounts": [
+    31458
+   ],
+   "phones": [
+    "+237690369149"
+   ]
+  },
+  "severity": 0.87,
+  "turn": 180
+ },
+ {
+  "id": "07-eneo-en",
+  "file": "07-eneo-en.jpg",
+  "kind": "eneo",
+  "lang": "en",
+  "text": "ENEO CAMEROON S.A.\nELECTRICITY BILL\nCustomer : TCHOUPO Jean-Claude\nAddress : Bafoussam, neighbourhood Biyem-Assi\nContract No. : 0822443857\nInvoice reference : FA-2026-324569\nBilling period : from 03/09/2026 to 07/10/2026\nDescription  Quantity  Unit price  Amount\nConsumption (kWh)  218  57  12 426\nFixed charge  1  1 500  1 500\nCouncil tax and VAT      2 392\nTOTAL      16 318\nNet amount payable : 16 318 FCFA\nPayment deadline : 16/11/2026\nPay by Orange Money, MTN MoMo or at an agency before the deadline to avoid disconnection and late\npenalties.\nCustomer service : 698 18 26 13\nPlease keep this bill.",
+  "must": {
+   "dates": [
+    "2026-11-16"
+   ],
+   "amounts": [
+    16318
+   ],
+   "phones": [
+    "+237698182613"
+   ]
+  },
+  "severity": 0.3,
+  "turn": 0
+ },
+ {
+  "id": "08-eneo-en",
+  "file": "08-eneo-en.jpg",
+  "kind": "eneo",
+  "lang": "en",
+  "text": "ENEO CAMEROON S.A.\nELECTRICITY BILL\nCustomer : ATEBA Ngwa\nAddress : Garoua, neighbourhood Biyem-Assi\nContract No. : 0291327304\nInvoice reference : FA-2026-480150\nBilling period : from 08/09/2026 to 13/10/2026\nDescription  Quantity  Unit price  Amount\nConsumption (kWh)  198  52  10 296\nFixed charge  1  1 500  1 500\nCouncil tax and VAT      1 982\nTOTAL      13 778\nNet amount payable : 13 778 FCFA\nPayment deadline : 6 November 2026\nPay by Orange Money, MTN MoMo or at an agency before the deadline to avoid disconnection and late\npenalties.\nCustomer service : 698 25 12 36\nPlease keep this bill.",
+  "must": {
+   "dates": [
+    "2026-11-06"
+   ],
+   "amounts": [
+    13778
+   ],
+   "phones": [
+    "+237698251236"
+   ]
+  },
+  "severity": 0.63,
+  "turn": 0
+ },
+ {
+  "id": "09-camwater-fr",
+  "file": "09-camwater-fr.jpg",
+  "kind": "camwater",
+  "lang": "fr",
+  "text": "CAMEROON WATER UTILITIES CORPORATION\nCAMWATER\nAVIS DE FACTURE D'EAU\nAbonné : TCHOUPO Brice\nPolice N° : 70106760\nRéférence : CW-8455865\nAncien index : 263    Nouvel index : 937\nLibellé  Volume m3  Montant FCFA\nConsommation eau  35  12 250\nLocation compteur    1 000\nTotal TTC    13 250\nNet à payer : 13 250 FCFA\nÀ régler avant le 10 novembre 2026\nEn cas de non-paiement à l'échéance, votre branchement pourra être suspendu. Pour toute\nréclamation, appelez le service clientèle.\nService clientèle : 690102148",
+  "must": {
+   "dates": [
+    "2026-11-10"
+   ],
+   "amounts": [
+    13250
+   ],
+   "phones": [
+    "+237690102148"
+   ]
+  },
+  "severity": 0.96,
+  "turn": 0
+ },
+ {
+  "id": "10-camwater-fr",
+  "file": "10-camwater-fr.jpg",
+  "kind": "camwater",
+  "lang": "fr",
+  "text": "CAMEROON WATER UTILITIES CORPORATION\nCAMWATER\nAVIS DE FACTURE D'EAU\nAbonné : FOTSO Pauline\nPolice N° : 86350627\nRéférence : CW-4679264\nAncien index : 847    Nouvel index : 1060\nLibellé  Volume m3  Montant FCFA\nConsommation eau  38  13 300\nLocation compteur    1 000\nTotal TTC    14 300\nNet à payer : 14 300 FCFA\nÀ régler avant le 25 novembre 2026\nEn cas de non-paiement à l'échéance, votre branchement pourra être suspendu. Pour toute\nréclamation, appelez le service clientèle.\nService clientèle : 678314203",
+  "must": {
+   "dates": [
+    "2026-11-25"
+   ],
+   "amounts": [
+    14300
+   ],
+   "phones": [
+    "+237678314203"
+   ]
+  },
+  "severity": 0.4,
+  "turn": 0
+ },
+ {
+  "id": "11-camwater-fr",
+  "file": "11-camwater-fr.jpg",
+  "kind": "camwater",
+  "lang": "fr",
+  "text": "CAMEROON WATER UTILITIES CORPORATION\nCAMWATER\nAVIS DE FACTURE D'EAU\nAbonné : TABI Emmanuel\nPolice N° : 78211129\nRéférence : CW-6877717\nAncien index : 790    Nouvel index : 1025\nLibellé  Volume m3  Montant FCFA\nConsommation eau  20  4 100\nLocation compteur    1 500\nTotal TTC    5 600\nNet à payer : 5 600 FCFA\nÀ régler avant le 15 décembre 2026\nEn cas de non-paiement à l'échéance, votre branchement pourra être suspendu. Pour toute réclamation, appelez\nle service clientèle.\nService clientèle : 670781823",
+  "must": {
+   "dates": [
+    "2026-12-15"
+   ],
+   "amounts": [
+    5600
+   ],
+   "phones": [
+    "+237670781823"
+   ]
+  },
+  "severity": 0.73,
+  "turn": 0
+ },
+ {
+  "id": "12-camwater-fr",
+  "file": "12-camwater-fr.jpg",
+  "kind": "camwater",
+  "lang": "fr",
+  "text": "CAMEROON WATER UTILITIES CORPORATION\nCAMWATER\nAVIS DE FACTURE D'EAU\nAbonné : TABI Christelle\nPolice N° : 44737281\nRéférence : CW-9673694\nAncien index : 767    Nouvel index : 1131\nLibellé  Volume m3  Montant FCFA\nConsommation eau  5  1 070\nLocation compteur    1 500\nTotal TTC    2 570\nNet à payer : 2 570 FCFA\nÀ régler avant le 23 décembre 2026\nEn cas de non-paiement à l'échéance, votre branchement pourra être suspendu. Pour toute réclamation, appelez\nle service clientèle.\nService clientèle : 678121713",
+  "must": {
+   "dates": [
+    "2026-12-23"
+   ],
+   "amounts": [
+    2570
+   ],
+   "phones": [
+    "+237678121713"
+   ]
+  },
+  "severity": 0.16,
+  "turn": 0
+ },
+ {
+  "id": "13-school-fr",
+  "file": "13-school-fr.jpg",
+  "kind": "school",
+  "lang": "fr",
+  "text": "RÉPUBLIQUE DU CAMEROUN\nPaix - Travail - Patrie\nCOLLÈGE BILINGUE LA RÉUSSITE\nAVIS DE PAIEMENT DES FRAIS DE SCOLARITÉ\nChers parents, nous vous informons que les frais de scolarité de votre enfant (Florence, classe de\n6ème) sont à régler comme suit.\nTranche  Échéance  Montant\n1ère tranche  23 novembre 2026  25 000 FCFA\n2ème tranche  23/12/2026  25 000 FCFA\nAPEE et assurance  23/12/2026  20 000 FCFA\nTotal annuel : 70 000 FCFA\nLes élèves n'ayant pas réglé la première tranche à la date indiquée ne seront pas admis en classe. Les\npaiements se font à la comptabilité ou par Mobile Money.\nRenseignements : 670 19 28 09\nLe Principal",
+  "must": {
+   "dates": [
+    "2026-11-23",
+    "2026-12-23"
+   ],
+   "amounts": [
+    25000,
+    25000,
+    20000,
+    70000
+   ],
+   "phones": [
+    "+237670192809"
+   ]
+  },
+  "severity": 0.5,
+  "turn": 0
+ },
+ {
+  "id": "14-school-fr",
+  "file": "14-school-fr.jpg",
+  "kind": "school",
+  "lang": "fr",
+  "text": "RÉPUBLIQUE DU CAMEROUN\nPaix - Travail - Patrie\nCOLLÈGE BILINGUE LA RÉUSSITE\nAVIS DE PAIEMENT DES FRAIS DE SCOLARITÉ\nChers parents, nous vous informons que les frais de scolarité de votre enfant (Florence, classe de 6ème)\nsont à régler comme suit.\nTranche  Échéance  Montant\n1ère tranche  8 novembre 2026  25 000 FCFA\n2ème tranche  23/12/2026  25 000 FCFA\nAPEE et assurance  23/12/2026  20 000 FCFA\nTotal annuel : 70 000 FCFA\nLes élèves n'ayant pas réglé la première tranche à la date indiquée ne seront pas admis en classe. Les\npaiements se font à la comptabilité ou par Mobile Money.\nRenseignements : 698 40 58 65\nLe Principal",
+  "must": {
+   "dates": [
+    "2026-11-08",
+    "2026-12-23"
+   ],
+   "amounts": [
+    25000,
+    25000,
+    20000,
+    70000
+   ],
+   "phones": [
+    "+237698405865"
+   ]
+  },
+  "severity": 0.83,
+  "turn": 0
+ },
+ {
+  "id": "15-school-fr",
+  "file": "15-school-fr.jpg",
+  "kind": "school",
+  "lang": "fr",
+  "text": "RÉPUBLIQUE DU CAMEROUN\nPaix - Travail - Patrie\nCOLLÈGE BILINGUE LA RÉUSSITE\nAVIS DE PAIEMENT DES FRAIS DE SCOLARITÉ\nChers parents, nous vous informons que les frais de scolarité de votre enfant (Aïcha, classe de 6ème)\nsont à régler comme suit.\nTranche  Échéance  Montant\n1ère tranche  17 novembre 2026  40 000 FCFA\n2ème tranche  23/12/2026  40 000 FCFA\nAPEE et assurance  23/12/2026  15 000 FCFA\nTotal annuel : 95 000 FCFA\nLes élèves n'ayant pas réglé la première tranche à la date indiquée ne seront pas admis en classe. Les\npaiements se font à la comptabilité ou par Mobile Money.\nRenseignements : 698 73 63 89\nLe Principal",
+  "must": {
+   "dates": [
+    "2026-11-17",
+    "2026-12-23"
+   ],
+   "amounts": [
+    40000,
+    40000,
+    15000,
+    95000
+   ],
+   "phones": [
+    "+237698736389"
+   ]
+  },
+  "severity": 0.26,
+  "turn": 0
+ },
+ {
+  "id": "16-school-fr",
+  "file": "16-school-fr.jpg",
+  "kind": "school",
+  "lang": "fr",
+  "text": "RÉPUBLIQUE DU CAMEROUN\nPaix - Travail - Patrie\nCOLLÈGE BILINGUE LA RÉUSSITE\nAVIS DE PAIEMENT DES FRAIS DE SCOLARITÉ\nChers parents, nous vous informons que les frais de scolarité de votre enfant (Brice, classe de 5ème)\nsont à régler comme suit.\nTranche  Échéance  Montant\n1ère tranche  27 novembre 2026  40 000 FCFA\n2ème tranche  12/12/2026  40 000 FCFA\nAPEE et assurance  12/12/2026  20 000 FCFA\nTotal annuel : 100 000 FCFA\nLes élèves n'ayant pas réglé la première tranche à la date indiquée ne seront pas admis en classe. Les\npaiements se font à la comptabilité ou par Mobile Money.\nRenseignements : 651 88 54 02\nLe Principal",
+  "must": {
+   "dates": [
+    "2026-11-27",
+    "2026-12-12"
+   ],
+   "amounts": [
+    40000,
+    40000,
+    20000,
+    100000
+   ],
+   "phones": [
+    "+237651885402"
+   ]
+  },
+  "severity": 0.59,
+  "turn": 90
+ },
+ {
+  "id": "17-school-en",
+  "file": "17-school-en.jpg",
+  "kind": "school",
+  "lang": "en",
+  "text": "REPUBLIC OF CAMEROON\nPeace - Work - Fatherland\nGOVERNMENT BILINGUAL HIGH SCHOOL\nNOTICE OF SCHOOL FEES PAYMENT\nDear parents, we inform you that the school fees of your child (Brice, Form 3) are to be paid as follows.\nInstalment  Deadline  Amount\n1st instalment  16 November 2026  25 000 FCFA\n2nd instalment  18/12/2026  25 000 FCFA\nPTA and insurance  18/12/2026  20 000 FCFA\nAnnual total : 70 000 FCFA\nStudents who have not paid the first instalment by the date indicated will not be admitted to class.\nPayment is made at the bursar office or by Mobile Money.\nEnquiries : 655 33 79 07\nThe Principal",
+  "must": {
+   "dates": [
+    "2026-11-16",
+    "2026-12-18"
+   ],
+   "amounts": [
+    25000,
+    25000,
+    20000,
+    70000
+   ],
+   "phones": [
+    "+237655337907"
+   ]
+  },
+  "severity": 0.93,
+  "turn": 0
+ },
+ {
+  "id": "18-school-en",
+  "file": "18-school-en.jpg",
+  "kind": "school",
+  "lang": "en",
+  "text": "REPUBLIC OF CAMEROON\nPeace - Work - Fatherland\nGOVERNMENT BILINGUAL HIGH SCHOOL\nNOTICE OF SCHOOL FEES PAYMENT\nDear parents, we inform you that the school fees of your child (Marie, Form 5) are to be paid as\nfollows.\nInstalment  Deadline  Amount\n1st instalment  19 November 2026  25 000 FCFA\n2nd instalment  22/12/2026  25 000 FCFA\nPTA and insurance  22/12/2026  20 000 FCFA\nAnnual total : 70 000 FCFA\nStudents who have not paid the first instalment by the date indicated will not be admitted to class.\nPayment is made at the bursar office or by Mobile Money.\nEnquiries : 677 80 17 90\nThe Principal",
+  "must": {
+   "dates": [
+    "2026-11-19",
+    "2026-12-22"
+   ],
+   "amounts": [
+    25000,
+    25000,
+    20000,
+    70000
+   ],
+   "phones": [
+    "+237677801790"
+   ]
+  },
+  "severity": 0.36,
+  "turn": 0
+ },
+ {
+  "id": "19-hospital-fr",
+  "file": "19-hospital-fr.jpg",
+  "kind": "hospital",
+  "lang": "fr",
+  "text": "HÔPITAL RÉGIONAL DE BERTOUA\nService de consultation externe\nDouala, le 13 octobre 2026\nOBJET : Rendez-vous de consultation\nMadame, Monsieur NJOYA,\nNous avons le plaisir de vous confirmer votre rendez-vous avec le docteur NJOYA le 27/11/2026 à\n11h30.\nMerci de vous présenter 30 minutes avant, avec votre carnet de santé et vos anciens examens. Les\nfrais de consultation s'élèvent à 15 000 FCFA, payables à la caisse.\nEn cas d’empêchement, veuillez nous prévenir au moins 24 heures à l’avance.\nSecrétariat médical : 690 14 80 12\nLe Directeur",
+  "must": {
+   "dates": [
+    "2026-11-27"
+   ],
+   "amounts": [
+    15000
+   ],
+   "phones": [
+    "+237690148012"
+   ]
+  },
+  "severity": 0.69,
+  "turn": 0
+ },
+ {
+  "id": "20-hospital-fr",
+  "file": "20-hospital-fr.jpg",
+  "kind": "hospital",
+  "lang": "fr",
+  "text": "HÔPITAL RÉGIONAL DE BAFOUSSAM\nService de consultation externe\nDouala, le 8 octobre 2026\nOBJET : Rendez-vous de consultation\nMadame, Monsieur FOTSO,\nNous avons le plaisir de vous confirmer votre rendez-vous avec le docteur TABI le 3 décembre 2026 à\n10h00.\nMerci de vous présenter 30 minutes avant, avec votre carnet de santé et vos anciens examens. Les\nfrais de consultation s'élèvent à 10 000 FCFA, payables à la caisse.\nEn cas d’empêchement, veuillez nous prévenir au moins 24 heures à l’avance.\nSecrétariat médical : 670 86 95 76\nLe Directeur",
+  "must": {
+   "dates": [
+    "2026-12-03"
+   ],
+   "amounts": [
+    10000
+   ],
+   "phones": [
+    "+237670869576"
+   ]
+  },
+  "severity": 0.13,
+  "turn": 0
+ },
+ {
+  "id": "21-hospital-fr",
+  "file": "21-hospital-fr.jpg",
+  "kind": "hospital",
+  "lang": "fr",
+  "text": "HÔPITAL RÉGIONAL DE BUEA\nService de consultation externe\nDouala, le 27 octobre 2026\nOBJET : Rendez-vous de consultation\nMadame, Monsieur KAMGA,\nNous avons le plaisir de vous confirmer votre rendez-vous avec le docteur TCHOUPO le\n13/12/2026 à 8h30.\nMerci de vous présenter 30 minutes avant, avec votre carnet de santé et vos anciens examens.\nLes frais de consultation s'élèvent à 10 000 FCFA, payables à la caisse.\nEn cas d’empêchement, veuillez nous prévenir au moins 24 heures à l’avance.\nSecrétariat médical : 690 08 34 95\nLe Directeur",
+  "must": {
+   "dates": [
+    "2026-12-13"
+   ],
+   "amounts": [
+    10000
+   ],
+   "phones": [
+    "+237690083495"
+   ]
+  },
+  "severity": 0.46,
+  "turn": 0
+ },
+ {
+  "id": "22-hospital-en",
+  "file": "22-hospital-en.jpg",
+  "kind": "hospital",
+  "lang": "en",
+  "text": "BAFOUSSAM REGIONAL HOSPITAL\nOutpatient department\nDate issued: 12 October 2026\nSUBJECT: Consultation appointment\nDear patient ESSOMBA,\nWe are pleased to confirm your appointment with Dr. KAMGA on 20 November 2026 at 9:30.\nPlease arrive 30 minutes early with your health booklet and previous test results. The\nconsultation fee is 10 000 FCFA, payable at the cashier.\nIf you cannot attend, please let us know at least 24 hours in advance.\nMedical secretariat : 698 69 96 04\nThe Director",
+  "must": {
+   "dates": [
+    "2026-11-20"
+   ],
+   "amounts": [
+    10000
+   ],
+   "phones": [
+    "+237698699604"
+   ]
+  },
+  "severity": 0.79,
+  "turn": 0
+ },
+ {
+  "id": "23-hospital-en",
+  "file": "23-hospital-en.jpg",
+  "kind": "hospital",
+  "lang": "en",
+  "text": "DOUALA REGIONAL HOSPITAL\nOutpatient department\nDate issued: 6 October 2026\nSUBJECT: Consultation appointment\nDear patient NJOYA,\nWe are pleased to confirm your appointment with Dr. NJOYA on 25/11/2026 at 13:30.\nPlease arrive 30 minutes early with your health booklet and previous test results. The consultation fee\nis 3 500 FCFA, payable at the cashier.\nIf you cannot attend, please let us know at least 24 hours in advance.\nMedical secretariat : 670 89 95 92\nThe Director",
+  "must": {
+   "dates": [
+    "2026-11-25"
+   ],
+   "amounts": [
+    3500
+   ],
+   "phones": [
+    "+237670899592"
+   ]
+  },
+  "severity": 0.23,
+  "turn": 0
+ },
+ {
+  "id": "24-momo-fr",
+  "file": "24-momo-fr.jpg",
+  "kind": "momo",
+  "lang": "fr",
+  "text": "Vous avez envoye 11 200 FCFA a EMMANUEL NJOYA (698536376) le 15/11/2026.\nFrais: 200 FCFA. Nouveau solde: 20 139 FCFA.\nID de transaction: 7240024257.\nPour toute reclamation appelez le 8487.",
+  "must": {
+   "dates": [
+    "2026-11-15"
+   ],
+   "amounts": [
+    11200,
+    200,
+    20139
+   ],
+   "phones": [
+    "+237698536376"
+   ]
+  },
+  "severity": 0.56,
+  "turn": 0
+ },
+ {
+  "id": "25-momo-fr",
+  "file": "25-momo-fr.jpg",
+  "kind": "momo",
+  "lang": "fr",
+  "text": "Vous avez envoye 41 100 FCFA a SAMUEL FOTSO (677465100) le 19/10/2026.\nFrais: 800 FCFA. Nouveau solde: 20 007 FCFA.\nID de transaction: 5648139418.\nPour toute reclamation appelez le 8104.",
+  "must": {
+   "dates": [
+    "2026-10-19"
+   ],
+   "amounts": [
+    41100,
+    800,
+    20007
+   ],
+   "phones": [
+    "+237677465100"
+   ]
+  },
+  "severity": 0.89,
+  "turn": 0
+ },
+ {
+  "id": "26-momo-fr",
+  "file": "26-momo-fr.jpg",
+  "kind": "momo",
+  "lang": "fr",
+  "text": "Vous avez envoye 13 600 FCFA a NGWA NGONO (655551239) le 18/11/2026.\nFrais: 250 FCFA. Nouveau solde: 64 667 FCFA.\nID de transaction: 4565599166.\nPour toute reclamation appelez le 8259.",
+  "must": {
+   "dates": [
+    "2026-11-18"
+   ],
+   "amounts": [
+    13600,
+    250,
+    64667
+   ],
+   "phones": [
+    "+237655551239"
+   ]
+  },
+  "severity": 0.33,
+  "turn": 0
+ },
+ {
+  "id": "27-momo-en",
+  "file": "27-momo-en.jpg",
+  "kind": "momo",
+  "lang": "en",
+  "text": "You have sent 900 FCFA to MARIE KAMGA (655634929) on 16/11/2026.\nFee: 100 FCFA. New balance: 9 771 FCFA.\nTransaction ID: 6218732262.\nFor any complaint call 8315.",
+  "must": {
+   "dates": [
+    "2026-11-16"
+   ],
+   "amounts": [
+    900,
+    100,
+    9771
+   ],
+   "phones": [
+    "+237655634929"
+   ]
+  },
+  "severity": 0.66,
+  "turn": 0
+ },
+ {
+  "id": "28-momo-en",
+  "file": "28-momo-en.jpg",
+  "kind": "momo",
+  "lang": "en",
+  "text": "You have sent 17 700 FCFA to FLORENCE MBARGA (678242070) on 13/11/2026.\nFee: 350 FCFA. New balance: 20 883 FCFA.\nTransaction ID: 4955096862.\nFor any complaint call 8994.",
+  "must": {
+   "dates": [
+    "2026-11-13"
+   ],
+   "amounts": [
+    17700,
+    350,
+    20883
+   ],
+   "phones": [
+    "+237678242070"
+   ]
+  },
+  "severity": 0.99,
+  "turn": 0
+ },
+ {
+  "id": "29-camwater-en",
+  "file": "29-camwater-en.jpg",
+  "kind": "camwater",
+  "lang": "en",
+  "text": "CAMEROON WATER UTILITIES CORPORATION\nCAMWATER\nWATER BILL NOTICE\nSubscriber : NJOYA Emmanuel\nPolicy No. : 65479965\nReference : CW-9510275\nPrevious index : 399    New index : 1159\nItem  Volume m3  Amount FCFA\nWater consumption  26  5 564\nMeter rental    1 000\nTotal incl. tax    6 564\nNet to pay : 6 564 FCFA\nTo be paid before 19 December 2026\nIf payment is not received by the due date, your connection may be suspended. For any complaint,\ncall customer care.\nCustomer care : 699917938",
+  "must": {
+   "dates": [
+    "2026-12-19"
+   ],
+   "amounts": [
+    6564
+   ],
+   "phones": [
+    "+237699917938"
+   ]
+  },
+  "severity": 0.42,
+  "turn": 0
+ },
+ {
+  "id": "30-hospital-fr",
+  "file": "30-hospital-fr.jpg",
+  "kind": "hospital",
+  "lang": "fr",
+  "text": "HÔPITAL RÉGIONAL DE BERTOUA\nService de consultation externe\nDouala, le 9 octobre 2026\nOBJET : Rendez-vous de consultation\nMadame, Monsieur ATEBA,\nNous avons le plaisir de vous confirmer votre rendez-vous avec le docteur ESSOMBA le 25\nnovembre 2026 à 11h30.\nMerci de vous présenter 30 minutes avant, avec votre carnet de santé et vos anciens\nexamens. Les frais de consultation s'élèvent à 15 000 FCFA, payables à la caisse.\nEn cas d’empêchement, veuillez nous prévenir au moins 24 heures à l’avance.\nSecrétariat médical : 655 47 10 63\nLe Directeur",
+  "must": {
+   "dates": [
+    "2026-11-25"
+   ],
+   "amounts": [
+    15000
+   ],
+   "phones": [
+    "+237655471063"
+   ]
+  },
+  "severity": 0.76,
+  "turn": 0
+ }
+]

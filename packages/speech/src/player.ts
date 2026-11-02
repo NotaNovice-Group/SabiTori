@@ -5,6 +5,12 @@ export interface PlayOptions {
   from?: number;
   onSection?: (index: number | null) => void;
   onProgress?: (index: number, fraction: number) => void;
+  /**
+   * A part of section `index` could not be played (missing clip, speech error). The rest of that
+   * section is NOT played, so a half-spoken amount never reaches the listener; later sections still play.
+   * The caller can re-render the section (for example in a fallback language) and play it again.
+   */
+  onError?: (index: number, error: Error) => void;
 }
 
 export interface Player {
@@ -40,12 +46,8 @@ export function createPlayer(backends: { tts: TtsBackend; clips: ClipBackend }):
   };
 
   async function playPart(part: RenderedPart, rate: number, onFrac: (f: number) => void): Promise<void> {
-    try {
-      if (part.kind === 'tts') await backends.tts.speak({ text: part.text, bcp47: part.bcp47, rate, onProgress: onFrac });
-      else await backends.clips.play({ url: part.url, rate });
-    } catch {
-      /* a part that fails is skipped so the rest still plays */
-    }
+    if (part.kind === 'tts') await backends.tts.speak({ text: part.text, bcp47: part.bcp47, rate, onProgress: onFrac });
+    else await backends.clips.play({ url: part.url, rate });
   }
 
   async function go(id: number, sections: RenderedSection[], opts: PlayOptions, from: number): Promise<void> {
@@ -57,9 +59,20 @@ export function createPlayer(backends: { tts: TtsBackend; clips: ClipBackend }):
       if (parts.length === 0) opts.onProgress?.(i, 1);
       for (let p = 0; p < parts.length; p++) {
         if (run !== id) return;
-        await playPart(parts[p]!, opts.rate, (f) => {
-          if (run === id) opts.onProgress?.(i, (p + Math.min(Math.max(f, 0), 1)) / parts.length);
-        });
+        try {
+          await playPart(parts[p]!, opts.rate, (f) => {
+            if (run === id) opts.onProgress?.(i, (p + Math.min(Math.max(f, 0), 1)) / parts.length);
+          });
+        } catch (e) {
+          if (run !== id) return;
+          // Abort this section: the rest of it would be a wrong sentence (e.g. "twelve five hundred francs").
+          try {
+            opts.onError?.(i, e instanceof Error ? e : new Error(String(e)));
+          } catch {
+            /* a throwing callback must not stop playback */
+          }
+          break;
+        }
         if (run !== id) return;
         opts.onProgress?.(i, (p + 1) / parts.length);
       }

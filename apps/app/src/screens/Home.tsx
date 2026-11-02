@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Camera, CalendarClock, ClipboardPaste, Settings as Cog, Smartphone, Lightbulb } from 'lucide-react';
+import { Camera, CalendarClock, ClipboardPaste, Images, Settings as Cog, Smartphone, Lightbulb } from 'lucide-react';
 import type { Card } from '@sabitori/core';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
@@ -8,6 +8,8 @@ import { Wordmark } from '../components/Mark';
 import { KIND_ICON, URGENCY_ICON } from '../components/icons';
 import { navigate } from '../lib/router';
 import { session } from '../lib/session';
+import { isNative } from '../lib/native';
+import { useNativePhoto } from '../components/PhotoPicker';
 import { formatAgo, formatMoney, formatShortDate } from '../lib/format';
 
 export function senderName(card: Card, fallback: string): string {
@@ -21,6 +23,8 @@ function Row({ card }: { card: Card }) {
   const scam = card.scam.level !== 'no_signs' && card.scam.level !== undefined;
   const level = scam ? 'urgent' : card.understanding.urgency;
   const Chip = scam ? URGENCY_ICON.urgent : U;
+  // a card we could not fully understand has no urgency to claim
+  const chip = scam || card.mode !== 'facts_only';
   return (
     <li>
       <a className="row" href={`#/card/${card.id}`}>
@@ -31,10 +35,12 @@ function Row({ card }: { card: Card }) {
             <span className="row-ago">{formatAgo(card.createdAt, locale)}</span>
           </span>
           <span className="row-meta">
-            <span className="chip" data-level={level}>
-              <Chip size={18} strokeWidth={2} aria-hidden />
-              {scam ? t('app.scam.title') : t(`app.urgency.${card.understanding.urgency}`)}
-            </span>
+            {chip && (
+              <span className="chip" data-level={level}>
+                <Chip size={18} strokeWidth={2} aria-hidden />
+                {scam ? t('app.scam.title') : t(`app.urgency.${card.understanding.urgency}`)}
+              </span>
+            )}
             {card.deadline && (
               <span className="row-fact"><CalendarClock size={18} strokeWidth={2} aria-hidden />{formatShortDate(card.deadline.value, locale)}</span>
             )}
@@ -49,12 +55,16 @@ function Row({ card }: { card: Card }) {
 export function HomeScreen() {
   const { t, history } = useApp();
   const input = useRef<HTMLInputElement>(null);
+  const open = (f: File) => {
+    session.setPhoto(f);
+    navigate('/capture');
+  };
+  const native = isNative();
+  const photo = useNativePhoto(open);
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     e.target.value = '';
-    if (!f) return;
-    session.setPhoto(f);
-    navigate('/capture');
+    if (f) open(f);
   };
   return (
     <Screen
@@ -64,7 +74,8 @@ export function HomeScreen() {
       dock={
         <>
           <input ref={input} type="file" accept="image/*" capture="environment" hidden onChange={onFile} tabIndex={-1} />
-          <SpeakingButton speakKey="ui.take_photo" variant="hero" className="btn-block" icon={<Camera size={32} strokeWidth={2} aria-hidden />} onAct={() => input.current?.click()} />
+          <SpeakingButton speakKey="ui.take_photo" variant="hero" className="btn-block" icon={<Camera size={32} strokeWidth={2} aria-hidden />} onAct={() => (native ? void photo.pick('camera') : input.current?.click())} />
+          {native && <SpeakingButton speakKey="app.photo.choose" variant="secondary" className="btn-block" icon={<Images size={24} strokeWidth={2} aria-hidden />} onAct={() => void photo.pick('gallery')} />}
           <SpeakingButton speakKey="ui.paste" variant="secondary" className="btn-block" icon={<ClipboardPaste size={24} strokeWidth={2} aria-hidden />} onAct={() => navigate('/paste')} />
         </>
       }
@@ -82,6 +93,7 @@ export function HomeScreen() {
         )}
         <SpeakingButton speakKey="app.practice" variant="quiet" className="practice" icon={<Lightbulb size={24} strokeWidth={2} aria-hidden />} onAct={() => navigate('/practice')} />
       </section>
+      {photo.notice}
     </Screen>
   );
 }

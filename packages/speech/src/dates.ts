@@ -51,21 +51,21 @@ export function dateTokens(rules: PackRules, date: IsoDate, anchor: IsoDate): To
     }
     switch (part.name) {
       case 'day': {
-        const w = dr.days?.[String(p.d)];
-        if (w !== undefined) out.push({ id: `day.${p.d}`, text: w });
+        const w = dr.days && Object.prototype.hasOwnProperty.call(dr.days, String(p.d)) ? dr.days[String(p.d)] : undefined;
+        if (typeof w === 'string') out.push({ id: `day.${p.d}`, text: w });
         else out.push(...numberTokens(rules.numbers, p.d));
         break;
       }
       case 'month': {
         const name = dr.months[p.m - 1];
-        if (name === undefined) throw new SpeechRuleError(`rules.dates.months has no month ${p.m}`);
+        if (typeof name !== 'string') throw new SpeechRuleError(`rules.dates.months has no month ${p.m}`);
         out.push({ id: `month.${p.m}`, text: name });
         break;
       }
       case 'weekday': {
         const w = isoWeekday(date);
         const name = dr.weekdays?.[w - 1];
-        if (name === undefined) throw new SpeechRuleError('rules.dates.weekdays is missing');
+        if (typeof name !== 'string') throw new SpeechRuleError('rules.dates.weekdays is missing');
         out.push({ id: `weekday.${w}`, text: name });
         break;
       }

@@ -25,7 +25,9 @@ Run `requiredClips(pack)` (or the recorder app) to get the exact list of clips a
 | `sender.<id>` | an official sender's name (id from `regions/<CODE>/region.json`) |
 | `pause.short` | optional short silence between phone groups; skipped when missing |
 
-If a clip, phrase or slot cannot be rendered in a recorded pack, that phrase is spoken in the first language of the fallback chain that can (the pack's `fallback` list, then `en`, then the catalog's English text). The card shows which language was used.
+A recorded pack must ship `audio/index.json`, `{ "clips": ["num.1", "scale.100", ...] }`, listing the clips it really has. The registry refuses a recorded pack without it, and exposes `missingClips` (what `requiredClips` needs that the index lacks). A clip that is not in the index counts as missing when a phrase is rendered, so the phrase is spoken in another language before playback starts; a half-recorded amount is never played.
+
+If a clip, phrase or slot cannot be rendered in a recorded pack, that phrase is spoken in the first language of the fallback chain that can (the pack's `fallback` list, then the terminal fallback, then the catalog's English text). The terminal fallback is `ctx.terminalFallback` when given, else the region's offered languages in order, else `en`. The card shows which language was used. If a clip still fails to play, the player skips the rest of that section and calls `onError(sectionIndex, error)`, so the app can re-render that section in a fallback language.
 
 ## Top level
 
@@ -54,7 +56,9 @@ How a number `n` is said (first rule that applies):
 3. **Scale**: take the largest scale `s` with `s.value <= n`. `q = n / s.value`, remainder `r = n % s.value`. Say the multiplier `q` (recursively), the scale word, then the joiner (from `s.join`) and the remainder. `omitOne` drops the multiplier when `q` is 1 ("cent", "mille", "ten"). `order: "scale_first"` puts the scale word first. `pluralWhen` + `plural` choose a plural form of the word (`"multiple"`, or `"multiple_final"` when nothing follows). The multiplier is "final" for bound forms only when `multiplierFinal` is true.
 4. **Additive**: below the smallest scale, take the largest atom `a <= n`, then the joiner from the top-level `join`, then the rest. 45 = "forty" + "five".
 
-Numbers above `largest scale * 1000 - 1` are read digit by digit.
+Numbers above `largest scale * 1000 - 1` are read digit by digit. A pack with no scales can compose numbers only up to its largest atom; above that they are read digit by digit. Below the smallest scale, additive reading ("forty" + "five") only starts at atoms of 10 or more: a number the rules cannot build (12 with atoms 0-9 and a scale of 100) is not spoken wrongly as "nine three", the phrase falls back to another language. A pack whose atoms stop below 10 with no scales gets a warning from `scripts/check-packs.mjs`; add the atoms (10, 11 ...) or scales.
+
+Limits: a scale value is a whole number of at least 2 and unique; `overrides` must not loop (a `{ "number": 13 }` inside the override of 13 is rejected); one number may use at most 2000 rule steps; amounts above 2^53 are refused rather than rounded.
 
 **Atoms with two forms.** `"80": { "text": "quatre-vingts", "bound": "quatre-vingt" }`. `text` is used when nothing follows, `bound` when more number words follow ("quatre-vingt-un"). Same clip.
 
@@ -132,7 +136,7 @@ Dates never include an article: phrases supply it. `{date}` renders "12 novembre
 
 The country code is dropped when it matches the region's (`+237...`), unless `countryCode` is `"say"` (read digit by digit). The national number is split into `groups` (or `groupsByLength[digit count]`; extra digits use `defaultGroupSize`). Each group is read as a number (`read: "number"`) or digit by digit (`"digits"`); `groupRead` overrides per group index. Leading zeros are always said ("05" = "zero five"). `pause.text` is the punctuation TTS uses between groups; recorded packs may include a silent `pause.short` clip.
 
-French: `6 77 12 34 56` = "six, soixante-dix-sept, douze, trente-quatre, cinquante-six".
+French: `6 77 12 34 56` = "six, soixante-dix-sept, douze, trente-quatre, cinquante-six". English uses the same structure: "six, seventy-seven, twelve, thirty-four, fifty-six".
 
 ## words
 
@@ -175,5 +179,6 @@ This example is checked by `packages/speech/test/hypothetical.test.ts`.
 
 ## Checking a pack
 
-- The registry validates `rules.json` when loading and names the problem ("numbers.atoms is missing \"3\"", "dates.templates.full: {w:of} is not in words").
+- The registry validates `manifest.json`, `phrases.json` and `rules.json` when loading, every value, not just the shape (words are non-empty strings, scale values whole numbers of at least 2, months exactly 12, phone group sizes at least 1, clip ids only letters, digits, `_ . -`, no `..`, tags like `fr` or `pcm-CM`). It names the problem ("numbers.atoms is missing \"3\"", "dates.templates.full: {w:of} is not in words").
 - `requiredClips(pack, { region })` lists every clip. Numbers up to 999 999 999 only ever use clips from this list.
+- `node scripts/check-packs.mjs` runs the same `validateRules`, prints warnings (numbers the rules cannot say, atoms that stop below 10), requires `rules.json` for `stable` and `beta` packs (a warning for `in_recording`), and requires `reading.json` (12 month lists, 7 weekday lists) when the manifest says `reads: true`.

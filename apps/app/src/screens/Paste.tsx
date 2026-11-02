@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { rememberMessage } from '../lib/crash';
 import { ClipboardPaste } from 'lucide-react';
 import type { MessageInput } from '@sabitori/core';
 import { useApp } from '../app-context';
@@ -14,6 +15,7 @@ type Kind = 'name' | 'number' | 'unknown';
 export function PasteScreen() {
   const { t, engine, saveCard } = useApp();
   const [text, setText] = useState(() => session.takeSharedText() ?? '');
+  useEffect(() => rememberMessage(text), []); // eslint-disable-line react-hooks/exhaustive-deps
   const [kind, setKind] = useState<Kind>('unknown');
   const [who, setWho] = useState('');
   const [busy, setBusy] = useState(false);
@@ -36,7 +38,7 @@ export function PasteScreen() {
     >
       <div className="field">
         <label htmlFor="msg" className="field-label">{t('app.paste.label')}</label>
-        <textarea id="msg" className="textarea" value={text} onChange={(e) => setText(e.target.value)} placeholder={t('app.paste.placeholder')} rows={7} />
+        <textarea id="msg" className="textarea" value={text} onChange={(e) => { rememberMessage(e.target.value); setText(e.target.value); }} placeholder={t('app.paste.placeholder')} rows={7} />
       </div>
       <div className="field">
         <span className="field-label" id="who-label">{t('app.paste.sender')}</span>
@@ -52,8 +54,8 @@ export function PasteScreen() {
         />
         {kind !== 'unknown' && (
           <>
-            <label htmlFor="who" className="sr-only">{t(kind === 'name' ? 'app.paste.sender.name_label' : 'app.paste.sender.number_label')}</label>
-            <input id="who" className="input" value={who} onChange={(e) => setWho(e.target.value)} inputMode={kind === 'number' ? 'tel' : 'text'} placeholder={t(kind === 'name' ? 'app.paste.sender.name_label' : 'app.paste.sender.number_label')} autoComplete="off" />
+            <label htmlFor="who" className="field-sublabel">{t(kind === 'name' ? 'app.paste.sender.name_label' : 'app.paste.sender.number_label')}</label>
+            <input id="who" className="input" value={who} onChange={(e) => setWho(e.target.value)} inputMode={kind === 'number' ? 'tel' : 'text'} autoComplete="off" />
           </>
         )}
       </div>

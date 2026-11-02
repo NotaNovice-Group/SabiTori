@@ -5,18 +5,44 @@
   "timezone": "Africa/Douala",
   "currency": {
     "code": "XAF",
-    "aliases": ["FCFA", "F CFA", "F.CFA", "CFA", "XAF", "FRS", "F"]
+    "aliases": [
+      "FCFA",
+      "F CFA",
+      "F.CFA",
+      "CFA",
+      "XAF",
+      "FRS",
+      "F"
+    ]
   },
   "phone": {
     "countryCode": "237",
-    "nationalPattern": "6\\d{8}|2\\d{8}"
+    "nationalPattern": "6\\d{8}|2\\d{8}",
+    "mobilePrefixes": [
+      "6"
+    ]
   },
-  "languages": ["fr", "en", "wes", "dua", "ewo", "fub"],
+  "languages": [
+    "fr",
+    "en",
+    "wes",
+    "dua",
+    "ewo",
+    "fub",
+    "lns",
+    "lmp",
+    "pny"
+  ],
   "officialSenders": [
     {
       "id": "mtn-momo",
       "displayName": "MTN Mobile Money",
-      "aliases": ["MTN Mobile Money", "MTN MoMo", "MoMo", "Mobile Money"],
+      "aliases": [
+        "MTN Mobile Money",
+        "MTN MoMo",
+        "MoMo",
+        "Mobile Money"
+      ],
       "kind": "mobile_money",
       "smsSenderIds": [],
       "shortCodes": [],
@@ -26,7 +52,9 @@
     {
       "id": "orange-money",
       "displayName": "Orange Money",
-      "aliases": ["Orange Money"],
+      "aliases": [
+        "Orange Money"
+      ],
       "kind": "mobile_money",
       "smsSenderIds": [],
       "shortCodes": [],
@@ -36,7 +64,12 @@
     {
       "id": "eneo",
       "displayName": "ENEO",
-      "aliases": ["ENEO", "ENEO Cameroon", "ENEO Cameroun"],
+      "aliases": [
+        "ENEO",
+        "ENEO Cameroon",
+        "ENEO Cameroun",
+        "Eneo"
+      ],
       "kind": "electricity_bill",
       "smsSenderIds": [],
       "shortCodes": [],
@@ -46,7 +79,11 @@
     {
       "id": "camwater",
       "displayName": "CAMWATER",
-      "aliases": ["CAMWATER", "Cameroon Water Utilities"],
+      "aliases": [
+        "CAMWATER",
+        "Cameroon Water Utilities",
+        "Camwater"
+      ],
       "kind": "water_bill",
       "smsSenderIds": [],
       "shortCodes": [],
@@ -56,7 +93,11 @@
     {
       "id": "mtn-cameroon",
       "displayName": "MTN Cameroon",
-      "aliases": ["MTN Cameroon", "MTN Cameroun", "MTN"],
+      "aliases": [
+        "MTN Cameroon",
+        "MTN Cameroun",
+        "MTN"
+      ],
       "kind": "telecom",
       "smsSenderIds": [],
       "shortCodes": [],
@@ -66,7 +107,11 @@
     {
       "id": "orange-cameroun",
       "displayName": "Orange Cameroun",
-      "aliases": ["Orange Cameroun", "Orange Cameroon", "Orange"],
+      "aliases": [
+        "Orange Cameroun",
+        "Orange Cameroon",
+        "Orange"
+      ],
       "kind": "telecom",
       "smsSenderIds": [],
       "shortCodes": [],

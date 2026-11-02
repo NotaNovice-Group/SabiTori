@@ -383,7 +383,7 @@ describe('card builder', () => {
 describe('speech plan', () => {
   it('orders sections as CARD_SECTIONS and uses SlotValue shapes', async () => {
     const c = await run(
-      'Votre facture ENEO de 15 000 FCFA. Veuillez régler avant le 15/11/2026. Appelez le 233 42 00 11 pour toute question.',
+      'Votre facture ENEO de 15 000 FCFA. Veuillez régler avant le 15/11/2026. Merci.',
     );
     const plan = buildSpeechPlan(c, { today: '2026-10-31' });
     expect(plan.sections.map((s) => s.section)).toEqual(

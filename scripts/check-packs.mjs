@@ -4,19 +4,42 @@
  * catalog (packages/core/src/catalog.ts) and the PackManifest / PhraseEntry
  * types (packages/core/src/pack.ts). Prints a coverage table.
  *
+ * Also validates rules.json with the speech package's validateRules (stable and beta packs must have
+ * one; in_recording packs get a warning) and requires reading.json for packs with reads: true.
+ *
  * Exit code 0 when there are no errors, 1 otherwise. Warnings never fail.
  */
 import { readFileSync, existsSync, readdirSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+import { register } from 'node:module';
 import { join, dirname } from 'node:path';
 import { CATALOG } from '../packages/core/src/catalog.ts';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+
+// The speech package is TypeScript with ".js" import specifiers and a workspace import of
+// @sabitori/core. Node strips types but does not map those, so a tiny resolver does:
+// "./x.js" -> "./x.ts" when only the .ts exists, "@sabitori/core" -> packages/core/src/index.ts.
+const hooks = `
+import { existsSync } from 'node:fs';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+export async function resolve(spec, context, next) {
+  if (spec === '@sabitori/core') return { url: ${JSON.stringify(pathToFileURL(join(root, 'packages/core/src/index.ts')).href)}, shortCircuit: true };
+  if (/^\\.\\.?\\//.test(spec) && spec.endsWith('.js') && context.parentURL) {
+    const ts = new URL(spec.slice(0, -3) + '.ts', context.parentURL);
+    if (existsSync(fileURLToPath(ts))) return { url: ts.href, shortCircuit: true };
+  }
+  return next(spec, context);
+}
+`;
+register('data:text/javascript,' + encodeURIComponent(hooks));
+const { validateRules, rulesWarnings } = await import(pathToFileURL(join(root, 'packages/speech/src/validate.ts')).href);
 const packsDir = join(root, 'packs');
 
 const PACK_STATUS = ['stable', 'beta', 'in_recording', 'planned'];
 const PHRASE_STATUS = ['draft', 'reviewed'];
 const CONTRIB_ROLES = ['translator', 'speaker', 'reviewer', 'maintainer'];
+const LANG_TAG = /^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$/;
 const CLIP_EXT = /\.(webm|opus|m4a|ogg|wav|mp3)$/i;
 
 const errors = [];
@@ -43,6 +66,7 @@ function checkManifest(tag, m, listedTags) {
   if (!isObj(m)) return err(tag, 'manifest.json is not an object');
   if (m.formatVersion !== 1) err(tag, `formatVersion must be 1, got ${JSON.stringify(m.formatVersion)}`);
   if (m.tag !== tag) err(tag, `manifest tag "${m.tag}" does not match folder "${tag}"`);
+  if (!LANG_TAG.test(String(m.tag))) err(tag, `manifest.tag "${m.tag}" is not a valid language tag`);
   for (const k of ['name', 'autonym', 'script', 'license', 'version']) {
     if (!isStr(m[k])) err(tag, `manifest.${k} must be a non-empty string`);
   }
@@ -53,6 +77,7 @@ function checkManifest(tag, m, listedTags) {
     err(tag, 'manifest.fallback must be an array of tags');
   } else {
     for (const f of m.fallback) {
+      if (!LANG_TAG.test(f)) err(tag, `fallback "${f}" is not a valid language tag`);
       if (f === tag) err(tag, 'manifest.fallback lists the pack itself');
       if (!listedTags.includes(f)) warn(tag, `fallback "${f}" is not in packs/index.json`);
     }
@@ -116,6 +141,46 @@ function checkPhrases(tag, phrases, declaredClips) {
   }
 }
 
+function checkRules(tag, manifest, dir) {
+  const path = join(dir, 'rules.json');
+  const status = manifest?.status;
+  if (!existsSync(path)) {
+    if (status === 'stable' || status === 'beta') err(tag, `rules.json is required for ${status} packs`);
+    else warn(tag, `rules.json is missing (allowed while status is ${status ?? 'unknown'}; numbers, money, dates and phones cannot be spoken yet)`);
+    return;
+  }
+  const rules = readJson(path, tag);
+  if (rules === undefined) return;
+  try {
+    validateRules(rules, tag);
+  } catch (e) {
+    return err(tag, e.message);
+  }
+  for (const w of rulesWarnings(rules)) warn(tag, `rules.json: ${w}`);
+}
+
+function checkReading(tag, manifest, dir) {
+  const path = join(dir, 'reading.json');
+  if (!existsSync(path)) {
+    if (manifest?.reads === true) err(tag, 'reads is true, so reading.json is required (12 month lists, 7 weekday lists)');
+    return;
+  }
+  const r = readJson(path, tag);
+  if (r === undefined) return;
+  if (!isObj(r)) return err(tag, 'reading.json is not an object');
+  if (r.formatVersion !== 1) err(tag, 'reading.json formatVersion must be 1');
+  if (r.tag !== tag) err(tag, `reading.json tag "${r.tag}" does not match folder "${tag}"`);
+  const lists = (name, n) => {
+    const v = r[name];
+    if (!Array.isArray(v) || v.length !== n) return err(tag, `reading.json ${name} must be ${n} lists`);
+    v.forEach((l, i) => {
+      if (!Array.isArray(l) || l.length === 0 || !l.every(isStr)) err(tag, `reading.json ${name}[${i}] must be a non-empty list of non-empty strings`);
+    });
+  };
+  lists('months', 12);
+  lists('weekdays', 7);
+}
+
 // ---- main -----------------------------------------------------------------
 
 const index = readJson(join(packsDir, 'index.json'), 'index');
@@ -138,6 +203,9 @@ for (const tag of listed) {
 
   const manifest = readJson(join(dir, 'manifest.json'), tag);
   if (manifest) checkManifest(tag, manifest, listed);
+
+  checkRules(tag, manifest, dir);
+  checkReading(tag, manifest, dir);
 
   const audioDir = join(dir, 'audio');
   const clipFiles = existsSync(audioDir) ? readdirSync(audioDir).filter((f) => CLIP_EXT.test(f)) : [];

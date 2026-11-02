@@ -40,6 +40,7 @@ Colour carries meaning (urgency, scam) and almost nothing else. Chrome is ink on
 | `--info-tint` / `--soon-tint` / `--urgent-tint` | 10% of the hue on surface | 18% on surface | Section background when lit |
 
 - Urgency is never colour alone: each level has its own symbol and spoken sentence.
+- Status notes (for example a voice not yet recorded) are `--ink-2`, never a hue: hues carry urgency and scam meaning only.
 - Light theme is the default (sunlight). Dark theme is a full scheme, not an invert.
 - No gradients, no glass, no glows, no drop shadows. Separation is a tone step or space.
 
@@ -58,6 +59,23 @@ Colour carries meaning (urgency, scam) and almost nothing else. Chrome is ink on
 - Section symbols: scam `ShieldAlert`, sender `Building2`, about `FileText`, action `Hand`,
   deadline `CalendarClock`, money `Banknote`, help `Phone`, urgency: info `Info`,
   soon `Clock`, urgent `TriangleAlert`.
+
+## The card
+
+The card answers one question: **what must I do, and by when?**
+
+- Order: scam warning → header (sender, subject; compact) → lead block (urgency word, action,
+  date, amount, one Remind button) → help (phone + Call) → quiet no-signs line → Show someone.
+- The lead block carries the largest text (`1.75rem`). `2.25rem` is reserved for the helper view.
+- Urgency appears once, on the first line of the lead block: hue + symbol + one word. The
+  catalog sentence is spoken, never printed. Never a filled slab. "Urgent" only when the
+  deadline is within 7 days or passed (enforced in core).
+- "No warning signs found" is spoken first but shown last, as a small `--ink-2` line with the
+  plain `Shield` glyph. Never a box, never green.
+- A fact's value is its own button (tabular bold, trailing `Search` glyph); tapping it opens the
+  original message with that fact highlighted.
+- The bottom dock is sticky, edge-to-edge on `--ground`, with safe-area padding; content always
+  rests above it. No rounded floating tray.
 
 ## Motion
 

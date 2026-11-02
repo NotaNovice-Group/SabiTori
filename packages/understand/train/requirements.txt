@@ -1,0 +1,11 @@
+# CPU only: install torch first with
+#   pip install torch --index-url https://download.pytorch.org/whl/cpu
+sentence-transformers>=3.0
+transformers>=4.44
+onnx>=1.16
+onnxruntime>=1.18
+onnxscript
+scikit-learn>=1.4
+numpy
+tokenizers>=0.19
+huggingface_hub

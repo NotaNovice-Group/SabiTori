@@ -7,3 +7,23 @@ dist/
 apps/app/android/app/build/
 apps/app/android/.gradle/
 coverage/
+apps/app/android/local.properties
+apps/app/android/build/
+apps/app/android/capacitor-cordova-android-plugins/build/
+apps/app/android/app/src/main/assets/public/
+apps/*/screenshots/
+packages/understand/harness/public/
+dist-updates/
+.env
+.env.local
+.env.*.local
+
+# Signing keys: never commit
+*.jks
+*.keystore
+*.p12
+keystore.properties
+
+# Piper voice models (fetched by scripts/fetch-voices.mjs; over 80 MB together)
+packs/*/voice/*.onnx
+apps/app/public/piper/

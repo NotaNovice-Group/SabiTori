@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { CalendarPlus, Phone, RotateCcw, Play, Square, Turtle, Eye, Search, Trash2, ShieldAlert } from 'lucide-react';
+import { CalendarPlus, CalendarCheck, Phone, RotateCcw, Play, Square, Turtle, Eye, Search, Trash2, Shield, ShieldAlert } from 'lucide-react';
 import type { Card, SourceSpan } from '@sabitori/core';
 import { useApp } from '../app-context';
 import type { SectionView } from '../engine';
@@ -11,9 +11,12 @@ import { navigate } from '../lib/router';
 import { getCard, deleteCard } from '../lib/db';
 import { session } from '../lib/session';
 import { buildIcs, downloadIcs } from '../lib/ics';
+import { isNative, openSystemSettings } from '../lib/native';
+import { cancelReminders, hasReminders, scheduleReminders } from '../lib/reminders';
 import { formatLongDate, formatMoney, formatPhone } from '../lib/format';
 import { senderName } from './Home';
 import { SPEEDS } from '../lib/settings';
+import { rememberMessage } from '../lib/crash';
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -42,6 +45,12 @@ export function CardRoute({ id }: { id: string }) {
   return <CardScreen card={card} />;
 }
 
+/**
+ * The spoken card. Its one question is "what must I do, and by when?", so the lead block
+ * (urgency word, action, date, amount) is the largest thing on the first screen. A scam warning,
+ * when there is one, comes before everything. Sender and subject are a compact header.
+ * "No warning signs" is spoken first but shown as a quiet line at the end: it is never a badge.
+ */
 export function CardScreen({ card: first, example }: { card: Card; example?: boolean }) {
   const { engine, settings, t, locale, manifest, refreshHistory, saveCard } = useApp();
   const [card, setCard] = useState(first);
@@ -52,6 +61,7 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
   const [speedStep, setSpeedStep] = useState<number>(settings.speed);
   const [source, setSource] = useState<Source | null>(null);
   const [helper, setHelper] = useState(false);
+  useEffect(() => rememberMessage(card.input.text, card.input.sender?.value), [card]);
   const els = useRef<(HTMLElement | null)[]>([]);
   const last = useRef(0);
   const rate = SPEEDS[speedStep] ?? 1;
@@ -85,6 +95,9 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [first.id]);
 
+  const facts = card.mode === 'facts_only';
+  const scamLevel = card.scam.level;
+
   const play = useCallback(
     (from = 0, withRate = rate) => {
       if (!views) return;
@@ -96,14 +109,17 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
           if (i !== null) {
             last.current = i;
             const el = els.current[i];
-            el?.scrollIntoView({ block: 'center', behavior: 'auto' });
+            // "No warning signs" sits at the end of the card: keep the eye at the top while it is said.
+            if (views[i]?.section === 'scam' && scamLevel === 'no_signs') window.scrollTo({ top: 0, behavior: 'auto' });
+            else el?.scrollIntoView({ block: 'center', behavior: 'auto' });
             el?.style.setProperty('--p', reduced() ? '1' : '0');
           }
         },
         onProgress: (i, f) => els.current[i]?.style.setProperty('--p', reduced() ? '1' : String(f)),
+        onFallback: (i, section) => setViews((prev) => (prev ? prev.map((v, k) => (k === i ? section : v)) : prev)),
       });
     },
-    [engine, views, rate],
+    [engine, views, rate, scamLevel],
   );
 
   const autoplayed = useRef(false);
@@ -116,21 +132,52 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
 
   const playing = active !== null;
   const name = senderName(card, t('app.sender.unknown'));
-  const facts = card.mode === 'facts_only';
-  const scamLevel = card.scam.level;
 
-  const ordered = useMemo(() => {
-    if (!views) return { band: undefined as number | undefined, rest: [] as number[] };
-    const band = facts ? undefined : views.findIndex((v) => v.section === 'urgency');
-    const rest = views.map((_, i) => i).filter((i) => i !== band);
-    return { band: band !== undefined && band >= 0 ? band : undefined, rest };
+  const layout = useMemo(() => {
+    if (!views) return null;
+    const idx = (s: string) => views.findIndex((v) => v.section === s);
+    const scam = idx('scam');
+    const head = ['sender', 'about'].map(idx).filter((i) => i >= 0);
+    const lead = ['action', 'deadline', 'money'].map(idx).filter((i) => i >= 0);
+    const urgency = facts ? -1 : idx('urgency');
+    const help = idx('help');
+    return { scam, head, lead, urgency, help };
   }, [views, facts]);
 
-  const remind = () => {
+  const native = isNative();
+  type ReminderState = 'unknown' | 'none' | 'set' | 'past' | 'denied' | 'failed';
+  const [reminder, setReminder] = useState<ReminderState>('unknown');
+  useEffect(() => {
+    if (!native || !card.deadline) return;
+    let live = true;
+    void hasReminders(card.id).then((on) => live && setReminder(on ? 'set' : 'none'));
+    return () => { live = false; };
+  }, [native, card.id, card.deadline]);
+
+  const remind = async () => {
     if (!card.deadline || !views) return;
+    if (native) {
+      // Title: the sender, or "SabiTori". Body: the card's action and date, as already rendered in the person's language.
+      const who = card.sender.displayName ?? card.input.sender?.value;
+      const body = ['action', 'deadline'].map((s) => views.find((v) => v.section === s)?.text ?? '').filter(Boolean).join(' ');
+      const r = await scheduleReminders({
+        cardId: card.id,
+        deadline: card.deadline.value,
+        title: who || 'SabiTori',
+        body: body || t('ui.remind'),
+        route: example ? '/practice' : undefined,
+        channelName: t('app.remind.channel'),
+      });
+      setReminder(r.status === 'set' ? 'set' : r.status);
+      return;
+    }
     const about = views.find((v) => v.section === 'about')?.text ?? '';
     const deadlineText = views.find((v) => v.section === 'deadline')?.text ?? '';
     downloadIcs('sabitori-reminder.ics', buildIcs({ uid: card.id, date: card.deadline.value, title: `${name}. ${about}`.trim(), description: `${deadlineText}\n${card.input.text}` }));
+  };
+  const unremind = async () => {
+    await cancelReminders(card.id);
+    setReminder('none');
   };
   const call = () => {
     if (card.contactPhone) location.href = `tel:${card.contactPhone.value}`;
@@ -142,75 +189,131 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
     navigate('/', { replace: true });
   };
 
-  const renderSection = (i: number, mode: 'band' | 'normal') => {
+  /** lang attribute only where the text is in another language than the interface (a phrase that fell back). */
+  const langOf = (l: string) => (l && l !== settings.lang ? l : undefined);
+
+  const fallbackNote = (v: SectionView) => {
+    const fb = v.lang !== settings.lang ? manifest(v.lang)?.autonym : undefined;
+    return fb ? <p className="fallback">{t('app.card.fallback_note', { name: fb })}</p> : null;
+  };
+
+  /** Common frame of one spoken section: lit tint + progress bar on the inline-start edge. */
+  const frame = (i: number, extra: Record<string, unknown>, className: string, children: React.ReactNode) => {
     const v = views![i]!;
-    const Icon = mode === 'band' ? URGENCY_ICON[card.understanding.urgency] : SECTION_ICON[v.section];
-    const isActive = active === i;
-    const fallback = v.lang !== settings.lang ? manifest(v.lang)?.autonym : undefined;
-    const noticeOnly = v.lines.length > 0 && v.lines.every((l) => l.key === 'facts_only.intro');
-    const cls = `sec sec-${v.section}${mode === 'band' ? ' band' : ''}${noticeOnly ? ' notice' : ''}`;
-    const common = { ref: (el: HTMLElement | null) => { els.current[i] = el; }, 'data-active': isActive || undefined, 'data-urgency': mode === 'band' ? card.understanding.urgency : undefined, 'data-level': v.section === 'scam' ? scamLevel : undefined, className: cls } as const;
-    let body;
-    if (v.section === 'scam') {
-      const [head, ...rest] = v.lines;
-      const signals = rest.filter((l) => l.key.startsWith('scam.signal.'));
-      const advice = rest.filter((l) => !l.key.startsWith('scam.signal.'));
-      body = (
-        <>
-          <p className={`sec-text ${scamLevel === 'no_signs' ? 'sz-title' : 'sz-lead'}`}>{scamLevel === 'no_signs' ? head?.text : <b>{head?.text}</b>}</p>
-          {signals.length > 0 && <ul className="signals">{signals.map((l) => <li key={l.key}>{l.text}</li>)}</ul>}
-          {advice.map((l) => <p key={l.key} className="advice">{l.text}</p>)}
-        </>
-      );
-    } else if (mode === 'band') {
-      body = (
-        <>
-          <p className="band-word">{t(`app.urgency.${card.understanding.urgency}`)}</p>
-          <p className="sec-text">{v.text}</p>
-        </>
-      );
-    } else {
-      body = (
-        <>
-          {(() => {
-            const sentences = v.lines.map((l) => (
-              <p key={l.key} className={`sec-text ${sizeFor(v.section, noticeOnly, !!(v.section === 'deadline' && card.deadline) || !!(v.section === 'money' && card.amount) || !!(v.section === 'help' && card.contactPhone))}`}>{l.text}</p>
-            ));
-            if (v.section === 'deadline' && card.deadline)
-              return (
-                <>
-                  <FactRow onSource={setSource} raw={card.deadline.raw} span={card.deadline.span} text={formatLongDate(card.deadline.value, locale)}>{sentences}</FactRow>
-                  <SpeakingButton speakKey="ui.remind" variant="secondary" className="sec-action" icon={<CalendarPlus size={24} strokeWidth={2} aria-hidden />} onAct={remind} />
-                </>
-              );
-            if (v.section === 'money' && card.amount)
-              return <FactRow onSource={setSource} raw={card.amount.raw} span={card.amount.span} text={formatMoney(card.amount.value.amount, card.amount.value.currency, locale)}>{sentences}</FactRow>;
-            if (v.section === 'help' && card.contactPhone)
-              return (
-                <>
-                  <FactRow onSource={setSource} raw={card.contactPhone.raw} span={card.contactPhone.span} text={formatPhone(card.contactPhone.value, engine.region.phone.countryCode)}>{sentences}</FactRow>
-                  <SpeakingButton speakKey="ui.call" variant="secondary" className="sec-action" icon={<Phone size={24} strokeWidth={2} aria-hidden />} onAct={call} />
-                </>
-              );
-            return (
-              <>
-                {sentences}
-                {v.section === 'about' && card.reference && !facts && <FactRow onSource={setSource} raw={card.reference.raw} span={card.reference.span} label={t('app.fact.reference')} />}
-              </>
-            );
-          })()}
-        </>
-      );
-    }
     return (
-      <section key={`${v.section}-${i}`} {...common} aria-label={v.section}>
-        <Icon className="sec-ic" size={mode === 'band' ? 32 : v.section === 'scam' ? 32 : 28} strokeWidth={2} aria-hidden />
+      <div
+        key={`${v.section}-${i}`}
+        ref={(el) => { els.current[i] = el; }}
+        data-active={active === i || undefined}
+        aria-current={active === i ? 'true' : undefined}
+        lang={langOf(v.lang)}
+        className={`sec ${className}`}
+        {...extra}
+      >
+        {children}
+      </div>
+    );
+  };
+
+  const renderScam = (i: number) => {
+    const v = views![i]!;
+    const [head, ...rest] = v.lines;
+    const signals = rest.filter((l) => l.key.startsWith('scam.signal.'));
+    const advice = rest.filter((l) => !l.key.startsWith('scam.signal.'));
+    if (scamLevel === 'no_signs')
+      return frame(i, { 'data-level': scamLevel }, 'sec-nosigns', (
+        <>
+          <Shield className="sec-ic" size={22} strokeWidth={2} aria-hidden />
+          <div className="sec-body">
+            <p className="sec-text" lang={langOf(v.lang)}>{v.text}</p>
+            {fallbackNote(v)}
+          </div>
+        </>
+      ));
+    return frame(i, { 'data-level': scamLevel }, 'sec-scam', (
+      <>
+        <ShieldAlert className="sec-ic" size={32} strokeWidth={2} aria-hidden />
+        <div className="sec-body">
+          <p className="sec-text sz-lead" lang={head && langOf(head.lang)}><b>{head?.text}</b></p>
+          {signals.length > 0 && <ul className="signals">{signals.map((l) => <li key={l.key} lang={langOf(l.lang)}>{l.text}</li>)}</ul>}
+          {advice.map((l) => <p key={l.key} className="advice" lang={langOf(l.lang)}>{l.text}</p>)}
+          {fallbackNote(v)}
+        </div>
+      </>
+    ));
+  };
+
+  const renderUrgency = (i: number) => {
+    const u = card.understanding.urgency;
+    const Icon = URGENCY_ICON[u];
+    const v = views![i]!;
+    return frame(i, { 'data-urgency': u }, 'sec-urgency', (
+      <>
+        <Icon className="sec-ic" size={28} strokeWidth={2} aria-hidden />
+        <div className="sec-body">
+          <p className="urgency-word">{t(`app.urgency.${u}`)}</p>
+          {fallbackNote(v)}
+        </div>
+      </>
+    ));
+  };
+
+  const renderSection = (i: number) => {
+    const v = views![i]!;
+    const Icon = SECTION_ICON[v.section];
+    const notice = v.lines.length > 0 && v.lines.every((l) => l.key === 'facts_only.intro');
+    const lines = (size: string) => v.lines.map((l) => <p key={l.key} className={`sec-text ${size}`} lang={langOf(l.lang)}>{l.text}</p>);
+    let body: React.ReactNode;
+    let cls = `sec-${v.section}`;
+    if (notice) {
+      cls += ' sec-notice';
+      body = lines('sz-body');
+    } else if (v.section === 'deadline' && card.deadline) {
+      body = (
+        <>
+          <FactValue onSource={setSource} raw={card.deadline.raw} span={card.deadline.span} text={formatLongDate(card.deadline.value, locale)} size="sz-lead" />
+          {lines('sz-small sec-said')}
+        </>
+      );
+    } else if (v.section === 'money' && card.amount) {
+      body = (
+        <>
+          <FactValue onSource={setSource} raw={card.amount.raw} span={card.amount.span} text={formatMoney(card.amount.value.amount, card.amount.value.currency, locale)} size="sz-lead" />
+          {lines('sz-small sec-said')}
+        </>
+      );
+    } else if (v.section === 'help' && card.contactPhone) {
+      body = (
+        <>
+          <FactValue onSource={setSource} raw={card.contactPhone.raw} span={card.contactPhone.span} text={formatPhone(card.contactPhone.value, engine.region.phone.countryCode)} size="sz-lead" />
+          {lines('sz-small sec-said')}
+          <SpeakingButton speakKey="ui.call" variant="secondary" className="sec-action" icon={<Phone size={24} strokeWidth={2} aria-hidden />} onAct={call} />
+        </>
+      );
+    } else if (v.section === 'about') {
+      body = (
+        <>
+          {lines('sz-title')}
+          {card.reference && !facts && <FactValue onSource={setSource} raw={card.reference.raw} span={card.reference.span} label={t('app.fact.reference')} size="sz-body" />}
+        </>
+      );
+    } else if (v.section === 'action') {
+      const unsure = v.lines.some((l) => l.key === 'action.unclear');
+      body = lines(unsure ? 'sz-title' : 'sz-lead');
+    } else if (v.section === 'sender') {
+      body = lines('sz-body');
+    } else {
+      body = lines('sz-title');
+    }
+    return frame(i, {}, cls, (
+      <>
+        <Icon className="sec-ic" size={28} strokeWidth={2} aria-hidden />
         <div className="sec-body">
           {body}
-          {fallback && <p className="fallback">{t('app.card.fallback_note', { name: fallback })}</p>}
+          {fallbackNote(v)}
         </div>
-      </section>
-    );
+      </>
+    ));
   };
 
   const dock = (
@@ -236,15 +339,16 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
     </div>
   );
 
+  const L = layout;
   return (
     <Screen
       title={name}
       quietTitle
       back={() => { engine.stop(); navigate('/'); }}
-      className={`cardscreen`}
+      className="cardscreen"
       dock={dock}
     >
-      <article className="card" data-mode={card.mode} data-scam={scamLevel} aria-busy={!views}>
+      <article className="card" data-mode={card.mode} data-scam={scamLevel} data-urgency={facts ? undefined : card.understanding.urgency} aria-busy={!views}>
         {example && <p className="badge-line">{t('app.practice.badge')}</p>}
         {checking && (
           <div className="checking" role="status">
@@ -258,10 +362,38 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
             <SpeakingButton speakKey="ui.listen" variant="secondary" icon={<Play size={24} strokeWidth={2} fill="currentColor" aria-hidden />} onAct={() => { setImproved(false); play(0); }} />
           </div>
         )}
-        {views?.filter((v) => v.section === 'scam').map((v) => renderSection(views.indexOf(v), 'normal'))}
-        {views && ordered.band !== undefined && renderSection(ordered.band, 'band')}
-        {views && scamLevel === 'no_signs' && null}
-        {views && ordered.rest.filter((i) => views[i]!.section !== 'scam').map((i) => renderSection(i, 'normal'))}
+        {views && L && (
+          <>
+            {L.scam >= 0 && scamLevel !== 'no_signs' && renderScam(L.scam)}
+            {L.head.length > 0 && <div className={`group group-head${facts ? ' group-notice' : ''}`}>{L.head.map(renderSection)}</div>}
+            {(L.urgency >= 0 || L.lead.length > 0) && (
+              <div className="group group-lead">
+                {L.urgency >= 0 && renderUrgency(L.urgency)}
+                {L.lead.map(renderSection)}
+                {card.deadline && L.lead.some((i) => views[i]!.section === 'deadline') && (
+                  <div className="group-actions">
+                    {native && reminder === 'set' ? (
+                      <>
+                        <p className="note remind-note" role="status"><CalendarCheck size={24} strokeWidth={2} aria-hidden /> <b>{t('app.remind.set')}</b></p>
+                        <SpeakingButton speakKey="app.remind.cancel" variant="quiet" onAct={() => void unremind()} />
+                      </>
+                    ) : (
+                      <SpeakingButton speakKey="ui.remind" variant="secondary" icon={<CalendarPlus size={24} strokeWidth={2} aria-hidden />} onAct={() => void remind()} />
+                    )}
+                    {native && (reminder === 'past' || reminder === 'denied' || reminder === 'failed') && (
+                      <p className="note" role="status">{t(`app.remind.${reminder}`)}</p>
+                    )}
+                    {native && reminder === 'denied' && (
+                      <SpeakingButton speakKey="app.settings.open" variant="secondary" onAct={() => void openSystemSettings('notifications')} />
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+            {L.help >= 0 && <div className="group group-help">{renderSection(L.help)}</div>}
+            {L.scam >= 0 && scamLevel === 'no_signs' && renderScam(L.scam)}
+          </>
+        )}
         <SpeakingButton speakKey="ui.show_helper" variant="secondary" className="show-helper" icon={<Eye size={24} strokeWidth={2} aria-hidden />} onAct={() => { engine.stop(); setHelper(true); }} />
         <p className="footer-note">{t('ui.not_advice')}</p>
         {!example && (
@@ -282,26 +414,41 @@ export function CardScreen({ card: first, example }: { card: Card; example?: boo
   );
 }
 
-function FactRow({ raw, span, label, text, onSource, children }: { raw: string; span: SourceSpan; label?: string; text?: string; onSource: (s: Source) => void; children?: React.ReactNode }) {
+/**
+ * A fact (date, amount, phone, reference) shown big. The value itself is the button that
+ * opens the message with this fact highlighted; the small search glyph says so, and the
+ * button speaks "Where is this in the message?" on long-press.
+ */
+function FactValue({ raw, span, label, text, size, onSource }: { raw: string; span: SourceSpan; label?: string; text?: string; size: string; onSource: (s: Source) => void }) {
+  const { t } = useApp();
+  const shown = text ?? raw;
+  // The last word stays with the glyph; the space before it is an ordinary one so a long amount can wrap there.
+  const cut = shown.search(/[\s\u00a0\u202f]\S*$/);
+  const [head, tail] = cut > 0 ? [shown.slice(0, cut) + ' ', shown.slice(cut + 1)] : ['', shown];
   return (
-    <div className="fact">
-      <span className="fact-line">
-        {label && <span className="fact-label">{label}</span>}
-        <b className="fact-value num">{text ?? raw}</b>
-      </span>
-      {children}
-      <SpeakingButton speakKey="ui.show_source" variant="quiet" className="fact-source" icon={<Search size={24} strokeWidth={2} aria-hidden />} onAct={() => onSource({ label: text ?? raw, span })} />
-    </div>
+    <SpeakingButton
+      speakKey="ui.show_source"
+      variant="quiet"
+      className="fact"
+      label={
+        <span className="fact-line">
+          {label && <span className="fact-label">{label}</span>}
+          <span className="fact-row">
+            <b className={`fact-value num ${size}`}>
+              {head}
+              <span className="fact-tail">
+                {tail}
+                <Search className="fact-glyph" size={24} strokeWidth={2} aria-hidden />
+              </span>
+            </b>
+            {/* the glyph alone says nothing to a screen reader: name what the button does */}
+            <span className="sr-only">. {t('ui.show_source')}</span>
+          </span>
+        </span>
+      }
+      onAct={() => onSource({ label: shown, span })}
+    />
   );
-}
-
-function sizeFor(section: string, notice: boolean, hasFact = false): string {
-  if (notice || hasFact) return 'sz-body';
-  switch (section) {
-    case 'about': return 'sz-headline';
-    case 'action': case 'deadline': case 'money': return 'sz-lead';
-    default: return 'sz-title';
-  }
 }
 
 export function SourceText({ text, span }: { text: string; span: SourceSpan }) {
@@ -317,20 +464,38 @@ export function SourceText({ text, span }: { text: string; span: SourceSpan }) {
 }
 
 function HelperView({ card, views, locale, phoneCc }: { card: Card; views: SectionView[]; locale: string; phoneCc: string }) {
+  const { settings } = useApp();
+  const lg = (l: string) => (l && l !== settings.lang ? l : undefined);
+  const noSigns = card.scam.level === 'no_signs';
+  // the quiet "no warning signs" line goes last for a helper too
+  const order = noSigns ? [...views.filter((v) => v.section !== 'scam'), ...views.filter((v) => v.section === 'scam')] : views;
   return (
     <div className="helper">
-      {views.map((v, i) => {
-        const Icon = SECTION_ICON[v.section];
+      {order.map((v, i) => {
+        const Icon = v.section === 'urgency' ? URGENCY_ICON[card.understanding.urgency] : SECTION_ICON[v.section];
         if (v.section === 'urgency' && card.mode === 'facts_only') return null;
+        if (v.section === 'scam' && noSigns)
+          return (
+            <section key={i} className="helper-sec helper-quiet">
+              <Shield size={28} strokeWidth={2} aria-hidden />
+              <p lang={lg(v.lang)}>{v.text}</p>
+            </section>
+          );
+        // numbers are read best as digits: show the fact itself, big
+        const digits =
+          v.section === 'deadline' && card.deadline ? formatLongDate(card.deadline.value, locale)
+          : v.section === 'money' && card.amount ? formatMoney(card.amount.value.amount, card.amount.value.currency, locale)
+          : v.section === 'help' && card.contactPhone ? formatPhone(card.contactPhone.value, phoneCc)
+          : undefined;
+        // same order of importance as the card: who and what smaller, the facts biggest
+        const weight = v.section === 'sender' || v.section === 'about' || v.section === 'urgency' ? ' helper-lead' : v.section === 'help' && !digits ? ' helper-title' : '';
         return (
-          <section key={i} className={`helper-sec${v.section === 'scam' ? ' helper-scam' : ''}`}>
+          <section key={i} className={`helper-sec${v.section === 'scam' ? ' helper-scam' : ''}${weight}`}>
             {v.section === 'scam' ? <ShieldAlert size={40} strokeWidth={2} aria-hidden /> : <Icon size={40} strokeWidth={2} aria-hidden />}
-            <p>{v.text}</p>
+            <p className={digits ? 'num' : undefined} lang={digits ? undefined : lg(v.lang)}>{digits ?? v.text}</p>
           </section>
         );
       })}
-      {card.contactPhone && <p className="helper-phone num">{formatPhone(card.contactPhone.value, phoneCc)}</p>}
-      {card.amount && <p className="helper-phone num">{formatMoney(card.amount.value.amount, card.amount.value.currency, locale)}</p>}
     </div>
   );
 }

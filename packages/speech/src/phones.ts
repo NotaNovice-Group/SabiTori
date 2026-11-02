@@ -14,12 +14,22 @@ export function splitPhone(value: string, countryCode?: string): { cc?: string; 
   return { national: digits };
 }
 
+/** Longest digit string we will read (E.164 allows 15; short codes are shorter). */
+export const MAX_PHONE_DIGITS = 20;
+
 export function phoneTokens(rules: PackRules, value: string, countryCode?: string): Token[] {
   const pr = rules.phones;
   if (!pr) throw new SpeechRuleError('rules.phones is missing');
+  if (typeof value !== 'string') throw new SpeechRuleError('phone value must be a string');
   const { cc, national } = splitPhone(value, countryCode);
-  if (national.length === 0) throw new SpeechRuleError(`phone "${value}" has no digits`);
-  const sizes = pr.groupsByLength?.[String(national.length)] ?? pr.groups;
+  if (national.length === 0) throw new SpeechRuleError('phone has no digits');
+  if (national.length > MAX_PHONE_DIGITS) throw new SpeechRuleError(`phone has too many digits (${national.length} > ${MAX_PHONE_DIGITS})`);
+  const byLen = pr.groupsByLength;
+  const key = String(national.length);
+  const sizes = byLen && Object.prototype.hasOwnProperty.call(byLen, key) ? byLen[key] : pr.groups;
+  const rest = pr.defaultGroupSize ?? 2;
+  const okSize = (x: unknown): x is number => typeof x === 'number' && Number.isInteger(x) && x >= 1;
+  if (!Array.isArray(sizes) || !sizes.every(okSize) || !okSize(rest)) throw new SpeechRuleError('rules.phones group sizes must be integers of at least 1');
   const groups: string[] = [];
   let pos = 0;
   for (const s of sizes) {
@@ -27,7 +37,6 @@ export function phoneTokens(rules: PackRules, value: string, countryCode?: strin
     groups.push(national.slice(pos, pos + s));
     pos += s;
   }
-  const rest = pr.defaultGroupSize ?? 2;
   while (pos < national.length) {
     groups.push(national.slice(pos, pos + rest));
     pos += rest;

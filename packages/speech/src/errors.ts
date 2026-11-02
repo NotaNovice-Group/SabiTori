@@ -1,7 +1,9 @@
 /** A pack file could not be fetched or failed validation. */
 export class PackLoadError extends Error {
-  constructor(message: string, readonly tag?: string) {
+  readonly tag?: string;
+  constructor(message: string, tag?: string) {
     super(message);
+    this.tag = tag;
     this.name = 'PackLoadError';
   }
 }

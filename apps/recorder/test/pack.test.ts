@@ -36,7 +36,7 @@ describe('pack zip', () => {
     const { bytes, version } = await exportPackZip(p, clips, { includeNotes: false, atomIds: ['num.1'] });
     expect(version).toBe('0.1.1');
     const names = Object.keys(unzipSync(bytes)).sort();
-    expect(names).toEqual(['audio/deadline.by.0.webm', 'audio/deadline.by.1.webm', 'audio/num.1.webm', 'audio/urgency.soon.0.webm', 'manifest.json', 'phrases.json']);
+    expect(names).toEqual(['audio/deadline.by.0.webm', 'audio/deadline.by.1.webm', 'audio/index.json', 'audio/num.1.webm', 'audio/urgency.soon.0.webm', 'manifest.json', 'phrases.json']);
     const files = unzipSync(bytes);
     const m = JSON.parse(new TextDecoder().decode(files['manifest.json']));
     expect(m.status).toBe('in_recording');
@@ -66,10 +66,16 @@ describe('pack zip', () => {
     const c = back.clips.find((x) => x.id === 'deadline.by.1')!;
     expect(c.text).toBe('tɔ̂');
     expect(new Uint8Array(await c.blob.arrayBuffer())).toEqual(new Uint8Array(await clips.get('deadline.by.1')!.blob.arrayBuffer()));
-    // and the import can be exported again
+    // audio/index.json lists exactly the clips in audio/, sorted
+    const idx = JSON.parse(new TextDecoder().decode(unzipSync(bytes)['audio/index.json']!));
+    expect(idx).toEqual({ clips: ['deadline.by.0', 'deadline.by.1', 'num.1', 'urgency.soon.0'] });
+    expect(idx.clips).toEqual(back.clips.map((x) => x.id).sort());
+    // and the import can be exported again, with the index regenerated
     const m = new Map(back.clips.map((x) => [x.id, x]));
     const again = await exportPackZip(back.project, m, { includeNotes: false, atomIds: [] });
     expect(Object.keys(unzipSync(again.bytes))).toContain('audio/deadline.by.0.webm');
+    const idx2 = JSON.parse(new TextDecoder().decode(unzipSync(again.bytes)['audio/index.json']!));
+    expect(idx2.clips).toEqual(['deadline.by.0', 'deadline.by.1', 'urgency.soon.0']);
   });
   it('imports a plain pack without notes and with a wrapping folder', async () => {
     const { p, clips } = sample();

@@ -7,6 +7,10 @@ export interface Settings {
   speed: SpeedStep;
   retention: Retention;
   region: string;
+  /** Optional: download updates (only offered when configured). Off until the person turns it on. */
+  updatesOn: boolean;
+  /** Optional: send error reports without messages (only offered when configured). */
+  crashOn: boolean;
 }
 
 export const SPEEDS: readonly number[] = [1, 0.8, 0.6];
@@ -18,6 +22,8 @@ export const DEFAULTS: Settings = {
   speed: 0,
   retention: 30,
   region: 'CM',
+  updatesOn: false,
+  crashOn: false,
 };
 
 const KEY = 'sabitori.settings.v1';
@@ -41,6 +47,8 @@ export function sanitize(v: unknown): Settings {
     speed: o.speed === 1 || o.speed === 2 ? o.speed : 0,
     retention: o.retention === 7 || o.retention === 0 ? o.retention : 30,
     region: typeof o.region === 'string' && o.region ? o.region : DEFAULTS.region,
+    updatesOn: o.updatesOn === true,
+    crashOn: o.crashOn === true,
   };
 }
 

@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Test, typecheck, packs
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: pnpm/action-setup@v4.1.0
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm -r test
+      - run: pnpm -r typecheck
+      - run: node scripts/check-packs.mjs
+
+  android-debug:
+    name: Android debug build
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: pnpm/action-setup@v4.1.0
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-java@v4.7.1
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: android-actions/setup-android@v3.2.2
+        with:
+          packages: platform-tools platforms;android-36 build-tools;36.0.0
+      - uses: gradle/actions/setup-gradle@v4.4.1
+        with:
+      - run: pnpm install --frozen-lockfile
+      - name: Build the web app
+        run: pnpm --filter @sabitori/app build
+      - name: Sync Capacitor
+        working-directory: apps/app
+        run: npx cap sync android
+      - name: Assemble debug APK
+        working-directory: apps/app/android
+        run: ./gradlew assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4.6.2
+        with:
+          name: sabitori-debug-apk
+          path: apps/app/android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error

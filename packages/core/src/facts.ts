@@ -5,12 +5,14 @@ import type { ReadingLexicon } from './reading.js';
 import {
   addDays,
   collect,
+  daysBetween,
   escapeRe,
   findTerms,
   fold,
   isValidYmd,
   overlaps,
   parseIso,
+  splitSentences,
   termSource,
   toIso,
   weekdayOf,
@@ -24,10 +26,13 @@ export interface FactsContext {
 
 type Span = { start: number; end: number };
 
-/** A date with no year is read as its next occurrence on or after (receivedAt - grace). */
-const YEAR_GRACE_DAYS = 7;
+/** A year-less date is the occurrence nearest to receivedAt: past if within PAST_DAYS before, else the next one. */
+const PAST_DAYS = 180;
 const SEP = '[ \\u00a0\\u202f.,]';
-const NUM = `\\d{1,3}(?:${SEP}\\d{3})+(?:[.,]\\d{1,2})?(?!\\d)|\\d+(?:[.,]\\d{1,2})?`;
+/** Stands for an OCR line break removed from inside a digit group (amounts only). */
+const JOIN = '\u0001';
+const D3 = `\\d${JOIN}?\\d${JOIN}?\\d`;
+const NUM = `\\d{1,3}(?:${SEP}${D3})+(?:[.,]\\d{1,2})?(?!\\d)|\\d+(?:[.,]\\d{1,2})?`;
 
 function conflicts(span: Span, blocked: Span[]): boolean {
   return blocked.some((b) => overlaps(span, b));
@@ -112,7 +117,7 @@ function extractPhones(text: string, norm: string, ctx: FactsContext, blocked: S
   const national = new RegExp(`^(?:${ctx.region.phone.nationalPattern})$`);
   const alias = aliasSource(ctx);
   const after = alias ? new RegExp(`^[ \\u00a0]?(?:${alias})(?![\\p{L}\\p{N}])`, 'u') : undefined;
-  const before = alias ? new RegExp(`(?<![\\p{L}])(?:${alias})[ \\u00a0]*:?[ \\u00a0]*$`, 'u') : undefined;
+  const before = alias ? new RegExp(`(?<![\\p{L}])(?<!\\d[ \\u00a0\\u202f]?)(?:${alias})[ \\u00a0]*:?[ \\u00a0]*$`, 'u') : undefined;
 
   const toNational = (digits: string, plus: boolean): string | undefined => {
     let rest = digits;
@@ -133,20 +138,26 @@ function extractPhones(text: string, norm: string, ctx: FactsContext, blocked: S
     const gre = /\d+/g;
     let g: RegExpExecArray | null;
     while ((g = gre.exec(body))) groups.push({ d: g[0], start: bodyStart + g.index, end: bodyStart + g.index + g[0].length });
-    let s = 0;
-    while (s < groups.length) {
-      let matched = false;
-      for (let e = groups.length - 1; e >= s; e--) {
+    // Take phones from the END of the run backwards: a phone is the longest valid window that ends
+    // at the end of the remaining groups (suffix-aligned). If none, drop the last group and retry.
+    // A window whose first group looks like a year (2026 677 12 34 56) is never a phone.
+    const yearLike = (d: string) => /^(19|20)\d\d$/.test(d);
+    let hi = groups.length - 1;
+    while (hi >= 0) {
+      let found = false;
+      for (let s = 0; s <= hi; s++) {
+        const first = groups[s];
+        const last = groups[hi];
+        if (!first || !last) continue;
         const digits = groups
-          .slice(s, e + 1)
+          .slice(s, hi + 1)
           .map((x) => x.d)
           .join('');
         if (digits.length < 9) break;
+        if (yearLike(first.d) && s < hi) continue;
         const hasPlus = plus && s === 0;
         const nat = toNational(digits, hasPlus);
-        const first = groups[s];
-        const last = groups[e];
-        if (!nat || !first || !last) continue;
+        if (!nat) continue;
         const start = hasPlus ? first.start - 1 : first.start;
         const span = { start, end: last.end };
         if (conflicts(span, blocked)) continue;
@@ -154,11 +165,11 @@ function extractPhones(text: string, norm: string, ctx: FactsContext, blocked: S
           if (after?.test(norm.slice(span.end)) || before?.test(norm.slice(Math.max(0, start - 14), start))) continue;
         }
         out.push(mk(text, span.start, span.end, `+${cc}${nat}`));
-        s = e + 1;
-        matched = true;
+        hi = s - 1;
+        found = true;
         break;
       }
-      if (!matched) s++;
+      if (!found) hi--;
     }
   }
   return out.sort((a, b) => a.span.start - b.span.start);
@@ -169,12 +180,16 @@ function extractPhones(text: string, norm: string, ctx: FactsContext, blocked: S
 function inferYear(m: number, d: number, receivedAt: IsoDate): number | undefined {
   const r = parseIso(receivedAt);
   if (!r) return undefined;
-  const floor = addDays(receivedAt, -YEAR_GRACE_DAYS);
-  for (let y = r.y; y <= r.y + 8; y++) {
+  let past: { y: number; delta: number } | undefined;
+  let next: { y: number; delta: number } | undefined;
+  for (let y = r.y - 1; y <= r.y + 1; y++) {
     if (!isValidYmd(y, m, d)) continue;
-    if (toIso(y, m, d) >= floor) return y;
+    const delta = daysBetween(receivedAt, toIso(y, m, d));
+    if (delta < 0) {
+      if (delta >= -PAST_DAYS && (!past || delta > past.delta)) past = { y, delta };
+    } else if (!next || delta < next.delta) next = { y, delta };
   }
-  return undefined;
+  return (past ?? next)?.y;
 }
 
 function extractDates(text: string, norm: string, ctx: FactsContext, blocked: Span[]): Fact<IsoDate>[] {
@@ -273,9 +288,11 @@ function extractDates(text: string, norm: string, ctx: FactsContext, blocked: Sp
     }
   }
 
+  const explicit = [...out];
+
   // 6. relative words ("demain", "tomorrow")
   const rel = new Map<string, number>();
-  L.forEach((l) => Object.entries(l.relativeDays).forEach(([w, off]) => rel.set(w, off)));
+  L.forEach((l) => Object.entries(l.relativeDays).forEach(([w, off]) => rel.set(fold(w).trim().replace(/\s+/g, ' '), off)));
   const relHits = findTerms(norm, [...rel.keys()]).sort(
     (a, b) => b.end - b.start - (a.end - a.start) || a.start - b.start,
   );
@@ -285,13 +302,22 @@ function extractDates(text: string, norm: string, ctx: FactsContext, blocked: Sp
     push(h.start, h.end, addDays(ctx.receivedAt, off));
   }
 
-  // 7. weekday names, only after a lead word ("avant vendredi")
+  // 7. weekday names, only after a lead word ("avant vendredi"). A weekday written next to an
+  //    explicit date ("lundi 9 novembre 2026") is only a label of that date, never a date of its own.
   const wdLead = collect(L, (l) => l.weekdayLeadWords).map((w) => termSource(w));
   const wdRe = wdLead.length ? new RegExp(`(?:${wdLead.join('|')})\\s*$`, 'u') : undefined;
+  const sentences = splitSentences(norm);
   L.forEach((l) =>
     l.weekdays.forEach((names, idx) => {
       for (const h of findTerms(norm, names)) {
         if (!wdRe || !wdRe.test(norm.slice(Math.max(0, h.start - 30), h.start))) continue;
+        if (explicit.some((e) => e.span.start >= h.end && e.span.start - h.end <= 3)) continue;
+        const sen = sentences.find((x) => h.start >= x.start && h.start < x.end);
+        if (
+          sen &&
+          explicit.some((e) => e.span.start >= sen.start && e.span.end <= sen.end && weekdayOf(e.value) === idx)
+        )
+          continue;
         const ahead = (idx - weekdayOf(ctx.receivedAt) + 7) % 7;
         push(h.start, h.end, addDays(ctx.receivedAt, ahead));
       }
@@ -303,19 +329,32 @@ function extractDates(text: string, norm: string, ctx: FactsContext, blocked: Sp
 
 /* ------------------------------- amounts ------------------------------- */
 
-function extractAmounts(text: string, norm: string, ctx: FactsContext, blocked: Span[]): Fact<Money>[] {
+function extractAmounts(text: string, norm0: string, ctx: FactsContext, blocked: Span[]): Fact<Money>[] {
   const alias = aliasSource(ctx);
   if (!alias) return [];
   const currency = ctx.region.currency.code;
+  // OCR line breaks inside a number (same length, so spans stay valid):
+  //   "15\n000" -> group break; "15 0\n00" -> the break sits inside the group, removed (JOIN).
+  const norm = norm0
+    .replace(/(?<![\d])(\d{1,3})\n(\d{3})(?!\d)/g, '$1 $2')
+    .replace(/(?<=\d[   .,])(\d{1,2})\n(\d{1,2})(?!\d)/g, (all, l: string, r: string) =>
+      l.length + r.length === 3 ? `${l}${JOIN}${r}` : all,
+    );
   const cands: { start: number; end: number; amount: number }[] = [];
   const add = (start: number, end: number, rawNum: string) => {
-    if (rawNum.replace(/\D/g, '').length > 12) return;
-    const amount = parseNumber(rawNum);
-    if (Number.isFinite(amount)) cands.push({ start, end, amount });
+    const digits = rawNum.replace(/\D/g, '');
+    if (digits.length > 12) return;
+    // No leading zero ("00 FCFA", "05000"), no zero, no minor unit ("15,50": never rounded to 16).
+    if (digits.startsWith('0')) return;
+    if (/^(.*\d)[.,]\d{1,2}$/.test(rawNum.replace(new RegExp(JOIN, 'g'), ''))) return;
+    const amount = parseNumber(rawNum.replace(new RegExp(JOIN, 'g'), ''));
+    if (Number.isFinite(amount) && amount > 0) cands.push({ start, end, amount });
   };
 
-  const A = new RegExp(`(?<![\\d])(?<![\\d][.,/\\-])(${NUM})[ \\u00a0\\u202f]?(?:${alias})(?![\\p{L}\\p{N}])`, 'gu');
-  const B = new RegExp(`(?<![\\p{L}\\p{N}])(?:${alias})[ \\u00a0]*:?[ \\u00a0]*(${NUM})(?![\\d])`, 'gu');
+  // Not glued to a letter or digit before it, and not the tail of "1 5 000" (a lone 1-3 digit group + space).
+  const lead = `(?<![\\p{L}\\d${JOIN}])(?<!(?<![\\d.,])\\d{1,3}[ \\u00a0\\u202f])(?<![\\d][.,/\\-])`;
+  const A = new RegExp(`${lead}(${NUM})[ \\u00a0\\u202f]?(?:${alias})(?![\\p{L}\\p{N}])`, 'gu');
+  const B = new RegExp(`(?<![\\p{L}\\p{N}])(?:${alias})[ \\u00a0]*:?[ \\u00a0]*(${NUM})(?![\\d])(?![ \\u00a0\\u202f]\\d)`, 'gu');
   let m: RegExpExecArray | null;
   while ((m = A.exec(norm))) {
     const n = m[1] ?? '';
@@ -329,7 +368,7 @@ function extractAmounts(text: string, norm: string, ctx: FactsContext, blocked: 
   }
 
   // Labelled amount near a currency word: "Montant: 2 500 (FCFA)"
-  const C = new RegExp(`^[ \\u00a0]*[:=\\-]?[ \\u00a0]*(${NUM})(?![\\d])`, 'u');
+  const C = new RegExp(`^[ \\u00a0]*[:=\\-]?[ \\u00a0]*(${NUM})(?![\\d])(?![ \\u00a0\\u202f]\\d)`, 'u');
   const near = new RegExp(`(?<![\\p{L}\\p{N}])(?:${alias})(?![\\p{L}\\p{N}])`, 'u');
   for (const h of findTerms(norm, collect(ctx.lexicons, (l) => l.amountWords))) {
     const c = C.exec(norm.slice(h.end));
@@ -379,7 +418,7 @@ function extractReferences(text: string, norm: string, ctx: FactsContext, blocke
 
 function extractShortCodes(text: string, norm: string, ctx: FactsContext, blocked: Span[]): Fact<string>[] {
   const out: Fact<string>[] = [];
-  const re = /^[  ]*:?[  ]*(\d{3,5})(?![\d])/;
+  const re = /^[  ]*:?[  ]*(\d{4,5})(?![\d])/;
   for (const h of findTerms(norm, collect(ctx.lexicons, (l) => l.shortCodeLabels))) {
     const m = re.exec(norm.slice(h.end));
     if (!m || !m[1]) continue;

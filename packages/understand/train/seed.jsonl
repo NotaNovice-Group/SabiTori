@@ -1,0 +1,39 @@
+{"text": "Votre facture ENEO de 24 500 FCFA est disponible. Payez avant le 20/03 pour éviter la coupure.", "expected": {"kind": "electricity_bill", "action": "pay", "urgency": "soon"}, "split": "train"}
+{"text": "ENEO: coupure imminente demain si la facture de 18 000 FCFA n'est pas réglée.", "expected": {"kind": "electricity_bill", "action": "pay", "urgency": "urgent"}, "split": "train"}
+{"text": "Your ENEO electricity bill of 12,300 XAF is ready. Pay by the 25th.", "expected": {"kind": "electricity_bill", "action": "pay", "urgency": "soon"}, "split": "train"}
+{"text": "Camwater: facture d'eau de 6 200 FCFA, date limite le 10/04.", "expected": {"kind": "water_bill", "action": "pay", "urgency": "soon"}, "split": "test"}
+{"text": "Your CAMWATER bill is 4,800 XAF. Water will be cut if unpaid tomorrow.", "expected": {"kind": "water_bill", "action": "pay", "urgency": "urgent"}, "split": "train"}
+{"text": "Vous avez reçu 15 000 FCFA de NGONO Paul. Solde: 32 400 FCFA. Ref 8839201.", "expected": {"kind": "mobile_money", "action": "nothing", "urgency": "info"}, "split": "train"}
+{"text": "You have received 5,000 XAF from Mary. New balance 21,000 XAF. MTN MoMo.", "expected": {"kind": "mobile_money", "action": "nothing", "urgency": "info"}, "split": "train"}
+{"text": "Retrait de 10 000 FCFA effectué. Orange Money. Ref 77231.", "expected": {"kind": "mobile_money", "action": "nothing", "urgency": "info"}, "split": "test"}
+{"text": "Orange Money: confirmez le transfert de 20 000 FCFA en tapant #150*1#.", "expected": {"kind": "mobile_money", "action": "reply", "urgency": "soon"}, "split": "train"}
+{"text": "MTN: votre forfait internet 5 Go expire demain. Rechargez via *155#.", "expected": {"kind": "telecom", "action": "pay", "urgency": "soon"}, "split": "train"}
+{"text": "Orange: your airtime balance is low. Recharge now to keep your line active.", "expected": {"kind": "telecom", "action": "pay", "urgency": "soon"}, "split": "train"}
+{"text": "Votre ligne sera suspendue dans 24h. Appelez le 8080 pour régulariser.", "expected": {"kind": "telecom", "action": "call", "urgency": "urgent"}, "split": "test"}
+{"text": "Afriland First Bank: votre carte a été débitée de 45 000 FCFA. Solde disponible 120 000.", "expected": {"kind": "bank", "action": "nothing", "urgency": "info"}, "split": "train"}
+{"text": "UBA: your account statement for March is available. Visit any branch to collect.", "expected": {"kind": "bank", "action": "collect", "urgency": "info"}, "split": "train"}
+{"text": "Votre chéquier est prêt. Passez le retirer à l'agence de Bonanjo.", "expected": {"kind": "bank", "action": "collect", "urgency": "soon"}, "split": "train"}
+{"text": "Hôpital Laquintinie: rendez-vous demain à 8h au service de pédiatrie. Apportez le carnet.", "expected": {"kind": "health", "action": "go_to_place", "urgency": "soon"}, "split": "test"}
+{"text": "Reminder: take your malaria tablets twice a day for 3 days.", "expected": {"kind": "health", "action": "take_medicine", "urgency": "soon"}, "split": "train"}
+{"text": "Vos résultats d'analyses sont prêts. Passez les récupérer au laboratoire.", "expected": {"kind": "health", "action": "collect", "urgency": "soon"}, "split": "train"}
+{"text": "Campagne de vaccination ce samedi au centre de santé. Venez avec votre enfant.", "expected": {"kind": "health", "action": "go_to_place", "urgency": "soon"}, "split": "train"}
+{"text": "Lycée Général Leclerc: les frais de scolarité de 50 000 FCFA sont dus avant le 30/09.", "expected": {"kind": "school", "action": "pay", "urgency": "soon"}, "split": "test"}
+{"text": "School notice: parents meeting on Friday at 4pm. Please attend.", "expected": {"kind": "school", "action": "go_to_place", "urgency": "soon"}, "split": "train"}
+{"text": "Le bulletin du 1er trimestre est disponible. Merci de le récupérer au secrétariat.", "expected": {"kind": "school", "action": "collect", "urgency": "info"}, "split": "train"}
+{"text": "Mairie de Douala: votre acte de naissance est prêt. Présentez-vous avec votre CNI.", "expected": {"kind": "administrative", "action": "collect", "urgency": "soon"}, "split": "train"}
+{"text": "Convocation à la préfecture lundi à 9h. Apportez votre passeport et 2 photos.", "expected": {"kind": "administrative", "action": "bring_document", "urgency": "soon"}, "split": "test"}
+{"text": "Your national ID card renewal appointment is on 12/05. Bring the old card.", "expected": {"kind": "administrative", "action": "bring_document", "urgency": "soon"}, "split": "train"}
+{"text": "Tribunal de Première Instance: vous êtes convoqué à l'audience du 14/06. Présentez-vous avec un avocat.", "expected": {"kind": "legal", "action": "go_to_place", "urgency": "urgent"}, "split": "train"}
+{"text": "Huissier de justice: vous devez régler 150 000 FCFA sous huit jours sinon saisie.", "expected": {"kind": "legal", "action": "pay", "urgency": "urgent"}, "split": "train"}
+{"text": "Bonjour, ceci est un message de test. Merci.", "expected": {"kind": "other", "action": "nothing", "urgency": "info"}, "split": "test"}
+{"text": "Happy new year to all our customers!", "expected": {"kind": "other", "action": "nothing", "urgency": "info"}, "split": "train"}
+{"text": "Félicitations! Vous avez gagné 5 000 000 FCFA. Envoyez 10 000 FCFA pour recevoir votre prix.", "expected": {"kind": "other", "action": "pay", "urgency": "urgent"}, "split": "train"}
+{"text": "Salut, rappelle-moi quand tu peux.", "expected": {"kind": "other", "action": "call", "urgency": "info"}, "split": "train"}
+{"text": "Please reply YES to confirm your appointment.", "expected": {"kind": "other", "action": "reply", "urgency": "soon"}, "split": "test"}
+{"text": "Répondez OUI pour confirmer votre rendez-vous à la banque.", "expected": {"kind": "bank", "action": "reply", "urgency": "soon"}, "split": "train"}
+{"text": "Votre facture ENEO de 9 000 FCFA est payée. Merci.", "expected": {"kind": "electricity_bill", "action": "nothing", "urgency": "info"}, "split": "train"}
+{"text": "Camwater: your payment of 3,000 XAF was received. Thank you.", "expected": {"kind": "water_bill", "action": "nothing", "urgency": "info"}, "split": "train"}
+{"text": "Dr Mbarga vous attend lundi à 10h. Merci d'appeler pour confirmer: 677123456.", "expected": {"kind": "health", "action": "call", "urgency": "soon"}, "split": "test"}
+{"text": "Urgent: appelez le service client MTN au 677 00 00 00.", "expected": {"kind": "telecom", "action": "call", "urgency": "urgent"}, "split": "train"}
+{"text": "Retirez votre diplôme au rectorat avant la fin du mois.", "expected": {"kind": "school", "action": "collect", "urgency": "soon"}, "split": "train"}
+{"text": "Ministère: déposez votre dossier complet avant le 5 mai. Pièces: acte de naissance, CNI.", "expected": {"kind": "administrative", "action": "bring_document", "urgency": "soon"}, "split": "train"}

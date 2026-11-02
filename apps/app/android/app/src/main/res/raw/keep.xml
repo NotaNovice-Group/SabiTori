@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- These are looked up by name at run time (capacitor.config.ts: LocalNotifications.smallIcon),
+     so the resource shrinker cannot see that they are used. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_stat_sabitori,@drawable/splash_icon,@drawable/ic_launcher_foreground,@drawable/ic_launcher_monochrome"
+    tools:shrinkMode="safe" />

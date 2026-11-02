@@ -78,5 +78,15 @@ export interface ReadingLexicon {
     callWords: string[];
     /** Words meaning "using": a company named right after them is a payment channel, not the sender. */
     viaWords: string[];
+    /** Words that end a clause for negation scope ("mais", "but"). Commas and semicolons always do. */
+    clauseBreaks?: string[];
+    /** Words joining a list of companies ("ou", "or"): a company after another one is a channel. */
+    joinWords?: string[];
+    /** Verbs of paying / sending / transferring money ("payez", "send"). */
+    payVerbs?: string[];
+    /** Verbs of dialling a USSD code ("composez", "dial"). */
+    dialWords?: string[];
+    /** Purposes a scam gives for dialling: receive, unlock, confirm, verify money or account. */
+    ussdPurposeWords?: string[];
   };
 }
