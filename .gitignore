@@ -23,3 +23,7 @@ dist-updates/
 *.keystore
 *.p12
 keystore.properties
+
+# Piper voice models (fetched by scripts/fetch-voices.mjs; over 80 MB together)
+packs/*/voice/*.onnx
+apps/app/public/piper/

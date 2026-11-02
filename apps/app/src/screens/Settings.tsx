@@ -20,6 +20,7 @@ declare const __APP_VERSION__: string;
 export function SettingsScreen() {
   const { t, settings, setSettings, engine, refreshHistory, locale } = useApp();
   const [model, setModel] = useState<ModelState>(engine.model.state());
+  const [builtin, setBuiltin] = useState(engine.understanding.state());
   const [available, setAvailable] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -34,7 +35,10 @@ export function SettingsScreen() {
 
   useEffect(() => {
     void engine.model.available().then(setAvailable);
-    return engine.model.subscribe(setModel);
+    const off = engine.model.subscribe(setModel);
+    const offBuiltin = engine.understanding.subscribe(setBuiltin);
+    setBuiltin(engine.understanding.state());
+    return () => { off(); offBuiltin(); };
   }, [engine]);
 
   const pick = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,6 +166,15 @@ export function SettingsScreen() {
           onAct={async () => { await clearCards(); await refreshHistory(); setCleared(true); }}
         />
         <p className="panel-hint" role="status">{cleared ? t('app.settings.cleared') : ''}</p>
+      </section>
+
+      <section className="panel" aria-labelledby="s-builtin">
+        <h2 id="s-builtin" className="panel-title">{t('app.settings.model.builtin')}</h2>
+        <p className="panel-hint" role="status">
+          {builtin.status === 'ready' ? t('app.settings.model.builtin_ready')
+            : builtin.status === 'failed' ? t('app.settings.model.builtin_failed')
+            : t('app.settings.model.builtin_loading')}
+        </p>
       </section>
 
       {available && (

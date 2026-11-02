@@ -1,4 +1,40 @@
-# On-device model (@sabitori/understand)
+# On-device models (@sabitori/understand)
+
+SabiTori has two on-device understanding models. Both only **choose labels** from the closed lists in `@sabitori/core` (`kind`, `action`, `urgency`); dates, amounts, phone numbers and text always come from code.
+
+| | Built-in small model (default, every message) | Optional "deeper" LLM |
+| --- | --- | --- |
+| Model | paraphrase-multilingual-MiniLM-L12-v2 encoder (Apache-2.0), int8 ONNX, plus 3 linear heads | Qwen2.5-1.5B-Instruct Q4_K_M GGUF |
+| Size | about 35.6 MB, shipped inside the app | about 1 GB, side-loaded |
+| Parameters | 117.7M base; 33.0M after pruning the vocabulary to 30k pieces | 1.5B |
+| Speed | median about 60 ms per message on a laptop core; about 230 ms median, 400 ms p95 with the CPU throttled 4x (headless Chromium, one thread) | seconds |
+| Runtime | onnxruntime-web (wasm, one thread, no COOP/COEP) | wllama |
+| Classifier id | `minilm-l12-int8@1` | `qwen2.5-1.5b-q4@1` |
+
+## Built-in model: how it plugs in
+
+```
+text -> tokenizer.json (Unigram, pure JS) -> encoder.int8.onnx (mean pooled, 384 numbers)
+     -> L2 normalise -> heads.json (3 softmax-regression heads, temperature-calibrated)
+     -> per field: encoder label if its probability >= that field's threshold, else the rules' label
+```
+
+- Code: `src/encoder.ts` (`createEncoderClassifier({ baseUrl, fallback, wasmBaseUrl, threshold?, readFile?, ort? })`), `src/encoder-math.ts` (pure head and combination maths).
+- Files: `packages/understand/model/minilm/` (`encoder.int8.onnx`, `tokenizer.json`, `heads.json`, `model-card.md`); training and export in `packages/understand/train/` (see its README for the exact commands).
+- Combination: thresholds per field (kind 0.85, action 0.55, urgency 0.65) are stored in `heads.json` and were picked on the train split only. Confidence is the lowest confidence among the sources used, capped at 0.95. Below that the rules answer. Any error (files missing, runtime fails) also gives the rules' answer. The encoder cannot create a fact.
+- App: `apps/app/src/engine/encoder.ts` loads it once, lazily, when the app calls `engine.model.init()` after first paint (about 1.2 s after start); until it is ready `Engine.analyze` uses rules. `Engine.analyzeDeeper` and the optional LLM are unchanged. Settings shows "Understanding model: built in (MiniLM, 118M)" and its status.
+- Assets (copied by `apps/app/vite.config.ts` into `public/`, all precached by the PWA service worker):
+  `models/minilm/{encoder.int8.onnx,tokenizer.json,heads.json}` and `ort/ort-wasm-simd-threaded.{wasm,mjs}` (onnxruntime-web, 14.8 MB wasm). A vite plugin maps `onnxruntime-web/wasm` to its "extern wasm" build so the wasm is not bundled twice. The app passes an absolute `wasmBaseUrl` (the runtime imports its loader from there).
+  Added to the APK: about 50 MB uncompressed (35.6 MB model + 14.9 MB runtime).
+- Node (tests, eval): the same code runs with onnxruntime-web's Node entry; pass `readFile` to read the files from disk.
+
+Evaluate: `node packages/understand/eval/run-encoder.mjs` (test split, writes `eval/results-encoder.md`; baseline numbers in `eval/results-rules.md`).
+
+Known limits: the encoder runs on the main thread (about 0.2 to 0.4 s of CPU per message on a slow phone); `env.wasm.proxy` could move it to a worker later. Training data is synthetic and small; see `model/minilm/model-card.md`.
+
+---
+
+# Optional deeper model: Qwen2.5 LLM
 
 ## What it is
 

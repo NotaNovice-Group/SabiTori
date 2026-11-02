@@ -10,3 +10,11 @@ export { renderPlan, renderPhrase, type RenderedPart, type RenderedSection, type
 export { requiredClips } from './required.js';
 export { createPlayer, type Player, type PlayOptions, type TtsBackend, type ClipBackend } from './player.js';
 export { createBrowserPlayer, createBrowserTts, createBrowserClips, chunkText, pickVoice } from './browser.js';
+export { createPiperTts, type PiperTts, type PiperTtsOptions, type PiperEvent } from './piper/tts.js';
+export { createWorkerEngines, type WorkerLike } from './piper/worker-client.js';
+export { createWebAudioOutput, type AudioOutput } from './piper/audio.js';
+export type { PiperEngine, PiperEngineFactory, PiperVoiceSpec, PiperAudio } from './piper/engine.js';
+export { parsePiperConfig, textToIds, phonemesToIds, symbolsToIds, lengthScaleForRate, splitSentences, type PiperConfig } from './piper/config.js';
+export { createPiperRuntime, type OrtLike, type PhonemizerLike } from './piper/runtime.js';
+export { piperVoiceFromManifest, createManifestVoiceResolver, createPacksVoiceResolver, loadManifests } from './piper/voices.js';
+export { createPiperWorkerEngines, piperSupported } from './piper/create-worker.js';

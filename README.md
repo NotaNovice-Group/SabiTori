@@ -81,3 +81,16 @@ pnpm --filter @sabitori/app build && cd apps/app && npx cap sync android && cd a
 - Native review of the French text (`packs/fr/phrases.json`, status `draft`).
 - Test on real low-cost Android phones: voices, camera, OCR speed, model speed.
 - Release signing key for the Play Store build.
+
+## Contributing
+
+Read [`CONTRIBUTING.md`](CONTRIBUTING.md) to set up, run the tests and add a language. Please follow our
+[Code of Conduct](CODE_OF_CONDUCT.md). Report security problems privately, as described in
+[`SECURITY.md`](SECURITY.md).
+
+## License
+
+- Code: [MPL-2.0](LICENSE).
+- Language packs (`packs/`): CC-BY-SA-4.0 by default. A language community can choose another licence in
+  its pack manifest. See [`packs/LICENSE.md`](packs/LICENSE.md).
+- Third-party models, fonts and libraries: see [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).

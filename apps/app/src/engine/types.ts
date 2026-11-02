@@ -71,6 +71,11 @@ export interface Engine {
     save(file: Blob): Promise<void>;
     remove(): Promise<void>;
   };
+  /** The built-in small neural classifier that reads every message (rules until it has loaded). */
+  understanding: {
+    state(): { status: 'idle' | 'loading' | 'ready' | 'failed'; progress: number };
+    subscribe(fn: (s: { status: 'idle' | 'loading' | 'ready' | 'failed'; progress: number }) => void): () => void;
+  };
   /** Exposed for tests. */
   classifier(): Classifier;
 }

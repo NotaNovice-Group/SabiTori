@@ -1,0 +1,19 @@
+{
+ "source": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+ "source_params": 117653760,
+ "kept_vocab": 30000,
+ "dim": 384,
+ "onnx_bytes": 34195614,
+ "cosine_vs_original": {
+  "n": 203,
+  "cosine_mean": 0.9856987472238212,
+  "cosine_min": 0.958932101726532
+ },
+ "max_len": 128,
+ "pad_id": 1,
+ "ids": {
+  "bos": 0,
+  "eos": 2
+ },
+ "exported_params": 33042912
+}

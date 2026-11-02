@@ -8,7 +8,8 @@
  *   speech.renderPlan(plan, lang, registry, { region, today }) -> Engine.renderCard (step 2)
  *   speech.renderPhrase(key, slots, lang, registry, ctx)       -> Engine.phrase / bundle / speak
  *   speech.createBrowserPlayer()                               -> Engine.playSections / stop
- *   understand.createLlmClassifier / modelStore                -> Engine.model (engine/model.ts)
+ *   understand.createEncoderClassifier (built in, default)       -> Engine.analyze, Engine.understanding (engine/encoder.ts)
+ *   understand.createLlmClassifier / modelStore                -> Engine.model (engine/model.ts), the optional deeper path
  */
 import {
   CATALOG, PHRASE_KEYS, analyze, buildSpeechPlan, createRulesClassifier,
@@ -20,6 +21,7 @@ import { createBrowserPlayer, createPackRegistry, renderPhrase, renderPlan, type
 import { EXTRA, EXTRA_KEYS, isExtraKey } from './extra';
 import { BUNDLE_KEYS, fallbackChain, fillSlots, resolveExtra } from './shared';
 import { createModelController } from './model';
+import { createEncoderController } from './encoder';
 import { todayIso } from '../lib/format';
 import type { Bundle, Engine, PlayOptions, Rendered, RenderedSection, SectionView, UiKey } from './types';
 
@@ -84,6 +86,8 @@ export function createEngineFrom(deps: EngineDeps): Engine {
   const ctx = () => ({ region, today: today() });
   const rules: Classifier = createRulesClassifier(region, lexicons);
   const model = createModelController(rules, deps.baseUrl);
+  /** Default understanding: the built-in small neural model (rules until it has loaded). */
+  const encoder = createEncoderController(rules, deps.baseUrl);
   const player = deps.player ?? createAppPlayer();
 
   let manifestsP: Promise<PackManifest[]> | null = null;
@@ -267,7 +271,7 @@ export function createEngineFrom(deps: EngineDeps): Engine {
     },
     bundle,
     phrase,
-    analyze: (input: MessageInput) => analyze(input, { region, lexicons, classifier: rules }),
+    analyze: (input: MessageInput) => analyze(input, { region, lexicons, classifier: encoder.classifier }),
     async analyzeDeeper(input: MessageInput, timeoutMs: number) {
       const t0 = Date.now();
       const llm = await model.llm(timeoutMs);
@@ -296,8 +300,10 @@ export function createEngineFrom(deps: EngineDeps): Engine {
     get playing() {
       return player.playing;
     },
-    model,
-    classifier: () => model.classifier(),
+    // The optional deeper LLM keeps its own controller; init also starts the built-in encoder (once, after first paint).
+    model: { ...model, init: () => Promise.all([encoder.init(), model.init()]).then(() => undefined) },
+    understanding: { state: encoder.state, subscribe: encoder.subscribe },
+    classifier: () => encoder.classifier,
   };
 }
 

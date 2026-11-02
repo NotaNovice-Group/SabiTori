@@ -6,7 +6,7 @@
   "script": "Latn",
   "direction": "ltr",
   "fallback": [],
-  "voice": { "kind": "tts", "engine": "system", "bcp47": "en-GB" },
+  "voice": { "kind": "tts", "engine": "piper", "bcp47": "en-GB", "voiceHint": "en_GB-alba-medium" },
   "reads": true,
   "status": "beta",
   "regions": ["CM"],

@@ -74,6 +74,21 @@ trained voice can then say any sentence in that language, still in the speaker's
 community owns the dataset and the trained voice and decides its licence. Training takes a few
 hours on one rented GPU per language; the work is in collecting good recordings.
 
+*The runtime for this already exists.* SabiTori runs Piper models on the phone today (French and
+English use open Piper voices; see `docs/model.md`, "Voices"). To ship a community voice:
+
+1. Train or fine-tune a Piper model on the recordings. If espeak-ng has no support for the language,
+   train it with `"phoneme_type": "text"` (the model reads the letters directly; no phonemizer, no GPL
+   component). Export `<id>.onnx` and `<id>.onnx.json`.
+2. Put both files in `packs/<tag>/voice/`, write `packs/<tag>/voice/VOICE.md` (speakers, consent, licence the
+   community chose, sha256) and add the voice to `THIRD_PARTY_NOTICES.md`.
+3. In `packs/<tag>/manifest.json` set `"voice": { "kind": "tts", "engine": "piper", "bcp47": "<tag>", "voiceHint": "<id>" }`.
+
+No app code changes. A pack with a Piper voice is a `tts` pack (`voice.kind` is either `tts` or `recorded`,
+not both), so switching a language from recordings to a trained voice means its manifest changes
+from `recorded` to this. If the model cannot load or is too slow on a phone, the phone's own voice
+speaks instead.
+
 **Optional shortcut: existing open voices.** Meta's MMS project published synthetic voices for
 about 1,100 languages, including Lamnso' (`lns`), Pinyin (`pny`) and Basaa (`bss`); we could not
 confirm Limbum. They are licensed **non-commercial only** (CC-BY-NC-4.0), sound mechanical, and

@@ -1,0 +1,175 @@
+"""Export paraphrase-multilingual-MiniLM-L12-v2 as a small on-device ONNX encoder.
+
+What it does
+  1. Loads the sentence-transformers model (Apache-2.0, 118M parameters, 250k-token vocabulary).
+  2. Prunes the vocabulary to the pieces French/English phone messages use (the embedding table is
+     96M of the 118M parameters; the 12 transformer layers are only 21M). Kept pieces keep their exact
+     weights, so quality is unchanged for them; a dropped piece is simply split into smaller kept ones.
+  3. Stores the embedding table as int8 (one scale per row), then exports encoder + mean pooling to
+     ONNX and int8-quantises the MatMuls dynamically.
+  4. Writes the pruned tokenizer.json next to it, and a check of quantised vs original embeddings.
+
+Usage: python export.py --out ../model/minilm --corpus ../eval/messages.jsonl --corpus ../../../packs
+"""
+from __future__ import annotations
+
+import argparse, json, re, shutil, sys, tempfile
+from pathlib import Path
+
+import numpy as np
+import torch
+from huggingface_hub import hf_hub_download
+from sentence_transformers import SentenceTransformer
+from tokenizers import Tokenizer
+
+MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+# Characters that French/English text uses; a vocabulary piece made only of these is a candidate.
+LATIN = re.compile(r"^[▁A-Za-z0-9À-ÖØ-öø-ÿŒœŸ'’“”«»‘’.,;:!?%/\\()\[\]{}<>@#*&+=_|~^$€£°…–—-]+$")
+
+
+def corpus_texts(paths: list[str]) -> list[str]:
+    out: list[str] = []
+    for p in map(Path, paths):
+        files = [p] if p.is_file() else sorted(p.rglob("*.json")) + sorted(p.rglob("*.jsonl"))
+        for f in files:
+            if f.suffix == ".jsonl":
+                for line in f.read_text("utf8").splitlines():
+                    if line.strip():
+                        d = json.loads(line)
+                        if isinstance(d, dict) and d.get("split") == "test":
+                            continue  # the test split never influences any choice, not even which tokens are kept
+                        out.append(d["text"] if isinstance(d, dict) and "text" in d else json.dumps(d, ensure_ascii=False))
+            else:
+                try:
+                    out.append(json.dumps(json.loads(f.read_text("utf8")), ensure_ascii=False))
+                except Exception:
+                    pass
+    return out
+
+
+def choose_vocab(tok: Tokenizer, texts: list[str], budget: int) -> list[int]:
+    tj = json.loads(tok.to_str())
+    vocab = tj["model"]["vocab"]  # [[piece, score], ...] id == index
+    keep = set(range(4))  # <s> <pad> </s> <unk>
+    for t in texts:  # every piece the corpus needs
+        keep.update(tok.encode(t).ids)
+    # all single characters of the Latin set so unseen words always decompose
+    for i, (piece, _) in enumerate(vocab):
+        if i >= 4 and LATIN.match(piece) and len(piece.replace("▁", "")) <= 1:
+            keep.add(i)
+    # fill the rest with the best-scoring Latin pieces (scores follow frequency)
+    cands = sorted((i for i, (p, _) in enumerate(vocab) if i >= 4 and i not in keep and LATIN.match(p)), key=lambda i: -vocab[i][1])
+    for i in cands:
+        if len(keep) >= budget:
+            break
+        keep.add(i)
+    return sorted(keep)
+
+
+def main() -> None:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--out", required=True)
+    ap.add_argument("--corpus", action="append", default=[])
+    ap.add_argument("--vocab", type=int, default=30000, help="vocabulary pieces to keep")
+    args = ap.parse_args()
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+
+    st = SentenceTransformer(MODEL, device="cpu")
+    st.eval()
+    n_params = sum(p.numel() for p in st.parameters())  # before the vocabulary is pruned
+    hf = st[0].auto_model
+    full_tok = Tokenizer.from_file(hf_hub_download(MODEL, "tokenizer.json"))
+    texts = corpus_texts(args.corpus)
+    keep = choose_vocab(full_tok, texts, args.vocab)
+    remap = {old: new for new, old in enumerate(keep)}
+    sample = texts[:200] + [
+        "Votre facture ENEO de 12 500 FCFA est disponible. Payez avant le 15/03.",
+        "You have received 5,000 XAF from Mr Ngono. Ref 1234.",
+        "Rendez-vous a l'hopital demain a 8h pour votre vaccin.",
+    ]
+    ref = st.encode(sample, convert_to_numpy=True, batch_size=32)  # original model, before we touch it
+    print(f"vocab: {len(full_tok.get_vocab())} -> {len(keep)}; corpus texts: {len(texts)}")
+
+    # ---- pruned tokenizer.json -------------------------------------------------------------
+    tj = json.loads(full_tok.to_str())
+    tj["model"]["vocab"] = [tj["model"]["vocab"][o] for o in keep]
+    tj["model"]["unk_id"] = remap[tj["model"]["unk_id"]]
+    tj["added_tokens"] = [dict(t, id=remap[t["id"]]) for t in tj["added_tokens"] if t["id"] in remap]
+    (out / "tokenizer.json").write_text(json.dumps(tj, ensure_ascii=False), "utf8")
+    (out / "tokenizer_config.json").write_text(json.dumps({
+        "tokenizer_class": "XLMRobertaTokenizerFast", "model_max_length": 128,
+        "bos_token": "<s>", "eos_token": "</s>", "pad_token": "<pad>", "unk_token": "<unk>",
+        "pad_token_id": remap[1], "bos_token_id": remap[0], "eos_token_id": remap[2], "unk_token_id": remap[3],
+    }, indent=1), "utf8")
+    Tokenizer.from_file(str(out / "tokenizer.json"))  # must load
+
+    # ---- int8 embedding table --------------------------------------------------------------
+    w = hf.embeddings.word_embeddings.weight.detach()[torch.tensor(keep)]
+    scale = (w.abs().amax(dim=1, keepdim=True) / 127.0).clamp_min(1e-8)
+    q = torch.round(w / scale).clamp(-127, 127).to(torch.int8)
+
+    class Int8Embedding(torch.nn.Module):
+        def __init__(self) -> None:
+            super().__init__()
+            self.register_buffer("q", q)
+            self.register_buffer("scale", scale)
+
+        def forward(self, ids: torch.Tensor) -> torch.Tensor:
+            return self.q[ids].to(torch.float32) * self.scale[ids]
+
+    class Encoder(torch.nn.Module):
+        def __init__(self) -> None:
+            super().__init__()
+            self.m = hf
+            self.m.embeddings.word_embeddings = Int8Embedding()
+
+        def forward(self, input_ids: torch.Tensor, attention_mask: torch.Tensor) -> torch.Tensor:
+            h = self.m(input_ids=input_ids, attention_mask=attention_mask).last_hidden_state
+            m = attention_mask.unsqueeze(-1).to(h.dtype)
+            return (h * m).sum(1) / m.sum(1).clamp_min(1e-9)
+
+    enc = Encoder().eval()
+    tmp = Path(tempfile.mkdtemp())
+    fp32 = tmp / "encoder.fp32.onnx"
+    ids = torch.tensor([[remap[0], 10, 11, 12, remap[2]]])
+    with torch.no_grad():
+        torch.onnx.export(
+            enc, (ids, torch.ones_like(ids)), str(fp32),
+            input_names=["input_ids", "attention_mask"], output_names=["sentence_embedding"],
+            dynamic_axes={"input_ids": {0: "batch", 1: "seq"}, "attention_mask": {0: "batch", 1: "seq"}, "sentence_embedding": {0: "batch"}},
+            opset_version=17, dynamo=False,
+        )
+    from onnxruntime.quantization import QuantType, quantize_dynamic
+    from onnxruntime.quantization.shape_inference import quant_pre_process
+    pre = tmp / "encoder.pre.onnx"
+    try:
+        quant_pre_process(str(fp32), str(pre), skip_symbolic_shape=True)
+    except Exception as e:  # pre-processing is an optimisation only
+        print("pre-process skipped:", e)
+        shutil.copy(fp32, pre)
+    final = out / "encoder.int8.onnx"
+    quantize_dynamic(str(pre), str(final), weight_type=QuantType.QInt8, op_types_to_quantize=["MatMul"])
+    print("encoder.int8.onnx:", round(final.stat().st_size / 1e6, 2), "MB")
+
+    # ---- check: quantised+pruned vs original sentence embeddings ---------------------------
+    import onnxruntime as ort
+    sess = ort.InferenceSession(str(final), providers=["CPUExecutionProvider"])
+    ptok = Tokenizer.from_file(str(out / "tokenizer.json"))
+    ptok.enable_truncation(128)
+    cos = []
+    for i, t in enumerate(sample):
+        e = ptok.encode(t)
+        v = sess.run(None, {"input_ids": np.array([e.ids], dtype=np.int64), "attention_mask": np.array([e.attention_mask], dtype=np.int64)})[0][0]
+        cos.append(float(v @ ref[i] / (np.linalg.norm(v) * np.linalg.norm(ref[i]))))
+    stats = {"n": len(sample), "cosine_mean": float(np.mean(cos)), "cosine_min": float(np.min(cos))}
+    print("quantised vs original:", stats)
+    (out / "export-info.json").write_text(json.dumps({
+        "source": MODEL, "source_params": n_params, "exported_params": int(sum(int(np.prod(i.dims)) if i.dims else 1 for i in __import__("onnx").load(str(final)).graph.initializer)), "kept_vocab": len(keep), "dim": int(w.shape[1]),
+        "onnx_bytes": final.stat().st_size, "cosine_vs_original": stats, "max_len": 128,
+        "pad_id": remap[1], "ids": {"bos": remap[0], "eos": remap[2]},
+    }, indent=1), "utf8")
+
+
+if __name__ == "__main__":
+    sys.exit(main())
