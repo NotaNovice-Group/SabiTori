@@ -91,3 +91,55 @@ const report = await evaluate(classifier, cases);
 ```
 
 Run it for the rules classifier and the LLM classifier on the same set and compare. Build the set from real, consented, anonymised messages in French and English across bills, mobile money, hospital, school and administration; keep some ambiguous and scam-like messages. Fields without an `expected` value are skipped. Ship the model only if it beats the rules on `kind` and `action` accuracy and does not lower `accuracyAll`; use `meanConfidence` and `failures` to tune `prompt.ts` (few-shots, wording) and the card builder's `CONFIDENCE_THRESHOLD`. Re-run after any change to `prompt.ts`.
+
+## Voices
+
+SabiTori speaks with small open neural voices that run on the phone, replacing the phone maker's closed TTS as the default. The phone's own TTS stays underneath as an automatic fallback.
+
+### Runtime
+
+Chosen: **onnxruntime-web 1.22 (MIT, CPU/wasm, single thread) + the espeak-ng/piper-phonemize wasm from `@diffusionstudio/piper-wasm` 1.0.0 (MIT wrapper, GPL-3.0-or-later espeak-ng)**, driven by our own code in `packages/speech/src/piper/` inside a module Web Worker. No COOP/COEP is needed.
+
+| Option | Verdict |
+| --- | --- |
+| `@mintplex-labs/piper-tts-web` 1.0.5 | Same two wasm builds underneath, but it fetches voices from Hugging Face, caches them in OPFS, creates a new espeak instance per sentence and cannot do `phoneme_type: "text"`. Its wasm paths can be local, the model loading cannot. Not used. |
+| sherpa-onnx wasm TTS (Apache-2.0) | Offline, but the npm package is a Node build (15 MB wasm); a browser build means compiling with Emscripten and embedding the model. More build burden, not smaller. Not used. |
+| onnxruntime-web + espeak-ng wasm (ours) | About 13 MB of runtime files, loads model and config from local URLs, phonemizes once per instance, supports `phoneme_type: "text"` (no espeak at all). Chosen. |
+
+Runtime files (staged into `public/piper/` by `scripts/piper-assets.mjs`): ORT wasm 11.2 MB, phonemizer wasm 0.6 MB, espeak-ng data trimmed from 18.1 MB to 1.05 MB (only the dictionaries the bundled voices need, derived from `packs/*/voice/*.onnx.json`). Note that `public/ort/` (the understanding model) holds a second copy of the ORT wasm; the two can be unified later when both use the same onnxruntime-web version.
+
+### Voices
+
+| Pack | Voice | Licence | Size |
+| --- | --- | --- | --- |
+| fr | `fr_FR-siwis-low` (16 kHz) | CC BY 4.0 | 28.1 MB |
+| en | `en_GB-alba-medium` (22.05 kHz) | CC BY 4.0 | 63.2 MB |
+
+Together over 80 MB, so the `.onnx` files are git-ignored: `node scripts/fetch-voices.mjs` restores them from a pinned Hugging Face revision and verifies sha256, and the app build runs it when a model is missing (offline build: it warns and the app uses the phone voice). No English voice at or below about 30 MB with a redistributable licence exists in rhasspy/piper-voices (no `x_low`; all `low` English voices are 63 MB). Records: `packs/<tag>/voice/VOICE.md`, `THIRD_PARTY_NOTICES.md`.
+
+A pack points to its own model with `voice: { kind: 'tts', engine: 'piper', bcp47, voiceHint: '<model id>' }` and files `packs/<tag>/voice/<id>.onnx` + `.onnx.json`. Models with `phoneme_type: "text"` (planned for Cameroonian languages) skip espeak-ng.
+
+### Behaviour
+
+- Rate maps to Piper `length_scale` (multiplier of the model's own value, 1/rate, clamped 0.4 to 2.5). Rate 0.7 made speech about 1.3x longer in tests.
+- Text is split into sentences; the next sentence is synthesized while the current one plays; progress callbacks are per character weight.
+- Synthesized sentences are cached in memory (32 MB cap, per voice and rate), so "Again" starts immediately (0 to 1 ms measured).
+- Fallback to the system voice, never silence: no Piper voice for the language, model/config fails to load, model still loading after 6 s (this utterance only), first synthesis of the session over 6 s (Piper off for the session), a synthesis error (the unplayed rest is spoken by the system voice), blocked audio output. Covered by `packages/speech/test/piper-tts.test.ts`.
+- The voice of the phone's language is loaded in the background at start; at most 2 models stay in RAM.
+
+### Measurements
+
+Headless Chromium (`/opt/pw-browsers/chromium`), real audio output, voices loaded, 3 sentences per language (`packages/speech/bench/`). Time to first audio (TTFA) is from `speak()` to the first sample reaching the audio device. RTF is synthesis time divided by audio length (below 1 means faster than real time). The CPU of the test machine is not a phone; treat the 4x column as a relative stress test.
+
+Chromium's 4x CPU throttling does not slow Web Workers, so the 4x rows run the same runtime on the main thread (the real app uses a worker).
+
+| Condition | Language | Model load | TTFA (3 sentences) | RTF |
+| --- | --- | --- | --- | --- |
+| Worker, no throttling | fr | 2.7 s | 665 / 498 / 607 ms | 0.27 / 0.18 / 0.17 |
+| Worker, no throttling | en | 2.5 s | 1344 / 753 / 1458 ms | 0.43 / 0.30 / 0.41 |
+| Main thread, 4x CPU throttling | fr | 9.9 s | 2736 / 2435 / 2481 ms | 1.06 / 0.84 / 0.78 |
+| Main thread, 4x CPU throttling | en | 8.3 s | 5292 / 4018 / 5118 ms | 1.53 / 1.56 / 1.29 |
+
+Sentences: "Vous avez reçu 5 000 francs de votre opérateur.", "Ne partagez jamais votre code secret avec personne.", "Le rendez-vous est prévu demain à dix heures au centre de santé."; "You have received 5,000 francs from your operator.", "Never share your secret code with anyone.", "Your appointment is tomorrow at ten o'clock at the health centre."
+
+Reading: French (low) stays under the 6 s limit with margin at 4x; English (medium) is within about 1 s of it on the first sentence, and at RTF above 1 there are pauses between sentences. On slower phones the 6 s rule switches to the system voice. Loading takes 2 to 10 s, which is why the phone-language voice is warmed at start. No system-fallback utterances occurred in any run.

@@ -26,7 +26,8 @@ function sabitoriAssets(): Plugin {
         const to = resolve(pub, dir);
         if (existsSync(from)) {
           rmSync(to, { recursive: true, force: true });
-          cpSync(from, to, { recursive: true, filter: (p) => !p.endsWith('README.md') });
+          // Voice models are copied separately below, only for the bundled voices.
+          cpSync(from, to, { recursive: true, filter: (p) => !p.endsWith('README.md') && !/\.onnx$/.test(p) });
         }
       }
       // OCR: worker, three LSTM-only cores (the loader picks the best one the phone supports), fra + eng data.
@@ -73,7 +74,12 @@ function sabitoriAssets(): Plugin {
         const node = process.execPath;
         const run = (script: string, ...args: string[]) => spawnSync(node, [resolve(repo, 'scripts', script), ...args], { stdio: 'inherit' });
         if (run('fetch-voices.mjs', '--check').status !== 0) run('fetch-voices.mjs');
+        // Only these voices ship inside the app (the English voice alone is 63 MB, too heavy for cheap
+        // phones and data plans). Other voices arrive later through the signed update channel; until
+        // then those languages use the phone's own voice.
+        const bundled = (process.env.SABITORI_BUNDLE_VOICES ?? 'fr').split(',').map((t) => t.trim()).filter(Boolean);
         for (const tag of readdirSync(resolve(repo, 'packs'))) {
+          if (!bundled.includes(tag)) continue;
           const vdir = resolve(repo, 'packs', tag, 'voice');
           if (!existsSync(vdir)) continue;
           for (const f of readdirSync(vdir)) {

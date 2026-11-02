@@ -67,7 +67,8 @@ export const PREP_DEFAULT: PrepOptions = {
   deskew: true,
   scale: true,
   binarise: false,
-  maxSide: 2400,
+  maxSide: 2000,
+  targetLine: 34,
 };
 
 export interface PrepReport {
@@ -495,7 +496,7 @@ interface Ink {
   mask: Uint8Array;
 }
 
-function inkMask(g: GreyImage, maxSide: number): Ink {
+export function inkMask(g: GreyImage, maxSide: number): Ink {
   const s = fitSide(g, maxSide);
   // threshold between ink and paper; clamp so a blank/uniform page does not turn to noise
   const thr = Math.min(165, Math.max(60, otsu(s.data)));
@@ -510,7 +511,7 @@ function inkMask(g: GreyImage, maxSide: number): Ink {
 }
 
 /** Row ink counts after rotating the page by `deg` (nearest-bin projection of the ink pixels). */
-function projection(ink: Ink, deg: number, step: number): Float64Array {
+export function projection(ink: Ink, deg: number, step: number): Float64Array {
   const t = (deg * Math.PI) / 180;
   const c = Math.cos(t);
   const s = Math.sin(t);
@@ -530,7 +531,7 @@ function projection(ink: Ink, deg: number, step: number): Float64Array {
   return prof;
 }
 
-function sharpnessOf(prof: Float64Array): number {
+export function sharpnessOf(prof: Float64Array): number {
   // sum of squared differences between neighbouring rows: large when ink is stacked into crisp lines
   let sum = 0;
   for (let i = 1; i < prof.length; i++) {
@@ -541,7 +542,7 @@ function sharpnessOf(prof: Float64Array): number {
 }
 
 /** Best projection angle within +-range of `centre`: coarse 1 degree steps, then 0.15 refinement. */
-function searchAngle(ink: Ink, centre: number, range: number, step: number): { angle: number; score: number } {
+export function searchAngle(ink: Ink, centre: number, range: number, step: number): { angle: number; score: number } {
   let best = centre;
   let bestS = -1;
   for (let a = centre - range; a <= centre + range + 1e-9; a += 1) {
@@ -579,7 +580,7 @@ export function estimateSkew(g: GreyImage, maxSkew = 15, checkSideways = false):
   let count = 0;
   for (let i = 0; i < ink.mask.length; i++) count += ink.mask[i]!;
   if (count < 200) return { angle: 0, sideways: false, ratio: 0 };
-  const step = count > 60000 ? 2 : 1;
+  const step = 1; // never subsample: a stride aliases with the 1-px projection bins and fakes crisp lines
   const h = searchAngle(ink, 0, maxSkew, step);
   const s0 = sharpnessOf(projection(ink, 0, step));
   if (checkSideways) {

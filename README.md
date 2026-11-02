@@ -13,15 +13,30 @@ address ([`docs/updates.md`](docs/updates.md)).
 
 ## How it works
 
+Three small neural models run on the phone for every message, and none of them needs the internet:
+
 ```
-photo / shared text ─► facts found by code (dates, FCFA amounts, phones, codes)
-                    ─► message understood (rules, optional small on-device model)
-                    ─► scam signals checked (code)
-                    ─► card built; every fact verified against the original text
-                    ─► card spoken from the language pack (TTS or community recordings)
+photo ─► OCR (Tesseract LSTM, French + English) ─┐
+shared text ─────────────────────────────────────┤
+                                                 ├─► facts found by code (dates, FCFA, phones, codes)
+                                                 ├─► message understood: multilingual MiniLM encoder
+                                                 │   (33M parameters, 36 MB, ~0.2 s on a cheap phone)
+                                                 │   with keyword rules as the safety net
+                                                 ├─► scam signals checked (code)
+                                                 └─► card built; every fact verified against the text
+card ─► spoken from the language pack: Piper neural voice (French, English, and community-trained
+        voices later) or community recordings
 ```
 
-The AI never produces a fact, and SabiTori never calls a message safe.
+**A small model chooses labels, code finds and verifies facts, and a voice from the community speaks.**
+The model decides what kind of message it is, what the person must do and how urgent it is. It never
+produces a date, an amount or a phone number: code reads those and every one is checked against the
+original text. SabiTori never calls a message safe.
+
+On our evaluation set, the on-device model plus rules gets all three labels right on 70% of held-out
+messages, against 44% for keyword rules alone
+([`packages/understand/eval`](packages/understand/eval)). The set is synthetic for now; real,
+consented messages from the pilot will replace it.
 
 ## Languages
 
@@ -44,7 +59,7 @@ and when we train our own voices: [`docs/languages.md`](docs/languages.md).
 | --- | --- |
 | `packages/core` | Contracts, phrase catalog, the pipeline (facts, scam, card, speech plan) |
 | `packages/speech` | Language-pack rules, rendering, audio player |
-| `packages/understand` | Optional on-device classifier (Qwen2.5-1.5B via wllama) |
+| `packages/understand` | On-device understanding: MiniLM encoder (default), optional Qwen2.5-1.5B second opinion, evaluation set and training code |
 | `packages/connect` | Optional signed-update client and overlay (no message content, ever) |
 | `apps/app` | The SabiTori app (React PWA, wrapped for Android with Capacitor) |
 | `apps/recorder` | Tool for communities to translate and record a language |

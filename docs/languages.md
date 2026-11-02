@@ -14,8 +14,10 @@ or English. It only has to *speak* the card. So a language needs:
 | Number and date words | About 60 recorded words (numbers, months, "francs CFA") plus rules for how they combine | Same speakers, guided by the Recorder app |
 | A voice | Either those recordings, or a trained voice (below) | Speakers record; we train later |
 
-No AI is needed to start. A language is usable as soon as its phrases and number words are
-recorded and checked by a second speaker.
+A new language can start before any model is trained for it: the on-device models that read and
+understand the message work the same whatever language the card is spoken in. A language is usable as
+soon as its phrases and number words are recorded and checked by a second speaker; its own neural
+voice follows once there are enough recordings (Phase 2 below).
 
 ## Start a language (5 minutes)
 
@@ -96,8 +98,10 @@ were trained on Bible readings rather than everyday speech. They can help a free
 a starting point that native speakers check, but they cannot be the long-term voice if
 organisations pay for SabiTori.
 
-**What we do not train:** a model that understands local-language *text*. It is not needed,
-because official messages are in French or English and code, not AI, finds the facts.
+**Reading messages written in local languages.** Official messages are in French or English, but SMS
+between people are often in Cameroonian Pidgin. The on-device MiniLM encoder is multilingual, so we
+retrain its small classification heads as consented Pidgin messages are collected
+([`packages/understand/train`](../packages/understand/train)). Facts are still found by code, never by a model.
 
 **Later: voice commands in local languages.** Small keyword-spotting models trained on the
 community's own recordings of the few commands ("Again", "Call", "Help"), again owned by the

@@ -21,7 +21,7 @@ Why this voice: among the English voices whose model cards were read (ryan, hfc_
 jenny_dioco, ljspeech, kristin, cori, alba), the others are non-commercial (ryan, hfc_*: CC BY-NC-SA), share-alike (southern_english_female: CC BY-SA), without a
 stated licence on the card (jenny_dioco: "See URL"), or public domain but US English and the same 63 MB
 (ljspeech, kristin; cori is public domain en-GB but also 63 MB). Alba is CC BY, matches the pack's
-`en-GB` tag and needs only attribution. None of the English voices checked has an `x_low` variant. Size is the open problem for
+`en-GB` tag and needs only attribution. The repository has no `x_low` English voice, and every English `low` voice (amy, alan, danny, kathleen, lessac, southern_english_female) is the same 63 MB as `medium`, so a smaller English voice does not exist there; `medium` Alba is used. Only `fr_FR-siwis-low` is small (28 MB). Size is the open problem for
 cheap phones: see "Voices" in `docs/model.md`.
 
 `en_GB-alba-medium.onnx.json` has `phoneme_type: "espeak"` with espeak voice `en-gb-x-rp`.

@@ -3,6 +3,8 @@
  * already reads; anything else is refused before it is downloaded.
  */
 export const MAX_FILE_BYTES = 20 * 1024 * 1024;
+/** Piper voice models (a French or English voice is 28 to 63 MB; community voices are smaller). */
+export const MAX_VOICE_BYTES = 80 * 1024 * 1024;
 export const MAX_TOTAL_BYTES = 300 * 1024 * 1024;
 export const MAX_FILES = 5000;
 export const MAX_INDEX_BYTES = 2 * 1024 * 1024;
@@ -15,6 +17,8 @@ const WHITELIST: RegExp[] = [
   new RegExp(`^packs/${TAG}/(manifest|phrases|rules|reading)\\.json$`),
   new RegExp(`^packs/${TAG}/audio/index\\.json$`),
   new RegExp(`^packs/${TAG}/audio/[a-z0-9][a-z0-9_.\\-]{0,63}\\.(webm|m4a)$`),
+  // Piper voices: an English voice, or a voice trained on a community's own recordings.
+  new RegExp(`^packs/${TAG}/voice/[A-Za-z0-9][A-Za-z0-9_\\-]{0,63}\\.onnx(\\.json)?$`),
   // Region codes are upper case (regions/CM/region.json), as the app already reads them.
   /^regions\/[A-Z]{2}\/region\.json$/,
 ];
@@ -25,6 +29,11 @@ export function isAllowedPath(path: unknown): path is string {
   if (path.includes('..') || path.includes('//')) return false;
   if (path.split('/').some((s) => s === '' || s === '.')) return false;
   return WHITELIST.some((re) => re.test(path));
+}
+
+/** Largest size a file at this path may have. */
+export function maxFileBytes(path: string): number {
+  return /\/voice\/[^/]+\.onnx$/.test(path) ? MAX_VOICE_BYTES : MAX_FILE_BYTES;
 }
 
 export function contentTypeOf(path: string): string {

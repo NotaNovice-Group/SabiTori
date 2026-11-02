@@ -190,8 +190,8 @@ describe('illumination and binarisation', () => {
     // a text block in the shadowed left side: bright paper beside it stays white, the block black
     const probe = (im: GreyImage, thr?: number) => {
       let black = 0;
-      for (let y = 40; y < 51; y++) for (let x = 45; x < 60; x++) black += (thr === undefined ? im.data[y * im.width + x]! === 0 : im.data[y * im.width + x]! < thr) ? 1 : 0;
-      return black / (11 * 15);
+      for (let y = 40; y < 51; y++) for (let x = 42; x < 52; x++) black += (thr === undefined ? im.data[y * im.width + x]! === 0 : im.data[y * im.width + x]! < thr) ? 1 : 0;
+      return black / (11 * 10);
     };
     expect(probe(b)).toBeGreaterThan(0.9);
     // paper in the same dark region must not be black
@@ -262,7 +262,7 @@ describe('pipeline', () => {
     expect(on({ normalise: true })).toEqual(['normalise']);
     expect(on({ binarise: true })).toEqual(['sauvola']);
     expect(on({ deskew: false })).not.toContain('deskew');
-    expect(on({ scale: true, deskew: false })).toContain('scale');
+    expect(preprocessGrey(textPage(), { ...PREP_OFF, scale: true }).report.steps).toContain('scale');
   });
 
   it('upscales small text to the target line height, never past maxSide', () => {

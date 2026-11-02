@@ -16,4 +16,33 @@ export const VARIANT_SETS: Record<string, Variant[]> = {
     { name: 'G +scale', prep: p({ normalise: true, crop: true, orient: true, deskew: true, scale: true }) },
     { name: 'H +sauvola', prep: p({ normalise: true, crop: true, orient: true, deskew: true, scale: true, binarise: true }) },
   ],
+  tune: [
+    { name: 'T1 no-scale', prep: { ...PREP_DEFAULT, scale: false, maxSide: 1800 } },
+    { name: 'T2 scale t28 max1800', prep: { ...PREP_DEFAULT, targetLine: 28, maxSide: 1800 } },
+    { name: 'T3 scale t34 max2000', prep: { ...PREP_DEFAULT, targetLine: 34, maxSide: 2000 } },
+    { name: 'T4 scale t40 max2400', prep: { ...PREP_DEFAULT, targetLine: 40, maxSide: 2400 } },
+    { name: 'T5 t28 no-deskew', prep: { ...PREP_DEFAULT, targetLine: 28, maxSide: 1800, deskew: false } },
+    { name: 'T6 t28 no-normalise', prep: { ...PREP_DEFAULT, targetLine: 28, maxSide: 1800, normalise: false } },
+    { name: 'T7 t28 no-crop', prep: { ...PREP_DEFAULT, targetLine: 28, maxSide: 1800, crop: false } },
+  ],
+  psm: [
+    { name: 'P3 rim+t34 psm3', prep: { ...PREP_DEFAULT, targetLine: 34, maxSide: 2000 } },
+    { name: 'P6 rim+t34 psm6', prep: { ...PREP_DEFAULT, targetLine: 34, maxSide: 2000 }, psm: '6' },
+    { name: 'P4 rim+t34 psm4', prep: { ...PREP_DEFAULT, targetLine: 34, maxSide: 2000 }, psm: '4' },
+    { name: 'P6L legacy psm6', prep: 'legacy', psm: '6' },
+    { name: 'P4L legacy psm4', prep: 'legacy', psm: '4' },
+  ],
+  final: [
+    { name: 'legacy fra+eng', prep: 'legacy' },
+    { name: 'default fra+eng', prep: PREP_DEFAULT },
+    { name: 'default fra+eng +retry', prep: PREP_DEFAULT, retry: true },
+    { name: 'default fra only', prep: PREP_DEFAULT, langs: ['fra'] },
+    { name: 'default eng only', prep: PREP_DEFAULT, langs: ['eng'] },
+    { name: 'default by-page lang (oracle)', prep: PREP_DEFAULT, langs: (e) => [e.lang === 'fr' ? 'fra' : 'eng'] },
+  ],
+  timing: [
+    { name: 'legacy fra+eng', prep: 'legacy' },
+    { name: 'default fra+eng +retry', prep: PREP_DEFAULT, retry: true },
+    { name: 'default fra only', prep: PREP_DEFAULT, langs: ['fra'] },
+  ],
 };

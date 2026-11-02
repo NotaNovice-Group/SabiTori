@@ -1,5 +1,5 @@
 import { fromBase64, sha256Hex, verifySignature } from './crypto.js';
-import { MAX_FILE_BYTES, MAX_FILES, MAX_INDEX_BYTES, MAX_TOTAL_BYTES, isAllowedPath } from './paths.js';
+import { MAX_FILES, MAX_INDEX_BYTES, MAX_TOTAL_BYTES, isAllowedPath, maxFileBytes } from './paths.js';
 import type { FetchFn, InstalledState, UpdateFailure, UpdateIndex, UpdateResult, UpdateStore } from './types.js';
 
 export interface UpdateClientOptions {
@@ -58,7 +58,7 @@ export function parseIndex(bytes: Uint8Array): UpdateIndex {
     seen.add(f.path);
     if (typeof f.sha256 !== 'string' || !SHA.test(f.sha256)) return bad(`bad sha256 for ${f.path}`);
     if (!Number.isSafeInteger(f.size) || f.size < 0) return bad(`bad size for ${f.path}`);
-    if (f.size > MAX_FILE_BYTES) return bad(`${f.path} is larger than ${MAX_FILE_BYTES} bytes`);
+    if (f.size > maxFileBytes(f.path)) return bad(`${f.path} is larger than ${maxFileBytes(f.path)} bytes`);
     total += f.size;
   }
   if (total > MAX_TOTAL_BYTES) return bad('update is larger than the allowed total');

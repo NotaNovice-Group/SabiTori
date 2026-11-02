@@ -5,6 +5,7 @@ import { resolve } from 'node:path';
 import { createWorker, type Worker } from 'tesseract.js';
 import { extractFacts, type FactsContext, type ReadingLexicon, type RegionConfig } from '@sabitori/core';
 import { greyToRgba, preprocessGrey, rgbaToGrey, resize, type GreyImage, type PrepOptions, type PrepReport } from '../../src/lib/ocr-prep';
+import { recogniseGrey } from '../../src/lib/ocr';
 import type { TruthEntry } from './generate';
 
 const ROOT = resolve(__dirname, '../../../..');
@@ -68,6 +69,8 @@ export interface Variant {
   prep: Partial<PrepOptions> | 'legacy';
   langs?: string[] | ((e: TruthEntry) => string[]);
   psm?: string;
+  /** use the app's low-confidence half-turn retry */
+  retry?: boolean;
 }
 
 export async function loadRgba(file: string): Promise<{ data: Uint8ClampedArray; width: number; height: number }> {
@@ -99,6 +102,7 @@ export function toPng(g: GreyImage): Buffer {
 
 export interface Prepared {
   png: Buffer;
+  grey: GreyImage;
   prepMs: number;
   report: PrepReport | null;
 }
@@ -114,7 +118,7 @@ export function prepare(rgba: { data: Uint8ClampedArray; width: number; height: 
     report = r.report;
   }
   const prepMs = performance.now() - t0; // the app hands pixels to Tesseract directly, no PNG round trip
-  return { png: toPng(g), prepMs, report };
+  return { png: toPng(g), grey: g, prepMs, report };
 }
 
 /* ------------------------------ ocr pool ------------------------------ */
@@ -176,9 +180,8 @@ export async function runVariant(v: Variant, entries: TruthEntry[], dir: string,
           const e = list[next++]!;
           const p = prepped.get(e.id)!;
           const t0 = performance.now();
-          const { data } = await w.recognize(p.png);
+          const text = v.retry ? (await recogniseGrey(w as never, p.grey, toPng)).text : (await w.recognize(p.png)).data.text;
           const ocrMs = performance.now() - t0;
-          const text = data.text;
           results.set(e.id, {
             id: e.id,
             kind: e.kind,
