@@ -157,7 +157,7 @@ export default [
   g('telecom', 'pay', { due: 's', src: 'letter', from: 'name:CAMTEL' }, [
     (c) => `CAMTEL - ${c.city()} Agency\nLandline bill no. ${c.ref('', 8)}\nAmount: ${c.A(7000, 60000)}\nPayment deadline: ${c.D()}. After this date late fees will apply.`,
   ]),
-  g('telecom', 'reply', { from: 'Orange Cameroun' }, [
+  g('telecom', 'nothing', { from: 'Orange Cameroun' }, [ // a genuine opt-in promotion: nothing owed
     (c) => `Orange: Get a 100% recharge bonus! Reply YES to this message to activate it.`,
   ]),
   g('telecom', 'go_to_place', { due: 's', from: 'MTN Cameroon' }, [
@@ -184,7 +184,7 @@ export default [
   g('telecom', 'unclear', { sg: ['link', 'sender_mismatch'], from: 'num' }, [
     (c) => `Orange: Win 10GB free! Click here: ${c.url('orange-promo.example', '/g/' + c.code(4))}`,
   ]),
-  g('telecom', 'pay', { u: 'urgent', sg: ['time_pressure'], from: 'MTN Cameroon' }, [
+  g('telecom', 'nothing', { sg: ['time_pressure'], from: 'MTN Cameroon' }, [ // a genuine promotion: nothing owed, 'today only' is not a deadline
     (c) => `MTN: Special offer! Double your recharge today only. Recharge ${c.A(1000, 5000, 500)} right now.`,
   ]),
 

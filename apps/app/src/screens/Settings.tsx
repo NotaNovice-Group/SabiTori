@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Trash2, FileUp, X, RefreshCw } from 'lucide-react';
+import { Trash2, FileUp, X, RefreshCw, Info } from 'lucide-react';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
 import { SpeakingButton } from '../components/SpeakingButton';
@@ -10,7 +10,8 @@ import { navigate } from '../lib/router';
 import { clearCards } from '../lib/db';
 import { formatSize } from '../lib/format';
 import { config, anyConnected } from '../config';
-import { clearUpdates, loadMemo, runUpdateCheck, type UpdateMemo } from '../lib/updates';
+import { clearUpdates, forgetQuarantine, loadMemo, loadQuarantine, runUpdateCheck, type UpdateMemo } from '../lib/updates';
+import { session } from '../lib/session';
 import type { UpdateResult } from '@sabitori/connect';
 import type { ModelState } from '../engine';
 import type { Retention, SpeedStep } from '../lib/settings';
@@ -32,6 +33,9 @@ export function SettingsScreen() {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
+  const [clearing, setClearing] = useState(false);
+  const [quarantined, setQuarantined] = useState(() => (config.updates ? loadQuarantine() : null));
 
   useEffect(() => {
     void engine.model.available().then(setAvailable);
@@ -51,14 +55,19 @@ export function SettingsScreen() {
       await engine.model.save(f);
     } catch (x) {
       const code = (x as { code?: string }).code;
-      setErr(code === 'not_gguf' ? 'app.settings.model.err.not_gguf' : code === 'unavailable' ? 'app.settings.model.err.unavailable' : 'app.settings.model.err.write_failed');
+      setErr(
+        code === 'not_gguf' ? 'app.settings.model.err.not_gguf'
+        : code === 'unavailable' ? 'app.settings.model.err.unavailable'
+        : code === 'not_usable' ? 'app.settings.model.err.not_usable'
+        : 'app.settings.model.err.write_failed',
+      );
     }
     setBusy(false);
   };
 
   const status =
-    busy ? t('app.settings.model.saving')
-    : model.status === 'loading' ? `${t('app.settings.model.loading')} ${Math.round(model.progress * 100)}%`
+    model.status === 'loading' ? `${t(busy ? 'app.settings.model.testing' : 'app.settings.model.loading')} ${Math.round(model.progress * 100)}%`
+    : busy ? t('app.settings.model.saving')
     : model.status === 'ready' ? `${t('app.settings.model.ready', { size: formatSize(model.size, locale) })}. ${t('app.settings.model.active')}`
     : model.status === 'failed' ? t('app.settings.model.failed')
     : t('app.settings.model.none');
@@ -70,6 +79,10 @@ export function SettingsScreen() {
     setDeleted(false);
     const r = await runUpdateCheck().catch((): UpdateResult => ({ status: 'failed', sequence: 0, changed: [], reason: 'network' }));
     setResult(r);
+    if (r.status !== 'failed') {
+      forgetQuarantine();
+      setQuarantined(null);
+    }
     setMemo(loadMemo());
     setChecking(false);
   };
@@ -77,6 +90,8 @@ export function SettingsScreen() {
     setDeleting(true);
     try {
       await clearUpdates();
+      forgetQuarantine();
+      setQuarantined(null);
       setDeleted(true);
       setResult(null);
       setMemo(loadMemo());
@@ -159,11 +174,12 @@ export function SettingsScreen() {
             { value: 0, key: 'app.settings.history.0', label: t('app.settings.history.0') },
           ]}
         />
+        {settings.retention === 0 && <p className="panel-hint">{t('app.settings.history.0_hint')}</p>}
         <SpeakingButton
           speakKey="app.settings.clear"
           variant="secondary"
           icon={<Trash2 size={24} strokeWidth={2} aria-hidden />}
-          onAct={async () => { await clearCards(); await refreshHistory(); setCleared(true); }}
+          onAct={() => { setCleared(false); setConfirmClear(true); }}
         />
         <p className="panel-hint" role="status">{cleared ? t('app.settings.cleared') : ''}</p>
       </section>
@@ -183,7 +199,9 @@ export function SettingsScreen() {
           <p className="panel-hint">{t('app.settings.model.note')}</p>
           <p className="panel-strong" role="status">{status}</p>
           {err && <p className="error" role="alert">{t(err as never)}</p>}
-          <input ref={input} type="file" accept=".gguf" hidden onChange={pick} tabIndex={-1} />
+          {/* No `accept`: Android's WebView file chooser (Capacitor) crashes on an extension it has no MIME type
+              for, and a .gguf has none. The file is checked here instead (checkGgufHeader, then a load test). */}
+          <input ref={input} type="file" hidden onChange={pick} tabIndex={-1} />
           <SpeakingButton speakKey="app.settings.model.add" variant="secondary" icon={<FileUp size={24} strokeWidth={2} aria-hidden />} disabled={busy} onAct={() => input.current?.click()} />
           {hasFile && (
             <SpeakingButton speakKey="app.settings.model.remove" variant="secondary" icon={<X size={24} strokeWidth={2} aria-hidden />} onAct={() => void engine.model.remove()} />
@@ -199,12 +217,14 @@ export function SettingsScreen() {
             <div className="panel-group" role="group" aria-labelledby="s-upd">
               <h3 id="s-upd" className="panel-strong">{t('app.settings.updates')}</h3>
               <p className="panel-hint">{t('app.settings.updates_hint')}</p>
+              {quarantined && <p className="panel-strong" role="status">{t('app.settings.updates.quarantined')}</p>}
               {onOff('updatesOn', t('app.settings.updates'))}
               {settings.updatesOn && (
                 <>
                   <p className="panel-hint" role="status">{checking ? t('app.settings.updates.checking') : lastCheck}</p>
                   <SpeakingButton speakKey="app.settings.updates.check" variant="secondary" icon={<RefreshCw size={24} strokeWidth={2} aria-hidden />} disabled={checking} onAct={() => void checkNow()} />
                   <p className="panel-strong" role="status">{resultKey ? t(resultKey) : deleted ? t('app.settings.updates.deleted') : ''}</p>
+              {result?.reason === 'bad_file' && result.file && <p className="panel-hint">{t('app.settings.updates.bad_file', { file: result.file })}</p>}
                 </>
               )}
               <SpeakingButton speakKey="app.settings.updates.delete" variant="secondary" icon={<Trash2 size={24} strokeWidth={2} aria-hidden />} disabled={checking || deleting} onAct={() => setConfirmDelete(true)} />
@@ -228,7 +248,35 @@ export function SettingsScreen() {
         {anyConnected() && <p className="panel-hint">{t('app.settings.privacy_connected')}</p>}
       </section>
 
+      <div className="panel">
+        <SpeakingButton speakKey="app.settings.about" variant="secondary" icon={<Info size={24} strokeWidth={2} aria-hidden />} onAct={() => navigate('/about')} />
+      </div>
+
       <p className="version">{t('app.settings.version')} {__APP_VERSION__}</p>
+
+      {confirmClear && (
+        <Sheet title={t('app.settings.clear')} onClose={() => !clearing && setConfirmClear(false)}>
+          <div className="confirm">
+            <p>{t('app.settings.clear_hint')}</p>
+            <SpeakingButton speakKey="app.settings.clear_keep" variant="secondary" disabled={clearing} onAct={() => setConfirmClear(false)} />
+            <SpeakingButton
+              speakKey="app.settings.clear_confirm"
+              variant="danger"
+              icon={<Trash2 size={24} strokeWidth={2} aria-hidden />}
+              disabled={clearing}
+              onAct={async () => {
+                setClearing(true);
+                await clearCards(); // and their reminders
+                session.clearCards();
+                await refreshHistory();
+                setClearing(false);
+                setConfirmClear(false);
+                setCleared(true);
+              }}
+            />
+          </div>
+        </Sheet>
+      )}
 
       {confirmDelete && (
         <Sheet title={t('app.settings.updates.delete')} onClose={() => !deleting && setConfirmDelete(false)}>

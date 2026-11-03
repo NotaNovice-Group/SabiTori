@@ -8,27 +8,47 @@ export const MAX_VOICE_BYTES = 80 * 1024 * 1024;
 export const MAX_TOTAL_BYTES = 300 * 1024 * 1024;
 export const MAX_FILES = 5000;
 export const MAX_INDEX_BYTES = 2 * 1024 * 1024;
+/** A language's own file list (`packs/<tag>/index.json`). */
+export const MAX_LANGUAGE_INDEX_BYTES = 2 * 1024 * 1024;
 
 /** Coarse shape, as documented: only packs/ and regions/, no ".." anywhere. */
 const SHAPE = /^(packs|regions)\/[A-Za-z0-9_.\-/]+$/;
-const TAG = '[a-z][a-z0-9_-]{0,31}';
+/**
+ * Pack tags and clip ids follow the speech package's validators (validate.ts), not a narrower pattern: tags are
+ * BCP 47 shaped ("fr", "ewo", "pcm-CM") and clip ids may use upper case ("currency.XAF"). A path the app reads
+ * is never refused by the update channel only because of its spelling.
+ */
+const TAG = '[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*';
+const MAX_TAG = 35;
+/** Longest clip id (file stem), as in the speech package. */
+const CLIP = '[A-Za-z0-9][A-Za-z0-9_.\\-]{0,99}';
 const WHITELIST: RegExp[] = [
   /^packs\/index\.json$/,
   new RegExp(`^packs/${TAG}/(manifest|phrases|rules|reading)\\.json$`),
+  // Per-language file list of a language that is updated on its own (see UpdateIndex.languages).
+  new RegExp(`^packs/${TAG}/index\\.json$`),
   new RegExp(`^packs/${TAG}/audio/index\\.json$`),
-  new RegExp(`^packs/${TAG}/audio/[a-z0-9][a-z0-9_.\\-]{0,63}\\.(webm|m4a)$`),
+  new RegExp(`^packs/${TAG}/audio/${CLIP}\\.(webm|m4a)$`),
   // Piper voices: an English voice, or a voice trained on a community's own recordings.
-  new RegExp(`^packs/${TAG}/voice/[A-Za-z0-9][A-Za-z0-9_\\-]{0,63}\\.onnx(\\.json)?$`),
+  new RegExp(`^packs/${TAG}/voice/[A-Za-z0-9][A-Za-z0-9_.\\-]{0,63}\\.onnx(\\.json)?$`),
   // Region codes are upper case (regions/CM/region.json), as the app already reads them.
   /^regions\/[A-Z]{2}\/region\.json$/,
 ];
+
+/** The pack tag of a `packs/<tag>/...` path, or null. */
+export function packTagOf(path: string): string | null {
+  const m = /^packs\/([^/]+)\//.exec(path);
+  return m ? m[1]! : null;
+}
 
 export function isAllowedPath(path: unknown): path is string {
   if (typeof path !== 'string' || path.length > 200) return false;
   if (!SHAPE.test(path)) return false;
   if (path.includes('..') || path.includes('//')) return false;
   if (path.split('/').some((s) => s === '' || s === '.')) return false;
-  return WHITELIST.some((re) => re.test(path));
+  if (!WHITELIST.some((re) => re.test(path))) return false;
+  const tag = packTagOf(path);
+  return tag === null || tag.length <= MAX_TAG;
 }
 
 /** Largest size a file at this path may have. */

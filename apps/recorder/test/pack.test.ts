@@ -5,15 +5,15 @@ import { unzipSync } from 'fflate';
 
 const blob = (n: number) => new Blob([new Uint8Array(Array.from({ length: 20 }, (_, i) => (i * n) % 255))], { type: 'audio/webm' });
 function clip(id: string, text: string, n: number): ClipRecord {
-  return { id, blob: blob(n), durationMs: 900, text, ext: 'webm', at: 1 };
+  return { id, blob: blob(n), durationMs: 900, text, ext: 'webm', at: 1, speakerId: 's1' };
 }
 
 function sample() {
   const p = newProject({
     tag: 'xyz', name: 'Testish', autonym: 'Ɛtɛsi', fallback: ['fr'],
     speakers: [
-      { id: 's1', name: 'Amina N.', role: 'speaker', consent: true },
-      { id: 's2', name: 'Private Person', role: 'reviewer', consent: false },
+      { id: 's1', name: 'Amina N.', role: 'speaker', consent: true, voiceConsent: true, voiceConsentDate: '2026-10-01' },
+      { id: 's2', name: 'Private Person', role: 'reviewer', consent: false, voiceConsent: true },
     ],
     license: 'CC-BY-SA-4.0',
   });
@@ -36,7 +36,7 @@ describe('pack zip', () => {
     const { bytes, version } = await exportPackZip(p, clips, { includeNotes: false, atomIds: ['num.1'] });
     expect(version).toBe('0.1.1');
     const names = Object.keys(unzipSync(bytes)).sort();
-    expect(names).toEqual(['audio/deadline.by.0.webm', 'audio/deadline.by.1.webm', 'audio/index.json', 'audio/num.1.webm', 'audio/urgency.soon.0.webm', 'manifest.json', 'phrases.json']);
+    expect(names).toEqual(['audio/deadline.by.0.webm', 'audio/deadline.by.1.webm', 'audio/index.json', 'audio/num.1.webm', 'audio/urgency.soon.0.webm', 'manifest.json', 'phrases.json', 'rules.json']);
     const files = unzipSync(bytes);
     const m = JSON.parse(new TextDecoder().decode(files['manifest.json']));
     expect(m.status).toBe('in_recording');
@@ -60,7 +60,8 @@ describe('pack zip', () => {
     expect(back.project.autonym).toBe('Ɛtɛsi');
     expect(back.project.phrases['deadline.by']!.text).toBe('Ɓɔ {date} tɔ̂');
     expect(back.project.phrases['urgency.info']).toMatchObject({ note: 'say slower', review: 'sent_back' });
-    expect(back.project.speakers.map((s) => s.name)).toContain('Private Person');
+    // the notes list only people who agreed to be named
+    expect(back.project.speakers.map((s) => s.name)).not.toContain('Private Person');
     expect(back.project.atoms['num.1']!.label).toBe('mɔ́ɔ');
     expect(back.clips.map((c) => c.id).sort()).toEqual(['deadline.by.0', 'deadline.by.1', 'num.1', 'urgency.soon.0']);
     const c = back.clips.find((x) => x.id === 'deadline.by.1')!;
@@ -68,14 +69,15 @@ describe('pack zip', () => {
     expect(new Uint8Array(await c.blob.arrayBuffer())).toEqual(new Uint8Array(await clips.get('deadline.by.1')!.blob.arrayBuffer()));
     // audio/index.json lists exactly the clips in audio/, sorted
     const idx = JSON.parse(new TextDecoder().decode(unzipSync(bytes)['audio/index.json']!));
-    expect(idx).toEqual({ clips: ['deadline.by.0', 'deadline.by.1', 'num.1', 'urgency.soon.0'] });
-    expect(idx.clips).toEqual(back.clips.map((x) => x.id).sort());
+    const ids = ['deadline.by.0', 'deadline.by.1', 'num.1', 'urgency.soon.0'];
+    expect(idx).toEqual({ clips: ids.map((id) => ({ id, file: `${id}.webm` })) });
+    expect(idx.clips.map((c: { id: string }) => c.id)).toEqual(back.clips.map((x) => x.id).sort());
     // and the import can be exported again, with the index regenerated
     const m = new Map(back.clips.map((x) => [x.id, x]));
     const again = await exportPackZip(back.project, m, { includeNotes: false, atomIds: [] });
     expect(Object.keys(unzipSync(again.bytes))).toContain('audio/deadline.by.0.webm');
     const idx2 = JSON.parse(new TextDecoder().decode(unzipSync(again.bytes)['audio/index.json']!));
-    expect(idx2.clips).toEqual(['deadline.by.0', 'deadline.by.1', 'urgency.soon.0']);
+    expect(idx2.clips.map((c: { id: string }) => c.id)).toEqual(['deadline.by.0', 'deadline.by.1', 'urgency.soon.0']);
   });
   it('imports a plain pack without notes and with a wrapping folder', async () => {
     const { p, clips } = sample();
@@ -84,7 +86,7 @@ describe('pack zip', () => {
     const { zipSync } = await import('fflate');
     const wrapped = zipSync(Object.fromEntries(Object.entries(files).map(([k, v]) => [`xyz/${k}`, v])));
     const back = importPackZip(wrapped);
-    expect(back.project.speakers.map((s) => s.name)).toEqual(['Amina N.']);
+    expect(back.project.speakers.filter((s) => s.consent).map((s) => s.name)).toEqual(['Amina N.']);
     expect(back.clips).toHaveLength(3);
   });
   it('rejects a zip with no manifest', async () => {

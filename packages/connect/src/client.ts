@@ -1,6 +1,7 @@
+import { ContentError, validateUpdateFile } from './content.js';
 import { fromBase64, sha256Hex, verifySignature } from './crypto.js';
-import { MAX_FILES, MAX_INDEX_BYTES, MAX_TOTAL_BYTES, isAllowedPath, maxFileBytes } from './paths.js';
-import type { FetchFn, InstalledState, UpdateFailure, UpdateIndex, UpdateResult, UpdateStore } from './types.js';
+import { MAX_FILES, MAX_INDEX_BYTES, MAX_LANGUAGE_INDEX_BYTES, MAX_TOTAL_BYTES, isAllowedPath, maxFileBytes, packTagOf } from './paths.js';
+import type { FetchFn, IndexFile, InstalledState, LanguageIndex, UpdateFailure, UpdateIndex, UpdateResult, UpdateStore } from './types.js';
 
 export interface UpdateClientOptions {
   /** Directory of the update channel, e.g. "https://example.org/sabitori". Must be https. */
@@ -15,30 +16,60 @@ export interface UpdateClientOptions {
    * check forever (the timer restarts with every chunk, so a slow but live download is fine).
    */
   idleTimeoutMs?: number;
+  /**
+   * For a channel whose index has per-language file lists (UpdateIndex.languages): the languages this phone
+   * downloads, as pack tags. Shared files (regions, packs/index.json) are always downloaded. Default: every
+   * language of the index. A language that was installed and is no longer listed here is dropped from the active set.
+   */
+  tags?: string[] | (() => string[]);
 }
 
 export interface UpdateClient {
-  check(opts?: { signal?: AbortSignal }): Promise<UpdateResult>;
+  /** `tags` overrides the client's `tags` for this check (see UpdateClientOptions.tags). */
+  check(opts?: { signal?: AbortSignal; tags?: string[] }): Promise<UpdateResult>;
 }
 
 export const DEFAULT_IDLE_TIMEOUT_MS = 30_000;
+/** Files of all selected languages together (each list is limited to MAX_FILES by itself). */
+const MAX_FILES_TOTAL = 20_000;
 
 class Fail extends Error {
-  constructor(readonly reason: UpdateFailure, message: string) {
+  constructor(readonly reason: UpdateFailure, message: string, readonly file?: string) {
     super(message);
   }
 }
 
 const SHA = /^[0-9a-f]{64}$/;
 
+/** Checks a list of {path, sha256, size}. `seen` is shared across lists so a path cannot appear twice. Returns the bytes it adds up to. */
+function checkFiles(files: unknown, seen: Set<string>, bad: (m: string) => never, own?: { tag: string }): number {
+  if (!Array.isArray(files) || files.length > MAX_FILES) return bad('bad files list');
+  let total = 0;
+  for (const f of files as IndexFile[]) {
+    if (!f || typeof f !== 'object') return bad('bad file entry');
+    if (!isAllowedPath(f.path)) return bad(`path not allowed: ${String((f as { path?: unknown }).path).slice(0, 80)}`);
+    if (own && (packTagOf(f.path) !== own.tag || f.path === `packs/${own.tag}/index.json`)) return bad(`${f.path} is not a file of language ${own.tag}`);
+    if (seen.has(f.path)) return bad(`duplicate path ${f.path}`);
+    seen.add(f.path);
+    if (typeof f.sha256 !== 'string' || !SHA.test(f.sha256)) return bad(`bad sha256 for ${f.path}`);
+    if (!Number.isSafeInteger(f.size) || f.size < 0) return bad(`bad size for ${f.path}`);
+    if (f.size > maxFileBytes(f.path)) return bad(`${f.path} is larger than ${maxFileBytes(f.path)} bytes`);
+    total += f.size;
+  }
+  return total;
+}
+
+const decodeJson = (bytes: Uint8Array, what: string): unknown => {
+  try {
+    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
+  } catch {
+    throw new Fail('bad_index', `${what} is not valid JSON`);
+  }
+};
+
 /** Validates the shape of a (signed) index. Throws Fail('bad_index'). */
 export function parseIndex(bytes: Uint8Array): UpdateIndex {
-  let j: unknown;
-  try {
-    j = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(bytes));
-  } catch {
-    throw new Fail('bad_index', 'index.json is not valid JSON');
-  }
+  const j = decodeJson(bytes, 'index.json');
   const o = j as Partial<UpdateIndex> | null;
   const bad = (m: string): never => {
     throw new Fail('bad_index', m);
@@ -48,21 +79,34 @@ export function parseIndex(bytes: Uint8Array): UpdateIndex {
   if (o.channel !== 'stable') return bad('unsupported channel');
   if (!Number.isSafeInteger(o.sequence) || (o.sequence as number) < 1) return bad('bad sequence');
   if (typeof o.issuedAt !== 'string' || Number.isNaN(Date.parse(o.issuedAt))) return bad('bad issuedAt');
-  if (!Array.isArray(o.files) || o.files.length > MAX_FILES) return bad('bad files list');
   const seen = new Set<string>();
-  let total = 0;
-  for (const f of o.files) {
-    if (!f || typeof f !== 'object') return bad('bad file entry');
-    if (!isAllowedPath(f.path)) return bad(`path not allowed: ${String((f as { path?: unknown }).path).slice(0, 80)}`);
-    if (seen.has(f.path)) return bad(`duplicate path ${f.path}`);
-    seen.add(f.path);
-    if (typeof f.sha256 !== 'string' || !SHA.test(f.sha256)) return bad(`bad sha256 for ${f.path}`);
-    if (!Number.isSafeInteger(f.size) || f.size < 0) return bad(`bad size for ${f.path}`);
-    if (f.size > maxFileBytes(f.path)) return bad(`${f.path} is larger than ${maxFileBytes(f.path)} bytes`);
-    total += f.size;
+  let total = checkFiles(o.files, seen, bad);
+  if (o.languages !== undefined) {
+    if (!o.languages || typeof o.languages !== 'object' || Array.isArray(o.languages)) return bad('bad languages');
+    for (const [tag, l] of Object.entries(o.languages)) {
+      if (!/^[a-z]{2,3}(?:-[A-Za-z0-9]{2,8})*$/.test(tag) || tag.length > 35) return bad(`bad language tag ${tag.slice(0, 40)}`);
+      const idx = (l as { index?: IndexFile } | null)?.index;
+      if (!idx || idx.path !== `packs/${tag}/index.json`) return bad(`language ${tag} must point at packs/${tag}/index.json`);
+      if (typeof idx.sha256 !== 'string' || !SHA.test(idx.sha256)) return bad(`bad sha256 for ${idx.path}`);
+      if (!Number.isSafeInteger(idx.size) || idx.size < 0 || idx.size > MAX_LANGUAGE_INDEX_BYTES) return bad(`bad size for ${idx.path}`);
+      for (const f of o.files as IndexFile[]) if (packTagOf(f.path) === tag) return bad(`${f.path} belongs to language ${tag}, which has its own file list`);
+    }
   }
   if (total > MAX_TOTAL_BYTES) return bad('update is larger than the allowed total');
   return o as UpdateIndex;
+}
+
+/** Validates a per-language file list (`packs/<tag>/index.json`). Its hash was already checked against the signed index. */
+export function parseLanguageIndex(tag: string, bytes: Uint8Array): { index: LanguageIndex; total: number } {
+  const o = decodeJson(bytes, `packs/${tag}/index.json`) as Partial<LanguageIndex> | null;
+  const bad = (m: string): never => {
+    throw new Fail('bad_index', `packs/${tag}/index.json: ${m}`);
+  };
+  if (!o || typeof o !== 'object') return bad('not an object');
+  if (o.formatVersion !== 1) return bad('unsupported formatVersion');
+  if (o.tag !== tag) return bad(`tag "${String(o.tag)}" is not ${tag}`);
+  const total = checkFiles(o.files, new Set(), bad, { tag });
+  return { index: o as LanguageIndex, total };
 }
 
 /**
@@ -170,7 +214,20 @@ export function createUpdateClient(opts: UpdateClientOptions): UpdateClient {
     }
   };
 
-  async function run(signal?: AbortSignal): Promise<UpdateResult> {
+  const wantedTags = (index: UpdateIndex, override?: string[]): string[] => {
+    const listed = Object.keys(index.languages ?? {});
+    let want: string[] | undefined = override;
+    if (!want) {
+      try {
+        want = typeof opts.tags === 'function' ? opts.tags() : opts.tags;
+      } catch {
+        want = undefined;
+      }
+    }
+    return (want ? listed.filter((t) => want!.includes(t)) : listed).sort();
+  };
+
+  async function run(signal?: AbortSignal, tagsOverride?: string[]): Promise<UpdateResult> {
     const { store } = opts;
     if (!/^https:\/\//i.test(base)) throw new Fail('network', 'the update address is not https');
     let installed: InstalledState | null;
@@ -195,13 +252,33 @@ export function createUpdateClient(opts: UpdateClientOptions): UpdateClient {
     const index = parseIndex(indexBytes);
 
     if (index.sequence < have) throw new Fail('rollback', `update ${index.sequence} is older than installed ${have}`);
-    if (index.sequence === have) return { status: 'up_to_date', sequence: have, changed: [] };
+    const langs = index.languages ?? {};
+    const wanted = wantedTags(index, tagsOverride);
+    const had = installed?.languages ?? {};
+    const sameLanguages = Object.keys(had).length === wanted.length && wanted.every((t) => had[t]?.sha256 === langs[t]!.index.sha256);
+    // A quarantined set stays quarantined until a NEWER update arrives; asking again for the same one would bring the same files back.
+    if (index.sequence === have && (sameLanguages || installed?.quarantined)) {
+      return { status: 'up_to_date', sequence: have, changed: [], languages: Object.keys(had) };
+    }
+
+    const all: IndexFile[] = [...index.files];
+    let total = all.reduce((n, f) => n + f.size, 0);
+    for (const tag of wanted) {
+      const li = langs[tag]!.index;
+      const lbytes = await get(li.path, li.size, signal);
+      if (lbytes.length !== li.size || sha256Hex(lbytes) !== li.sha256) throw new Fail('bad_file', `${li.path} does not match its hash`, li.path);
+      const sub = parseLanguageIndex(tag, lbytes);
+      total += sub.total;
+      all.push(...sub.index.files);
+      if (total > MAX_TOTAL_BYTES) throw new Fail('bad_index', 'update is larger than the allowed total');
+      if (all.length > MAX_FILES_TOTAL) throw new Fail('bad_index', 'update lists too many files');
+    }
 
     // A file is downloaded when its hash changed, or when the active set lost it (so a damaged
     // store heals instead of failing every commit from then on).
-    const changed: typeof index.files = [];
-    for (const f of index.files) {
-      const same = installed?.files[f.path]?.sha256 === f.sha256;
+    const changed: IndexFile[] = [];
+    for (const f of all) {
+      const same = !installed?.quarantined && installed?.files[f.path]?.sha256 === f.sha256;
       let present = false;
       if (same) {
         try {
@@ -215,16 +292,29 @@ export function createUpdateClient(opts: UpdateClientOptions): UpdateClient {
     const next: InstalledState = {
       sequence: index.sequence,
       updatedAt: new Date(now()).toISOString(),
-      files: Object.fromEntries(index.files.map((f) => [f.path, { sha256: f.sha256, size: f.size }])),
+      files: Object.fromEntries(all.map((f) => [f.path, { sha256: f.sha256, size: f.size }])),
+      ...(index.languages ? { languages: Object.fromEntries(wanted.map((t) => [t, { sha256: langs[t]!.index.sha256 }])) } : {}),
     };
 
     try {
       await store.discardStaging();
       for (const f of changed) {
         if (signal?.aborted) throw new Fail('network', 'cancelled');
-        const bytes = await get(f.path, f.size, signal);
-        if (bytes.length !== f.size) throw new Fail('bad_file', `${f.path} has the wrong size`);
-        if (sha256Hex(bytes) !== f.sha256) throw new Fail('bad_file', `${f.path} does not match its hash`);
+        let bytes: Uint8Array;
+        try {
+          bytes = await get(f.path, f.size, signal);
+        } catch (e) {
+          throw e instanceof Fail && !e.file && e.reason === 'bad_file' ? new Fail(e.reason, e.message, f.path) : e;
+        }
+        if (bytes.length !== f.size) throw new Fail('bad_file', `${f.path} has the wrong size`, f.path);
+        if (sha256Hex(bytes) !== f.sha256) throw new Fail('bad_file', `${f.path} does not match its hash`, f.path);
+        // The hash proves it is the signed file; the content check proves the app can use it. One bad file fails the whole update.
+        try {
+          validateUpdateFile(f.path, bytes);
+        } catch (e) {
+          const msg = e instanceof ContentError ? e.message : `${f.path}: ${(e as Error).message}`;
+          throw new Fail('bad_file', `the update was not installed because ${msg}`, f.path);
+        }
         try {
           await store.stage(f.path, bytes);
         } catch (e) {
@@ -241,13 +331,13 @@ export function createUpdateClient(opts: UpdateClientOptions): UpdateClient {
       await store.discardStaging().catch(() => undefined);
       throw e;
     }
-    return { status: 'updated', sequence: index.sequence, changed: changed.map((f) => f.path) };
+    return { status: 'updated', sequence: index.sequence, changed: changed.map((f) => f.path), languages: Object.keys(next.languages ?? {}) };
   }
 
   return {
     async check(o) {
       try {
-        return await run(o?.signal);
+        return await run(o?.signal, o?.tags);
       } catch (e) {
         const seq = await opts.store.getState().then((s) => s?.sequence ?? 0, () => 0);
         return {
@@ -256,6 +346,7 @@ export function createUpdateClient(opts: UpdateClientOptions): UpdateClient {
           changed: [],
           error: (e as Error).message,
           reason: e instanceof Fail ? e.reason : 'network',
+          ...(e instanceof Fail && e.file ? { file: e.file } : {}),
         };
       }
     },

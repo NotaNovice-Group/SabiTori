@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Files this app hands to other apps through its FileProvider: only the camera's own capture file
+     (Capacitor's WebView file chooser and the legacy camera path write it to getExternalFilesDir(Pictures)).
+     Shared files (cache/shared_files) are read by the page through the local WebView origin, never exposed here.
+     The camera plugin's own provider (cm.sabitori.app.camera.provider) has its own path list. -->
 <paths xmlns:android="http://schemas.android.com/apk/res/android">
-    <external-path name="my_images" path="." />
-    <cache-path name="my_cache_images" path="." />
+    <external-files-path name="my_images" path="Pictures/" />
 </paths>

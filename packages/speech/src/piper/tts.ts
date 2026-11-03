@@ -1,7 +1,7 @@
 import type { TtsBackend } from '../player.js';
 import { createWebAudioOutput, type AudioOutput } from './audio.js';
 import { lengthScaleForRate, splitSentences } from './config.js';
-import type { PiperAudio, PiperEngine, PiperEngineFactory, PiperVoiceSpec } from './engine.js';
+import { voiceKey, type PiperAudio, type PiperEngine, type PiperEngineFactory, type PiperVoiceSpec } from './engine.js';
 
 export type PiperEvent =
   | { type: 'ready'; voice: string; loadMs: number }
@@ -10,12 +10,19 @@ export type PiperEvent =
 
 export interface PiperTtsOptions {
   engines: PiperEngineFactory;
-  /** The Piper voice that speaks this BCP 47 tag, or null when no pack offers one (then the fallback speaks). */
-  resolveVoice: (bcp47: string) => PiperVoiceSpec | null | Promise<PiperVoiceSpec | null>;
-  /** The phone's own TTS. Used whenever Piper cannot speak: the listener is never left in silence. */
+  /**
+   * The Piper voice that speaks this BCP 47 tag, or null when no pack offers one (then the fallback speaks).
+   * `ref` is the pack tag and voice id the rendered part carries: two packs sharing a BCP 47 tag get their own voices.
+   */
+  resolveVoice: (bcp47: string, ref?: { tag?: string; voice?: string }) => PiperVoiceSpec | null | Promise<PiperVoiceSpec | null>;
+  /**
+   * The phone's own TTS. Used whenever Piper cannot speak: the listener is never left in silence. When the phone
+   * has no voice for the language either, this backend (createBrowserTts) rejects with TtsVoiceUnavailableError;
+   * that rejection is passed on to the player's onError so the app can render the next fallback language.
+   */
   fallback: TtsBackend;
   output?: AudioOutput;
-  /** The first synthesis of the session must finish within this, or Piper is switched off for the session. Default 6000. */
+  /** The first synthesis of a voice must finish within this, or that voice is switched off for the session. Default 6000. */
   firstSynthesisMs?: number;
   /** How long one utterance waits for a model that is still loading before the fallback speaks it. Default 6000. */
   loadGraceMs?: number;
@@ -28,10 +35,12 @@ export interface PiperTtsOptions {
 }
 
 export interface PiperTts extends TtsBackend {
-  /** Starts loading the voice for this language in the background. Resolves true when it is ready. */
-  warm(bcp47: string): Promise<boolean>;
-  /** True after a slow first synthesis or an audio failure: Piper stays off until the app restarts. */
+  /** Starts loading the voice for this language (or this pack's voice) in the background. Resolves true when it is ready. */
+  warm(bcp47: string, ref?: { tag?: string; voice?: string }): Promise<boolean>;
+  /** True after an audio output failure: Piper stays off for every voice until the app restarts. */
   readonly disabled: boolean;
+  /** Voices (id@version) switched off for the session: a slow first synthesis, or a model that does not match its config. Other voices keep working. */
+  readonly disabledVoices: ReadonlySet<string>;
   /** Drops cached audio and loaded models. */
   dispose(): void;
 }
@@ -65,6 +74,9 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
 
   const entries = new Map<string, Entry>();
   let disabled = false;
+  /** Voices (by key) that must not be used again this session: slow, or broken. A broken voice is not reloaded for every utterance. */
+  const off = new Set<string>();
+  const brokenWhy = new Map<string, string>();
   let token = 0;
   let clock = 0;
   let playing: { stop(): void } | null = null;
@@ -96,7 +108,7 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
   };
 
   function drop(entry: Entry): void {
-    entries.delete(entry.voice.id);
+    entries.delete(voiceKey(entry.voice));
     try {
       entry.engine.dispose();
     } catch {
@@ -104,37 +116,52 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
     }
   }
 
+  function startLoad(entry: Entry): void {
+    const t0 = now();
+    entry.ready = false;
+    entry.loaded = entry.engine.load().then(
+      () => {
+        entry.ready = true;
+        emit({ type: 'ready', voice: entry.voice.id, loadMs: now() - t0 });
+      },
+      (err) => {
+        entry.broken = true;
+        throw err;
+      },
+    );
+    entry.loaded.catch(() => undefined); // reported by whoever awaits it
+  }
+
   function entryFor(voice: PiperVoiceSpec): Entry {
-    let e = entries.get(voice.id);
+    const key = voiceKey(voice);
+    let e = entries.get(key);
     if (!e) {
       while ([...entries.values()].filter((x) => !x.broken).length >= maxLoaded) {
         const lru = [...entries.values()].sort((a, b) => a.used - b.used)[0];
         if (!lru) break;
         drop(lru);
       }
-      const engine = opts.engines(voice);
-      const t0 = now();
-      const entry: Entry = { voice, engine, loaded: Promise.resolve(), ready: false, broken: false, verified: false, used: ++clock };
-      entry.loaded = engine.load().then(
-        () => {
-          entry.ready = true;
-          emit({ type: 'ready', voice: voice.id, loadMs: now() - t0 });
-        },
-        (err) => {
-          entry.broken = true;
-          throw err;
-        },
-      );
-      entry.loaded.catch(() => undefined); // reported by whoever awaits it
-      entries.set(voice.id, entry);
+      const entry: Entry = { voice, engine: opts.engines(voice), loaded: Promise.resolve(), ready: false, broken: false, verified: false, used: ++clock };
+      startLoad(entry);
+      entries.set(key, entry);
       e = entry;
     }
     e.used = ++clock;
     return e;
   }
 
+  /** The worker that held the model was restarted: forget that the voice is ready and load it again. */
+  function revive(entry: Entry): void {
+    if (entry.ready && entry.engine.alive && !entry.engine.alive()) startLoad(entry);
+  }
+
+  const markBroken = (voice: PiperVoiceSpec, why: string): void => {
+    off.add(voiceKey(voice));
+    brokenWhy.set(voiceKey(voice), why);
+  };
+
   function synth(entry: Entry, sentence: string, scale: number): Promise<PiperAudio> {
-    const key = `${entry.voice.id}|${scale}|${sentence}`;
+    const key = `${voiceKey(entry.voice)}|${scale}|${sentence}`;
     const hit = cacheGet(key);
     if (hit) return Promise.resolve(hit);
     let p = inflight.get(key);
@@ -163,13 +190,17 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
     get disabled() {
       return disabled;
     },
+    get disabledVoices() {
+      return off;
+    },
 
-    async warm(bcp47) {
+    async warm(bcp47, ref) {
       if (disabled) return false;
       try {
-        const voice = await opts.resolveVoice(bcp47);
-        if (!voice) return false;
+        const voice = await opts.resolveVoice(bcp47, ref);
+        if (!voice || off.has(voiceKey(voice))) return false;
         const e = entryFor(voice);
+        revive(e);
         await e.loaded;
         return true;
       } catch {
@@ -183,14 +214,19 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
       if (disabled) return useFallback('disabled', req);
       let voice: PiperVoiceSpec | null;
       try {
-        voice = await opts.resolveVoice(bcp47);
+        voice = await opts.resolveVoice(bcp47, { ...(req.tag ? { tag: req.tag } : {}), ...(req.voice ? { voice: req.voice } : {}) });
       } catch {
         voice = null;
       }
       if (my !== token) return;
       if (!voice) return useFallback('no-voice', req);
+      const vkey = voiceKey(voice);
+      // A voice that failed to load or does not match its config is not loaded again for every sentence.
+      if (brokenWhy.has(vkey)) return useFallback('load-error', req, voice.id, brokenWhy.get(vkey));
+      if (off.has(vkey)) return useFallback('disabled', req, voice.id);
       const entry = entryFor(voice);
       if (entry.broken) return useFallback('load-error', req, voice.id);
+      revive(entry);
 
       if (!entry.ready) {
         const r = await Promise.race([entry.loaded.then(() => 'ok' as const, (e: unknown) => ({ error: e })), wait(loadGraceMs)]);
@@ -198,6 +234,7 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
         if (r === 'timeout') return useFallback('load-slow', req, voice.id); // keeps loading: the next utterance may use it
         if (r !== 'ok') {
           drop(entry);
+          markBroken(voice, errText(r.error));
           return useFallback('load-error', req, voice.id, errText(r.error));
         }
       }
@@ -215,12 +252,15 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
         const first = await Promise.race([current.then((a) => a, (e: unknown) => ({ error: e })), wait(firstSynthesisMs)]);
         if (my !== token) return;
         if (first === 'timeout') {
-          disabled = true;
+          // Only this voice is too slow for the phone: others (and a faster language) keep Piper.
+          off.add(vkey);
           for (const e of [...entries.values()]) drop(e); // frees the worker; the stuck call dies with it
           return useFallback('first-synthesis-slow', req, voice.id);
         }
         if ('error' in first && !('samples' in first)) {
           drop(entry);
+          // Failing before it ever produced audio: the model and config do not belong together (or the voice is damaged).
+          markBroken(voice, errText(first.error));
           return useFallback('synthesis-error', req, voice.id, errText(first.error));
         }
         entry.verified = true;

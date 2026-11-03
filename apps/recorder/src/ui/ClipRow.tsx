@@ -8,6 +8,7 @@ export function ClipControls({
   id,
   clip,
   stale,
+  unsaved,
   st,
   onToggle,
   onPlay,
@@ -16,6 +17,8 @@ export function ClipControls({
   id: string;
   clip?: ClipRecord;
   stale?: boolean;
+  /** The clip is only in memory: it could not be saved on this device. */
+  unsaved?: boolean;
   st: RecState;
   onToggle: () => void;
   onPlay: () => void;
@@ -49,6 +52,11 @@ export function ClipControls({
         </Btn>
         {clip && !recording && <span className="dur num">{fmtMs(clip.durationMs)}</span>}
       </div>
+      {clip && unsaved && !recording && (
+        <p className="note note-warn" role="status">
+          <TriangleAlert size={20} aria-hidden /> Not saved on this device. Download the pack now so it is not lost.
+        </p>
+      )}
       {recording && (
         <div className="meter-wrap">
           <div className="meter" role="meter" aria-label="Voice level" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(st.level * 100)}>

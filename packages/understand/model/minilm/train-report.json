@@ -1,20 +1,20 @@
 {
- "n_train": 223,
+ "n_train": 224,
  "cv": {
   "kind": {
-   "cv_accuracy": 0.8834,
+   "cv_accuracy": 0.8929,
    "C": 300,
-   "temperature": 0.853
+   "temperature": 0.783
   },
   "action": {
-   "cv_accuracy": 0.7578,
+   "cv_accuracy": 0.7455,
    "C": 100,
-   "temperature": 1.048
+   "temperature": 1.001
   },
   "urgency": {
-   "cv_accuracy": 0.7534,
+   "cv_accuracy": 0.7366,
    "C": 10,
-   "temperature": 0.962
+   "temperature": 1.029
   }
  }
 }

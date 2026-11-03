@@ -12,7 +12,7 @@ Statut : brouillon. Les éléments marqués [OWNER : ...] doivent être renseign
 
 Longueur : 70 caractères (comptés).
 
-## Description complète (4000 caractères maximum, 2 783 caractères comptés)
+## Description complète (4000 caractères maximum, 3 007 caractères comptés)
 
 ```
 SabiTori explique les messages officiels à voix haute, dans votre langue.
@@ -35,11 +35,11 @@ VOS MESSAGES RESTENT SUR VOTRE TÉLÉPHONE
 Vos photos et le texte de vos messages ne quittent jamais votre téléphone. SabiTori n'a pas de comptes, pas de publicité et pas d'outil d'analyse. Nous ne vendons pas de données.
 
 LANGUES
-Le français et l'anglais sont disponibles aujourd'hui. Le pidgin camerounais, le duala, l'ewondo, le fulfulde de l'Adamaoua, le lamnso', le limbum et le pinyin sont en cours d'enregistrement avec des locuteurs natifs. Ils seront ajoutés par mise à jour, dès qu'ils seront prêts.
+Le français et l'anglais sont disponibles aujourd'hui. Le pidgin camerounais, le duala, l'ewondo, le fulfulde de l'Adamaoua, le lamnso', le limbum et le pinyin attendent des locuteurs natifs pour les traduire et les enregistrer. En attendant, ils parlent français ou anglais.
 [OWNER : état de la relecture du français. Supprimez cette ligne avant publication si la relecture décrite dans docs/release.md n'est pas terminée.]
 
-LA VOIX EST CELLE DE VOTRE TÉLÉPHONE
-SabiTori parle avec la voix hors ligne de votre téléphone. Vous pouvez changer la vitesse de lecture. Les alertes arnaque passent en premier.
+UNE VOIX QUI FONCTIONNE HORS LIGNE
+Le français est lu par une voix naturelle intégrée à l'application, qui fonctionne sur votre téléphone. L'anglais utilise la voix hors ligne de votre téléphone. Si la voix intégrée ne peut pas fonctionner, la voix de votre téléphone prend le relais. Vous pouvez changer la vitesse de lecture. Les alertes arnaque passent en premier.
 
 ÉCHÉANCES
 Touchez « Me rappeler » sur une fiche avec une échéance. SabiTori vous rappelle la veille et le jour même. Le rappel reste sur votre téléphone.
@@ -54,7 +54,7 @@ SabiTori explique un message. Il ne remplace ni l'organisme qui l'a envoyé, ni 
 
 POLITIQUE DE CONFIDENTIALITÉ : [OWNER : adresse publique de la politique de confidentialité]
 CONTACT : [OWNER : adresse e-mail de contact]
-Publié par NotaNovice Group, [OWNER : raison sociale].
+Publié par [OWNER : éditeur — fondateur à titre individuel ou structure à but non lucratif].
 ```
 
 ## Catégorie suggérée

@@ -1,0 +1,7948 @@
+{
+ "generatedBy": "packages/understand/eval/run-encoder.mjs",
+ "classifier": "minilm-l12-int8@2",
+ "model": "packages/understand/model/minilm",
+ "thresholds": {
+  "kind": 0.85,
+  "action": 0.4,
+  "urgency": 0.6
+ },
+ "stats": {
+  "ci": "95% percentile bootstrap over rows",
+  "resamples": 10000,
+  "seed": 20261102,
+  "test": "exact two-sided McNemar on discordant pairs",
+  "alpha": 0.05,
+  "ece": "10 equal-width bins, encoder heads alone, argmax probability"
+ },
+ "export": {
+  "onnxBytes": 34195614,
+  "keptVocab": 30000,
+  "fill": "freq",
+  "exportedParams": 33042912,
+  "sourceParams": 117653760,
+  "fidelity": {
+   "heldout_only": true,
+   "n": 276,
+   "cosine_mean": 0.9821,
+   "cosine_min": 0.8613,
+   "sets": {
+    "messages.jsonl:test": {
+     "n": 96,
+     "cosine_mean": 0.9823,
+     "cosine_min": 0.9085,
+     "below_0.95": 4,
+     "same_tokenisation": 55
+    },
+    "unseen.jsonl": {
+     "n": 100,
+     "cosine_mean": 0.9759,
+     "cosine_min": 0.8613,
+     "below_0.95": 9,
+     "same_tokenisation": 53
+    },
+    "heldout-sentences.txt": {
+     "n": 80,
+     "cosine_mean": 0.9897,
+     "cosine_min": 0.9412,
+     "below_0.95": 2,
+     "same_tokenisation": 77
+    }
+   }
+  }
+ },
+ "train": {
+  "n": 224,
+  "cv": {
+   "kind": {
+    "cv_accuracy": 0.8929,
+    "C": 300,
+    "temperature": 0.783
+   },
+   "action": {
+    "cv_accuracy": 0.7455,
+    "C": 100,
+    "temperature": 1.001
+   },
+   "urgency": {
+    "cv_accuracy": 0.7366,
+    "C": 10,
+    "temperature": 1.029
+   }
+  }
+ },
+ "thresholdGrid": {
+  "n": 224,
+  "best": {
+   "kind": {
+    "t": 0.85,
+    "acc": 0.933
+   },
+   "action": {
+    "t": 0.4,
+    "acc": 0.7545
+   },
+   "urgency": {
+    "t": 0.6,
+    "acc": 0.8438
+   }
+  },
+  "table": {
+   "kind": [
+    {
+     "t": 0.3,
+     "acc": 0.8929
+    },
+    {
+     "t": 0.35,
+     "acc": 0.9018
+    },
+    {
+     "t": 0.4,
+     "acc": 0.9063
+    },
+    {
+     "t": 0.45,
+     "acc": 0.9063
+    },
+    {
+     "t": 0.5,
+     "acc": 0.9107
+    },
+    {
+     "t": 0.55,
+     "acc": 0.9196
+    },
+    {
+     "t": 0.6,
+     "acc": 0.9196
+    },
+    {
+     "t": 0.65,
+     "acc": 0.9196
+    },
+    {
+     "t": 0.7,
+     "acc": 0.9241
+    },
+    {
+     "t": 0.75,
+     "acc": 0.9375
+    },
+    {
+     "t": 0.8,
+     "acc": 0.9241
+    },
+    {
+     "t": 0.85,
+     "acc": 0.933
+    },
+    {
+     "t": 0.9,
+     "acc": 0.9375
+    },
+    {
+     "t": 0.95,
+     "acc": 0.933
+    },
+    {
+     "t": 1.01,
+     "acc": 0.8705
+    }
+   ],
+   "action": [
+    {
+     "t": 0.3,
+     "acc": 0.7366
+    },
+    {
+     "t": 0.35,
+     "acc": 0.7455
+    },
+    {
+     "t": 0.4,
+     "acc": 0.7545
+    },
+    {
+     "t": 0.45,
+     "acc": 0.75
+    },
+    {
+     "t": 0.5,
+     "acc": 0.7411
+    },
+    {
+     "t": 0.55,
+     "acc": 0.7589
+    },
+    {
+     "t": 0.6,
+     "acc": 0.7455
+    },
+    {
+     "t": 0.65,
+     "acc": 0.7321
+    },
+    {
+     "t": 0.7,
+     "acc": 0.7277
+    },
+    {
+     "t": 0.75,
+     "acc": 0.7277
+    },
+    {
+     "t": 0.8,
+     "acc": 0.7232
+    },
+    {
+     "t": 0.85,
+     "acc": 0.6964
+    },
+    {
+     "t": 0.9,
+     "acc": 0.683
+    },
+    {
+     "t": 0.95,
+     "acc": 0.6607
+    },
+    {
+     "t": 1.01,
+     "acc": 0.6116
+    }
+   ],
+   "urgency": [
+    {
+     "t": 0.3,
+     "acc": 0.7857
+    },
+    {
+     "t": 0.35,
+     "acc": 0.7857
+    },
+    {
+     "t": 0.4,
+     "acc": 0.7857
+    },
+    {
+     "t": 0.45,
+     "acc": 0.7902
+    },
+    {
+     "t": 0.5,
+     "acc": 0.808
+    },
+    {
+     "t": 0.55,
+     "acc": 0.8304
+    },
+    {
+     "t": 0.6,
+     "acc": 0.8438
+    },
+    {
+     "t": 0.65,
+     "acc": 0.8259
+    },
+    {
+     "t": 0.7,
+     "acc": 0.8304
+    },
+    {
+     "t": 0.75,
+     "acc": 0.8438
+    },
+    {
+     "t": 0.8,
+     "acc": 0.8259
+    },
+    {
+     "t": 0.85,
+     "acc": 0.817
+    },
+    {
+     "t": 0.9,
+     "acc": 0.808
+    },
+    {
+     "t": 0.95,
+     "acc": 0.8036
+    },
+    {
+     "t": 1.01,
+     "acc": 0.7946
+    }
+   ]
+  }
+ },
+ "sets": {
+  "test": {
+   "n": 96,
+   "accuracy": {
+    "rules": {
+     "kind": {
+      "n": 96,
+      "k": 83,
+      "acc": 0.8646,
+      "lo": 0.7917,
+      "hi": 0.9271
+     },
+     "action": {
+      "n": 96,
+      "k": 62,
+      "acc": 0.6458,
+      "lo": 0.5521,
+      "hi": 0.7396
+     },
+     "urgency": {
+      "n": 96,
+      "k": 73,
+      "acc": 0.7604,
+      "lo": 0.6667,
+      "hi": 0.8438
+     },
+     "all": {
+      "n": 96,
+      "k": 43,
+      "acc": 0.4479,
+      "lo": 0.3438,
+      "hi": 0.5417
+     }
+    },
+    "encoder": {
+     "kind": {
+      "n": 96,
+      "k": 85,
+      "acc": 0.8854,
+      "lo": 0.8125,
+      "hi": 0.9479
+     },
+     "action": {
+      "n": 96,
+      "k": 84,
+      "acc": 0.875,
+      "lo": 0.8021,
+      "hi": 0.9375
+     },
+     "urgency": {
+      "n": 96,
+      "k": 81,
+      "acc": 0.8438,
+      "lo": 0.7708,
+      "hi": 0.9167
+     },
+     "all": {
+      "n": 96,
+      "k": 66,
+      "acc": 0.6875,
+      "lo": 0.5938,
+      "hi": 0.7708
+     }
+    },
+    "combined": {
+     "kind": {
+      "n": 96,
+      "k": 90,
+      "acc": 0.9375,
+      "lo": 0.8854,
+      "hi": 0.9792
+     },
+     "action": {
+      "n": 96,
+      "k": 80,
+      "acc": 0.8333,
+      "lo": 0.7604,
+      "hi": 0.9063
+     },
+     "urgency": {
+      "n": 96,
+      "k": 78,
+      "acc": 0.8125,
+      "lo": 0.7292,
+      "hi": 0.8854
+     },
+     "all": {
+      "n": 96,
+      "k": 67,
+      "acc": 0.6979,
+      "lo": 0.6042,
+      "hi": 0.7813
+     }
+    }
+   },
+   "vsRules": {
+    "combined": {
+     "kind": {
+      "n": 96,
+      "diff": 0.0729,
+      "lo": 0.0208,
+      "hi": 0.1354,
+      "aOnly": 8,
+      "bOnly": 1,
+      "p": 0.0391,
+      "significant": true
+     },
+     "action": {
+      "n": 96,
+      "diff": 0.1875,
+      "lo": 0.0833,
+      "hi": 0.2917,
+      "aOnly": 24,
+      "bOnly": 6,
+      "p": 0.0014,
+      "significant": true
+     },
+     "urgency": {
+      "n": 96,
+      "diff": 0.0521,
+      "lo": -0.0208,
+      "hi": 0.125,
+      "aOnly": 9,
+      "bOnly": 4,
+      "p": 0.2668,
+      "significant": false
+     },
+     "all": {
+      "n": 96,
+      "diff": 0.25,
+      "lo": 0.1458,
+      "hi": 0.3542,
+      "aOnly": 28,
+      "bOnly": 4,
+      "p": 0,
+      "significant": true
+     }
+    },
+    "encoder": {
+     "kind": {
+      "n": 96,
+      "diff": 0.0208,
+      "lo": -0.0521,
+      "hi": 0.0938,
+      "aOnly": 8,
+      "bOnly": 6,
+      "p": 0.7905,
+      "significant": false
+     },
+     "action": {
+      "n": 96,
+      "diff": 0.2292,
+      "lo": 0.1146,
+      "hi": 0.3438,
+      "aOnly": 29,
+      "bOnly": 7,
+      "p": 0.0003,
+      "significant": true
+     },
+     "urgency": {
+      "n": 96,
+      "diff": 0.0833,
+      "lo": -0.0208,
+      "hi": 0.1875,
+      "aOnly": 17,
+      "bOnly": 9,
+      "p": 0.1686,
+      "significant": false
+     },
+     "all": {
+      "n": 96,
+      "diff": 0.2396,
+      "lo": 0.1042,
+      "hi": 0.3646,
+      "aOnly": 34,
+      "bOnly": 11,
+      "p": 0.0008,
+      "significant": true
+     }
+    }
+   },
+   "byLang": {
+    "fr": {
+     "n": 38,
+     "rules": {
+      "kind": {
+       "n": 38,
+       "k": 32,
+       "acc": 0.8421,
+       "lo": 0.7105,
+       "hi": 0.9474
+      },
+      "action": {
+       "n": 38,
+       "k": 25,
+       "acc": 0.6579,
+       "lo": 0.5,
+       "hi": 0.8158
+      },
+      "urgency": {
+       "n": 38,
+       "k": 30,
+       "acc": 0.7895,
+       "lo": 0.6579,
+       "hi": 0.9211
+      },
+      "all": {
+       "n": 38,
+       "k": 16,
+       "acc": 0.4211,
+       "lo": 0.2632,
+       "hi": 0.5789
+      }
+     },
+     "combined": {
+      "kind": {
+       "n": 38,
+       "k": 34,
+       "acc": 0.8947,
+       "lo": 0.7895,
+       "hi": 0.9737
+      },
+      "action": {
+       "n": 38,
+       "k": 31,
+       "acc": 0.8158,
+       "lo": 0.6842,
+       "hi": 0.9211
+      },
+      "urgency": {
+       "n": 38,
+       "k": 32,
+       "acc": 0.8421,
+       "lo": 0.7105,
+       "hi": 0.9474
+      },
+      "all": {
+       "n": 38,
+       "k": 26,
+       "acc": 0.6842,
+       "lo": 0.5263,
+       "hi": 0.8158
+      }
+     },
+     "combinedVsRules": {
+      "n": 38,
+      "diff": 0.2632,
+      "lo": 0.0789,
+      "hi": 0.4474,
+      "aOnly": 12,
+      "bOnly": 2,
+      "p": 0.0129,
+      "significant": true
+     }
+    },
+    "en": {
+     "n": 43,
+     "rules": {
+      "kind": {
+       "n": 43,
+       "k": 40,
+       "acc": 0.9302,
+       "lo": 0.8372,
+       "hi": 1
+      },
+      "action": {
+       "n": 43,
+       "k": 32,
+       "acc": 0.7442,
+       "lo": 0.6047,
+       "hi": 0.8605
+      },
+      "urgency": {
+       "n": 43,
+       "k": 34,
+       "acc": 0.7907,
+       "lo": 0.6744,
+       "hi": 0.907
+      },
+      "all": {
+       "n": 43,
+       "k": 25,
+       "acc": 0.5814,
+       "lo": 0.4419,
+       "hi": 0.7209
+      }
+     },
+     "combined": {
+      "kind": {
+       "n": 43,
+       "k": 42,
+       "acc": 0.9767,
+       "lo": 0.9302,
+       "hi": 1
+      },
+      "action": {
+       "n": 43,
+       "k": 38,
+       "acc": 0.8837,
+       "lo": 0.7907,
+       "hi": 0.9767
+      },
+      "urgency": {
+       "n": 43,
+       "k": 35,
+       "acc": 0.814,
+       "lo": 0.6977,
+       "hi": 0.9302
+      },
+      "all": {
+       "n": 43,
+       "k": 32,
+       "acc": 0.7442,
+       "lo": 0.6047,
+       "hi": 0.8605
+      }
+     },
+     "combinedVsRules": {
+      "n": 43,
+      "diff": 0.1628,
+      "lo": 0.0233,
+      "hi": 0.3023,
+      "aOnly": 9,
+      "bOnly": 2,
+      "p": 0.0654,
+      "significant": false
+     }
+    },
+    "wes": {
+     "n": 15,
+     "rules": {
+      "kind": {
+       "n": 15,
+       "k": 11,
+       "acc": 0.7333,
+       "lo": 0.4667,
+       "hi": 0.9333
+      },
+      "action": {
+       "n": 15,
+       "k": 5,
+       "acc": 0.3333,
+       "lo": 0.1333,
+       "hi": 0.6
+      },
+      "urgency": {
+       "n": 15,
+       "k": 9,
+       "acc": 0.6,
+       "lo": 0.3333,
+       "hi": 0.8667
+      },
+      "all": {
+       "n": 15,
+       "k": 2,
+       "acc": 0.1333,
+       "lo": 0,
+       "hi": 0.3333
+      }
+     },
+     "combined": {
+      "kind": {
+       "n": 15,
+       "k": 14,
+       "acc": 0.9333,
+       "lo": 0.8,
+       "hi": 1
+      },
+      "action": {
+       "n": 15,
+       "k": 11,
+       "acc": 0.7333,
+       "lo": 0.4667,
+       "hi": 0.9333
+      },
+      "urgency": {
+       "n": 15,
+       "k": 11,
+       "acc": 0.7333,
+       "lo": 0.5317,
+       "hi": 0.9333
+      },
+      "all": {
+       "n": 15,
+       "k": 9,
+       "acc": 0.6,
+       "lo": 0.3333,
+       "hi": 0.8667
+      }
+     },
+     "combinedVsRules": {
+      "n": 15,
+      "diff": 0.4667,
+      "lo": 0.2,
+      "hi": 0.7333,
+      "aOnly": 7,
+      "bOnly": 0,
+      "p": 0.0156,
+      "significant": true
+     }
+    }
+   },
+   "calibration": {
+    "kind": {
+     "n": 96,
+     "ece": 0.0571,
+     "meanConf": 0.9375,
+     "acc": 0.8854,
+     "bins": [
+      {
+       "lo": 0.3,
+       "hi": 0.4,
+       "n": 2,
+       "conf": 0.3574,
+       "acc": 0
+      },
+      {
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 2,
+       "conf": 0.4537,
+       "acc": 0
+      },
+      {
+       "lo": 0.5,
+       "hi": 0.6,
+       "n": 1,
+       "conf": 0.5772,
+       "acc": 0
+      },
+      {
+       "lo": 0.6,
+       "hi": 0.7,
+       "n": 3,
+       "conf": 0.6646,
+       "acc": 0
+      },
+      {
+       "lo": 0.7,
+       "hi": 0.8,
+       "n": 1,
+       "conf": 0.7556,
+       "acc": 1
+      },
+      {
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 7,
+       "conf": 0.8568,
+       "acc": 0.7143
+      },
+      {
+       "lo": 0.9,
+       "hi": 1,
+       "n": 80,
+       "conf": 0.9881,
+       "acc": 0.9875
+      }
+     ]
+    },
+    "action": {
+     "n": 96,
+     "ece": 0.0808,
+     "meanConf": 0.8124,
+     "acc": 0.875,
+     "bins": [
+      {
+       "lo": 0.3,
+       "hi": 0.4,
+       "n": 3,
+       "conf": 0.3521,
+       "acc": 0.6667
+      },
+      {
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 5,
+       "conf": 0.469,
+       "acc": 0.6
+      },
+      {
+       "lo": 0.5,
+       "hi": 0.6,
+       "n": 7,
+       "conf": 0.5534,
+       "acc": 0.4286
+      },
+      {
+       "lo": 0.6,
+       "hi": 0.7,
+       "n": 10,
+       "conf": 0.6501,
+       "acc": 0.8
+      },
+      {
+       "lo": 0.7,
+       "hi": 0.8,
+       "n": 8,
+       "conf": 0.737,
+       "acc": 0.875
+      },
+      {
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 21,
+       "conf": 0.8606,
+       "acc": 0.9048
+      },
+      {
+       "lo": 0.9,
+       "hi": 1,
+       "n": 42,
+       "conf": 0.9583,
+       "acc": 1
+      }
+     ]
+    },
+    "urgency": {
+     "n": 96,
+     "ece": 0.0885,
+     "meanConf": 0.7709,
+     "acc": 0.8438,
+     "bins": [
+      {
+       "lo": 0.3,
+       "hi": 0.4,
+       "n": 2,
+       "conf": 0.3761,
+       "acc": 0
+      },
+      {
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 5,
+       "conf": 0.4614,
+       "acc": 0.6
+      },
+      {
+       "lo": 0.5,
+       "hi": 0.6,
+       "n": 14,
+       "conf": 0.5387,
+       "acc": 0.5714
+      },
+      {
+       "lo": 0.6,
+       "hi": 0.7,
+       "n": 16,
+       "conf": 0.6485,
+       "acc": 0.8125
+      },
+      {
+       "lo": 0.7,
+       "hi": 0.8,
+       "n": 10,
+       "conf": 0.7494,
+       "acc": 1
+      },
+      {
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 14,
+       "conf": 0.8605,
+       "acc": 0.9286
+      },
+      {
+       "lo": 0.9,
+       "hi": 1,
+       "n": 35,
+       "conf": 0.9569,
+       "acc": 0.9714
+      }
+     ]
+    }
+   },
+   "scam": {
+    "level": {
+     "n": 96,
+     "k": 91,
+     "acc": 0.9479,
+     "lo": 0.8958,
+     "hi": 0.9896
+    },
+    "warned": 21,
+    "flagged": 22,
+    "falseAlarms": 3,
+    "genuine": 74
+   },
+   "changedFromRules": {
+    "kind": 10,
+    "action": 32,
+    "urgency": 14
+   }
+  },
+  "unseen": {
+   "n": 100,
+   "accuracy": {
+    "rules": {
+     "kind": {
+      "n": 100,
+      "k": 88,
+      "acc": 0.88,
+      "lo": 0.81,
+      "hi": 0.94
+     },
+     "action": {
+      "n": 100,
+      "k": 45,
+      "acc": 0.45,
+      "lo": 0.35,
+      "hi": 0.55
+     },
+     "urgency": {
+      "n": 100,
+      "k": 65,
+      "acc": 0.65,
+      "lo": 0.56,
+      "hi": 0.74
+     },
+     "all": {
+      "n": 100,
+      "k": 25,
+      "acc": 0.25,
+      "lo": 0.17,
+      "hi": 0.34
+     }
+    },
+    "encoder": {
+     "kind": {
+      "n": 100,
+      "k": 78,
+      "acc": 0.78,
+      "lo": 0.7,
+      "hi": 0.86
+     },
+     "action": {
+      "n": 100,
+      "k": 58,
+      "acc": 0.58,
+      "lo": 0.48,
+      "hi": 0.68
+     },
+     "urgency": {
+      "n": 100,
+      "k": 58,
+      "acc": 0.58,
+      "lo": 0.48,
+      "hi": 0.6702
+     },
+     "all": {
+      "n": 100,
+      "k": 34,
+      "acc": 0.34,
+      "lo": 0.25,
+      "hi": 0.43
+     }
+    },
+    "combined": {
+     "kind": {
+      "n": 100,
+      "k": 94,
+      "acc": 0.94,
+      "lo": 0.89,
+      "hi": 0.98
+     },
+     "action": {
+      "n": 100,
+      "k": 57,
+      "acc": 0.57,
+      "lo": 0.47,
+      "hi": 0.66
+     },
+     "urgency": {
+      "n": 100,
+      "k": 67,
+      "acc": 0.67,
+      "lo": 0.58,
+      "hi": 0.76
+     },
+     "all": {
+      "n": 100,
+      "k": 41,
+      "acc": 0.41,
+      "lo": 0.31,
+      "hi": 0.51
+     }
+    }
+   },
+   "vsRules": {
+    "combined": {
+     "kind": {
+      "n": 100,
+      "diff": 0.06,
+      "lo": 0,
+      "hi": 0.12,
+      "aOnly": 8,
+      "bOnly": 2,
+      "p": 0.1094,
+      "significant": false
+     },
+     "action": {
+      "n": 100,
+      "diff": 0.12,
+      "lo": -0.01,
+      "hi": 0.25,
+      "aOnly": 30,
+      "bOnly": 18,
+      "p": 0.1114,
+      "significant": false
+     },
+     "urgency": {
+      "n": 100,
+      "diff": 0.02,
+      "lo": -0.05,
+      "hi": 0.09,
+      "aOnly": 7,
+      "bOnly": 5,
+      "p": 0.7744,
+      "significant": false
+     },
+     "all": {
+      "n": 100,
+      "diff": 0.16,
+      "lo": 0.05,
+      "hi": 0.27,
+      "aOnly": 24,
+      "bOnly": 8,
+      "p": 0.007,
+      "significant": true
+     }
+    },
+    "encoder": {
+     "kind": {
+      "n": 100,
+      "diff": -0.1,
+      "lo": -0.2,
+      "hi": 0,
+      "aOnly": 8,
+      "bOnly": 18,
+      "p": 0.0755,
+      "significant": false
+     },
+     "action": {
+      "n": 100,
+      "diff": 0.13,
+      "lo": -0.02,
+      "hi": 0.27,
+      "aOnly": 35,
+      "bOnly": 22,
+      "p": 0.1112,
+      "significant": false
+     },
+     "urgency": {
+      "n": 100,
+      "diff": -0.07,
+      "lo": -0.18,
+      "hi": 0.04,
+      "aOnly": 12,
+      "bOnly": 19,
+      "p": 0.281,
+      "significant": false
+     },
+     "all": {
+      "n": 100,
+      "diff": 0.09,
+      "lo": -0.03,
+      "hi": 0.21,
+      "aOnly": 23,
+      "bOnly": 14,
+      "p": 0.1877,
+      "significant": false
+     }
+    }
+   },
+   "byLang": {
+    "fr": {
+     "n": 40,
+     "rules": {
+      "kind": {
+       "n": 40,
+       "k": 33,
+       "acc": 0.825,
+       "lo": 0.7,
+       "hi": 0.925
+      },
+      "action": {
+       "n": 40,
+       "k": 16,
+       "acc": 0.4,
+       "lo": 0.25,
+       "hi": 0.55
+      },
+      "urgency": {
+       "n": 40,
+       "k": 27,
+       "acc": 0.675,
+       "lo": 0.525,
+       "hi": 0.825
+      },
+      "all": {
+       "n": 40,
+       "k": 9,
+       "acc": 0.225,
+       "lo": 0.1,
+       "hi": 0.35
+      }
+     },
+     "combined": {
+      "kind": {
+       "n": 40,
+       "k": 36,
+       "acc": 0.9,
+       "lo": 0.8,
+       "hi": 0.975
+      },
+      "action": {
+       "n": 40,
+       "k": 26,
+       "acc": 0.65,
+       "lo": 0.5,
+       "hi": 0.8
+      },
+      "urgency": {
+       "n": 40,
+       "k": 26,
+       "acc": 0.65,
+       "lo": 0.5,
+       "hi": 0.8
+      },
+      "all": {
+       "n": 40,
+       "k": 16,
+       "acc": 0.4,
+       "lo": 0.25,
+       "hi": 0.55
+      }
+     },
+     "combinedVsRules": {
+      "n": 40,
+      "diff": 0.175,
+      "lo": 0,
+      "hi": 0.35,
+      "aOnly": 11,
+      "bOnly": 4,
+      "p": 0.1185,
+      "significant": false
+     }
+    },
+    "en": {
+     "n": 38,
+     "rules": {
+      "kind": {
+       "n": 38,
+       "k": 34,
+       "acc": 0.8947,
+       "lo": 0.7895,
+       "hi": 0.9737
+      },
+      "action": {
+       "n": 38,
+       "k": 19,
+       "acc": 0.5,
+       "lo": 0.3421,
+       "hi": 0.6579
+      },
+      "urgency": {
+       "n": 38,
+       "k": 24,
+       "acc": 0.6316,
+       "lo": 0.4737,
+       "hi": 0.7895
+      },
+      "all": {
+       "n": 38,
+       "k": 11,
+       "acc": 0.2895,
+       "lo": 0.1579,
+       "hi": 0.4474
+      }
+     },
+     "combined": {
+      "kind": {
+       "n": 38,
+       "k": 37,
+       "acc": 0.9737,
+       "lo": 0.9211,
+       "hi": 1
+      },
+      "action": {
+       "n": 38,
+       "k": 19,
+       "acc": 0.5,
+       "lo": 0.3421,
+       "hi": 0.6579
+      },
+      "urgency": {
+       "n": 38,
+       "k": 27,
+       "acc": 0.7105,
+       "lo": 0.5526,
+       "hi": 0.8421
+      },
+      "all": {
+       "n": 38,
+       "k": 16,
+       "acc": 0.4211,
+       "lo": 0.2632,
+       "hi": 0.5789
+      }
+     },
+     "combinedVsRules": {
+      "n": 38,
+      "diff": 0.1316,
+      "lo": -0.0263,
+      "hi": 0.2895,
+      "aOnly": 8,
+      "bOnly": 3,
+      "p": 0.2266,
+      "significant": false
+     }
+    },
+    "wes": {
+     "n": 22,
+     "rules": {
+      "kind": {
+       "n": 22,
+       "k": 21,
+       "acc": 0.9545,
+       "lo": 0.8636,
+       "hi": 1
+      },
+      "action": {
+       "n": 22,
+       "k": 10,
+       "acc": 0.4545,
+       "lo": 0.2727,
+       "hi": 0.6818
+      },
+      "urgency": {
+       "n": 22,
+       "k": 14,
+       "acc": 0.6364,
+       "lo": 0.4091,
+       "hi": 0.8182
+      },
+      "all": {
+       "n": 22,
+       "k": 5,
+       "acc": 0.2273,
+       "lo": 0.0909,
+       "hi": 0.4091
+      }
+     },
+     "combined": {
+      "kind": {
+       "n": 22,
+       "k": 21,
+       "acc": 0.9545,
+       "lo": 0.8636,
+       "hi": 1
+      },
+      "action": {
+       "n": 22,
+       "k": 12,
+       "acc": 0.5455,
+       "lo": 0.3182,
+       "hi": 0.7273
+      },
+      "urgency": {
+       "n": 22,
+       "k": 14,
+       "acc": 0.6364,
+       "lo": 0.4091,
+       "hi": 0.8182
+      },
+      "all": {
+       "n": 22,
+       "k": 9,
+       "acc": 0.4091,
+       "lo": 0.2273,
+       "hi": 0.6364
+      }
+     },
+     "combinedVsRules": {
+      "n": 22,
+      "diff": 0.1818,
+      "lo": 0,
+      "hi": 0.4091,
+      "aOnly": 5,
+      "bOnly": 1,
+      "p": 0.2188,
+      "significant": false
+     }
+    }
+   },
+   "calibration": {
+    "kind": {
+     "n": 100,
+     "ece": 0.0964,
+     "meanConf": 0.8716,
+     "acc": 0.78,
+     "bins": [
+      {
+       "lo": 0.3,
+       "hi": 0.4,
+       "n": 1,
+       "conf": 0.3555,
+       "acc": 0
+      },
+      {
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 8,
+       "conf": 0.4561,
+       "acc": 0.125
+      },
+      {
+       "lo": 0.5,
+       "hi": 0.6,
+       "n": 5,
+       "conf": 0.5698,
+       "acc": 0.4
+      },
+      {
+       "lo": 0.6,
+       "hi": 0.7,
+       "n": 5,
+       "conf": 0.6747,
+       "acc": 0.6
+      },
+      {
+       "lo": 0.7,
+       "hi": 0.8,
+       "n": 5,
+       "conf": 0.7523,
+       "acc": 0.8
+      },
+      {
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 10,
+       "conf": 0.8418,
+       "acc": 0.5
+      },
+      {
+       "lo": 0.9,
+       "hi": 1,
+       "n": 66,
+       "conf": 0.9811,
+       "acc": 0.9545
+      }
+     ]
+    },
+    "action": {
+     "n": 100,
+     "ece": 0.108,
+     "meanConf": 0.685,
+     "acc": 0.58,
+     "bins": [
+      {
+       "lo": 0.2,
+       "hi": 0.3,
+       "n": 3,
+       "conf": 0.2676,
+       "acc": 0
+      },
+      {
+       "lo": 0.3,
+       "hi": 0.4,
+       "n": 8,
+       "conf": 0.3559,
+       "acc": 0.375
+      },
+      {
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 14,
+       "conf": 0.4508,
+       "acc": 0.2857
+      },
+      {
+       "lo": 0.5,
+       "hi": 0.6,
+       "n": 12,
+       "conf": 0.5373,
+       "acc": 0.4167
+      },
+      {
+       "lo": 0.6,
+       "hi": 0.7,
+       "n": 13,
+       "conf": 0.6579,
+       "acc": 0.6154
+      },
+      {
+       "lo": 0.7,
+       "hi": 0.8,
+       "n": 14,
+       "conf": 0.7433,
+       "acc": 0.5714
+      },
+      {
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 15,
+       "conf": 0.8666,
+       "acc": 0.7333
+      },
+      {
+       "lo": 0.9,
+       "hi": 1,
+       "n": 21,
+       "conf": 0.9585,
+       "acc": 0.9048
+      }
+     ]
+    },
+    "urgency": {
+     "n": 100,
+     "ece": 0.19,
+     "meanConf": 0.77,
+     "acc": 0.58,
+     "bins": [
+      {
+       "lo": 0.3,
+       "hi": 0.4,
+       "n": 1,
+       "conf": 0.3935,
+       "acc": 0
+      },
+      {
+       "lo": 0.4,
+       "hi": 0.5,
+       "n": 4,
+       "conf": 0.4513,
+       "acc": 0.25
+      },
+      {
+       "lo": 0.5,
+       "hi": 0.6,
+       "n": 16,
+       "conf": 0.5425,
+       "acc": 0.4375
+      },
+      {
+       "lo": 0.6,
+       "hi": 0.7,
+       "n": 12,
+       "conf": 0.659,
+       "acc": 0.25
+      },
+      {
+       "lo": 0.7,
+       "hi": 0.8,
+       "n": 19,
+       "conf": 0.7518,
+       "acc": 0.6316
+      },
+      {
+       "lo": 0.8,
+       "hi": 0.9,
+       "n": 20,
+       "conf": 0.8619,
+       "acc": 0.6
+      },
+      {
+       "lo": 0.9,
+       "hi": 1,
+       "n": 28,
+       "conf": 0.9532,
+       "acc": 0.8214
+      }
+     ]
+    }
+   },
+   "scam": {
+    "level": {
+     "n": 100,
+     "k": 92,
+     "acc": 0.92,
+     "lo": 0.86,
+     "hi": 0.97
+    },
+    "warned": 17,
+    "flagged": 21,
+    "falseAlarms": 2,
+    "genuine": 79
+   },
+   "changedFromRules": {
+    "kind": 12,
+    "action": 59,
+    "urgency": 18
+   }
+  }
+ },
+ "rows": {
+  "test": [
+   {
+    "id": "sbt-001",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.85,
+     "action": 0.9886,
+     "urgency": 0.8233
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.75
+   },
+   {
+    "id": "sbt-002",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9999,
+     "action": 0.6384,
+     "urgency": 0.5625
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.64
+   },
+   {
+    "id": "sbt-003",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9972,
+     "action": 0.9694,
+     "urgency": 0.6117
+    },
+    "combined": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.61
+   },
+   {
+    "id": "sbt-004",
+    "lang": "en",
+    "source": "letter",
+    "gold": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9981,
+     "action": 0.7238,
+     "urgency": 0.9073
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.72
+   },
+   {
+    "id": "sbt-005",
+    "lang": "en",
+    "source": "letter",
+    "gold": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.6322,
+     "action": 0.9971,
+     "urgency": 0.563
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.5
+   },
+   {
+    "id": "sbt-006",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "school",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9999,
+     "action": 0.9956,
+     "urgency": 0.89
+    },
+    "combined": {
+     "kind": "school",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.89
+   },
+   {
+    "id": "sbt-007",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "reply",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9991,
+     "action": 0.8696,
+     "urgency": 0.408
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.87
+   },
+   {
+    "id": "sbt-008",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "reply",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "water_bill",
+     "action": "reply",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9854,
+     "action": 0.9961,
+     "urgency": 0.4876
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "reply",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.85
+   },
+   {
+    "id": "sbt-009",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.5772,
+     "action": 0.8873,
+     "urgency": 0.9934
+    },
+    "combined": {
+     "kind": "other",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "sbt-010",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9962,
+     "action": 0.7303,
+     "urgency": 0.5719
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.73
+   },
+   {
+    "id": "sbt-011",
+    "lang": "en",
+    "source": "letter",
+    "gold": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9858,
+     "action": 0.9896,
+     "urgency": 0.6049
+    },
+    "combined": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.6
+   },
+   {
+    "id": "sbt-012",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9968,
+     "action": 0.8549,
+     "urgency": 0.893
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.85
+   },
+   {
+    "id": "sbt-013",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "caution",
+    "scam": "caution",
+    "rules": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9999,
+     "action": 0.4624,
+     "urgency": 0.8639
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.46
+   },
+   {
+    "id": "sbt-014",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9748,
+     "action": 0.6107,
+     "urgency": 0.8797
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.61
+   },
+   {
+    "id": "sbt-015",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "school",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9986,
+     "action": 0.9736,
+     "urgency": 0.5001
+    },
+    "combined": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.53
+   },
+   {
+    "id": "sbt-016",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9918,
+     "action": 0.8478,
+     "urgency": 0.7292
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.73
+   },
+   {
+    "id": "sbt-017",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9833,
+     "action": 0.9089,
+     "urgency": 0.9025
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.9
+   },
+   {
+    "id": "sbt-018",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9983,
+     "action": 0.8829,
+     "urgency": 0.9899
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.88
+   },
+   {
+    "id": "sbt-019",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9904,
+     "action": 0.6772,
+     "urgency": 0.5291
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.68
+   },
+   {
+    "id": "sbt-020",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9954,
+     "action": 0.6365,
+     "urgency": 0.8436
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.64
+   },
+   {
+    "id": "sbt-021",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9869,
+     "action": 0.9373,
+     "urgency": 0.93
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.93
+   },
+   {
+    "id": "sbt-022",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9999,
+     "action": 0.8973,
+     "urgency": 0.9949
+    },
+    "combined": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.9
+   },
+   {
+    "id": "sbt-023",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.976,
+     "action": 0.5257,
+     "urgency": 0.9621
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.53
+   },
+   {
+    "id": "sbt-024",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.996,
+     "action": 0.8832,
+     "urgency": 0.9424
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.88
+   },
+   {
+    "id": "sbt-025",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9111,
+     "action": 0.9764,
+     "urgency": 0.9733
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.91
+   },
+   {
+    "id": "sbt-026",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9994,
+     "action": 0.6473,
+     "urgency": 0.9649
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.65
+   },
+   {
+    "id": "sbt-027",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9967,
+     "action": 0.9545,
+     "urgency": 0.8549
+    },
+    "combined": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.85
+   },
+   {
+    "id": "sbt-028",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.676,
+     "action": 0.6404,
+     "urgency": 0.6106
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.61
+   },
+   {
+    "id": "sbt-029",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "legal",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9856,
+     "action": 0.8715,
+     "urgency": 0.6667
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.67
+   },
+   {
+    "id": "sbt-030",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9997,
+     "action": 0.7157,
+     "urgency": 0.6946
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.69
+   },
+   {
+    "id": "sbt-031",
+    "lang": "en",
+    "source": "letter",
+    "gold": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.4174,
+     "action": 0.9756,
+     "urgency": 0.873
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.75
+   },
+   {
+    "id": "sbt-032",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9999,
+     "action": 0.9747,
+     "urgency": 0.5869
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.53
+   },
+   {
+    "id": "sbt-033",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9914,
+     "action": 0.9323,
+     "urgency": 0.671
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.67
+   },
+   {
+    "id": "sbt-034",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9922,
+     "action": 0.4839,
+     "urgency": 0.6827
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.48
+   },
+   {
+    "id": "sbt-035",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.989,
+     "action": 0.8822,
+     "urgency": 0.7631
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.76
+   },
+   {
+    "id": "sbt-036",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "goldScam": "caution",
+    "scam": "caution",
+    "rules": {
+     "kind": "health",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.8656,
+     "action": 0.5704,
+     "urgency": 0.9947
+    },
+    "combined": {
+     "kind": "school",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.57
+   },
+   {
+    "id": "sbt-037",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.7556,
+     "action": 0.9382,
+     "urgency": 0.7407
+    },
+    "combined": {
+     "kind": "health",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.74
+   },
+   {
+    "id": "sbt-038",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9505,
+     "action": 0.9783,
+     "urgency": 0.5077
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.67
+   },
+   {
+    "id": "sbt-039",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.8871,
+     "action": 0.8139,
+     "urgency": 0.9965
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.81
+   },
+   {
+    "id": "sbt-040",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "administrative",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "legal",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9834,
+     "action": 0.5805,
+     "urgency": 0.8417
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.58
+   },
+   {
+    "id": "sbt-041",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9987,
+     "action": 0.9467,
+     "urgency": 0.9691
+    },
+    "combined": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.95
+   },
+   {
+    "id": "sbt-042",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9949,
+     "action": 0.7121,
+     "urgency": 0.8468
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.71
+   },
+   {
+    "id": "sbt-043",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9975,
+     "action": 0.8739,
+     "urgency": 0.4769
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.74
+   },
+   {
+    "id": "sbt-044",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9932,
+     "action": 0.5912,
+     "urgency": 0.6923
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.59
+   },
+   {
+    "id": "sbt-045",
+    "lang": "en",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9928,
+     "action": 0.9036,
+     "urgency": 0.9457
+    },
+    "combined": {
+     "kind": "other",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.9
+   },
+   {
+    "id": "sbt-046",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9469,
+     "action": 0.9629,
+     "urgency": 0.9527
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.95
+   },
+   {
+    "id": "sbt-047",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9991,
+     "action": 0.9831,
+     "urgency": 0.9323
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.93
+   },
+   {
+    "id": "sbt-048",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9191,
+     "action": 0.9276,
+     "urgency": 0.9883
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.92
+   },
+   {
+    "id": "sbt-049",
+    "lang": "fr",
+    "source": "letter",
+    "gold": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.8687,
+     "action": 0.9659,
+     "urgency": 0.6861
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.69
+   },
+   {
+    "id": "sbt-050",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9988,
+     "action": 0.8373,
+     "urgency": 0.9486
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.84
+   },
+   {
+    "id": "sbt-051",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "caution",
+    "rules": {
+     "kind": "water_bill",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9991,
+     "action": 0.9183,
+     "urgency": 0.9275
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.92
+   },
+   {
+    "id": "sbt-052",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "call",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.995,
+     "action": 0.3494,
+     "urgency": 0.6414
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "nothing",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.63
+   },
+   {
+    "id": "sbt-053",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9993,
+     "action": 0.7293,
+     "urgency": 0.5026
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.73
+   },
+   {
+    "id": "sbt-054",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "water_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9426,
+     "action": 0.8958,
+     "urgency": 0.8783
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.88
+   },
+   {
+    "id": "sbt-055",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "legal",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9974,
+     "action": 0.947,
+     "urgency": 0.842
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.84
+   },
+   {
+    "id": "sbt-056",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9808,
+     "action": 0.9703,
+     "urgency": 0.7571
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.76
+   },
+   {
+    "id": "sbt-057",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.986,
+     "action": 0.6122,
+     "urgency": 0.9963
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.61
+   },
+   {
+    "id": "sbt-058",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9795,
+     "action": 0.9136,
+     "urgency": 0.9673
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.91
+   },
+   {
+    "id": "sbt-059",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "bank",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.6855,
+     "action": 0.9057,
+     "urgency": 0.4926
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.53
+   },
+   {
+    "id": "sbt-060",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9974,
+     "action": 0.9477,
+     "urgency": 0.6131
+    },
+    "combined": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.61
+   },
+   {
+    "id": "sbt-061",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "legal",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "legal",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9962,
+     "action": 0.5135,
+     "urgency": 0.7802
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.51
+   },
+   {
+    "id": "sbt-062",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9929,
+     "action": 0.8599,
+     "urgency": 0.9215
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.86
+   },
+   {
+    "id": "sbt-063",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9919,
+     "action": 0.8054,
+     "urgency": 0.3651
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.63
+   },
+   {
+    "id": "sbt-065",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "goldScam": "caution",
+    "scam": "caution",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.96,
+     "action": 0.4761,
+     "urgency": 0.8989
+    },
+    "combined": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.48
+   },
+   {
+    "id": "sbt-067",
+    "lang": "fr",
+    "source": "letter",
+    "gold": {
+     "kind": "bank",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.49,
+     "action": 0.9373,
+     "urgency": 0.5111
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.44
+   },
+   {
+    "id": "sbt-068",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9968,
+     "action": 0.9935,
+     "urgency": 0.5794
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.88
+   },
+   {
+    "id": "sbt-069",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "legal",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.8812,
+     "action": 0.3461,
+     "urgency": 0.5174
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "sbt-072",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9107,
+     "action": 0.4822,
+     "urgency": 0.387
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.48
+   },
+   {
+    "id": "sbt-073",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9995,
+     "action": 0.8177,
+     "urgency": 0.9008
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.82
+   },
+   {
+    "id": "sbt-074",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.3618,
+     "action": 0.9664,
+     "urgency": 0.6706
+    },
+    "combined": {
+     "kind": "health",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.67
+   },
+   {
+    "id": "sbt-075",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9994,
+     "action": 0.7928,
+     "urgency": 0.6003
+    },
+    "combined": {
+     "kind": "health",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.6
+   },
+   {
+    "id": "sbt-076",
+    "lang": "en",
+    "source": "letter",
+    "gold": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.8414,
+     "action": 0.913,
+     "urgency": 0.4418
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.75
+   },
+   {
+    "id": "sbt-077",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "caution",
+    "rules": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9559,
+     "action": 0.9419,
+     "urgency": 0.5369
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.64
+   },
+   {
+    "id": "sbt-078",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "water_bill",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9989,
+     "action": 0.9543,
+     "urgency": 0.9122
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.91
+   },
+   {
+    "id": "sbt-080",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9997,
+     "action": 0.9708,
+     "urgency": 0.9013
+    },
+    "combined": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.9
+   },
+   {
+    "id": "sbt-082",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9997,
+     "action": 0.927,
+     "urgency": 0.7166
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.72
+   },
+   {
+    "id": "sbt-084",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "school",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "reply",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9974,
+     "action": 0.3609,
+     "urgency": 0.9369
+    },
+    "combined": {
+     "kind": "school",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.75
+   },
+   {
+    "id": "sbt-086",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9999,
+     "action": 0.9846,
+     "urgency": 0.9975
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.95
+   },
+   {
+    "id": "sbt-087",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9988,
+     "action": 0.8819,
+     "urgency": 0.9879
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.88
+   },
+   {
+    "id": "sbt-088",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9934,
+     "action": 0.8538,
+     "urgency": 0.9779
+    },
+    "combined": {
+     "kind": "other",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.85
+   },
+   {
+    "id": "sbt-089",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "caution",
+    "scam": "caution",
+    "rules": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9967,
+     "action": 0.9305,
+     "urgency": 0.9909
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.93
+   },
+   {
+    "id": "sbt-090",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9972,
+     "action": 0.5541,
+     "urgency": 0.5708
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.55
+   },
+   {
+    "id": "sbt-091",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "school",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9995,
+     "action": 0.7788,
+     "urgency": 0.7443
+    },
+    "combined": {
+     "kind": "school",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.74
+   },
+   {
+    "id": "sbt-092",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9993,
+     "action": 0.8606,
+     "urgency": 0.9557
+    },
+    "combined": {
+     "kind": "other",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.86
+   },
+   {
+    "id": "sbt-093",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.8033,
+     "action": 0.8634,
+     "urgency": 0.996
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.76
+   },
+   {
+    "id": "sbt-094",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "school",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "caution",
+    "rules": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "nothing",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9982,
+     "action": 0.4403,
+     "urgency": 0.6246
+    },
+    "combined": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.44
+   },
+   {
+    "id": "sbt-095",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.353,
+     "action": 0.9865,
+     "urgency": 0.7392
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.63
+   },
+   {
+    "id": "sbt-096",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9996,
+     "action": 0.9888,
+     "urgency": 0.6141
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.61
+   },
+   {
+    "id": "sbt-097",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "nothing",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9998,
+     "action": 0.6827,
+     "urgency": 0.5017
+    },
+    "combined": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.68
+   },
+   {
+    "id": "sbt-098",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "water_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9935,
+     "action": 0.9767,
+     "urgency": 0.9634
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.95
+   },
+   {
+    "id": "sbt-107",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9992,
+     "action": 0.9981,
+     "urgency": 0.6918
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.69
+   },
+   {
+    "id": "sbt-111",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9204,
+     "action": 0.5387,
+     "urgency": 0.9485
+    },
+    "combined": {
+     "kind": "health",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.54
+   },
+   {
+    "id": "sbt-120",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9996,
+     "action": 0.7132,
+     "urgency": 0.7482
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.71
+   },
+   {
+    "id": "sbt-126",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9999,
+     "action": 0.6585,
+     "urgency": 0.7753
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.66
+   },
+   {
+    "id": "sbt-137",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9997,
+     "action": 0.8327,
+     "urgency": 0.8182
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.82
+   },
+   {
+    "id": "sbt-156",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9892,
+     "action": 0.6975,
+     "urgency": 0.9222
+    },
+    "combined": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.7
+   }
+  ],
+  "unseen": [
+   {
+    "id": "uns-001",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9929,
+     "action": 0.8928,
+     "urgency": 0.5156
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.7
+   },
+   {
+    "id": "uns-002",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9232,
+     "action": 0.5277,
+     "urgency": 0.8851
+    },
+    "combined": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.53
+   },
+   {
+    "id": "uns-003",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "call",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9984,
+     "action": 0.319,
+     "urgency": 0.5802
+    },
+    "combined": {
+     "kind": "health",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.17
+   },
+   {
+    "id": "uns-004",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9968,
+     "action": 0.8898,
+     "urgency": 0.773
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.77
+   },
+   {
+    "id": "uns-005",
+    "lang": "fr",
+    "source": "letter",
+    "gold": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9914,
+     "action": 0.9764,
+     "urgency": 0.8897
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.89
+   },
+   {
+    "id": "uns-006",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9813,
+     "action": 0.4179,
+     "urgency": 0.9365
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.42
+   },
+   {
+    "id": "uns-007",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9998,
+     "action": 0.92,
+     "urgency": 0.7561
+    },
+    "combined": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.76
+   },
+   {
+    "id": "uns-008",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "caution",
+    "scam": "caution",
+    "rules": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.968,
+     "action": 0.8922,
+     "urgency": 0.6613
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.66
+   },
+   {
+    "id": "uns-009",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.5398,
+     "action": 0.4936,
+     "urgency": 0.7747
+    },
+    "combined": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.17
+   },
+   {
+    "id": "uns-010",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.7389,
+     "action": 0.5066,
+     "urgency": 0.5873
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.25
+   },
+   {
+    "id": "uns-011",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "water_bill",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9898,
+     "action": 0.9416,
+     "urgency": 0.6652
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.67
+   },
+   {
+    "id": "uns-012",
+    "lang": "en",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "reply",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.4907,
+     "action": 0.7029,
+     "urgency": 0.5933
+    },
+    "combined": {
+     "kind": "other",
+     "action": "reply",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "uns-013",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.996,
+     "action": 0.4181,
+     "urgency": 0.6758
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.42
+   },
+   {
+    "id": "uns-014",
+    "lang": "en",
+    "source": "letter",
+    "gold": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9802,
+     "action": 0.6939,
+     "urgency": 0.7903
+    },
+    "combined": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.69
+   },
+   {
+    "id": "uns-015",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9997,
+     "action": 0.9654,
+     "urgency": 0.9816
+    },
+    "combined": {
+     "kind": "health",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.95
+   },
+   {
+    "id": "uns-016",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9946,
+     "action": 0.7219,
+     "urgency": 0.9057
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.72
+   },
+   {
+    "id": "uns-017",
+    "lang": "en",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "health",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "reply",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9994,
+     "action": 0.7378,
+     "urgency": 0.7216
+    },
+    "combined": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.72
+   },
+   {
+    "id": "uns-018",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9955,
+     "action": 0.6481,
+     "urgency": 0.9639
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.65
+   },
+   {
+    "id": "uns-019",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "collect",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9888,
+     "action": 0.4319,
+     "urgency": 0.8553
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.43
+   },
+   {
+    "id": "uns-020",
+    "lang": "en",
+    "source": "letter",
+    "gold": {
+     "kind": "legal",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "legal",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.4511,
+     "action": 0.4188,
+     "urgency": 0.8953
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.42
+   },
+   {
+    "id": "uns-021",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.6925,
+     "action": 0.474,
+     "urgency": 0.9092
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.47
+   },
+   {
+    "id": "uns-022",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9997,
+     "action": 0.9829,
+     "urgency": 0.5016
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.34
+   },
+   {
+    "id": "uns-023",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "health",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9332,
+     "action": 0.519,
+     "urgency": 0.7972
+    },
+    "combined": {
+     "kind": "health",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.52
+   },
+   {
+    "id": "uns-024",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.7991,
+     "action": 0.9642,
+     "urgency": 0.4857
+    },
+    "combined": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.69
+   },
+   {
+    "id": "uns-025",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9381,
+     "action": 0.2834,
+     "urgency": 0.8409
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.53
+   },
+   {
+    "id": "uns-026",
+    "lang": "fr",
+    "source": "letter",
+    "gold": {
+     "kind": "health",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.8131,
+     "action": 0.8964,
+     "urgency": 0.6632
+    },
+    "combined": {
+     "kind": "health",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.63
+   },
+   {
+    "id": "uns-027",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9939,
+     "action": 0.8587,
+     "urgency": 0.7841
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.78
+   },
+   {
+    "id": "uns-028",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "caution",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "telecom",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9998,
+     "action": 0.455,
+     "urgency": 0.9497
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.45
+   },
+   {
+    "id": "uns-029",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "administrative",
+     "action": "collect",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "collect",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.8569,
+     "action": 0.8352,
+     "urgency": 0.6662
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.67
+   },
+   {
+    "id": "uns-030",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.6286,
+     "action": 0.2831,
+     "urgency": 0.8626
+    },
+    "combined": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.17
+   },
+   {
+    "id": "uns-031",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9998,
+     "action": 0.9293,
+     "urgency": 0.7954
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.8
+   },
+   {
+    "id": "uns-032",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "nothing",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 1,
+     "action": 0.9328,
+     "urgency": 0.5299
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.72
+   },
+   {
+    "id": "uns-033",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.4689,
+     "action": 0.3948,
+     "urgency": 0.6989
+    },
+    "combined": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.17
+   },
+   {
+    "id": "uns-034",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9959,
+     "action": 0.9648,
+     "urgency": 0.5702
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.17
+   },
+   {
+    "id": "uns-035",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.6749,
+     "action": 0.7808,
+     "urgency": 0.9543
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.44
+   },
+   {
+    "id": "uns-036",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9545,
+     "action": 0.6679,
+     "urgency": 0.6413
+    },
+    "combined": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.64
+   },
+   {
+    "id": "uns-037",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9868,
+     "action": 0.4866,
+     "urgency": 0.862
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.49
+   },
+   {
+    "id": "uns-038",
+    "lang": "fr",
+    "source": "letter",
+    "gold": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9908,
+     "action": 0.8598,
+     "urgency": 0.7852
+    },
+    "combined": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.79
+   },
+   {
+    "id": "uns-039",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9901,
+     "action": 0.9847,
+     "urgency": 0.5229
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.25
+   },
+   {
+    "id": "uns-040",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.4435,
+     "action": 0.9271,
+     "urgency": 0.7137
+    },
+    "combined": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.53
+   },
+   {
+    "id": "uns-041",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "water_bill",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9997,
+     "action": 0.9805,
+     "urgency": 0.9693
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.95
+   },
+   {
+    "id": "uns-042",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "caution",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.7008,
+     "action": 0.9864,
+     "urgency": 0.8634
+    },
+    "combined": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "uns-043",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9997,
+     "action": 0.7112,
+     "urgency": 0.7312
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.71
+   },
+   {
+    "id": "uns-044",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9746,
+     "action": 0.2362,
+     "urgency": 0.5082
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.44
+   },
+   {
+    "id": "uns-045",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9131,
+     "action": 0.4825,
+     "urgency": 0.9306
+    },
+    "combined": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.48
+   },
+   {
+    "id": "uns-046",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9994,
+     "action": 0.9252,
+     "urgency": 0.9501
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.93
+   },
+   {
+    "id": "uns-047",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.8599,
+     "action": 0.8924,
+     "urgency": 0.7523
+    },
+    "combined": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.75
+   },
+   {
+    "id": "uns-048",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9968,
+     "action": 0.5263,
+     "urgency": 0.8764
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.53
+   },
+   {
+    "id": "uns-049",
+    "lang": "fr",
+    "source": "letter",
+    "gold": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "legal",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9837,
+     "action": 0.9362,
+     "urgency": 0.7608
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.76
+   },
+   {
+    "id": "uns-050",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9971,
+     "action": 0.6759,
+     "urgency": 0.5167
+    },
+    "combined": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.17
+   },
+   {
+    "id": "uns-051",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9926,
+     "action": 0.5761,
+     "urgency": 0.9443
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.58
+   },
+   {
+    "id": "uns-052",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9975,
+     "action": 0.7585,
+     "urgency": 0.7235
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.72
+   },
+   {
+    "id": "uns-053",
+    "lang": "fr",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.3555,
+     "action": 0.3317,
+     "urgency": 0.7198
+    },
+    "combined": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "uns-054",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.4985,
+     "action": 0.4238,
+     "urgency": 0.5111
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.42
+   },
+   {
+    "id": "uns-055",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "school",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "collect",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9904,
+     "action": 0.4964,
+     "urgency": 0.6126
+    },
+    "combined": {
+     "kind": "school",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.5
+   },
+   {
+    "id": "uns-056",
+    "lang": "fr",
+    "source": "letter",
+    "gold": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "caution",
+    "rules": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.6943,
+     "action": 0.3823,
+     "urgency": 0.9745
+    },
+    "combined": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.63
+   },
+   {
+    "id": "uns-057",
+    "lang": "fr",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.5839,
+     "action": 0.8213,
+     "urgency": 0.9179
+    },
+    "combined": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.17
+   },
+   {
+    "id": "uns-058",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9489,
+     "action": 0.726,
+     "urgency": 0.7218
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.72
+   },
+   {
+    "id": "uns-059",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9979,
+     "action": 0.7083,
+     "urgency": 0.5264
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.64
+   },
+   {
+    "id": "uns-060",
+    "lang": "en",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.8018,
+     "action": 0.7694,
+     "urgency": 0.8729
+    },
+    "combined": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.75
+   },
+   {
+    "id": "uns-061",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.7599,
+     "action": 0.8512,
+     "urgency": 0.6774
+    },
+    "combined": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.68
+   },
+   {
+    "id": "uns-062",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "bank",
+     "action": "reply",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.994,
+     "action": 0.6528,
+     "urgency": 0.8774
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.65
+   },
+   {
+    "id": "uns-063",
+    "lang": "en",
+    "source": "letter",
+    "gold": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.9778,
+     "action": 0.9949,
+     "urgency": 0.5599
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.88
+   },
+   {
+    "id": "uns-064",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "caution",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9587,
+     "action": 0.8789,
+     "urgency": 0.9905
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.88
+   },
+   {
+    "id": "uns-065",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "caution",
+    "scam": "caution",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.8293,
+     "action": 0.5033,
+     "urgency": 0.8809
+    },
+    "combined": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.17
+   },
+   {
+    "id": "uns-066",
+    "lang": "en",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.6832,
+     "action": 0.6846,
+     "urgency": 0.9725
+    },
+    "combined": {
+     "kind": "other",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "uns-067",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "caution",
+    "rules": {
+     "kind": "water_bill",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9994,
+     "action": 0.6058,
+     "urgency": 0.8099
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.61
+   },
+   {
+    "id": "uns-068",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9516,
+     "action": 0.4484,
+     "urgency": 0.662
+    },
+    "combined": {
+     "kind": "school",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.45
+   },
+   {
+    "id": "uns-069",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9533,
+     "action": 0.8814,
+     "urgency": 0.8319
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.83
+   },
+   {
+    "id": "uns-070",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.8564,
+     "action": 0.7848,
+     "urgency": 0.8399
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.78
+   },
+   {
+    "id": "uns-071",
+    "lang": "en",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.7628,
+     "action": 0.6185,
+     "urgency": 0.5434
+    },
+    "combined": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "uns-072",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 1,
+     "action": 0.957,
+     "urgency": 0.989
+    },
+    "combined": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.95
+   },
+   {
+    "id": "uns-073",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9467,
+     "action": 0.8765,
+     "urgency": 0.7643
+    },
+    "combined": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.76
+   },
+   {
+    "id": "uns-074",
+    "lang": "en",
+    "source": "letter",
+    "gold": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9932,
+     "action": 0.5063,
+     "urgency": 0.9516
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "reply",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.51
+   },
+   {
+    "id": "uns-075",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9894,
+     "action": 0.384,
+     "urgency": 0.9176
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.5
+   },
+   {
+    "id": "uns-076",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "telecom",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9424,
+     "action": 0.6283,
+     "urgency": 0.9637
+    },
+    "combined": {
+     "kind": "telecom",
+     "action": "unclear",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.63
+   },
+   {
+    "id": "uns-077",
+    "lang": "en",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9207,
+     "action": 0.5098,
+     "urgency": 0.848
+    },
+    "combined": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.51
+   },
+   {
+    "id": "uns-078",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.914,
+     "action": 0.7698,
+     "urgency": 0.9449
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.77
+   },
+   {
+    "id": "uns-079",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "school",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9983,
+     "action": 0.6417,
+     "urgency": 0.4172
+    },
+    "combined": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "uns-080",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.8758,
+     "action": 0.3437,
+     "urgency": 0.6085
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "collect",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.61
+   },
+   {
+    "id": "uns-081",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "other",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.5686,
+     "action": 0.7117,
+     "urgency": 0.9594
+    },
+    "combined": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "uns-082",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9955,
+     "action": 0.3473,
+     "urgency": 0.8702
+    },
+    "combined": {
+     "kind": "health",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.75
+   },
+   {
+    "id": "uns-083",
+    "lang": "en",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "encoderP": {
+     "kind": 0.8791,
+     "action": 0.5656,
+     "urgency": 0.3935
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "bring_document",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "uns-084",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "encoderP": {
+     "kind": 0.9753,
+     "action": 0.9884,
+     "urgency": 0.4273
+    },
+    "combined": {
+     "kind": "school",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.85
+   },
+   {
+    "id": "uns-085",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.4325,
+     "action": 0.5939,
+     "urgency": 0.8739
+    },
+    "combined": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.17
+   },
+   {
+    "id": "uns-086",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "water_bill",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9995,
+     "action": 0.9724,
+     "urgency": 0.9494
+    },
+    "combined": {
+     "kind": "water_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.95
+   },
+   {
+    "id": "uns-087",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "other",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "bring_document",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.5897,
+     "action": 0.8474,
+     "urgency": 0.8349
+    },
+    "combined": {
+     "kind": "other",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.2
+   },
+   {
+    "id": "uns-088",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9994,
+     "action": 0.6821,
+     "urgency": 0.986
+    },
+    "combined": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.68
+   },
+   {
+    "id": "uns-089",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "likely_scam",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9837,
+     "action": 0.5755,
+     "urgency": 0.6756
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "call",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.58
+   },
+   {
+    "id": "uns-090",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "electricity_bill",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "electricity_bill",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "electricity_bill",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9813,
+     "action": 0.3445,
+     "urgency": 0.5664
+    },
+    "combined": {
+     "kind": "electricity_bill",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.72
+   },
+   {
+    "id": "uns-091",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.988,
+     "action": 0.825,
+     "urgency": 0.547
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "pay",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.75
+   },
+   {
+    "id": "uns-092",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "go_to_place",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "unclear",
+     "urgency": "soon"
+    },
+    "encoder": {
+     "kind": "legal",
+     "action": "go_to_place",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.5668,
+     "action": 0.747,
+     "urgency": 0.9424
+    },
+    "combined": {
+     "kind": "other",
+     "action": "go_to_place",
+     "urgency": "soon"
+    },
+    "combinedConfidence": 0.17
+   },
+   {
+    "id": "uns-093",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9538,
+     "action": 0.9577,
+     "urgency": 0.991
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.95
+   },
+   {
+    "id": "uns-094",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "mobile_money",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.4014,
+     "action": 0.6878,
+     "urgency": 0.9934
+    },
+    "combined": {
+     "kind": "mobile_money",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.63
+   },
+   {
+    "id": "uns-095",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "health",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "health",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "health",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9998,
+     "action": 0.7755,
+     "urgency": 0.9476
+    },
+    "combined": {
+     "kind": "health",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.78
+   },
+   {
+    "id": "uns-096",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "urgent"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9991,
+     "action": 0.9411,
+     "urgency": 0.4751
+    },
+    "combined": {
+     "kind": "school",
+     "action": "bring_document",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.25
+   },
+   {
+    "id": "uns-097",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "legal",
+     "action": "pay",
+     "urgency": "urgent"
+    },
+    "goldScam": "likely_scam",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "legal",
+     "action": "unclear",
+     "urgency": "urgent"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.8033,
+     "action": 0.4439,
+     "urgency": 0.7083
+    },
+    "combined": {
+     "kind": "legal",
+     "action": "call",
+     "urgency": "urgent"
+    },
+    "combinedConfidence": 0.44
+   },
+   {
+    "id": "uns-098",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "administrative",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "administrative",
+     "action": "take_medicine",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.462,
+     "action": 0.6656,
+     "urgency": 0.7105
+    },
+    "combined": {
+     "kind": "administrative",
+     "action": "collect",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.25
+   },
+   {
+    "id": "uns-099",
+    "lang": "wes",
+    "source": "sms",
+    "gold": {
+     "kind": "bank",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "bank",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "bank",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.9695,
+     "action": 0.5373,
+     "urgency": 0.9029
+    },
+    "combined": {
+     "kind": "bank",
+     "action": "reply",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.54
+   },
+   {
+    "id": "uns-100",
+    "lang": "wes",
+    "source": "whatsapp",
+    "gold": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "goldScam": "no_signs",
+    "scam": "no_signs",
+    "rules": {
+     "kind": "other",
+     "action": "call",
+     "urgency": "info"
+    },
+    "encoder": {
+     "kind": "administrative",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "encoderP": {
+     "kind": 0.8423,
+     "action": 0.4204,
+     "urgency": 0.8682
+    },
+    "combined": {
+     "kind": "other",
+     "action": "nothing",
+     "urgency": "info"
+    },
+    "combinedConfidence": 0.2
+   }
+  ]
+ }
+}

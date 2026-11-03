@@ -1,5 +1,5 @@
-import { PHRASE_KEYS, type JoinChoice, type LanguagePack, type RegionConfig } from '@sabitori/core';
-import { maxNumber } from './numbers.js';
+import { PHRASE_KEYS, type LanguagePack, type RegionConfig } from '@sabitori/core';
+import { numberClipIds } from './numbers.js';
 
 /**
  * Every clip id a fully recorded pack needs, sorted and unique. TTS packs
@@ -14,23 +14,14 @@ export function requiredClips(pack: LanguagePack, opts?: { region?: RegionConfig
     for (const a of pack.phrases[key]?.audio ?? []) if ('clip' in a) out.add(a.clip);
   }
 
-  const n = rules.numbers;
-  for (const k of Object.keys(n.atoms)) out.add(`num.${Number(k)}`);
-  for (const s of n.scales ?? []) {
-    if (s.value <= maxNumber(n)) out.add(`scale.${s.value}`);
-  }
-  const joins = (js?: JoinChoice[]): void => {
-    for (const j of js ?? []) if (!n.joiners?.[j.token]?.silent) out.add(`join.${j.token}`);
-  };
-  joins(n.join);
-  for (const s of n.scales ?? []) joins(s.join);
-  for (const o of Object.values(n.overrides ?? {})) {
-    joins(o.join);
-    for (const it of o.say ?? []) if ('join' in it && !n.joiners?.[it.join]?.silent) out.add(`join.${it.join}`);
-  }
+  for (const id of numberClipIds(rules.numbers)) out.add(id);
 
   for (const w of Object.keys(rules.words ?? {})) out.add(`word.${w}`);
-  for (const c of Object.keys(rules.money?.currencies ?? {})) out.add(`currency.${c}`);
+  for (const [c, w] of Object.entries(rules.money?.currencies ?? {})) {
+    out.add(`currency.${c}`);
+    const x = w as { plural?: string; pluralClip?: boolean };
+    if (x.pluralClip && x.plural !== undefined) out.add(`currency.${c}.plural`);
+  }
   const d = rules.dates;
   if (d) {
     d.months.forEach((_, i) => out.add(`month.${i + 1}`));

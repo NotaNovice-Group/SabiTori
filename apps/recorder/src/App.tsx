@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BookOpenText, Hash, Headphones, Package, Check, CloudOff } from 'lucide-react';
-import type { ClipRecord, Project } from './lib/model';
+import { shouldPromptExport, type ClipRecord, type Project } from './lib/model';
 import { totals } from './lib/status';
 import { ProjectProvider, useProject } from './store';
 import { Atoms } from './ui/Atoms';
@@ -29,7 +29,7 @@ export function App() {
 }
 
 function Shell({ onClose }: { onClose: () => void }) {
-  const { project, clips, saving } = useProject();
+  const { project, clips, saving, unsaved, persisted } = useProject();
   const [view, setView] = useState<View>(() => {
     const h = location.hash.slice(1) as View;
     return NAV.some((n) => n[0] === h) ? h : 'phrases';
@@ -76,6 +76,18 @@ function Shell({ onClose }: { onClose: () => void }) {
         <span className="saved" data-state={saving}><Check size={18} aria-hidden /> {saving === 'saving' ? 'Saving' : 'Saved'}</span>
       </header>
       <main className="stage" data-view={view}>
+      {(shouldPromptExport(project) || unsaved.size > 0) && view !== 'pack' && (
+        <div className="note note-warn export-prompt" role="alert">
+          <CloudOff size={20} aria-hidden />
+          <span>
+            {unsaved.size > 0
+              ? `${unsaved.size} recording${unsaved.size === 1 ? ' is' : 's are'} not saved on this device.`
+              : `${project.clipsSinceExport} new recordings since the last download.`}{' '}
+            Download the pack now so nothing is lost{persisted === false ? ' (this browser may clear its storage)' : ''}.
+          </span>
+          <button type="button" className="btn btn-quiet" onClick={() => go('pack')}>Go to Pack</button>
+        </div>
+      )}
         {view === 'phrases' && <Phrases selected={selected} setSelected={setSelected} />}
         {view === 'atoms' && <Atoms />}
         {view === 'review' && <Review />}

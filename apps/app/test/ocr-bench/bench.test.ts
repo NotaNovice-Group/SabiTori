@@ -13,7 +13,7 @@ import type { TruthEntry } from './generate';
 const set = process.env.OCR_BENCH;
 describe.skipIf(!set)('OCR benchmark', () => {
   it(`runs set ${set}`, async () => {
-    const dir = resolve(__dirname, 'images');
+    const dir = resolve(__dirname, process.env.OCR_BENCH_DIR ?? 'images');
     const entries = JSON.parse(readFileSync(resolve(dir, 'truth.json'), 'utf8')) as TruthEntry[];
     const variants = VARIANT_SETS[set!];
     if (!variants) throw new Error(`unknown set ${set}; have ${Object.keys(VARIANT_SETS).join(', ')}`);

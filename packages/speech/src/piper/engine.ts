@@ -5,7 +5,16 @@ export interface PiperVoiceSpec {
   id: string;
   modelUrl: string;
   configUrl: string;
+  /**
+   * Version of the voice files (the pack's manifest version). It is part of every cache key, so a voice retrained
+   * under the same id never pairs an old loaded model with a new config, and a voice marked broken stays broken
+   * only until its version changes.
+   */
+  version?: string;
 }
+
+/** The key under which a voice's loaded model, synthesized audio and broken-state are remembered: id and version. */
+export const voiceKey = (v: Pick<PiperVoiceSpec, 'id' | 'version'>): string => (v.version ? `${v.id}@${v.version}` : v.id);
 
 export interface PiperAudio {
   samples: Float32Array;
@@ -19,6 +28,11 @@ export interface PiperEngine {
   synthesize(text: string, opts: { lengthScale: number }): Promise<PiperAudio>;
   /** Frees the model. A pending call may never resolve afterwards. */
   dispose(): void;
+  /**
+   * False when the loaded model is gone, for example the worker that held it crashed and was restarted.
+   * The TTS backend then loads the voice again instead of failing every utterance. Absent: always alive.
+   */
+  alive?(): boolean;
 }
 
 export type PiperEngineFactory = (voice: PiperVoiceSpec) => PiperEngine;

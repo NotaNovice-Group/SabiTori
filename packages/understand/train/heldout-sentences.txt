@@ -1,0 +1,84 @@
+# Held-out sentences for the export fidelity check (train/export.py --heldout).
+# Written for this purpose; they are NOT phone messages and NOT from the dataset generator,
+# and they never influence which vocabulary pieces are kept. One sentence per line; '#' lines are ignored.
+# Licence: CC-BY-SA-4.0, like the eval dataset.
+La saison des pluies a commencé plus tôt cette année dans la région de l'Ouest.
+Les agriculteurs de Foumbot attendent un meilleur prix pour leurs tomates.
+Le match des Lions indomptables a été reporté à cause du mauvais temps.
+Ma grand-mère prépare le ndolé avec des arachides et des feuilles amères.
+Il faut laver les mains avec du savon avant de manger.
+Le car pour Bamenda part chaque matin à six heures de la gare routière.
+Les enfants jouent au ballon derrière l'église après la messe.
+Le prix du carburant a encore augmenté à la pompe.
+Nous avons planté des bananiers et du manioc dans le champ du village.
+La bibliothèque municipale ouvre ses portes le mercredi après-midi.
+Le médecin conseille de dormir sous une moustiquaire imprégnée.
+Les vendeuses du marché central arrivent avant le lever du soleil.
+Mon voisin répare les radios et les téléphones dans son petit atelier.
+Le fleuve Wouri traverse la ville de Douala avant de rejoindre la mer.
+On dit que la patience est la mère de toutes les vertus.
+Les élèves ont appris une chanson en langue nationale pour la fête.
+Le boulanger du quartier vend du pain chaud dès cinq heures.
+Elle a obtenu son diplôme d'infirmière après trois années d'études.
+Le vent a arraché une partie du toit de l'école primaire.
+Nous irons rendre visite à nos cousins pendant les vacances de Noël.
+Le cacao séché est stocké dans des sacs en toile de jute.
+La route entre Kribi et Edéa est en travaux depuis des mois.
+Il a perdu ses lunettes et ne peut plus lire le journal.
+Les pêcheurs rentrent au port avec des filets pleins de bars.
+Le chœur répète tous les jeudis soir dans la salle paroissiale.
+La coiffeuse tresse les cheveux de ses clientes pendant des heures.
+Le chantier du nouveau pont avance lentement.
+Le maïs grillé se vend au bord de la route en fin de journée.
+Il pleut si fort que la rivière a débordé sur les champs.
+Mon frère apprend à conduire une moto avec un ami.
+Les jeunes du quartier ont nettoyé les caniveaux samedi dernier.
+La radio communautaire diffuse des émissions en plusieurs langues.
+L'huile de palme rouge donne une belle couleur à la sauce.
+Le gardien ferme le portail à dix heures du soir.
+Les chèvres broutent l'herbe le long de la voie ferrée.
+Elle raconte des contes aux enfants à la tombée de la nuit.
+La sécheresse menace les récoltes dans l'Extrême-Nord.
+Le menuisier fabrique des tables et des bancs pour l'école.
+Nous avons fêté l'anniversaire de papa avec toute la famille.
+Le marché de Mokolo est le plus grand de la capitale.
+The rainy season started earlier than usual in the North West this year.
+Farmers in the valley are waiting for better prices for their beans.
+The football match was postponed because the pitch was flooded.
+My aunt cooks eru with waterleaf and smoked fish every Sunday.
+Wash your hands with soap and clean water before you eat.
+The bus to Kumba leaves the motor park at six in the morning.
+Children were playing football behind the church after the service.
+The price of petrol went up again at the filling station.
+We planted plantains and cassava on the family farm.
+The public library is open on Wednesday afternoons.
+The doctor advised everyone to sleep under a treated mosquito net.
+Market women arrive before sunrise to set up their stalls.
+My neighbour repairs radios and phones in his small workshop.
+The river crosses the town before it reaches the sea.
+They say patience is the mother of all good things.
+The pupils learned a song in their mother tongue for the celebration.
+The baker on our street sells warm bread from five o'clock.
+She finished her nursing degree after three years of study.
+The storm blew off part of the primary school roof.
+We will visit our cousins during the Christmas holidays.
+Dried cocoa beans are stored in jute sacks.
+The road between Limbe and Idenau has been under repair for months.
+He lost his glasses and can no longer read the newspaper.
+Fishermen come back to the beach with nets full of fish.
+The choir rehearses every Thursday evening in the parish hall.
+The hairdresser braids her customers' hair for hours.
+Work on the new bridge is moving slowly.
+Roasted corn is sold by the roadside in the evening.
+It rained so hard that the stream overflowed into the fields.
+My brother is learning to ride a motorbike with a friend.
+Young people from the neighbourhood cleaned the gutters last Saturday.
+The community radio broadcasts programmes in several languages.
+Red palm oil gives the soup a beautiful colour.
+The watchman locks the gate at ten o'clock at night.
+Goats graze along the railway line.
+She tells folk tales to the children when night falls.
+The drought is threatening the harvest in the Far North.
+The carpenter makes tables and benches for the school.
+We celebrated our father's birthday with the whole family.
+The market in the city centre is the busiest in the region.

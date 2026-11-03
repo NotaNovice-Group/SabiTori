@@ -11,12 +11,20 @@ export function intlLocale(...candidates: (string | undefined)[]): string {
   return 'fr';
 }
 
+function formatDay(iso: string, locale: string, opts: Intl.DateTimeFormatOptions): string {
+  try {
+    return new Intl.DateTimeFormat(locale, { ...opts, timeZone: 'UTC' }).format(new Date(iso + 'T00:00:00Z'));
+  } catch {
+    return String(iso ?? ''); // an invalid stored date is shown as it is, never thrown
+  }
+}
+
 export function formatShortDate(iso: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short', timeZone: 'UTC' }).format(new Date(iso + 'T00:00:00Z'));
+  return formatDay(iso, locale, { day: 'numeric', month: 'short' });
 }
 
 export function formatLongDate(iso: string, locale: string): string {
-  return new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(iso + 'T00:00:00Z'));
+  return formatDay(iso, locale, { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
 export function formatMoney(amount: number, currency: string, locale: string): string {
@@ -27,9 +35,17 @@ export function formatMoney(amount: number, currency: string, locale: string): s
   }
 }
 
+/** "3 days ago". Empty for a missing or invalid date (a damaged history record must not break the list). */
 export function formatAgo(iso: string, locale: string, now = Date.now()): string {
-  const diff = Date.parse(iso) - now;
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+  const t = typeof iso === 'string' ? Date.parse(iso) : NaN;
+  if (!Number.isFinite(t)) return '';
+  const diff = Math.min(0, t - now); // never "in 3 days"
+  let rtf: Intl.RelativeTimeFormat;
+  try {
+    rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+  } catch {
+    rtf = new Intl.RelativeTimeFormat('fr', { numeric: 'auto' });
+  }
   const min = Math.round(diff / 60000);
   if (Math.abs(min) < 60) return rtf.format(min, 'minute');
   const hr = Math.round(min / 60);

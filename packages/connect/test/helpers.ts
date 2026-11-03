@@ -52,4 +52,19 @@ export function siteFetch(files: Map<string, Uint8Array>, base = 'https://u.exam
 }
 
 export const BASE = 'https://u.example/sabi';
-export const PHRASES = JSON.stringify({ hello: { text: 'Bonjour 2' } });
+/** A phrases.json the app accepts (a real catalog key). Updates are content-checked, so test files must be valid. */
+export const phrasesJson = (text: string): string => JSON.stringify({ 'deadline.none': { text, status: 'reviewed' } });
+export const PHRASES = phrasesJson('Bonjour 2');
+/** A region.json the app accepts. */
+export const regionJson = (extra: Record<string, unknown> = {}): string =>
+  JSON.stringify({
+    formatVersion: 1, code: 'CM', name: 'Cameroon', timezone: 'Africa/Douala', currency: { code: 'XAF', aliases: ['FCFA'] },
+    phone: { countryCode: '237', nationalPattern: '6\\d{8}' }, languages: ['fr', 'en'], officialSenders: [], ...extra,
+  });
+export const REGION = regionJson();
+/** A manifest.json the app accepts. */
+export const manifestJson = (tag: string, over: Record<string, unknown> = {}): string =>
+  JSON.stringify({
+    formatVersion: 1, tag, name: tag, autonym: tag, script: 'Latn', direction: 'ltr', fallback: [], voice: { kind: 'tts', engine: 'system', bcp47: tag },
+    reads: false, status: 'beta', regions: ['CM'], license: 'CC-BY-4.0', contributors: [], version: '0.1.0', ...over,
+  });

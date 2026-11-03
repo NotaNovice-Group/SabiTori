@@ -171,7 +171,7 @@ export default [
   g('telecom', 'pay', { due: 's', src: 'letter', from: 'name:CAMTEL' }, [
     (c) => `CAMTEL - Agence de ${c.city()}\nFacture téléphone fixe n° ${c.ref('', 8)}\nMontant: ${c.A(7000, 60000)}\nDate limite de paiement: ${c.D()}. Passé ce délai, des pénalités de retard s'appliqueront.`,
   ]),
-  g('telecom', 'reply', { from: 'Orange Cameroun' }, [
+  g('telecom', 'nothing', { from: 'Orange Cameroun' }, [ // a genuine opt-in promotion: nothing owed
     (c) => `Orange: Profitez du bonus de recharge de 100%! Répondez OUI à ce message pour l'activer.`,
   ]),
   g('telecom', 'reply', { due: 'u', from: 'MTN Cameroon' }, [
@@ -204,7 +204,7 @@ export default [
   g('telecom', 'unclear', { sg: ['link', 'sender_mismatch'], from: 'num' }, [
     (c) => `Orange: Gagnez 10 Go gratuits! Cliquez ici: ${c.url('orange-promo.example', '/g/' + c.code(4))}`,
   ]),
-  g('telecom', 'pay', { u: 'urgent', sg: ['time_pressure'], from: 'MTN Cameroon' }, [
+  g('telecom', 'nothing', { sg: ['time_pressure'], from: 'MTN Cameroon' }, [ // a genuine promotion: nothing owed, 'today only' is not a deadline
     (c) => `MTN: Offre exceptionnelle! Doublez votre recharge aujourd'hui seulement. Rechargez ${c.A(1000, 5000, 500)} tout de suite.`,
   ]),
   g('telecom', 'pay', { sg: ['pay_to_personal_number', 'sender_mismatch'], from: 'num' }, [

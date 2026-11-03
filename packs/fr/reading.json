@@ -770,7 +770,8 @@
       "lot de",
       "bonus de",
       "tirage",
-      "gagn*"
+      "gagn*",
+      "promo"
     ],
     "feeWords": [
       "frais",
@@ -860,7 +861,9 @@
       "appel au",
       "au numéro",
       "veuillez appeler",
-      "veuillez contacter"
+      "veuillez contacter",
+      "appelle",
+      "rappelle"
     ],
     "viaWords": [
       "via",
@@ -929,6 +932,35 @@
       "réactiv*",
       "activ*",
       "récupér*"
+    ],
+    "numberChangeWords": [
+      "j'ai changé de numéro",
+      "j'ai change de numero",
+      "changé de numéro",
+      "mon nouveau numéro",
+      "mon nouveau numero",
+      "ceci est mon nouveau numéro"
+    ],
+    "emergencyWords": [
+      "accident",
+      "accidenté*",
+      "urgence à l'hôpital",
+      "urgence médicale",
+      "urgence medicale",
+      "est à l'hôpital",
+      "hospitalisé*"
     ]
-  }
+  },
+  "promoWords": [
+    "promo",
+    "promotion",
+    "offre exceptionnelle",
+    "offre spéciale",
+    "offre promotionnelle",
+    "doublez",
+    "bonus offert",
+    "profitez de",
+    "bonus de recharge",
+    "offre limitée"
+  ]
 }

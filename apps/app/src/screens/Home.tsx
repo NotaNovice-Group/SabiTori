@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { Camera, CalendarClock, ClipboardPaste, Images, Settings as Cog, Smartphone, Lightbulb } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Camera, CalendarClock, ClipboardPaste, FileText, Images, Info, Settings as Cog, Smartphone, Lightbulb } from 'lucide-react';
 import type { Card } from '@sabitori/core';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
@@ -11,6 +11,7 @@ import { session } from '../lib/session';
 import { isNative } from '../lib/native';
 import { useNativePhoto } from '../components/PhotoPicker';
 import { formatAgo, formatMoney, formatShortDate } from '../lib/format';
+import { rememberNames } from '../lib/crash';
 
 export function senderName(card: Card, fallback: string): string {
   return card.sender.displayName ?? card.input.sender?.value ?? fallback;
@@ -18,8 +19,9 @@ export function senderName(card: Card, fallback: string): string {
 
 function Row({ card }: { card: Card }) {
   const { t, locale } = useApp();
-  const Kind = KIND_ICON[card.understanding.kind];
-  const U = URGENCY_ICON[card.understanding.urgency];
+  // A record from an older or damaged history may carry a kind or urgency this version does not know.
+  const Kind = KIND_ICON[card.understanding.kind] ?? FileText;
+  const U = URGENCY_ICON[card.understanding.urgency] ?? Info;
   const scam = card.scam.level !== 'no_signs' && card.scam.level !== undefined;
   const level = scam ? 'urgent' : card.understanding.urgency;
   const Chip = scam ? URGENCY_ICON.urgent : U;
@@ -55,6 +57,9 @@ function Row({ card }: { card: Card }) {
 export function HomeScreen() {
   const { t, history } = useApp();
   const input = useRef<HTMLInputElement>(null);
+  const [notice, setNotice] = useState(() => session.takeNotice());
+  // The senders listed here are on screen: an error report must never contain them.
+  useEffect(() => rememberNames(...history.map((c) => senderName(c, ''))), [history]);
   const open = (f: File) => {
     session.setPhoto(f);
     navigate('/capture');
@@ -80,6 +85,12 @@ export function HomeScreen() {
         </>
       }
     >
+      {notice && (
+        <div className="notice" role="status">
+          <p>{t(notice)}</p>
+          <SpeakingButton speakKey="app.close" variant="quiet" onAct={() => setNotice(null)} />
+        </div>
+      )}
       <section aria-labelledby="hist">
         <h2 id="hist" className="section-title">{t('ui.history')}</h2>
         {history.length === 0 ? (

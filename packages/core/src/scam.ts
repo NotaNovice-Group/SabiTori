@@ -91,11 +91,23 @@ export function assessScam(
     region.officialSenders.flatMap((o) => [o.helpline, ...o.shortCodes]).filter((x): x is string => !!x).map((x) => digitsOf(x).slice(-9)),
   );
   const isOfficialNumber = (v: string) => officialNumbers.has(digitsOf(v).slice(-9));
-  const personalPhones = sender.verified ? [] : facts.phones.filter((p) => !isOfficialNumber(p.value));
+  // Verification whitelists only the official numbers; any other number is a personal number whoever sent the text.
+  const personalPhones = facts.phones.filter((p) => !isOfficialNumber(p.value));
   if (hasTerm(n, S((s) => s.prizeWords))) {
     // A prize that must be claimed by paying, or by calling a personal number, is a trap.
     const callsNumber = callHits.length > 0 && personalPhones.length > 0;
     if (hasTerm(n, S((s) => s.feeWords)) || callsNumber) found.add('prize_fee');
+  }
+  // Family impersonation ("j'ai changé de numéro" + rush or money) and the emergency story (accident / hospital
+  // + call a personal number) from a sender that is not verified.
+  if (!sender.verified) {
+    if (hasTerm(n, S((s) => s.numberChangeWords))) {
+      const rush = hasTerm(n, S((s) => s.timePressure)) || hasTerm(n, collect(lexicons, (l) => l.urgency.urgent));
+      const asksMoney = facts.amounts.length > 0 && hasTerm(n, S((s) => s.payVerbs));
+      if (rush || asksMoney) found.add('time_pressure');
+    }
+    if (hasTerm(n, S((s) => s.emergencyWords)) && callHits.length > 0 && personalPhones.length > 0)
+      found.add('asks_to_call_number');
   }
   if (hasTerm(n, S((s) => s.blockThreats))) found.add('account_block_threat');
   if (facts.urls.length > 0) found.add('link');
@@ -129,17 +141,31 @@ export function assessScam(
   }
 
   // ussd_instruction: a *...# code, or a dial instruction, from a sender that is not verified.
+  // Not an instruction by itself: an official sender's own balance code, and a bare *NNN# / #NNN# (a menu or
+  // balance shortcut: renew, check the balance) with no money-purpose word and no amount/phone inside.
   let strongUssd = false;
   if (!sender.verified) {
     const codes = facts.ussdCodes.filter((u) => /^[*#]/.test(u.value));
     const dial = findTerms(n, S((s) => s.dialWords));
     const purpose = findTerms(n, S((s) => s.ussdPurposeWords));
+    const balanceHits = findTerms(n, collect(lexicons, (l) => l.balanceWords));
+    const balanceCodes = new Set(region.officialSenders.map((o) => o.balanceCode?.replace(/\s/g, '')).filter((x): x is string => !!x));
     const dialsNear = (u: { span: { start: number } }) =>
       dial.some((w) => w.end <= u.span.start && u.span.start - w.end <= 40);
     for (const u of codes) {
+      if (balanceCodes.has(u.value)) continue;
       const segs = u.value.split(/[*#]+/).filter(Boolean);
       const carries = segs.some((x) => /^\d{4,}$/.test(x)); // a phone (9 digits) or an amount (4+ digits)
       const why = purpose.some((w) => (w.end <= u.span.start ? u.span.start - w.end : w.start - u.span.end) <= 100);
+      const bare = /^[*#]\d{1,3}#$/.test(u.value);
+      // An amount of money written right next to the code ("Renouvelez 25 000 FCFA via *888#") is a money purpose;
+      // a balance figure ("Nouveau solde: 23 450 FCFA. Composez *126#") is not.
+      const moneyNear = facts.amounts.some(
+        (a) =>
+          (a.span.end <= u.span.start ? u.span.start - a.span.end : a.span.start - u.span.end) <= 40 &&
+          !balanceHits.some((w) => w.end <= a.span.start && a.span.start - w.end <= 30),
+      );
+      if (bare && !why && !carries && !moneyNear) continue;
       if (carries || (dialsNear(u) && why)) strongUssd = true;
       found.add('ussd_instruction');
     }
@@ -149,8 +175,11 @@ export function assessScam(
   if (callHits.length > 0 && facts.phones.length > 0) {
     const helpline = region.officialSenders.find((o) => o.id === claimedSenderId)?.helpline;
     const h = helpline ? digitsOf(helpline).slice(-9) : undefined;
-    const foreign = facts.phones.some((p) => !h || digitsOf(p.value).slice(-9) !== h);
-    if (foreign && (claimedSenderId || found.size > 0)) found.add('asks_to_call_number');
+    const recvHits = findTerms(n, S((s) => s.moneyReceived));
+    // A number that merely names who sent money ("reçu de JEAN (677123456)") is not a number to call.
+    const named = (p: { span: { start: number } }) => recvHits.some((w) => w.end <= p.span.start && p.span.start - w.end <= 30);
+    const foreign = facts.phones.some((p) => !named(p) && (!h || digitsOf(p.value).slice(-9) !== h));
+    if (foreign && ((claimedSenderId && !sender.verified) || found.size > 0)) found.add('asks_to_call_number');
   }
 
   const signals = SCAM_SIGNALS.filter((s) => found.has(s));

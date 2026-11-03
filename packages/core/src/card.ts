@@ -12,6 +12,7 @@ import type {
 import type { ReadingLexicon } from './reading.js';
 import type { RegionConfig } from './region.js';
 import { collect, findTerms, fold } from './text.js';
+import { guardUnderstanding } from './guard.js';
 
 /** Below this confidence the card falls back to facts only. */
 export const CONFIDENCE_THRESHOLD = 0.55;
@@ -58,7 +59,12 @@ function chooseDeadline(input: MessageInput, facts: Facts, lexicons: ReadingLexi
   return future[0];
 }
 
-function chooseAmount(input: MessageInput, facts: Facts, lexicons: ReadingLexicon[]): Fact<Money> | undefined {
+function chooseAmount(
+  input: MessageInput,
+  facts: Facts,
+  lexicons: ReadingLexicon[],
+  deadline?: Fact<IsoDate>,
+): Fact<Money> | undefined {
   if (!facts.amounts.length) return undefined;
   const n = fold(input.text);
   const labels = findTerms(n, [
@@ -66,15 +72,43 @@ function chooseAmount(input: MessageInput, facts: Facts, lexicons: ReadingLexico
     ...collect(lexicons, (l) => l.scam.moneyReceived),
   ]);
   const balances = findTerms(n, collect(lexicons, (l) => l.balanceWords));
-  const score = (a: Fact<Money>) => {
-    let s = 0;
-    if (labels.some((w) => w.end <= a.span.start && a.span.start - w.end <= NEAR_AMOUNT)) s += 3;
-    if (balances.some((w) => w.end <= a.span.start && a.span.start - w.end <= NEAR_BALANCE)) s -= 3;
-    return s;
+  // A balance is what is left, never what is asked: an amount whose nearest label before it is a balance word is dropped.
+  const isBalance = (a: Fact<Money>) => {
+    const b = balances.filter((w) => w.end <= a.span.start && a.span.start - w.end <= NEAR_BALANCE);
+    if (!b.length) return false;
+    const nearestBalance = Math.max(...b.map((w) => w.end));
+    return !labels.some((w) => w.end > nearestBalance && w.end <= a.span.start);
   };
-  return [...facts.amounts].sort(
+  const pool = facts.amounts.filter((a) => !isBalance(a));
+  if (!pool.length) return undefined;
+  const score = (a: Fact<Money>) => (labels.some((w) => w.end <= a.span.start && a.span.start - w.end <= NEAR_AMOUNT) ? 3 : 0);
+
+  // Several instalments ("45 000 FCFA avant le 15/10, 30 000 FCFA avant le 15/01"): the amount that goes with the
+  // chosen deadline is the one in its own clause, the closest one just before it (else just after).
+  if (deadline && pool.length > 1) {
+    const clause = clauseAround(n, deadline.span.start, deadline.span.end);
+    const inClause = pool.filter((a) => a.span.start >= clause.start && a.span.end <= clause.end);
+    if (inClause.length) {
+      const dist = (a: Fact<Money>) =>
+        a.span.end <= deadline.span.start ? deadline.span.start - a.span.end : 1000 + a.span.start - deadline.span.end;
+      return [...inClause].sort((a, b) => dist(a) - dist(b))[0];
+    }
+  }
+  return [...pool].sort(
     (a, b) => score(b) - score(a) || b.value.amount - a.value.amount || a.span.start - b.span.start,
   )[0];
+}
+
+/** The clause holding [start, end): bounded by sentence ends, semicolons and commas that are not inside a number. */
+function clauseAround(n: string, start: number, end: number): { start: number; end: number } {
+  const stop = /[.!?\n\r]+(?=\s|$)|;|(?<!\d),|,(?!\d)/g;
+  let from = 0;
+  let m: RegExpExecArray | null;
+  while ((m = stop.exec(n))) {
+    if (m.index + m[0].length <= start) from = m.index + m[0].length;
+    else if (m.index >= end) return { start: from, end: m.index };
+  }
+  return { start: from, end: n.length };
 }
 
 const NEAR_PAY = 40;
@@ -105,21 +139,23 @@ function chooseContact(
   const received = findTerms(n, collect(lexicons, (l) => l.scam.moneyReceived));
   const payVerbs = findTerms(n, collect(lexicons, (l) => l.scam.payVerbs));
   const last9 = (v: string) => v.replace(/\D/g, '').slice(-9);
-  const official = new Set(
-    (region?.officialSenders ?? [])
-      .flatMap((o) => [o.helpline, ...o.shortCodes])
-      .filter((x): x is string => !!x)
-      .map(last9),
-  );
+  const ownNumbers = (o: { helpline?: string; shortCodes: string[] }) =>
+    [o.helpline, ...o.shortCodes].filter((x): x is string => !!x).map(last9);
+  const official = new Set((region?.officialSenders ?? []).flatMap(ownNumbers));
   const trusted = (p: Fact<string>): boolean => {
-    if (sender.verified) return true;
+    // Verification only whitelists the official numbers (a company's own helpline / short codes).
     if (official.has(last9(p.value))) return true;
+    const mobile = isMobile(p.value, region);
+    const afterPay = payVerbs.some((w) => w.end <= p.span.start && p.span.start - w.end <= NEAR_PAY);
+    const afterAmount = facts.amounts.some((a) => a.span.end <= p.span.start && p.span.start - a.span.end <= NEAR_PAY);
+    if (sender.verified) {
+      // A verified name does not make a personal mobile number written where the message asks to pay a help line.
+      return !(mobile && (afterPay || afterAmount));
+    }
     if (scam.level !== 'no_signs') return false;
     // A message that only claims to be from a company cannot hand out a personal
     // mobile number as that company's help line: impersonators do exactly this.
-    if (scam.claimedSenderId && isMobile(p.value, region)) return false;
-    const afterPay = payVerbs.some((w) => w.end <= p.span.start && p.span.start - w.end <= NEAR_PAY);
-    const afterAmount = facts.amounts.some((a) => a.span.end <= p.span.start && p.span.start - a.span.end <= NEAR_PAY);
+    if (scam.claimedSenderId && mobile) return false;
     return !afterPay && !afterAmount;
   };
   const pool = facts.phones.filter(
@@ -174,12 +210,28 @@ export function buildCard(args: {
   sender: Sender;
   lexicons?: ReadingLexicon[];
   region?: RegionConfig;
+  /** The rules' own reading, when another classifier answered: the guard keeps what it must not weaken. */
+  rules?: Understanding;
 }): Card {
   const { input, facts, scam, sender } = args;
   const lexicons = args.lexicons ?? [];
   const deadline = chooseDeadline(input, facts, lexicons);
-  const understanding = calibrateUrgency(args.understanding, deadline, input.receivedAt);
-  const amount = chooseAmount(input, facts, lexicons);
+  let understanding = args.understanding;
+  if (args.rules) {
+    const n = fold(input.text);
+    const pay = findTerms(n, collect(lexicons, (l) => l.scam.payVerbs));
+    const amountNearPay = facts.amounts.some((a) =>
+      pay.some((w) => (w.end <= a.span.start ? a.span.start - w.end : w.start - a.span.end) <= NEAR_PAY),
+    );
+    understanding = guardUnderstanding(understanding, args.rules, {
+      facts,
+      receivedAt: input.receivedAt,
+      amountNearPay,
+      scamLevel: scam.level,
+    });
+  }
+  understanding = calibrateUrgency(understanding, deadline, input.receivedAt);
+  const amount = chooseAmount(input, facts, lexicons, deadline);
   const preMode = unreadable(input.text) || understanding.confidence < CONFIDENCE_THRESHOLD;
   const contactPhone = chooseContact(input, facts, scam, sender, lexicons, args.region, !preMode);
   const reference = facts.references[0];
@@ -213,6 +265,7 @@ export function buildCard(args: {
     scam,
     mode,
   };
+  if (args.rules && args.rules.kind !== understanding.kind) card.rulesKind = args.rules.kind;
   if (degradedReason) card.degradedReason = degradedReason;
   // A fact that failed verification is never shown.
   if (ok) {

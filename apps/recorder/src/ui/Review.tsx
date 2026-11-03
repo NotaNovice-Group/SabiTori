@@ -3,7 +3,7 @@ import { Play, Pause, CheckCheck, Undo2, Info } from 'lucide-react';
 import { ITEMS, type CatalogItem } from '../lib/model';
 import { splitAtSlots, tokens } from '../lib/slots';
 import { itemState } from '../lib/status';
-import { toLanguagePack } from '../lib/pack';
+import { canReview, recordersOf, toLanguagePack } from '../lib/pack';
 import { EXAMPLE_SLOTS, renderWithSlots, type Playable } from '../lib/speechBridge';
 import { playUrl, stopPlayback } from '../lib/audio';
 import { useProject } from '../store';
@@ -82,7 +82,9 @@ export function Review() {
         <ul className="reviews">
           {shown.map(({ i, st }) => {
             const w = project.phrases[i.key]!;
-            const own = !!speaker && w.recordedBy === speaker.id;
+            // The reviewer must not have recorded ANY part of the phrase (not only the last recording).
+            const verdict = canReview(project, clips, i.key, speaker?.id);
+            const own = !!speaker && recordersOf(project, clips, i.key).has(speaker.id);
             const isPlaying = playing?.key === i.key;
             return (
               <li key={i.key} className="review">
@@ -112,8 +114,11 @@ export function Review() {
                 {own && st !== 'reviewed' && (
                   <p className="note note-quiet"><Info size={20} aria-hidden /> {speaker?.name} recorded this. Choose a different reviewer above.</p>
                 )}
+                {w.importedReviewed && st !== 'reviewed' && (
+                  <p className="note note-quiet"><Info size={20} aria-hidden /> The imported pack said this was reviewed, but not by whom. Listen again and mark it reviewed here.</p>
+                )}
                 <div className="review-actions">
-                  <Btn variant="primary" icon={CheckCheck} disabled={own || !speaker || st === 'reviewed'} onClick={() => setPhrase(i.key, (x) => ({ ...x, review: 'reviewed', reviewedBy: speaker?.id }))}>
+                  <Btn variant="primary" icon={CheckCheck} disabled={!verdict.ok || st === 'reviewed'} onClick={() => verdict.ok && setPhrase(i.key, (x) => ({ ...x, review: 'reviewed', reviewedBy: speaker?.id }))}>
                     {st === 'reviewed' ? 'Reviewed' : 'Mark as reviewed'}
                   </Btn>
                   <Btn icon={Undo2} disabled={!speaker || st === 'sent_back' || !(w.note ?? '').trim()} onClick={() => setPhrase(i.key, (x) => ({ ...x, review: 'sent_back' }))}>

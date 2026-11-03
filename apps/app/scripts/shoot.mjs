@@ -78,10 +78,13 @@ for (const c of combos) {
     if (full) await full.evaluate((el) => el.remove());
   };
   const scaleCss = c.scale !== 1 ? `html{font-size:${c.scale * 100}% !important}` : '';
-  const go = async (hash) => { await page.goto(base + hash); await page.reload(); if (scaleCss) await page.addStyleTag({ content: scaleCss }); await page.waitForSelector('h1', { state: 'attached' }); };
+  // A fresh document load for every screen, the way a person opens the app: never a reload after goto
+  // (a reload hides start-up bugs such as a first redirect that fires before the router listens).
+  const go = async (hash) => { await page.goto('about:blank'); await page.goto(base + hash); if (scaleCss) await page.addStyleTag({ content: scaleCss }); await page.waitForSelector('h1', { state: 'attached' }); };
 
-  // first run (no settings)
-  await go('#/welcome');
+  // first run (no settings), opened at the bare address: the language screen must appear by itself
+  await go('');
+  await page.waitForSelector('.welcome', { timeout: 15000 }).catch(() => { throw new Error(`${tag}: first run at "/" did not show the language screen`); });
   await shot('welcome-language');
   await page.goto(base + '#/mode'); await shot('welcome-mode');
 

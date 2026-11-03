@@ -3,7 +3,8 @@
  * normalise, apply the three linear heads, soften with a temperature and combine with the rules.
  * No I/O, no model: unit-testable.
  */
-import type { ActionKind, MessageKind, Understanding, Urgency } from '@sabitori/core';
+import type { ActionKind, Facts, IsoDate, MessageKind, Understanding, Urgency } from '@sabitori/core';
+import { guardUnderstanding } from '@sabitori/core';
 
 export const ENCODER_FIELDS = ['kind', 'action', 'urgency'] as const;
 export type EncoderField = (typeof ENCODER_FIELDS)[number];
@@ -82,18 +83,37 @@ export const DEFAULT_ENCODER_THRESHOLD = 0.6;
 
 const round2 = (x: number) => Math.round(x * 100) / 100;
 
+/** What the encoder must not contradict: the facts of the message, and whether it saw all of the text. */
+export interface CombineContext {
+  facts: Facts;
+  receivedAt: IsoDate;
+  /** The text was longer than the encoder's token budget: it read only the head, so its action and urgency are not trusted. */
+  truncated?: boolean;
+}
+
 /**
  * Combine the encoder with the rules, field by field. A field takes the encoder's label only when
  * the encoder's calibrated probability for it is at least `threshold`; otherwise the rules' label
  * stays. The result's confidence is the lowest confidence among the sources actually used, so a
  * card that leans on an unsure rule match still falls back to "facts only". Labels only: the
  * encoder cannot add, change or invent a fact (dates, amounts, phones, references come from code).
+ *
+ * With `ctx` the encoder also never contradicts the facts (see core's guardUnderstanding): "nothing to do"
+ * next to a future deadline or an amount keeps the rules' action, and urgency never falls below what the
+ * dates say. When the text was truncated the encoder's action and urgency are ignored: the part it did not
+ * read may hold the request.
  */
-export function combineWithRules(enc: EncoderLabels, rules: Understanding, threshold: Thresholds, id: string): Understanding {
+export function combineWithRules(
+  enc: EncoderLabels,
+  rules: Understanding,
+  threshold: Thresholds,
+  id: string,
+  ctx?: CombineContext,
+): Understanding {
   const at = (f: EncoderField) => (typeof threshold === 'number' ? threshold : threshold[f] ?? DEFAULT_ENCODER_THRESHOLD);
   const useKind = enc.kind.p >= at('kind');
-  const useAction = enc.action.p >= at('action');
-  const useUrgency = enc.urgency.p >= at('urgency');
+  const useAction = !ctx?.truncated && enc.action.p >= at('action');
+  const useUrgency = !ctx?.truncated && enc.urgency.p >= at('urgency');
   if (!useKind && !useAction && !useUrgency) return rules;
   const confs: number[] = [];
   const pick = <T extends string>(use: boolean, h: HeadResult, r: T): T => {
@@ -107,5 +127,8 @@ export function combineWithRules(enc: EncoderLabels, rules: Understanding, thres
   const kind = pick<MessageKind>(useKind, enc.kind, rules.kind);
   const action = pick<ActionKind>(useAction, enc.action, rules.action);
   const urgency = pick<Urgency>(useUrgency, enc.urgency, rules.urgency);
-  return { kind, action, urgency, confidence: round2(Math.min(...confs)), producedBy: id };
+  const combined: Understanding = { kind, action, urgency, confidence: round2(Math.min(...confs)), producedBy: id };
+  return ctx
+    ? guardUnderstanding(combined, rules, { facts: ctx.facts, receivedAt: ctx.receivedAt, amountNearPay: ctx.facts.amounts.length > 0 })
+    : combined;
 }

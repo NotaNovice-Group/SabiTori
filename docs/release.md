@@ -4,17 +4,17 @@ This is the step-by-step guide for a release of the Android app, and for publish
 
 ## 0. Known gaps in the repository (read first)
 
-Checked against the repository when this runbook was written. Fix or accept each one before the first release.
+Checked against the repository on 2026-11-02. Fix or accept each one before the first release.
 
-1. **There is no release workflow yet.** `.github/workflows/release.yml` does not exist. The secrets in section 4 are for that workflow, and they are needed once it is written. Until then the AAB is built by hand (section 5).
-2. **There is no keystore script yet.** `scripts/android-keystore.sh` does not exist. Section 3 uses `keytool` directly.
-3. **The release build is not signed.** `apps/app/android/app/build.gradle` has a `release` build type with no `signingConfig`. Add one that reads the four keystore values from environment variables before running `bundleRelease`.
-4. **Version numbers do not match 1.0.0.** `build.gradle` has `versionCode 1` and `versionName "1.0"`. `apps/app/package.json` has `"version": "0.1.0"`. Set `versionName "1.0.0"` and `version` to `1.0.0`, and keep the `versionCode` above any version already uploaded to Play.
-5. **Permissions are not yet in a commit.** The committed `AndroidManifest.xml` declares only `INTERNET`. The uncommitted work in the tree adds Capacitor plugins for the camera, local notifications and the share target. The merged manifest of the built release APK (`aapt dump permissions apps/app/android/app/build/outputs/apk/release/app-release-unsigned.apk`) lists five permissions: `INTERNET`, `CAMERA` (asked only when the person taps the camera button), `POST_NOTIFICATIONS` (asked only when the person taps "Remind me"), `RECEIVE_BOOT_COMPLETED` and `WAKE_LOCK`. The last two come from the `@capacitor/local-notifications` plugin, so that scheduled reminders survive a restart of the phone and can wake it to show a reminder. The same output also lists `cm.sabitori.app.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION`: an internal permission added by AndroidX that only this app can hold, not shown to users. `docs/privacy.md` section 6 and the Data safety form match this list. Re-run the command on the final bundle's APK, and update both if the list changes.
-6. **Official numbers are not verified.** Every entry in `regions/CM/region.json` has `"verified": false`. Do not publish until they are confirmed (section 1).
-7. **French text is still a draft.** `packs/fr/phrases.json` is marked `draft` until a native speaker reviews it (section 1).
-8. **Native work is uncommitted.** The camera, notifications, share target and splash screen files are in the working tree, not in a commit. The release must be built from a commit that includes them, and then tagged (section 10).
-9. **Two optional features need build settings.** Without `VITE_UPDATE_URL` and `VITE_UPDATE_PUBLIC_KEY`, updates are absent. Without `VITE_SENTRY_DSN`, crash reports are absent. Decide before the build which features the release offers.
+1. **Nothing has been released.** There is no tag, no GitHub Release, no Play listing and no user. The release workflow (`.github/workflows/release.yml`) runs only on a `v*` tag and has never run.
+2. **The repository is private.** The GPL written offer in `THIRD_PARTY_NOTICES.md` and every "work in the open" link need it to be public before a release.
+3. **Official numbers are not verified.** Every entry in `regions/CM/region.json` has `"verified": false`. Do not publish until they are confirmed (section 1).
+4. **French text is still a draft.** `packs/fr/phrases.json` is marked `draft` until a native speaker reviews it (section 1).
+5. **No update server exists.** Without `VITE_UPDATE_URL` and `VITE_UPDATE_PUBLIC_KEY`, updates are absent from the build, so the English Piper voice and new languages can be delivered by update only once an update server is set up. Without `VITE_SENTRY_DSN`, crash reports are absent. Decide before the build which features the release offers.
+6. **Nothing has been measured on a phone.** OCR, model and voice speed are only measured in headless Chromium with CPU throttling (`docs/model.md`). Section 1, "Device tests", must be done on real low-cost phones.
+7. **Owner decisions are open.** Every `[OWNER: ...]` marker is listed in `docs/OWNER-TODO.md`.
+
+Already in place (verified): the signed-release workflow (`.github/workflows/release.yml`, builds the AAB and APK from a tag with the secrets in section 4); the keystore script (`scripts/android-keystore.sh`, section 3); the release signing config in `apps/app/android/app/build.gradle` (used when the four keystore environment variables are set); version `1.0.0` in `apps/app/package.json`, which `build.gradle` uses as `versionName`; the permissions in the committed `AndroidManifest.xml` (`INTERNET`, `CAMERA`, `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`, plus `WAKE_LOCK` merged in from `@capacitor/local-notifications`). Re-check the merged manifest of the final bundle (`aapt dump permissions <apk>`) and keep `docs/privacy.md` section 6 and the Data safety form in line with it.
 
 ## 1. Pre-release checklist
 
@@ -30,8 +30,8 @@ Tick every line before you build the release.
 **Device tests** (README: "Test on real low-cost Android phones")
 
 - [ ] At least two low-cost Android phones, one of them near the oldest supported version (minSdk is 24, Android 7.0). [OWNER: device list.]
-- [ ] Offline voice works for French and English on each device.
-- [ ] Photo capture, OCR speed and the optional on-device model (if shipped) work at an acceptable speed.
+- [ ] Voice works for French (bundled Piper voice, and the phone voice as fallback) and English (phone voice) on each device, in airplane mode. Write down the time to first audio.
+- [ ] Photo capture, OCR speed and the bundled understanding model work at an acceptable speed. Measure seconds per photo and milliseconds per message on each phone and put them in `docs/model.md` and the README (today they say "not yet measured on a phone").
 - [ ] Airplane mode: the app reads a message completely with no network.
 - [ ] With "Send error reports" and "Get new languages" both off, the app makes no network request (check with a proxy or the device's network log).
 - [ ] With each feature on, requests go only to the update host and to Sentry, over HTTPS.
@@ -62,7 +62,7 @@ Tick every line before you build the release.
 
 ## 2. Play Console setup (one time)
 
-1. **Developer account.** Create or use the NotaNovice Group developer account. Organisation accounts need identity and organisation verification, which can take several days. [OWNER: Play Console account type, and whether the company verification is complete.]
+1. **Developer account.** Create or use the developer account of the publisher, [OWNER: publisher — individual founder or charitable vehicle]. Organisation accounts need identity and organisation verification, which can take several days. [OWNER: Play Console account type, and whether its verification is complete.]
 2. **Create the app.** Name `SabiTori`, default language English (United States) or French, app type App, free. [OWNER: default language.]
 3. **Package name.** `cm.sabitori.app` (from `applicationId` in `build.gradle`). It cannot be changed after the first upload.
 4. **Play App Signing.** Enrol in Play App Signing when prompted. Google keeps the app signing key. You keep only the upload key (section 3).
@@ -75,7 +75,7 @@ Tick every line before you build the release.
 
 Use an upload key that is separate from the app signing key, which Play keeps.
 
-Create the upload key once, on a trusted computer. Keep the keystore file outside the repository.
+Create the upload key once, on a trusted computer. Keep the keystore file outside the repository. `scripts/android-keystore.sh [directory]` does this (it refuses a directory inside the repository and prints the environment variables the build reads); the equivalent `keytool` command is:
 
 ```bash
 keytool -genkeypair -v \
@@ -91,7 +91,7 @@ keytool -genkeypair -v \
 
 ## 4. Secrets
 
-### For the app release (`.github/workflows/release.yml`, to be written)
+### For the app release (`.github/workflows/release.yml`)
 
 | Secret | What it is |
 | --- | --- |
@@ -128,8 +128,8 @@ cd android && ./gradlew bundleRelease
 ```
 
 - Use `bundleRelease` (an AAB), which Play requires. The README's `assembleDebug` builds a test APK only.
-- The signed bundle is at `apps/app/android/app/build/outputs/bundle/release/`. This needs the signing config from section 0, item 3.
-- Before uploading, check that the bundle's manifest declares only the permissions you expect (section 0, item 5).
+- The signed bundle is at `apps/app/android/app/build/outputs/bundle/release/`. It is signed only when the keystore environment variables are set (see `build.gradle` and section 3).
+- Before uploading, check that the bundle's manifest declares only the permissions you expect (section 0).
 
 ## 6. Sentry setup (only if crash reports are offered)
 
@@ -137,7 +137,7 @@ cd android && ./gradlew bundleRelease
 2. Choose the data region (EU or US) and write it in `docs/privacy.md` section 5.2 and in `docs/store/data-safety.md`.
 3. **Required:** in the project's Security & Privacy settings, enable "Prevent Storing of IP Addresses". The app sends no IP address in a report, but Sentry may record the sender's IP address unless this setting is on, and the privacy policy (section 5.2) and the Data safety form say it is handled this way. Do not copy the DSN into a release build until this is on. Tick it in the pre-release checklist.
 4. Set the retention period. Write it into the privacy policy (section 8) and the Data safety form.
-5. Sign the data processing agreement with Sentry, and keep a copy with the company records.
+5. Sign the data processing agreement with Sentry, and keep a copy with the publisher's records.
 6. Copy the DSN into `VITE_SENTRY_DSN` for the build.
 7. Test once with a deliberate error in a debug build, and check that the event has no message text, numbers or device model, no user and no session or replay data.
 

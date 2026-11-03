@@ -45,12 +45,15 @@ export function useRecorder() {
         setSt((s) => ({ ...s, saving: null, message: { id: info.id, text: 'We did not hear anything. Check the microphone, move closer and try again.', tone: 'warn' } }));
         return;
       }
-      await putClip({ id: info.id, blob: cap.blob, durationMs: cap.durationMs, text: info.text, speakerId: project.activeSpeakerId, ext: cap.ext, at: Date.now() });
-      if (info.phraseKey) setPhrase(info.phraseKey, (w) => ({ ...w, recordedBy: project.activeSpeakerId, review: w.review === 'reviewed' ? 'none' : w.review }));
+      const saved = await putClip({ id: info.id, blob: cap.blob, durationMs: cap.durationMs, text: info.text, speakerId: project.activeSpeakerId, ext: cap.ext, at: Date.now() });
+      // A new recording means the reviewer has to listen again (and the new recorder cannot be the reviewer).
+      if (info.phraseKey) setPhrase(info.phraseKey, (w) => ({ ...w, recordedBy: project.activeSpeakerId, review: w.review === 'reviewed' ? 'none' : w.review, reviewedBy: w.review === 'reviewed' ? undefined : w.reviewedBy }));
       setSt((s) => ({
         ...s,
         saving: null,
-        message: { id: info.id, text: cap.trimmedMs > 150 ? `Saved. Trimmed ${(cap.trimmedMs / 1000).toFixed(1)} s of silence.` : 'Saved.', tone: 'info' },
+        message: saved
+          ? { id: info.id, text: cap.trimmedMs > 150 ? `Saved. Trimmed ${(cap.trimmedMs / 1000).toFixed(1)} s of silence.` : 'Saved.', tone: 'info' }
+          : { id: info.id, text: 'Not saved on this device. Keep this page open and download the pack now.', tone: 'warn' },
       }));
     } catch {
       setSt((s) => ({ ...s, saving: null, message: { id: info.id, text: 'Could not save this recording. Try again.', tone: 'warn' } }));

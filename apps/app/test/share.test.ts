@@ -44,14 +44,17 @@ describe('share intake routing', () => {
     expect(d.setSharedText).not.toHaveBeenCalled();
   });
 
-  it('an image wins over text that came with it; non-images are ignored', async () => {
+  it('an image wins over text that came with it; a share of non-images only says so and cleans up', async () => {
     const d = deps();
     await routeShare({ texts: ['caption'], files: [{ uri: 'a', name: 'a.pdf', mimeType: 'application/pdf' }, { uri: 'b', name: 'b.png', mimeType: 'image/png' }] }, d);
     expect(d.loadImage).toHaveBeenCalledTimes(1);
     expect(d.navigate).toHaveBeenCalledWith('/capture?s=7');
-    const e = deps();
-    expect(await routeShare({ files: [{ uri: 'a', name: 'a.pdf', mimeType: 'application/pdf' }] }, e)).toBe('ignored');
-    expect(e.navigate).not.toHaveBeenCalled();
+    const setNotice = vi.fn();
+    const e = deps({ setNotice });
+    expect(await routeShare({ files: [{ uri: 'a', name: 'a.pdf', mimeType: 'application/pdf' }] }, e)).toBe('unsupported');
+    expect(e.navigate).toHaveBeenCalledWith('/?s=7');
+    expect(setNotice).toHaveBeenCalledWith('app.share.unsupported');
+    expect(e.done).toHaveBeenCalledTimes(1);
   });
 
   it('falls back to the text when the image cannot be read', async () => {

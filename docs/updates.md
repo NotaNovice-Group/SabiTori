@@ -34,21 +34,33 @@ The host must send `Access-Control-Allow-Origin: *` (GitHub Pages does; the publ
 }
 ```
 
+With `--per-language` (below), the root index also has a `languages` map: each language has its own file
+list `packs/<tag>/index.json`, pinned in the signed root index by size and sha256 (so the one signature
+covers every list). A phone downloads the lists, and so the files, only of the languages it asks for
+(`check({ tags })`); shared files (regions, `packs/index.json`) are always downloaded. A language listed
+under `languages` must not also have files in `files`.
+
 Rules the client enforces (all of them before a single file is kept):
 
 - The signature must verify with the public key pinned in the app build (`VITE_UPDATE_PUBLIC_KEY`).
 - `sequence` must not be lower than the installed one (rollback protection). Equal means "up to date".
-- Paths must match `^(packs|regions)/[a-z0-9_.\-/]+$`, contain no `..`, and be one of the files the
+- Paths must match `^(packs|regions)/[A-Za-z0-9_.\-/]+$`, contain no `..`, and be one of the files the
   app already reads: `packs/index.json`, `packs/<tag>/{manifest,phrases,rules,reading}.json`,
   `packs/<tag>/audio/index.json`, `packs/<tag>/audio/<clip>.webm|.m4a`,
   `packs/<tag>/voice/<model id>.onnx` and `.onnx.json` (Piper voices), `regions/<CODE>/region.json`.
-  Region codes are upper case (`CM`), so that one segment may use A-Z, as the app's own file does.
+  Region codes are upper case (`CM`). Pack tags follow the speech package's validators (BCP 47 shaped, for
+  example `fr`, `ewo`, `pcm-CM`) and clip names may use upper case (`currency.XAF`).
+- Every file's content is validated before it is staged, with the same validators the app uses to read
+  it (JSON shape of manifests, phrases, rules, reading lexicons, audio index, region, voice config). A
+  file that fails (for example bad JSON) fails the whole check with reason `bad_file` and the file's
+  path; nothing is installed.
 - At most 20 MB per file (80 MB for a `voice/*.onnx` model) and 300 MB in total (checked from the
   signed sizes, and again on download).
 
 ### Delivering a voice by update
 
-The app bundles only the voices in `SABITORI_BUNDLE_VOICES` (French by default). To give English its
+No update server is set up yet, so nothing is delivered this way today; a voice can be delivered once an
+update server is set up. The app bundles only the voices in `SABITORI_BUNDLE_VOICES` (French by default). To give English its
 Piper voice, or a language its community-trained voice, publish `packs/<tag>/voice/<id>.onnx` and
 `<id>.onnx.json` together with a `manifest.json` whose voice is `{ "kind": "tts", "engine": "piper",
 "voiceHint": "<id>" }`. On the next start the voice engine loads the downloaded copy; until both files
@@ -73,6 +85,11 @@ When it runs: only when the person turned it on, at most once a day, on app star
 background, and not when `navigator.connection.type` says the phone is on mobile data (unknown is
 allowed). Switching the feature on checks at once, and "Check now" in Settings always runs.
 
+At startup the app re-checks the installed set (`verifyActiveUpdates`, same validators). If a downloaded
+file is damaged or invalid, or the app cannot start with the update set active, it calls
+`quarantineActive`: the downloaded files stop being served and the bundled packs are used. The sequence
+is kept, so the same update is not installed again; the next newer update replaces the set.
+
 Switching the feature off stops the checks; the downloaded files stay in use. "Delete downloaded
 updates" (same group in Settings, with a confirmation) cancels any running check, forgets every
 downloaded file and the last-check memo: the app is back to its built-in languages, warnings and
@@ -95,6 +112,13 @@ Each update:
 ```bash
 UPDATE_SIGNING_KEY=<secret> node scripts/updates-publish.mjs --previous <previous index.json>
 ```
+
+Options: `--per-language` writes one file list per language (`packs/<tag>/index.json`, pinned by the
+signed root index) so phones download only their languages; without it the index lists every file
+(older app versions understand only that). `--voices en,lns` also publishes the Piper voice files (model
+and config) of those packs; voices are not published by default, because bundled voices ship inside the
+app and a model is tens of megabytes. The publisher checks every file with the same path and content
+validators as the app and refuses to publish (and sign) anything a phone would refuse to install.
 
 `--previous` is a path or an https URL of the index you published last; the new `sequence` is its
 sequence + 1. (Without it the sequence is 1 and phones that have a higher one ignore the update.)

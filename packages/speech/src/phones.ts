@@ -17,10 +17,20 @@ export function splitPhone(value: string, countryCode?: string): { cc?: string; 
 /** Longest digit string we will read (E.164 allows 15; short codes are shorter). */
 export const MAX_PHONE_DIGITS = 20;
 
+/** An international number ("+33612345678", "0033...") that is not from the region: its digits do not follow the region's grouping. */
+export function isForeignPhone(value: string, countryCode?: string): boolean {
+  if (!countryCode) return false;
+  const t = value.trim();
+  const digits = t.replace(/\D/g, '');
+  if (t.startsWith('+')) return !digits.startsWith(countryCode);
+  return digits.startsWith('00') && !digits.startsWith('00' + countryCode);
+}
+
 export function phoneTokens(rules: PackRules, value: string, countryCode?: string): Token[] {
   const pr = rules.phones;
   if (!pr) throw new SpeechRuleError('rules.phones is missing');
   if (typeof value !== 'string') throw new SpeechRuleError('phone value must be a string');
+  if (isForeignPhone(value, countryCode)) return foreignPhoneTokens(rules, value);
   const { cc, national } = splitPhone(value, countryCode);
   if (national.length === 0) throw new SpeechRuleError('phone has no digits');
   if (national.length > MAX_PHONE_DIGITS) throw new SpeechRuleError(`phone has too many digits (${national.length} > ${MAX_PHONE_DIGITS})`);
@@ -61,5 +71,24 @@ export function phoneTokens(rules: PackRules, value: string, countryCode?: strin
       if (zeros.length < g.length) out.push(...numberTokens(rules.numbers, Number(g)));
     }
   });
+  return out;
+}
+
+/**
+ * Numbers from another country are not grouped like the region's (a French mobile is not "3, 36, 12 ..."):
+ * the country code and the number are read digit by digit in groups of `phones.foreignGroupSize` (default 3).
+ */
+function foreignPhoneTokens(rules: PackRules, value: string): Token[] {
+  const pr = rules.phones!;
+  const digits = value.trim().replace(/\D/g, '').replace(/^00/, '');
+  if (digits.length === 0) throw new SpeechRuleError('phone has no digits');
+  if (digits.length > MAX_PHONE_DIGITS) throw new SpeechRuleError(`phone has too many digits (${digits.length} > ${MAX_PHONE_DIGITS})`);
+  const raw = (pr as { foreignGroupSize?: unknown }).foreignGroupSize;
+  const size = typeof raw === 'number' && Number.isInteger(raw) && raw >= 1 ? raw : 3;
+  const out: Token[] = [];
+  for (let i = 0; i < digits.length; i += size) {
+    if (i > 0 && pr.pause) out.push({ id: 'pause.short', text: pr.pause.text, glue: 'left', optional: true });
+    out.push(...digitTokens(rules.numbers, digits.slice(i, i + size)));
+  }
   return out;
 }

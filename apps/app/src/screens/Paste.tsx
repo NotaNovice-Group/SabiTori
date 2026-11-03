@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { rememberMessage } from '../lib/crash';
+import { rememberMessage, rememberNames } from '../lib/crash';
 import { ClipboardPaste } from 'lucide-react';
 import type { MessageInput } from '@sabitori/core';
 import { useApp } from '../app-context';
@@ -7,14 +7,17 @@ import { Screen } from '../components/Screen';
 import { SpeakingButton } from '../components/SpeakingButton';
 import { Segmented } from '../components/Segmented';
 import { navigate } from '../lib/router';
-import { session } from '../lib/session';
-import { buildInput } from '../lib/open';
+import { capText, session } from '../lib/session';
+import { buildInput, uniqueCard } from '../lib/open';
+import { todayIso } from '../lib/format';
 
 type Kind = 'name' | 'number' | 'unknown';
 
 export function PasteScreen() {
   const { t, engine, saveCard } = useApp();
   const [text, setText] = useState(() => session.takeSharedText() ?? '');
+  const [notice, setNotice] = useState(() => session.takeNotice());
+  const [failed, setFailed] = useState(false);
   useEffect(() => rememberMessage(text), []); // eslint-disable-line react-hooks/exhaustive-deps
   const [kind, setKind] = useState<Kind>('unknown');
   const [who, setWho] = useState('');
@@ -23,10 +26,18 @@ export function PasteScreen() {
   const go = async () => {
     if (!text.trim() || busy) return;
     setBusy(true);
-    const sender: MessageInput['sender'] = kind === 'unknown' || !who.trim() ? { kind: 'unknown' } : { kind, value: who.trim() };
-    const card = await engine.analyze(buildInput(text.trim(), 'paste', engine.region.code, sender));
-    await saveCard(card);
-    navigate(`/card/${card.id}`, { replace: true });
+    setFailed(false);
+    try {
+      const sender: MessageInput['sender'] = kind === 'unknown' || !who.trim() ? { kind: 'unknown' } : { kind, value: who.trim() };
+      rememberNames(who);
+      const card = uniqueCard(await engine.analyze(buildInput(capText(text.trim()).text, 'paste', engine.region.code, sender, todayIso(engine.region.timezone))));
+      // Storage that fails or never answers must not keep the person waiting: the card shows anyway.
+      if (!(await saveCard(card))) session.setNotice('app.card.not_saved');
+      navigate(`/card/${card.id}`, { replace: true });
+    } catch {
+      setFailed(true);
+      setBusy(false);
+    }
   };
 
   return (
@@ -38,7 +49,8 @@ export function PasteScreen() {
     >
       <div className="field">
         <label htmlFor="msg" className="field-label">{t('app.paste.label')}</label>
-        <textarea id="msg" className="textarea" value={text} onChange={(e) => { rememberMessage(e.target.value); setText(e.target.value); }} placeholder={t('app.paste.placeholder')} rows={7} />
+        <textarea id="msg" className="textarea" value={text} onChange={(e) => { const c = capText(e.target.value); rememberMessage(c.text); setText(c.text); setNotice(c.cut ? 'app.share.too_long' : null); }} placeholder={t('app.paste.placeholder')} rows={7} />
+        {notice && <p className="note" role="status">{t(notice)}</p>}
       </div>
       <div className="field">
         <span className="field-label" id="who-label">{t('app.paste.sender')}</span>
@@ -55,10 +67,11 @@ export function PasteScreen() {
         {kind !== 'unknown' && (
           <>
             <label htmlFor="who" className="field-sublabel">{t(kind === 'name' ? 'app.paste.sender.name_label' : 'app.paste.sender.number_label')}</label>
-            <input id="who" className="input" value={who} onChange={(e) => setWho(e.target.value)} inputMode={kind === 'number' ? 'tel' : 'text'} autoComplete="off" />
+            <input id="who" className="input" value={who} onChange={(e) => { rememberNames(e.target.value); setWho(e.target.value); }} inputMode={kind === 'number' ? 'tel' : 'text'} autoComplete="off" />
           </>
         )}
       </div>
+      {failed && <p className="error" role="alert">{t('app.capture.failed')}</p>}
     </Screen>
   );
 }

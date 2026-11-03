@@ -93,7 +93,9 @@ export function matchSender(
     for (const o of region.officialSenders) {
       if (!o.verified) continue;
       const ids = [...o.smsSenderIds, ...o.shortCodes].map(norm).filter(Boolean);
-      if (ids.includes(g)) return { sender: { officialId: o.id, displayName: o.displayName, verified: true } };
+      // A verified sender is still the company it names: its own helpline and codes stay recognisable.
+      if (ids.includes(g))
+        return { sender: { officialId: o.id, displayName: o.displayName, verified: true }, claimedSenderId: o.id };
     }
   }
 

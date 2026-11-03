@@ -13,7 +13,7 @@ English: [privacy.md](privacy.md)
 
 ## 1. Qui nous sommes
 
-SabiTori est publié par NotaNovice Group, [OWNER : raison sociale], [OWNER : adresse postale], Allemagne.
+SabiTori est publié par [OWNER : éditeur — fondateur à titre individuel ou structure à but non lucratif], [OWNER : adresse postale], Allemagne.
 Questions sur la vie privée : [OWNER : adresse e-mail de contact].
 Délégué à la protection des données : [OWNER : délégué à la protection des données, s'il est obligatoire ou désigné : nom et contact].
 
@@ -29,8 +29,8 @@ et les codes. Elle vous prévient lorsqu'un message pourrait être une arnaque. 
 message est sûr.
 
 SabiTori fonctionne hors ligne. Le français et l'anglais sont disponibles aujourd'hui. Le pidgin
-camerounais, le duala, l'ewondo, le fulfulde de l'Adamaoua, le lamnso', le limbum et le pinyin sont en
-cours d'enregistrement avec des locuteurs natifs. Ils seront ajoutés par mise à jour, dès qu'ils seront prêts.
+camerounais, le duala, l'ewondo, le fulfulde de l'Adamaoua, le lamnso', le limbum et le pinyin attendent
+des locuteurs natifs pour les traduire et les enregistrer. En attendant, ils parlent français ou anglais.
 
 ## 3. Ce qui reste sur votre téléphone
 

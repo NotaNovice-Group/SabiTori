@@ -41,7 +41,7 @@ export default [
   g('mobile_money', 'pay', { sg: ['wrong_transfer'], from: 'num' }, [
     (c) => `Sista abeg, I don mistake send ${c.A(10000, 60000, 500)} give you. Return am for ${c.sn}, I beg.`,
   ]),
-  g('mobile_money', 'pay', { sg: ['prize_fee', 'pay_to_personal_number', 'sender_mismatch'], from: 'num' }, [
+  g('telecom', 'pay', { sg: ['prize_fee', 'pay_to_personal_number', 'sender_mismatch'], from: 'num' }, [ // imitates an MTN promotion: telecom, like the fr/en prize-draw scams
     (c) => `Congrats! You don win ${c.A(500000, 3000000, 500000)} for MTN promo. Make you send ${c.A(5000, 20000, 5000)} for transport fee to ${c.sn} so dem go send am give you.`,
   ]),
   g('mobile_money', 'reply', { sg: ['asks_pin', 'account_block_threat', 'sender_mismatch'], from: 'num' }, [
@@ -70,7 +70,7 @@ export default [
   g('telecom', 'nothing', { src: 'whatsapp', from: 'name:Ma broda Patrice Fictif' }, [
     (c) => `Data don finish for my phone but I don buy new one. E don work now.`,
   ]),
-  g('telecom', 'reply', { from: 'MTN Cameroon' }, [
+  g('telecom', 'nothing', { from: 'MTN Cameroon' }, [ // a genuine opt-in promotion: nothing owed
     (c) => `MTN: You don win bonus 100%. Reply YES make we activate am.`,
   ]),
   g('telecom', 'go_to_place', { src: 'whatsapp', due: 's', from: 'name:Sista Brenda Fictif' }, [

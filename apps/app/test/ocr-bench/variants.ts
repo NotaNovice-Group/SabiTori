@@ -51,6 +51,16 @@ export const VARIANT_SETS: Record<string, Variant[]> = {
     { name: 'best_int (4.0.0_best_int)', prep: PREP_DEFAULT, retry: true, langPath: process.env.OCR_DIR_BEST_INT },
     { name: 'fast (tessdata_fast)', prep: PREP_DEFAULT, retry: true, langPath: process.env.OCR_DIR_FAST },
   ],
+  /** Review 3: dark-mode detection at working resolution (both rows) and the capped half-turn retry. Run with OCR_PAR=1. */
+  review3: [
+    { name: 'default fra+eng +retry (every page < 55)', prep: PREP_DEFAULT, retry: true },
+    { name: 'default fra+eng +capped retry (shipped)', prep: PREP_DEFAULT, retry: 'capped' },
+  ],
+  /** The reviewer's SMS screenshots (light, dark, dark without a bubble): OCR_BENCH=screens OCR_BENCH_DIR=screens. */
+  screens: [
+    { name: 'screens: default +capped retry', prep: PREP_DEFAULT, retry: 'capped' },
+    { name: 'screens: no invert step', prep: { ...PREP_DEFAULT, invert: false }, retry: 'capped' },
+  ],
   timing: [
     { name: 'legacy fra+eng', prep: 'legacy' },
     { name: 'default fra+eng +retry', prep: PREP_DEFAULT, retry: true },

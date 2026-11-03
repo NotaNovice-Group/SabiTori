@@ -1,6 +1,8 @@
 import 'fake-indexeddb/auto';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { signBytes } from '@sabitori/connect';
 
 const keysP = vi.hoisted(async () => {
@@ -23,7 +25,9 @@ const sha = (b: Uint8Array) => createHash('sha256').update(b).digest('hex');
 
 /** A signed site; `hold` makes one file wait until released, so a check can be interrupted mid-way. */
 function site(sequence: number, hold?: string) {
-  const content: Record<string, Uint8Array> = { 'packs/fr/phrases.json': enc.encode('{"v":' + sequence + '}'), 'regions/CM/region.json': enc.encode('{"code":"CM"}') };
+  // Real pack and region files (the client checks their content before installing); the sequence changes the bytes.
+  const repo = (p: string) => readFileSync(resolve(__dirname, '../../..', p), 'utf8');
+  const content: Record<string, Uint8Array> = { 'packs/fr/phrases.json': enc.encode(repo('packs/fr/phrases.json') + ' '.repeat(sequence)), 'regions/CM/region.json': enc.encode(repo('regions/CM/region.json')) };
   const index = enc.encode(JSON.stringify({ formatVersion: 1, channel: 'stable', sequence, issuedAt: '2026-10-31T10:00:00Z', files: Object.entries(content).map(([path, b]) => ({ path, sha256: sha(b), size: b.length })) }));
   const files = new Map<string, Uint8Array>([...Object.entries(content), ['index.json', index], ['index.json.sig', enc.encode(signBytes(index, keys.secretKey))]]);
   const urls: string[] = [];

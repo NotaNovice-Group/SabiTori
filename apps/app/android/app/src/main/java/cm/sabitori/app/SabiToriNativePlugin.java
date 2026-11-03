@@ -10,9 +10,35 @@ import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
 import java.io.File;
 
-/** Two small things Capacitor has no plugin for: open this app's system settings, and clean up shared files. */
+/** Small things Capacitor has no plugin for: open this app's system settings, clean up shared files, report filtered shares. */
 @CapacitorPlugin(name = "SabiToriNative")
 public class SabiToriNativePlugin extends Plugin {
+
+    private static int shareTooBig = 0;
+    private static int shareNotImage = 0;
+    private static int shareMore = 0;
+
+    /** Set by MainActivity.filterShare for the share it just handed on. */
+    static synchronized void setShareNotes(int tooBig, int notImage, int more) {
+        shareTooBig = tooBig;
+        shareNotImage = notImage;
+        shareMore = more;
+    }
+
+    /** What the activity left out of the last share, then forgets it. */
+    @PluginMethod
+    public void takeShareNotes(PluginCall call) {
+        JSObject r = new JSObject();
+        synchronized (SabiToriNativePlugin.class) {
+            r.put("tooBig", shareTooBig);
+            r.put("notImage", shareNotImage);
+            r.put("more", shareMore);
+            shareTooBig = 0;
+            shareNotImage = 0;
+            shareMore = 0;
+        }
+        call.resolve(r);
+    }
 
     @PluginMethod
     public void openSettings(PluginCall call) {

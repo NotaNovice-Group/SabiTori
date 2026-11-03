@@ -167,6 +167,8 @@ export interface Card {
   amount?: Fact<Money>;
   contactPhone?: Fact<string>;
   reference?: Fact<string>;
+  /** What the rules alone read the message as, when another classifier answered. Safety text (balance check) keys on it. */
+  rulesKind?: MessageKind;
   /** 'facts_only' when confidence is low or verification failed. */
   mode: 'full' | 'facts_only';
   /** Why the card is facts-only, for debugging and evaluation. */

@@ -13,10 +13,13 @@ export function createMemoryStore(): UpdateStore & TestHooks {
       return state ? structuredClone(state) : null;
     },
     async getFile(path) {
-      return active.get(path) ?? null;
+      return state?.quarantined ? null : (active.get(path) ?? null);
     },
     async hasFile(path) {
-      return active.has(path);
+      return !state?.quarantined && active.has(path);
+    },
+    async quarantine(reason) {
+      if (state) state = { ...state, quarantined: { at: new Date().toISOString(), reason } };
     },
     async getStaged(path) {
       return staging.get(path) ?? null;

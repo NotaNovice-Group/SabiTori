@@ -13,7 +13,7 @@ Français: [privacy.fr.md](privacy.fr.md)
 
 ## 1. Who we are
 
-SabiTori is published by NotaNovice Group, [OWNER: legal name], [OWNER: postal address], Germany.
+SabiTori is published by [OWNER: publisher — individual founder or charitable vehicle], [OWNER: postal address], Germany.
 Questions about privacy: [OWNER: contact email].
 Data protection officer: [OWNER: data protection officer, if one is required or appointed: name and contact].
 
@@ -28,8 +28,8 @@ language. It finds dates, amounts, phone numbers and codes. It warns you when a 
 scam. It never says that a message is safe.
 
 SabiTori works offline. French and English are spoken now. Cameroonian Pidgin, Duala, Ewondo,
-Adamawa Fulfulde, Lamnso', Limbum and Pinyin are being recorded with native speakers. They will be
-added as updates when they are ready.
+Adamawa Fulfulde, Lamnso', Limbum and Pinyin are waiting for native speakers to translate and record
+them. Until then they speak French or English.
 
 ## 3. What stays on your phone
 

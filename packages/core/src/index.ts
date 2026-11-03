@@ -10,5 +10,7 @@ export { matchSender } from './sender.js';
 export { assessScam } from './scam.js';
 export { createRulesClassifier } from './classifier.js';
 export { buildCard, CONFIDENCE_THRESHOLD } from './card.js';
+export { guardUnderstanding, nearestFutureDays } from './guard.js';
+export type { GuardContext } from './guard.js';
 export { buildSpeechPlan } from './speech-plan.js';
 export { analyze } from './analyze.js';

@@ -13,7 +13,7 @@ function frenchName(tag: string): string | undefined {
 
 /** Languages the region offers: autonym large, names small, honest note while a voice is still being recorded. */
 export function LanguageList({ onPick }: { onPick?: (tag: string) => void }) {
-  const { languages, settings, setSettings, say, t, manifest } = useApp();
+  const { languages, settings, setSettings, say, t, manifest, spokenIn } = useApp();
   const pick = (m: PackManifest) => {
     setSettings({ lang: m.tag });
     say('ui.welcome', undefined, m.tag);
@@ -24,8 +24,12 @@ export function LanguageList({ onPick }: { onPick?: (tag: string) => void }) {
     <ul className="langs">
       {languages.map((m) => {
         const chosen = settings.lang === m.tag;
-        const soon = m.status === 'in_recording' || m.status === 'planned';
-        const meanwhile = soon ? manifest(m.fallback[0] ?? 'fr')?.autonym : undefined;
+        // The note names the language the engine really speaks for this one (its fallback chain, as rendered),
+        // not the first fallback the manifest lists, which may itself not be ready.
+        const spoken = spokenIn[m.tag];
+        const fellBack = !!spoken && spoken !== m.tag;
+        const soon = m.status === 'in_recording' || m.status === 'planned' || fellBack;
+        const meanwhile = fellBack ? manifest(spoken)?.autonym : undefined;
         const fr = frenchName(m.tag);
         return (
           <li key={m.tag} className="lang" data-chosen={chosen || undefined}>
@@ -38,7 +42,7 @@ export function LanguageList({ onPick }: { onPick?: (tag: string) => void }) {
                 <span lang="en">{m.name}</span>
                 {fr && fr !== m.name && <> · <span lang="fr">{fr}</span></>}
               </span>
-              {soon && <span className="lang-note">{t('app.lang.soon', { name: meanwhile ?? 'Français' })}</span>}
+              {soon && (meanwhile ? <span className="lang-note">{t('app.lang.soon', { name: meanwhile })}</span> : <span className="lang-note">{t('app.lang.soon_plain')}</span>)}
             </button>
             <button type="button" className="btn btn-round lang-play" aria-label={`${t('ui.listen')}: ${m.autonym}`} onClick={() => say('ui.welcome', undefined, m.tag)}>
               <span className="round-ic"><Play size={24} strokeWidth={2} aria-hidden /></span>

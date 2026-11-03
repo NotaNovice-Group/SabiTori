@@ -159,7 +159,8 @@ describe('Piper TTS backend: never silent', () => {
     await p;
     expect(fb.spoken).toEqual([{ text: 'Bonjour.', bcp47: 'fr-FR', rate: 1 }]);
     expect(events).toContainEqual(expect.objectContaining({ reason: 'first-synthesis-slow' }));
-    expect(tts.disabled).toBe(true);
+    expect(tts.disabled).toBe(false); // only this voice is off, not Piper as a whole
+    expect([...tts.disabledVoices]).toEqual([VOICE.id]);
     expect(eng.disposed).toBe(true);
     await tts.speak({ text: 'Suite.', bcp47: 'fr-FR', rate: 1 });
     expect(fb.spoken).toHaveLength(2);

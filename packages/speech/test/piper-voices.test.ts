@@ -7,7 +7,7 @@ const m = (tag: string, voice: PackManifest['voice']): PackManifest => ({ format
 describe('piperVoiceFromManifest', () => {
   it('points at packs/<tag>/voice/<model id>.onnx(.json)', () => {
     const v = piperVoiceFromManifest(m('fr', { kind: 'tts', engine: 'piper', bcp47: 'fr-FR', voiceHint: 'fr_FR-siwis-low' }), './packs/');
-    expect(v).toEqual({ id: 'fr:fr_FR-siwis-low', modelUrl: './packs/fr/voice/fr_FR-siwis-low.onnx', configUrl: './packs/fr/voice/fr_FR-siwis-low.onnx.json' });
+    expect(v).toEqual({ id: 'fr:fr_FR-siwis-low', modelUrl: './packs/fr/voice/fr_FR-siwis-low.onnx', configUrl: './packs/fr/voice/fr_FR-siwis-low.onnx.json', version: '0.1.0' });
   });
   it('defaults the model id to the pack tag and refuses path tricks in voiceHint', () => {
     expect(piperVoiceFromManifest(m('ewo', { kind: 'tts', engine: 'piper', bcp47: 'ewo' }), 'p')!.modelUrl).toBe('p/ewo/voice/ewo.onnx');

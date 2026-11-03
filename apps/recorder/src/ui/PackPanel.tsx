@@ -1,21 +1,25 @@
 import { useMemo, useState } from 'react';
 import { Download, TriangleAlert, CircleCheck } from 'lucide-react';
 import { totals } from '../lib/status';
-import { exportPackZip } from '../lib/pack';
+import { exportPackZip, exportableClips } from '../lib/pack';
 import { useProject } from '../store';
 import { Bar, Btn } from './bits';
 import { FallbackPicker, LicensePicker, SpeakersEditor } from './Forms';
 import { useAtomIds } from './Atoms';
 import { MARK_NAMES } from '../lib/model';
+import { neutralRules } from '../lib/starter';
 
 export function PackPanel({ onClose }: { onClose: () => void }) {
-  const { project, clips, update } = useProject();
+  const { project, clips, update, markExported, persisted } = useProject();
   const t = totals(project, clips);
   const atomIds = useAtomIds();
   const atomsDone = atomIds.filter((id) => clips.has(id)).length;
-  const [notes, setNotes] = useState(true);
+  // Off by default: working notes are for continuing the work, never for the pack (see lib/pack.ts).
+  const [notes, setNotes] = useState(false);
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<string>('');
+  const [warnings, setWarnings] = useState<string[]>([]);
+  const blocked = useMemo(() => exportableClips(project, clips).blocked, [project, clips]);
   const rulesErr = useMemo(() => {
     if (!project.rulesText?.trim()) return '';
     try {
@@ -30,15 +34,22 @@ export function PackPanel({ onClose }: { onClose: () => void }) {
     setBusy(true);
     try {
       const atoms = atomIds.filter((id) => clips.has(id));
-      const { bytes, version } = await exportPackZip(project, clips, { includeNotes: notes, atomIds: atoms });
+      const { bytes, version, warnings: w, workingCopy } = await exportPackZip(project, clips, { includeNotes: notes, atomIds: atoms });
       update((p) => ({ ...p, version }));
+      markExported();
+      setWarnings(w);
       const url = URL.createObjectURL(new Blob([bytes as BlobPart], { type: 'application/zip' }));
       const a = document.createElement('a');
       a.href = url;
-      a.download = `${project.tag}-${version}.zip`;
+      const name = workingCopy ? `${project.tag}-${version}-working-copy.zip` : `${project.tag}-${version}.zip`;
+      a.download = name;
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 5000);
-      setDone(`${project.tag}-${version}.zip is in your downloads. Unzip it into packs/${project.tag}/ in the SabiTori project.`);
+      setDone(
+        workingCopy
+          ? `${name} is in your downloads. It is for opening here again: do NOT put it in packs/ or publish it.`
+          : `${name} is in your downloads. Unzip it into packs/${project.tag}/ in the SabiTori project.`,
+      );
     } finally {
       setBusy(false);
     }
@@ -77,10 +88,13 @@ export function PackPanel({ onClose }: { onClose: () => void }) {
           </section>
           <section className="block" aria-labelledby="rules-h">
             <h2 id="rules-h">Number and date rules</h2>
-            <p className="help">Advanced. A maintainer can paste rules.json here, so the Numbers page lists the words to record. It is saved in the pack only when you fill it in.</p>
+            <p className="help">Advanced. A maintainer can paste rules.json here, so the Numbers page lists the words to record. A pack always has a rules.json: when this is empty or not valid, a minimal one (the digits) is saved.</p>
             <label className="sr" htmlFor="rules">rules.json</label>
             <textarea id="rules" className="field code" rows={6} spellCheck={false} value={project.rulesText ?? ''} placeholder='{ "formatVersion": 1 }' onChange={(e) => update((p) => ({ ...p, rulesText: e.target.value || undefined }))} />
-            {rulesErr && <p className="note note-warn" role="alert"><TriangleAlert size={20} aria-hidden /> {rulesErr}. It will not be exported until fixed.</p>}
+            <Btn variant="quiet" onClick={() => update((p) => ({ ...p, rulesText: JSON.stringify(neutralRules(), null, 2) }))}>
+              Replace with the neutral starting rules
+            </Btn>
+            {rulesErr && <p className="note note-warn" role="alert"><TriangleAlert size={20} aria-hidden /> {rulesErr}. The pack gets the minimal rules until this is fixed.</p>}
           </section>
           <section className="block" aria-labelledby="pal-h">
             <h2 id="pal-h">Letters</h2>
@@ -118,13 +132,22 @@ export function PackPanel({ onClose }: { onClose: () => void }) {
           </fieldset>
           <label className="check">
             <input type="checkbox" checked={notes} onChange={(e) => setNotes(e.target.checked)} />
-            <span>Include working notes (consent, review notes, letters) so this zip can be opened here again. Remove before publishing if you prefer.</span>
+            <span>Make a working copy instead, with review notes and letters, so this zip can be opened here again with its review status. It lists only the people who agreed to be named. Never put a working copy in the pack or publish it.</span>
           </label>
           <Btn variant="primary" icon={Download} className="wide" onClick={doExport} disabled={busy || t.written === 0}>
             {busy ? 'Preparing' : 'Download pack .zip'}
           </Btn>
           {t.written === 0 && <p className="help">Write at least one phrase first.</p>}
+          {blocked.length > 0 && (
+            <p className="note note-warn" role="status">
+              <TriangleAlert size={20} aria-hidden /> {blocked.length} recording{blocked.length === 1 ? '' : 's'} will be left out: the speaker has not agreed to have their voice published. Tick it under People.
+            </p>
+          )}
           {done && <p className="note note-ok" role="status"><CircleCheck size={20} aria-hidden /> {done}</p>}
+          {warnings.map((w) => (
+            <p key={w} className="note note-warn" role="alert"><TriangleAlert size={20} aria-hidden /> {w}</p>
+          ))}
+          {persisted === false && <p className="note note-warn" role="status"><TriangleAlert size={20} aria-hidden /> This browser may clear your recordings if the phone runs short of space. Download the pack often.</p>}
           <Btn variant="plain" onClick={onClose} className="wide">Switch language or open a file</Btn>
         </aside>
       </div>

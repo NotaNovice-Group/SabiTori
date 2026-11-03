@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import { Camera, Images } from 'lucide-react';
+import { Camera, ClipboardPaste, Images } from 'lucide-react';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
 import { SpeakingButton } from '../components/SpeakingButton';
 import { navigate } from '../lib/router';
 import { session } from '../lib/session';
-import { buildInput } from '../lib/open';
+import { buildInput, uniqueCard } from '../lib/open';
 import { isSharp, measureSharpness } from '../lib/sharpness';
-import { recognise } from '../lib/ocr';
+import { ocrSupported, recognise, OcrUnsupportedError } from '../lib/ocr';
+import { todayIso } from '../lib/format';
 import { rememberMessage } from '../lib/crash';
 import { isNative } from '../lib/native';
 import { useNativePhoto } from '../components/PhotoPicker';
 
-type Phase = 'checking' | 'blurry' | 'reading' | 'empty' | 'error';
+type Phase = 'checking' | 'blurry' | 'reading' | 'empty' | 'error' | 'unsupported';
 
 export function CaptureScreen() {
   const { t, say, engine, saveCard } = useApp();
@@ -21,6 +22,7 @@ export function CaptureScreen() {
   const [phase, setPhase] = useState<Phase>('checking');
   const [progress, setProgress] = useState(0);
   const [forced, setForced] = useState(0);
+  const [notice] = useState(() => session.takeNotice());
   const input = useRef<HTMLInputElement>(null);
   const native = isNative();
   const photo = useNativePhoto((f) => { setForced(0); setFile(f); });
@@ -35,8 +37,11 @@ export function CaptureScreen() {
   useEffect(() => {
     if (!file) return;
     let live = true;
+    const abort = new AbortController();
     (async () => {
       try {
+        // Say it before the sharpness check: no photo can be read on this phone, whatever its quality.
+        if (!ocrSupported()) throw new OcrUnsupportedError();
         if (forced === 0) {
           setPhase('checking');
           const v = await measureSharpness(file);
@@ -49,7 +54,7 @@ export function CaptureScreen() {
         }
         setPhase('reading');
         setProgress(0);
-        const text = await recognise(file, (f) => live && setProgress(f));
+        const text = await recognise(file, (f) => live && setProgress(f), { signal: abort.signal, countFacts: (x) => engine.countFacts(x) });
         rememberMessage(text);
         if (!live) return;
         if (text.replace(/\s/g, '').length < 12) {
@@ -57,15 +62,21 @@ export function CaptureScreen() {
           say('ui.retake');
           return;
         }
-        const card = await engine.analyze(buildInput(text, 'photo', engine.region.code));
+        const card = uniqueCard(await engine.analyze(buildInput(text, 'photo', engine.region.code, undefined, todayIso(engine.region.timezone))));
         if (!live) return;
-        await saveCard(card);
+        if (!(await saveCard(card))) session.setNotice('app.card.not_saved');
+        if (!live) return;
         navigate(`/card/${card.id}`, { replace: true });
-      } catch {
-        if (live) setPhase('error');
+      } catch (e) {
+        if (!live) return;
+        if (e instanceof OcrUnsupportedError) {
+          setPhase('unsupported');
+          say('app.capture.no_ocr');
+        } else setPhase('error');
       }
     })();
-    return () => { live = false; };
+    // Leaving the screen, or a new photo, cancels this reading (and frees the OCR worker for the next).
+    return () => { live = false; abort.abort(); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [file, forced]);
 
@@ -75,13 +86,14 @@ export function CaptureScreen() {
     if (f) { setForced(0); setFile(f); }
   };
 
-  const failed = phase === 'blurry' || phase === 'empty' || phase === 'error';
+  const failed = phase === 'blurry' || phase === 'empty' || phase === 'error' || phase === 'unsupported';
   const busy = phase === 'checking' || phase === 'reading';
   const status =
     phase === 'checking' ? t('app.capture.checking')
     : phase === 'reading' ? t('ui.reading')
     : phase === 'blurry' ? t('ui.retake')
     : phase === 'empty' ? t('app.capture.empty')
+    : phase === 'unsupported' ? t('app.capture.no_ocr')
     : t('app.capture.failed');
 
   return (
@@ -90,7 +102,9 @@ export function CaptureScreen() {
       back={() => navigate('/')}
       className="capture"
       dock={
-        failed ? (
+        phase === 'unsupported' ? (
+          <SpeakingButton speakKey="ui.paste" variant="primary" className="btn-block" icon={<ClipboardPaste size={24} strokeWidth={2} aria-hidden />} onAct={() => navigate('/paste', { replace: true })} />
+        ) : failed ? (
           <>
             <input ref={input} type="file" accept="image/*" capture="environment" hidden onChange={retake} tabIndex={-1} />
             <SpeakingButton speakKey="app.capture.again" variant="hero" className="btn-block" icon={<Camera size={32} strokeWidth={2} aria-hidden />} onAct={() => (native ? void photo.pick('camera') : input.current?.click())} />
@@ -102,6 +116,7 @@ export function CaptureScreen() {
     >
       {url && <img className="preview" src={url} alt="" data-busy={busy || undefined} />}
       <p className="status" role="status" aria-live="polite" data-failed={failed || undefined}>{status}</p>
+      {notice && <p className="note" role="note">{t(notice)}</p>}
       {phase === 'reading' && (
         <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)} aria-label={t('ui.reading')}>
           <span style={{ width: `${Math.max(4, progress * 100)}%` }} />

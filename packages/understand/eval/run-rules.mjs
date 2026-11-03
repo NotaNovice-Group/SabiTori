@@ -2,12 +2,13 @@
 //
 // Run from the repository root (vite-node transpiles the TypeScript sources of @sabitori/core on the fly):
 //   node node_modules/.pnpm/vite-node@3.2.4/node_modules/vite-node/vite-node.mjs packages/understand/eval/run-rules.mjs
-// Options: --split=test|train|all (default test)   --no-write (print only, do not write results-rules.md)
+// Options: --split=test|train|all|unseen (default test; unseen reads unseen.jsonl)   --no-write (print only, do not write results-rules.md)
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { assessScam, createRulesClassifier, extractFacts } from '../../core/src/index.ts';
 import { evaluate } from '../src/evaluate.ts';
+import { accuracyCI, fmtCI, RESAMPLES, SEED } from './stats.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..', '..', '..');
@@ -19,7 +20,7 @@ const arg = (name, dflt) => (process.argv.find((a) => a.startsWith(`--${name}=`)
 const splitArg = arg('split', 'test');
 const write = !process.argv.includes('--no-write');
 
-const rows = readFileSync(join(here, 'messages.jsonl'), 'utf8')
+const rows = readFileSync(join(here, splitArg === 'unseen' ? 'unseen.jsonl' : 'messages.jsonl'), 'utf8')
   .split('\n')
   .filter(Boolean)
   .map((l) => JSON.parse(l))
@@ -37,6 +38,19 @@ async function evalRows(subset) {
     classifier,
     subset.map((r) => ({ id: r.id, input: toInput(r), facts: factsOf(r), expected: r.expected })),
   );
+}
+
+/** Per-row 0/1 correctness for each field, all three, and the scam level (for bootstrap intervals). */
+async function okRows(subset) {
+  const ok = { kind: [], action: [], urgency: [], all: [], scam: [] };
+  for (const r of subset) {
+    const u = await classifier.classify(toInput(r), factsOf(r));
+    let all = 1;
+    for (const f of ['kind', 'action', 'urgency']) { const k = u[f] === r.expected[f] ? 1 : 0; ok[f].push(k); all &= k; }
+    ok.all.push(all);
+    ok.scam.push(assessScam(toInput(r), factsOf(r), region, lexicons).level === r.scam ? 1 : 0);
+  }
+  return Object.fromEntries(Object.entries(ok).map(([k, v]) => [k, accuracyCI(v)]));
 }
 
 const SCAM_LEVELS = ['likely_scam', 'caution', 'no_signs'];
@@ -69,28 +83,31 @@ P('# Rules baseline results');
 P();
 P(`Classifier: \`${classifier.id}\` (region CM, lexicons fr + en, no \`wes\` lexicon exists yet). Split: \`${splitArg}\` (${rows.length} messages).`);
 P('Regenerate: see the header of `run-rules.mjs`. Deterministic: same dataset gives the same numbers.');
+P(`Brackets: 95% percentile bootstrap interval over messages (${RESAMPLES} resamples, seed ${SEED}; \`stats.mjs\`). The published comparison with the encoder is in \`results-encoder.md\` / \`results.json\`.`);
 P();
 P('## Accuracy');
 P();
-P('| Field | Accuracy |');
+const ci = await okRows(rows);
+P('| Field | Accuracy [95% CI] |');
 P('|---|---|');
-for (const f of ['kind', 'action', 'urgency']) P(`| ${f} | ${pct(rep.accuracy[f])} |`);
-P(`| all three right | ${pct(rep.accuracyAll)} |`);
-P(`| scam level (assessScam) | ${pct(scam.acc)} |`);
+for (const f of ['kind', 'action', 'urgency']) P(`| ${f} | ${fmtCI(ci[f])} |`);
+P(`| all three right | ${fmtCI(ci.all)} |`);
+P(`| scam level (assessScam) | ${fmtCI(ci.scam)} |`);
 P();
 P(`Mean rules confidence: ${rep.meanConfidence.toFixed(2)}. Classifier errors: ${rep.errors}.`);
 P();
 
 P('## By language');
 P();
-P('| Lang | n | kind | action | urgency | all three | scam level |');
+P('| Lang | n | kind | action | urgency | all three [95% CI] | scam level |');
 P('|---|---|---|---|---|---|---|');
 for (const lang of ['fr', 'en', 'wes']) {
   const sub = rows.filter((r) => r.lang === lang);
   if (!sub.length) continue;
   const r = await evalRows(sub);
   const s = scamEval(sub);
-  P(`| ${lang} | ${sub.length} | ${pct(r.accuracy.kind)} | ${pct(r.accuracy.action)} | ${pct(r.accuracy.urgency)} | ${pct(r.accuracyAll)} | ${pct(s.acc)} |`);
+  const c = await okRows(sub);
+  P(`| ${lang} | ${sub.length} | ${pct(r.accuracy.kind)} | ${pct(r.accuracy.action)} | ${pct(r.accuracy.urgency)} | ${fmtCI(c.all)} | ${pct(s.acc)} |`);
 }
 P();
 
@@ -144,7 +161,7 @@ for (const f of ['kind', 'action', 'urgency']) {
 }
 P();
 
-if (splitArg !== 'all') {
+if (splitArg === 'test' || splitArg === 'train') {
   const all = JSON.parse(JSON.stringify(rep.accuracy));
   const full = await evalRows(readFileSync(join(here, 'messages.jsonl'), 'utf8').split('\n').filter(Boolean).map((l) => JSON.parse(l)));
   P('## For reference: all 320 messages');

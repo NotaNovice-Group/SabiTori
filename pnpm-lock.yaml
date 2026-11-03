@@ -35,9 +35,6 @@ importers:
       '@capgo/capacitor-share-target':
         specifier: ^8.0.64
         version: 8.0.64(@capacitor/core@8.6.0)
-      '@fontsource/andika':
-        specifier: ^5.3.0
-        version: 5.3.0
       '@sabitori/connect':
         specifier: workspace:*
         version: link:../../packages/connect
@@ -163,6 +160,9 @@ importers:
       '@noble/hashes':
         specifier: ^2.4.0
         version: 2.4.0
+      '@sabitori/speech':
+        specifier: workspace:*
+        version: link:../speech
     devDependencies:
       fake-indexeddb:
         specifier: ^6.2.7

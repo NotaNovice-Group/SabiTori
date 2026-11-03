@@ -27,9 +27,9 @@ export function createOverlayFetch(store: UpdateStore, bundledFetch: FetchFn): F
  * For audio clips, which the player gives to <audio src>. Returns a blob: URL for a clip that is in
  * the active update set, else null (play the bundled URL). Blob URLs are kept for the session.
  */
-export function createOverlayClipResolver(store: UpdateStore): (url: string) => Promise<string | null> {
+export function createOverlayClipResolver(store: UpdateStore): ((url: string) => Promise<string | null>) & { reset(): void } {
   const urls = new Map<string, string>();
-  return async (url) => {
+  const resolve = async (url: string): Promise<string | null> => {
     const path = updatePathOfUrl(url);
     if (!path || typeof URL.createObjectURL !== 'function') return null;
     const hit = urls.get(path);
@@ -44,4 +44,16 @@ export function createOverlayClipResolver(store: UpdateStore): (url: string) => 
       return null;
     }
   };
+  /** Forget (and release) the blob URLs: call after quarantineActive or clearUpdates so clips are read from the bundled files again. */
+  resolve.reset = (): void => {
+    for (const u of urls.values()) {
+      try {
+        URL.revokeObjectURL(u);
+      } catch {
+        /* nothing to release */
+      }
+    }
+    urls.clear();
+  };
+  return resolve;
 }

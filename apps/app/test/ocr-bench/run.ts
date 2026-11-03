@@ -69,8 +69,9 @@ export interface Variant {
   prep: Partial<PrepOptions> | 'legacy';
   langs?: string[] | ((e: TruthEntry) => string[]);
   psm?: string;
-  /** use the app's low-confidence half-turn retry */
-  retry?: boolean;
+  /** use the app's half-turn retry: true = every page under 55 % confidence (the rule before review 3);
+   *  'capped' = what recognise() ships now (under 40 %, or under 55 % with fewer than 2 facts) */
+  retry?: boolean | 'capped';
   /** directory holding <lang>.traineddata.gz (default: the app's public/ocr) */
   langPath?: string;
 }
@@ -182,7 +183,9 @@ export async function runVariant(v: Variant, entries: TruthEntry[], dir: string,
           const e = list[next++]!;
           const p = prepped.get(e.id)!;
           const t0 = performance.now();
-          const text = v.retry ? (await recogniseGrey(w as never, p.grey, toPng)).text : (await w.recognize(p.png)).data.text;
+          const text = v.retry
+            ? (await recogniseGrey(w as never, p.grey, toPng, v.retry === 'capped' ? { countFacts: (t) => factKeys(t).size } : {})).text
+            : (await w.recognize(p.png)).data.text;
           const ocrMs = performance.now() - t0;
           results.set(e.id, {
             id: e.id,

@@ -2,7 +2,7 @@ import type { Classifier, Facts, MessageInput, Understanding } from '@sabitori/c
 import { ACTION_KINDS, MESSAGE_KINDS, URGENCIES } from '@sabitori/core';
 import { applyHeads, combineWithRules, DEFAULT_ENCODER_THRESHOLD, type HeadsFile, type Thresholds } from './encoder-math.js';
 
-export const ENCODER_ID = 'minilm-l12-int8@1';
+export const ENCODER_ID = 'minilm-l12-int8@2';
 export const ENCODER_MODEL_FILE = 'encoder.int8.onnx';
 /** Files the encoder needs, relative to baseUrl. */
 export const ENCODER_FILES = [ENCODER_MODEL_FILE, 'tokenizer.json', 'heads.json'] as const;
@@ -54,6 +54,8 @@ export interface Encoder {
   embed(text: string): Promise<Float32Array>;
   /** Token ids used for `text` (for tests and diagnostics). */
   tokenize(text: string): number[];
+  /** True when `text` is longer than the token budget, so the embedding covers only its head. */
+  isTruncated(text: string): boolean;
   heads: HeadsFile;
 }
 
@@ -96,6 +98,7 @@ export async function loadEncoder(opts: Pick<EncoderClassifierOptions, 'baseUrl'
   return {
     heads,
     tokenize,
+    isTruncated: (text: string) => tokenizer.encode(text).ids.length > ENCODER_MAX_TOKENS,
     async embed(text: string) {
       const ids = tokenize(text);
       const input_ids = new ort.Tensor('int64', BigInt64Array.from(ids, (x) => BigInt(x)), [1, ids.length]);
@@ -144,7 +147,10 @@ export async function createEncoderClassifier(opts: EncoderClassifierOptions): P
       });
       queue = run.catch(() => undefined);
       const [labels, rules] = await Promise.all([run, opts.fallback.classify(input, facts)]);
-      return labels ? combineWithRules(labels, rules, threshold, id) : rules;
+      // Head-only reading: when the text was cut at the token budget the encoder's action and urgency are
+      // ignored (the cut-off part may hold the request or the deadline); the rules read all of it.
+      const truncated = labels ? enc.isTruncated(input.text) : false;
+      return labels ? combineWithRules(labels, rules, threshold, id, { facts, receivedAt: input.receivedAt, truncated }) : rules;
     },
   };
 }

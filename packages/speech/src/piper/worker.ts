@@ -5,6 +5,7 @@
  * apps/app/vite.config.ts) and the trimmed espeak-ng wasm + data under `<assetBase>` (scripts/piper-assets.mjs). Nothing is fetched from a network origin other than the app's own.
  */
 import { createPiperRuntime, type LoadedVoice, type OrtLike, type PhonemizerLike } from './runtime.js';
+import { voiceKey } from './engine.js';
 import type { WorkerRequest, WorkerResponse } from './worker-protocol.js';
 
 interface EmscriptenModule {
@@ -77,7 +78,7 @@ scope.onmessage = (e) => {
         const ort = await ortP;
         const rt = createPiperRuntime({ ort, loadPhonemizer: sharedPhonemizer, fetchBytes });
         const p = rt.load(msg.voice);
-        voices.set(msg.voice.id, p);
+        voices.set(voiceKey(msg.voice), p);
         await p;
         reply({ id: msg.id, ok: true });
       } else if (msg.type === 'synth') {
