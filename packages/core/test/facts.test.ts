@@ -56,6 +56,14 @@ describe('dates', () => {
 });
 
 describe('amounts', () => {
+  it('reads an all-zero minor unit as exact, and still refuses real decimals', () => {
+    expect(amounts('Montant: 18 450,00 FCFA')).toEqual([18450]);
+    expect(amounts('Total 18.450,00 F CFA')).toEqual([18450]);
+    expect(amounts('Total 18,450.00 XAF')).toEqual([18450]);
+    expect(amounts('Total 2 500,0 FCFA')).toEqual([2500]);
+    expect(amounts('Prix 15,50 FCFA')).toEqual([]);
+    expect(amounts('Prix 1 250,5 FCFA')).toEqual([]);
+  });
   it('reads the usual Cameroonian spellings', () => {
     expect(amounts('15 000 FCFA')).toEqual([15000]);
     expect(amounts('15.000 F CFA')).toEqual([15000]);
