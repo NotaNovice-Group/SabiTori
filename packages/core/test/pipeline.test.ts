@@ -296,6 +296,25 @@ describe('classifier', () => {
     const u = await c.classify(msg(t), extractFacts(t, ctx));
     expect(u.urgency).toBe('urgent');
   });
+  it('a dated task within 7 days is urgent (day 7 counts); day 8 and later is soon', async () => {
+    const c = createRulesClassifier(region, lexicons);
+    // received 2026-10-31
+    for (const [date, want] of [['6 novembre 2026', 'urgent'], ['7 novembre 2026', 'urgent'], ['8 novembre 2026', 'soon'], ['20 novembre 2026', 'soon']] as const) {
+      const t = `Votre facture eau: payer 5 000 FCFA avant le ${date}.`;
+      expect((await c.classify(msg(t), extractFacts(t, ctx))).urgency, date).toBe(want);
+    }
+  });
+  it('an information notice with a date stays info (planned cut, statement)', async () => {
+    const c = createRulesClassifier(region, lexicons);
+    for (const t of [
+      "ENEO: Coupure d'électricité programmée le 02-11-2026 de 8h à 16h au quartier Akwa pour travaux. Veuillez nous excuser pour la gêne.",
+      'CAMWATER: There will be no water supply on 03/11/2026 in Bastos because of repairs. Thank you for your understanding.',
+    ]) {
+      const u = await c.classify(msg(t), extractFacts(t, ctx));
+      expect(u.action, t).toBe('nothing');
+      expect(u.urgency, t).toBe('info');
+    }
+  });
 });
 
 describe('card builder', () => {

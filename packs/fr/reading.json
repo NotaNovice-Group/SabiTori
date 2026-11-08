@@ -517,7 +517,13 @@
       "facture est disponible",
       "facture disponible",
       "à régler",
-      "réglez"
+      "réglez",
+      "frais de déblocage",
+      "frais de dossier",
+      "frais d'inscription",
+      "frais d'activation",
+      "pour l'inscription",
+      "pour débloquer"
     ],
     "collect": [
       "retirer",
@@ -534,7 +540,15 @@
       "disponible pour retrait",
       "prête pour retrait",
       "peut être retirée",
-      "retrait de votre carte"
+      "retrait de votre carte",
+      "le chercher",
+      "retrait au",
+      "résultats disponibles",
+      "résultats du",
+      "consultez vos résultats",
+      "consultez votre numéro",
+      "la chercher",
+      "les chercher"
     ],
     "go_to_place": [
       "rendez-vous",
@@ -556,7 +570,14 @@
       "venir à",
       "à l'hôpital",
       "à la clinique",
-      "à l'école"
+      "à l'école",
+      "est invité",
+      "sont invités",
+      "êtes invité",
+      "réunion",
+      "présence obligatoire",
+      "venez",
+      "rendez-vous à"
     ],
     "bring_document": [
       "apporter",
@@ -596,7 +617,13 @@
       "répondez par",
       "tapez",
       "répondre par sms",
-      "confirmez par"
+      "confirmez par",
+      "dictez",
+      "en réponse",
+      "envoyez votre code",
+      "envoyez votre mot de passe",
+      "donnez-nous",
+      "communiquez-nous"
     ],
     "take_medicine": [
       "prenez",
@@ -632,7 +659,17 @@
       "retrait effectué",
       "dépôt effectué",
       "paiement confirmé",
-      "bien été enregistré"
+      "bien été enregistré",
+      "relevé de compte",
+      "est disponible dans votre application",
+      "effectué ce jour",
+      "coupure programmée",
+      "coupure d'électricité programmée",
+      "veuillez nous excuser",
+      "merci pour votre compréhension",
+      "nous vous remercions de votre compréhension",
+      "pour consulter votre solde",
+      "prélèvement des frais"
     ]
   },
   "urgency": {

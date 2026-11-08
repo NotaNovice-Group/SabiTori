@@ -39,9 +39,15 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       spans, real dates, whole positive amounts, E.164 phones), 300 through the whole pipeline, 10 pathological
       inputs under 3 s each, 400 OCR-style bill variants. Found and fixed: "18 450,00 FCFA" (all-zero minor unit)
       was not read; real decimals ("15,50") are still refused. Rules eval unchanged.
-- [ ] **Unseen-set accuracy.** Find the most common error classes on `eval` unseen messages (41% all-three
-      right) and fix them in rules or training data without touching the unseen set itself. Re-run and publish
-      the new numbers with the eval script only.
+- [x] **Rules accuracy.** Errors studied on the TRAIN split only; the unseen set was measured, never inspected.
+      Rules now use the 7-day urgent window of the labels and the card; information notices stay `info`; more fr/en
+      action phrases. All three right, rules alone: test 44.8% -> 51.0%, unseen 25.0% -> 30.0%; encoder + rules:
+      test 69.8% -> 75.0%, unseen 41.0% -> 46.0% (regenerated with `run-rules.mjs`, `run-encoder.mjs`, `model-card.mjs`).
+- [ ] **Re-select encoder thresholds after the rules change.** `run-encoder.mjs --select-threshold` (train OOF only)
+      now prefers different action/urgency thresholds; re-select, sync `apps/app/public/models/minilm/heads.json`,
+      re-run the published results. Also update the grant draft's numbers (owner's Claude Doc) afterwards.
+- [ ] **Pidgin reading words.** `wes` messages score lowest (rules have no Pidgin lexicon). Add a draft `packs/wes`
+      reading lexicon (marked unreviewed) and measure; native review needed before it is called done.
 - [ ] **Scam detection breadth.** Add test cases and rules for current Cameroonian scam patterns already
       described in the region data (fake MoMo reversal, prize fee, account block, fake agent number), each with
       a negative twin (the real message) so false alarms are measured too.
@@ -69,3 +75,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-08 | #8 | Model download cut on the web: quiet fallback and retry instead of an uncaught abort (encoder and Piper worker) | 1,363 unit + 9 e2e passed |
 | 2026-11-08 | #9 | e2e: web reminder (.ics) and photo through OCR to a card | 1,363 unit + 11 e2e passed |
 | 2026-11-08 | #10 | Fuzz/property tests for fact extraction; amounts written with ",00" are now read | 1,377 unit + 11 e2e passed |
+| 2026-11-08 | #11 | Rules: 7-day urgent window, info notices stay info, more fr/en action phrases; published results regenerated | 1,379 unit + 11 e2e passed |

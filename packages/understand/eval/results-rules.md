@@ -9,9 +9,9 @@ Brackets: 95% percentile bootstrap interval over messages (10000 resamples, seed
 | Field | Accuracy [95% CI] |
 |---|---|
 | kind | 86.5% [79.2–92.7] |
-| action | 64.6% [55.2–74.0] |
-| urgency | 76.0% [66.7–84.4] |
-| all three right | 44.8% [34.4–54.2] |
+| action | 66.7% [57.3–76.0] |
+| urgency | 87.5% [80.2–93.8] |
+| all three right | 51.0% [40.6–61.5] |
 | scam level (assessScam) | 94.8% [89.6–99.0] |
 
 Mean rules confidence: 0.66. Classifier errors: 0.
@@ -20,9 +20,9 @@ Mean rules confidence: 0.66. Classifier errors: 0.
 
 | Lang | n | kind | action | urgency | all three [95% CI] | scam level |
 |---|---|---|---|---|---|---|
-| fr | 38 | 84.2% | 65.8% | 78.9% | 42.1% [26.3–57.9] | 94.7% |
-| en | 43 | 93.0% | 74.4% | 79.1% | 58.1% [44.2–72.1] | 93.0% |
-| wes | 15 | 73.3% | 33.3% | 60.0% | 13.3% [0.0–33.3] | 100.0% |
+| fr | 38 | 84.2% | 65.8% | 89.5% | 50.0% [34.2–65.8] | 94.7% |
+| en | 43 | 93.0% | 76.7% | 90.7% | 62.8% [48.8–76.7] | 93.0% |
+| wes | 15 | 73.3% | 40.0% | 73.3% | 20.0% [0.0–40.0] | 100.0% |
 
 ## Scam level confusion (rows = expected, columns = predicted)
 
@@ -50,8 +50,8 @@ Any warning on scam/caution messages: 21/22 (95.5%). Warning on no-signs message
 ### action
 
 - pay -> unclear: 12
-- nothing -> unclear: 7
-- go_to_place -> unclear: 5
+- nothing -> unclear: 6
+- go_to_place -> unclear: 4
 - reply -> unclear: 3
 - call -> go_to_place: 2
 - nothing -> pay: 2
@@ -60,10 +60,10 @@ Any warning on scam/caution messages: 21/22 (95.5%). Warning on no-signs message
 
 ### urgency
 
-- urgent -> soon: 11
-- info -> soon: 7
-- info -> urgent: 3
+- info -> soon: 5
+- info -> urgent: 4
 - urgent -> info: 2
+- urgent -> soon: 1
 
 ### scam level
 
@@ -98,8 +98,8 @@ Any warning on scam/caution messages: 21/22 (95.5%). Warning on no-signs message
 | bring_document | 9 | 88.9% |
 | call | 8 | 75.0% |
 | collect | 7 | 100.0% |
-| go_to_place | 11 | 54.5% |
-| nothing | 19 | 52.6% |
+| go_to_place | 11 | 63.6% |
+| nothing | 19 | 57.9% |
 | pay | 23 | 43.5% |
 | reply | 9 | 66.7% |
 | take_medicine | 4 | 100.0% |
@@ -109,10 +109,10 @@ Any warning on scam/caution messages: 21/22 (95.5%). Warning on no-signs message
 
 | Label | n | recall |
 |---|---|---|
-| info | 54 | 81.5% |
+| info | 54 | 83.3% |
 | soon | 18 | 100.0% |
-| urgent | 24 | 45.8% |
+| urgent | 24 | 87.5% |
 
 ## For reference: all 320 messages
 
-kind 86.9%, action 62.2%, urgency 78.4%, all three 44.4% (rules need no training, so train and test are comparable).
+kind 86.9%, action 71.9%, urgency 91.9%, all three 57.8% (rules need no training, so train and test are comparable).
