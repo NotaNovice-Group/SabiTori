@@ -20,9 +20,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 
 ## Backlog (top first)
 
-- [ ] **Release workflow without secrets.** `release.yml` should stop with one clear message when the four
-      signing secrets are missing, and the CI workflow should build an unsigned release APK as a downloadable
-      artifact on every push to `main`.
+- [x] **Release workflow without secrets.** `release.yml` now stops in its first step, naming the missing
+      signing secrets, instead of after a full test and build. (An unsigned release APK artifact was dropped:
+      it cannot be installed; CI already uploads the debug APK.)
 - [ ] **End-to-end tests of the built app.** Playwright against the production web build: first run, language
       choice, paste a bill, card spoken in order (scam first), facts-only path, likely-scam path, offline (no
       network requests at all), reminders. Run in CI.
@@ -52,3 +52,5 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 
 | Date (UTC) | PR | What changed | Tests |
 | --- | --- | --- | --- |
+| 2026-11-08 | #5 | Loop plan; fixed a flaky crash-report test (random Sentry ids); `scripts/ci-local.sh` gate | 1,362 passed |
+| 2026-11-08 | #6 | `release.yml` fails fast with the names of missing signing secrets | 1,362 passed |
