@@ -13,6 +13,9 @@ import type { ReadingLexicon } from './reading.js';
 import { collect, countTerms, daysBetween, fold, hasTerm } from './text.js';
 import { channelSpans, matchSender } from './sender.js';
 
+/** A dated task within this many days is urgent (day 7 counts): the card's calibration and the eval labels. */
+const URGENT_WITHIN_DAYS = 7;
+
 /** Order used to break ties between actions with the same score. */
 const ACTION_PRIORITY: ActionKind[] = [
   'pay',
@@ -79,9 +82,10 @@ export function createRulesClassifier(region: RegionConfig, lexicons: ReadingLex
       let urgency: Urgency = 'info';
       const future = facts.dates.map((d) => daysBetween(input.receivedAt, d.value)).filter((x) => x >= 0);
       if (promo) urgency = 'info';
-      else if (hasTerm(n, collect(lexicons, (l) => l.urgency.urgent))) urgency = 'urgent';
-      else if (future.length && Math.min(...future) <= 2 && action !== 'nothing') urgency = 'urgent';
-      else if (hasTerm(n, collect(lexicons, (l) => l.urgency.soon)) || (future.length > 0 && action !== 'nothing'))
+      // An information notice ("coupure programmée ... veuillez nous excuser") asks for nothing: its alarm words do not make it urgent.
+      else if (action !== 'nothing' && hasTerm(n, collect(lexicons, (l) => l.urgency.urgent))) urgency = 'urgent';
+      else if (future.length && Math.min(...future) <= URGENT_WITHIN_DAYS && action !== 'nothing') urgency = 'urgent';
+      else if (action !== 'nothing' && (hasTerm(n, collect(lexicons, (l) => l.urgency.soon)) || future.length > 0))
         urgency = 'soon';
 
       return { kind, action, urgency, confidence: Math.round(confidence * 100) / 100, producedBy: 'rules@1' };

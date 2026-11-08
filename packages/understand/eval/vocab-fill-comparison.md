@@ -1,5 +1,8 @@
 # frequency fill (shipped) vs Unigram-score fill (before)
 
+Measured on 2026-11-02 with the rules lexicons of that day. Later rules changes move the absolute numbers; the current
+published results are in `results.json` / `results-encoder.md`. This file only records the vocabulary comparison.
+
 ## test (n=96)
 
 | System | field | frequency fill (shipped) | Unigram-score fill (before) | frequency fill (shipped) - Unigram-score fill (before) |

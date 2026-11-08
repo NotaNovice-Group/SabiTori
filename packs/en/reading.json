@@ -475,7 +475,13 @@
       "payment due date",
       "avoid disconnection",
       "bill is available",
-      "please settle"
+      "please settle",
+      "release fee",
+      "activation fee",
+      "file fee",
+      "registration fee",
+      "processing fee",
+      "for registration"
     ],
     "collect": [
       "collect",
@@ -488,7 +494,12 @@
       "come and collect",
       "can be collected",
       "withdraw your",
-      "ready for pick up"
+      "ready for pick up",
+      "results are out",
+      "check your results",
+      "candidate number",
+      "is available at",
+      "come for it"
     ],
     "go_to_place": [
       "appointment",
@@ -507,7 +518,13 @@
       "at the clinic",
       "at the school",
       "you are expected",
-      "attend"
+      "attend",
+      "is invited",
+      "are invited",
+      "invited to",
+      "meeting",
+      "attendance is compulsory",
+      "come as soon as possible"
     ],
     "bring_document": [
       "bring",
@@ -544,7 +561,12 @@
       "reply with",
       "text back",
       "reply yes",
-      "reply stop"
+      "reply stop",
+      "tell us the",
+      "send your pin",
+      "send your password",
+      "in reply",
+      "give us the"
     ],
     "take_medicine": [
       "take",
@@ -580,7 +602,18 @@
       "withdrawal successful",
       "deposit successful",
       "payment confirmed",
-      "has been recorded"
+      "has been recorded",
+      "account statement",
+      "is available in your app",
+      "was debited",
+      "debited today",
+      "planned power cut",
+      "no water supply",
+      "we apologise",
+      "we apologize",
+      "thank you for your understanding",
+      "to check your",
+      "withdrawal of"
     ]
   },
   "urgency": {
