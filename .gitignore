@@ -30,3 +30,7 @@ apps/app/public/piper/
 
 # Recorder working notes: never commit or ship them
 packs/**/recorder-notes.json
+
+# Playwright
+apps/app/test-results/
+apps/app/playwright-report/

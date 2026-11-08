@@ -28,6 +28,27 @@ jobs:
       - run: pnpm -r typecheck
       - run: node scripts/check-packs.mjs
 
+  e2e:
+    name: End-to-end (browser)
+    needs: test
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: pnpm/action-setup@v4.1.0
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build the web app
+        run: pnpm --filter @sabitori/app build
+      - name: Install Chromium
+        working-directory: apps/app
+        run: npx playwright install --with-deps chromium
+      - name: Run end-to-end tests
+        working-directory: apps/app
+        run: pnpm e2e
+
   android-debug:
     name: Android debug build
     needs: test
