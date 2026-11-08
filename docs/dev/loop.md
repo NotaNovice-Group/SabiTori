@@ -7,6 +7,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 ## Rules every run follows
 
 - One focused change per PR, branch `loop/<short-name>`, merged only when CI is green.
+- If GitHub Actions cannot start ("an Actions budget is preventing further use"), the gate is
+  `scripts/ci-local.sh` (the same steps as `ci.yml`, Android build included). Merge only when every step
+  prints PASS, and paste its output into the PR as a comment. Any other CI failure must be fixed.
 - Never touch signing keys, secrets, release tags or `.github/workflows/release.yml` secrets handling.
 - Never write a number into docs that was not produced by a run in this repository; never claim users,
   partners, pilots or recordings that do not exist. `[OWNER]` placeholders stay until the owner fills them.
