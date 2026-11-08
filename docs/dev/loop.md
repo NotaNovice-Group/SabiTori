@@ -35,8 +35,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       onnxruntime wasm themselves and hand it over, so a failed download is a normal error (rules and the phone's
       voice answer) instead of an uncaught abort; both retry later (the encoder also when the browser comes back
       online). Covered by a unit test and an e2e test that blocks the wasm.
-- [ ] **Fact extraction fuzzing.** Property tests for amounts, dates, phones and USSD codes on noisy OCR-like
-      input (spacing, O/0, l/1, cut lines). Every fact must keep a valid span; nothing may throw.
+- [x] **Fact extraction fuzzing.** `packages/core/test/fuzz.test.ts`: 1,500 seeded noisy inputs (no throw, exact
+      spans, real dates, whole positive amounts, E.164 phones), 300 through the whole pipeline, 10 pathological
+      inputs under 3 s each, 400 OCR-style bill variants. Found and fixed: "18 450,00 FCFA" (all-zero minor unit)
+      was not read; real decimals ("15,50") are still refused. Rules eval unchanged.
 - [ ] **Unseen-set accuracy.** Find the most common error classes on `eval` unseen messages (41% all-three
       right) and fix them in rules or training data without touching the unseen set itself. Re-run and publish
       the new numbers with the eval script only.
@@ -66,3 +68,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-08 | #7 | Playwright end-to-end tests of the built app (8 flows), run in CI and the local gate | 1,362 unit + 8 e2e passed |
 | 2026-11-08 | #8 | Model download cut on the web: quiet fallback and retry instead of an uncaught abort (encoder and Piper worker) | 1,363 unit + 9 e2e passed |
 | 2026-11-08 | #9 | e2e: web reminder (.ics) and photo through OCR to a card | 1,363 unit + 11 e2e passed |
+| 2026-11-08 | #10 | Fuzz/property tests for fact extraction; amounts written with ",00" are now read | 1,377 unit + 11 e2e passed |

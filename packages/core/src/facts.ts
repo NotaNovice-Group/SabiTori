@@ -355,7 +355,10 @@ function extractAmounts(text: string, norm0: string, ctx: FactsContext, blocked:
       l.length + r.length === 3 ? `${l}${JOIN}${r}` : all,
     );
   const cands: { start: number; end: number; amount: number }[] = [];
-  const add = (start: number, end: number, rawNum: string, aliasText = '') => {
+  const add = (start: number, end: number, rawNum0: string, aliasText = '') => {
+    // An all-zero minor unit is exact ("18 450,00 FCFA" on an invoice is 18 450); drop it before the checks.
+    // Real decimals ("15,50") are still refused below: FCFA has no minor unit and an amount is never rounded.
+    const rawNum = rawNum0.replace(new RegExp(`(?<=\\d)[.,]0{1,2}$`), '');
     const digits = rawNum.replace(/\D/g, '');
     // The one-letter alias ("F") needs real money digits: 3+ digits, not a bare year ("2026 F"), or a thousands group.
     if (/^\p{L}$/u.test(aliasText.replace(/[\s:]+/g, ''))) {
