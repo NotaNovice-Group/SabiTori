@@ -143,3 +143,12 @@ test('a card can be deleted and is gone from history', async ({ page }) => {
   await page.goto(url.slice(url.indexOf('#')));
   await expect(page.locator('.note')).toBeVisible();
 });
+
+test('when the model cannot download (first web visit, network lost), the rules answer quietly', async ({ page }) => {
+  const { errors } = await setup(page);
+  await page.route('**/ort/*.wasm', (r) => r.abort('internetdisconnected'));
+  await paste(page, BILL);
+  await expect(page.locator('.card')).toHaveAttribute('data-mode', 'full');
+  await page.waitForTimeout(1500);
+  expect(errors).toEqual([]);
+});

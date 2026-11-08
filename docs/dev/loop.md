@@ -28,9 +28,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       on screen and first in speech, no money section), offline after load, no request to another host, delete.
 - [ ] **End-to-end: reminders and photo capture.** Reminder set and cancel on a card with a deadline; a photo
       through OCR to a card (slow: keep it in a separate, tagged test).
-- [ ] **Web: network lost while the model downloads.** On a first web visit, going offline while
-      `ort-wasm-simd-threaded.wasm` loads raises an uncaught "Aborted(NetworkError ...)" page error (found by the
-      e2e offline test). The card still comes from the rules; catch it so it is a quiet fallback and add a test.
+- [x] **Web: network lost while the model downloads.** The encoder and the Piper worker now fetch the
+      onnxruntime wasm themselves and hand it over, so a failed download is a normal error (rules and the phone's
+      voice answer) instead of an uncaught abort; both retry later (the encoder also when the browser comes back
+      online). Covered by a unit test and an e2e test that blocks the wasm.
 - [ ] **Fact extraction fuzzing.** Property tests for amounts, dates, phones and USSD codes on noisy OCR-like
       input (spacing, O/0, l/1, cut lines). Every fact must keep a valid span; nothing may throw.
 - [ ] **Unseen-set accuracy.** Find the most common error classes on `eval` unseen messages (41% all-three
@@ -60,3 +61,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-08 | #5 | Loop plan; fixed a flaky crash-report test (random Sentry ids); `scripts/ci-local.sh` gate | 1,362 passed |
 | 2026-11-08 | #6 | `release.yml` fails fast with the names of missing signing secrets | 1,362 passed |
 | 2026-11-08 | #7 | Playwright end-to-end tests of the built app (8 flows), run in CI and the local gate | 1,362 unit + 8 e2e passed |
+| 2026-11-08 | #8 | Model download cut on the web: quiet fallback and retry instead of an uncaught abort (encoder and Piper worker) | 1,363 unit + 9 e2e passed |

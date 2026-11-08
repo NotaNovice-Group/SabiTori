@@ -28,4 +28,16 @@ describe('built-in encoder controller', () => {
     expect((await c.classifier.classify(input, facts)).kind).toBe('water_bill');
     vi.unstubAllGlobals();
   });
+  it('tries again on a later init after a failure (for example once the network is back)', async () => {
+    let calls = 0;
+    vi.stubGlobal('fetch', async () => (calls++, new Response('nope', { status: 503 })));
+    const c = createEncoderController(rules, './');
+    await c.init();
+    const first = calls;
+    expect(first).toBeGreaterThan(0);
+    await c.init();
+    expect(calls).toBeGreaterThan(first);
+    expect(c.state().status).toBe('failed');
+    vi.unstubAllGlobals();
+  });
 });

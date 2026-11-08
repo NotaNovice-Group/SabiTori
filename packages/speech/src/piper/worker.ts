@@ -33,6 +33,9 @@ async function loadOrt(): Promise<OrtLike> {
   ort.env.wasm.wasmPaths = ortBase;
   ort.env.wasm.numThreads = 1; // single thread: works without cross-origin isolation
   ort.env.wasm.proxy = false;
+  // Fetch the wasm ourselves: a failed download (network lost on a first web visit) is then a normal,
+  // catchable error here instead of an uncaught "Aborted(NetworkError ...)" from inside the runtime.
+  ort.env.wasm.wasmBinary = (await fetchBytes(`${ortBase}ort-wasm-simd-threaded.wasm`)).buffer;
   return ort;
 }
 
@@ -74,7 +77,10 @@ scope.onmessage = (e) => {
       if (msg.type === 'load') {
         assetBase = msg.assetBase;
         ortBase = msg.ortBase ?? msg.assetBase;
-        ortP ??= loadOrt();
+        ortP ??= loadOrt().catch((e) => {
+          ortP = null; // try again on the next load
+          throw e;
+        });
         const ort = await ortP;
         const rt = createPiperRuntime({ ort, loadPhonemizer: sharedPhonemizer, fetchBytes });
         const p = rt.load(msg.voice);

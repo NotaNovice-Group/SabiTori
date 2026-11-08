@@ -37,9 +37,12 @@ export function createEncoderController(rules: Classifier, baseUrl: string) {
       } catch {
         impl = null;
         set({ status: 'failed' });
+        // Allow a later attempt (for example once the network is back on a first web visit); the rules answer meanwhile.
+        started = null;
       }
     })());
   }
+  if (typeof window !== 'undefined') window.addEventListener('online', () => { if (state.status === 'failed') void init(); });
 
   const classifier: Classifier = {
     get id() {
