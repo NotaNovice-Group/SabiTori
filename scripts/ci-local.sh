@@ -11,8 +11,13 @@ step "install" pnpm install --frozen-lockfile
 step "test" pnpm -r test
 step "typecheck" pnpm -r typecheck
 step "packs" node scripts/check-packs.mjs
+step "web build" pnpm --filter @sabitori/app build
+if [ -x /opt/pw-browsers/chromium ] || [ -n "${CHROMIUM:-}" ]; then
+  step "e2e" bash -c 'cd apps/app && CHROMIUM="${CHROMIUM:-/opt/pw-browsers/chromium}" pnpm e2e'
+else
+  step "e2e" bash -c 'cd apps/app && npx playwright install chromium && pnpm e2e'
+fi
 if [ -d "$ANDROID_HOME" ]; then
-  step "web build" pnpm --filter @sabitori/app build
   step "cap sync" bash -c 'cd apps/app && npx cap sync android'
   step "android debug" bash -c 'cd apps/app/android && ./gradlew assembleDebug --no-daemon -q'
 else

@@ -1,0 +1,145 @@
+import { expect, test, type Page } from '@playwright/test';
+
+/**
+ * The main flows of the built app, end to end, in a real browser.
+ * Speech is captured instead of played: headless Chromium has no voices, so `speechSynthesis.speak`
+ * records each utterance and ends it at once. Tests assert on what would have been said, and in what order.
+ */
+
+const BILL =
+  "ENEO: Votre facture d'électricité N° 0451233987 d'un montant de 18 450 FCFA est disponible. Date limite de paiement: 12 novembre 2026. Évitez la coupure. Service client: 677 00 12 34.";
+const VAGUE = 'Bonjour. Passez nous voir quand vous pouvez, nous avons quelque chose pour vous. Merci.';
+const SEED = { onboarded: true, lang: 'fr', listenFirst: false, speed: 0, retention: 30, region: 'CM' };
+
+declare global {
+  interface Window { __spoken: string[] }
+}
+
+async function setup(page: Page, opts: { seed?: boolean } = {}) {
+  const external: string[] = [];
+  page.on('request', (r) => {
+    const u = new URL(r.url());
+    if (!['localhost', '127.0.0.1'].includes(u.hostname) && !['data:', 'blob:'].includes(u.protocol)) external.push(r.url());
+  });
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.addInitScript((seed) => {
+    window.__spoken = [];
+    const synth = window.speechSynthesis;
+    if (synth) {
+      synth.speak = (u: SpeechSynthesisUtterance) => {
+        window.__spoken.push(u.text);
+        setTimeout(() => u.onend?.(new Event('end') as SpeechSynthesisEvent), 10);
+      };
+      synth.cancel = () => {};
+    }
+    // about:blank has no storage; only seed on the app's own pages
+    if (seed && location.protocol.startsWith('http')) localStorage.setItem('sabitori.settings.v1', JSON.stringify(seed));
+  }, opts.seed === false ? null : SEED);
+  return { external, errors };
+}
+
+async function paste(page: Page, text: string) {
+  await page.goto('#/paste');
+  await page.fill('#msg', text);
+  await page.locator('.dock .btn-primary').click();
+  await page.waitForURL(/#\/card\//);
+  await page.waitForSelector('.card .sec');
+}
+
+const sectionClasses = (page: Page) =>
+  page.locator('.card .sec').evaluateAll((els) => els.map((e) => [...e.classList].find((c) => c.startsWith('sec-') && c !== 'sec-ic') ?? ''));
+
+test('first run at the bare address shows the language screen', async ({ page }) => {
+  const { errors } = await setup(page, { seed: false });
+  await page.goto('');
+  await expect(page.locator('.welcome')).toBeVisible({ timeout: 15_000 });
+  expect(errors).toEqual([]);
+});
+
+test('a pasted bill becomes a full card with the amount, deadline and reference from the message', async ({ page }) => {
+  const { errors, external } = await setup(page);
+  await paste(page, BILL);
+  const card = page.locator('.card');
+  await expect(card).toHaveAttribute('data-mode', 'full');
+  const text = (await card.innerText()).replace(/\s+/g, ' ');
+  expect(text).toMatch(/18[\s  .]?450/);
+  expect(text).toMatch(/12/);
+  expect(text.toLowerCase()).toMatch(/novembre/);
+  // every fact on the card can show where it came from in the message
+  const facts = page.locator('.btn.fact');
+  expect(await facts.count()).toBeGreaterThan(0);
+  await facts.first().click();
+  await expect(page.locator('.sheet')).toBeVisible();
+  expect(errors).toEqual([]);
+  expect(external).toEqual([]);
+});
+
+test('a vague message falls back to facts only, and never claims it is safe', async ({ page }) => {
+  const { errors } = await setup(page);
+  await paste(page, VAGUE);
+  await expect(page.locator('.card')).toHaveAttribute('data-mode', 'facts_only');
+  const text = (await page.locator('.card').innerText()).toLowerCase();
+  // (\"si vous n'êtes pas sûr\" is fine; calling the message itself safe is not)
+  expect(text).not.toMatch(/(message|il|ce|c'|est) (est )?(sûr|sans danger|fiable)|aucun danger|\bis safe\b/);
+  expect(errors).toEqual([]);
+});
+
+for (const example of ['momo', 'prize']) {
+  test(`scam example "${example}": the warning comes first on screen and first in speech`, async ({ page }) => {
+    const { errors } = await setup(page);
+    await page.goto(`#/example/${example}`);
+    await page.waitForSelector('.card .sec-scam');
+    await expect(page.locator('.card')).toHaveAttribute('data-scam', 'likely_scam');
+    const order = await sectionClasses(page);
+    expect(order[0]).toBe('sec-scam');
+    // a likely scam never tells the person to pay
+    expect(order).not.toContain('sec-money');
+
+    const warning = (await page.locator('.card .sec-scam .sec-text').first().innerText()).trim();
+    await page.locator('.dock .play-main').click();
+    await expect.poll(() => page.evaluate(() => window.__spoken.length), { timeout: 10_000 }).toBeGreaterThan(0);
+    const first = await page.evaluate(() => window.__spoken[0]!);
+    expect(first.replace(/\s+/g, ' ')).toContain(warning.replace(/\s+/g, ' ').replace(/[.!]$/, ''));
+    expect(errors).toEqual([]);
+  });
+}
+
+test('works with the network switched off after the app has loaded', async ({ page, context }) => {
+  const { errors } = await setup(page);
+  // Load the app and its model once while online (on Android everything is inside the APK; on the web the
+  // service worker keeps them), then cut the network.
+  await paste(page, VAGUE);
+  await page.waitForLoadState('networkidle');
+  await context.setOffline(true);
+  await paste(page, BILL);
+  await expect(page.locator('.card')).toHaveAttribute('data-mode', 'full');
+  await context.setOffline(false);
+  expect(errors).toEqual([]);
+});
+
+test('no screen makes a request to another host', async ({ page }) => {
+  const { external, errors } = await setup(page);
+  for (const hash of ['#/', '#/paste', '#/practice', '#/example/hospital', '#/settings', '#/about']) {
+    await page.goto('about:blank');
+    await page.goto(hash);
+    await page.waitForSelector('h1', { state: 'attached' });
+    await page.waitForTimeout(300);
+  }
+  expect(external).toEqual([]);
+  expect(errors).toEqual([]);
+});
+
+test('a card can be deleted and is gone from history', async ({ page }) => {
+  await setup(page);
+  await paste(page, BILL);
+  const url = page.url();
+  page.on('dialog', (d) => d.accept());
+  await page.locator('.danger-quiet').click();
+  // listen-first is off, so one tap acts; a confirm step may follow
+  const confirm = page.locator('.sheet .btn-primary, .sheet .danger');
+  if (await confirm.count()) await confirm.first().click();
+  await page.waitForURL((u) => u.toString() !== url);
+  await page.goto(url.slice(url.indexOf('#')));
+  await expect(page.locator('.note')).toBeVisible();
+});

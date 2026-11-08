@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit -p .",
     "test": "vitest run --passWithNoTests",
     "shoot": "node scripts/shoot.mjs",
-    "icons": "node scripts/icons.mjs"
+    "icons": "node scripts/icons.mjs",
+    "e2e": "playwright test"
   },
   "dependencies": {
     "@capacitor-community/text-to-speech": "^8.0.2",

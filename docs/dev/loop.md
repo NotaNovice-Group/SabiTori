@@ -23,9 +23,14 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Release workflow without secrets.** `release.yml` now stops in its first step, naming the missing
       signing secrets, instead of after a full test and build. (An unsigned release APK artifact was dropped:
       it cannot be installed; CI already uploads the debug APK.)
-- [ ] **End-to-end tests of the built app.** Playwright against the production web build: first run, language
-      choice, paste a bill, card spoken in order (scam first), facts-only path, likely-scam path, offline (no
-      network requests at all), reminders. Run in CI.
+- [x] **End-to-end tests of the built app.** `apps/app/e2e/flows.spec.ts` (`pnpm e2e`, in CI and
+      `scripts/ci-local.sh`): first run, pasted bill to full card, facts-only card, two scam examples (warning first
+      on screen and first in speech, no money section), offline after load, no request to another host, delete.
+- [ ] **End-to-end: reminders and photo capture.** Reminder set and cancel on a card with a deadline; a photo
+      through OCR to a card (slow: keep it in a separate, tagged test).
+- [ ] **Web: network lost while the model downloads.** On a first web visit, going offline while
+      `ort-wasm-simd-threaded.wasm` loads raises an uncaught "Aborted(NetworkError ...)" page error (found by the
+      e2e offline test). The card still comes from the rules; catch it so it is a quiet fallback and add a test.
 - [ ] **Fact extraction fuzzing.** Property tests for amounts, dates, phones and USSD codes on noisy OCR-like
       input (spacing, O/0, l/1, cut lines). Every fact must keep a valid span; nothing may throw.
 - [ ] **Unseen-set accuracy.** Find the most common error classes on `eval` unseen messages (41% all-three
@@ -54,3 +59,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | --- | --- | --- | --- |
 | 2026-11-08 | #5 | Loop plan; fixed a flaky crash-report test (random Sentry ids); `scripts/ci-local.sh` gate | 1,362 passed |
 | 2026-11-08 | #6 | `release.yml` fails fast with the names of missing signing secrets | 1,362 passed |
+| 2026-11-08 | #7 | Playwright end-to-end tests of the built app (8 flows), run in CI and the local gate | 1,362 unit + 8 e2e passed |
