@@ -3,15 +3,15 @@
 Every `[OWNER: ...]` placeholder in the repository, with its file and line. Only the founder can fill these:
 they are decisions, facts about the publisher, or results of steps outside the code. A reviewer who sees one
 reads "unfinished", so fill or remove them before the repository is public. `packages/understand/test/model-card.test.ts`
-checks that this list matches the files (regenerate the list after editing a document).
+checks that this list matches the files (regenerate it with `node scripts/owner-todo.mjs` after editing a document).
 
 Total: 98 placeholders in 11 files.
 
 ## `CHANGELOG.md` (3)
 
-- [ ] `CHANGELOG.md:31` release date, once released.
-- [ ] `CHANGELOG.md:62` French review status; resolve before release.
-- [ ] `CHANGELOG.md:63` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
+- [ ] `CHANGELOG.md:33` release date, once released.
+- [ ] `CHANGELOG.md:64` French review status; resolve before release.
+- [ ] `CHANGELOG.md:65` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
 
 ## `CODE_OF_CONDUCT.md` (1)
 
