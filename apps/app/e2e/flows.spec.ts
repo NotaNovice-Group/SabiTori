@@ -152,3 +152,36 @@ test('when the model cannot download (first web visit, network lost), the rules 
   await page.waitForTimeout(1500);
   expect(errors).toEqual([]);
 });
+
+test('"Remind me" on the web downloads a calendar file for the deadline', async ({ page }) => {
+  await setup(page);
+  await paste(page, BILL);
+  const [download] = await Promise.all([page.waitForEvent('download'), page.locator('.group-actions button').first().click()]);
+  expect(download.suggestedFilename()).toMatch(/\.ics$/);
+  const path = await download.path();
+  const { readFileSync } = await import('node:fs');
+  const ics = readFileSync(path!, 'utf8');
+  expect(ics).toContain('BEGIN:VCALENDAR');
+  expect(ics).toMatch(/DTSTART[^:\r\n]*:20261112/);
+});
+
+test('a photo of a bill is read on the device and becomes a card', async ({ page, browser }) => {
+  test.slow(); // OCR in a headless browser takes tens of seconds
+  const { errors, external } = await setup(page);
+  // Render a clear photo of a bill to feed the camera input.
+  const shooter = await browser.newPage({ viewport: { width: 900, height: 1000 } });
+  await shooter.setContent(
+    '<body style="margin:0;background:#f4f1ea;font:34px/1.5 Georgia,serif;color:#111;padding:60px"><b>ENEO CAMEROON</b><br>Facture d\'électricité<br>Montant à payer : 18 450 FCFA<br>Date limite de paiement : 12 novembre 2026<br>Service client : 677 00 12 34</body>',
+  );
+  const photo = await shooter.screenshot({ type: 'png' });
+  await shooter.close();
+  await page.goto('#/');
+  await page.waitForSelector('h1', { state: 'attached' });
+  await page.locator('input[type=file]').first().setInputFiles({ name: 'bill.png', mimeType: 'image/png', buffer: photo });
+  await page.waitForURL(/#\/card\//, { timeout: 120_000 });
+  await page.waitForSelector('.card .sec');
+  const text = (await page.locator('.card').innerText()).replace(/\s+/g, ' ');
+  expect(text).toMatch(/18[\s  .]?450/);
+  expect(errors).toEqual([]);
+  expect(external).toEqual([]);
+});

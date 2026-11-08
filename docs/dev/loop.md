@@ -26,7 +26,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **End-to-end tests of the built app.** `apps/app/e2e/flows.spec.ts` (`pnpm e2e`, in CI and
       `scripts/ci-local.sh`): first run, pasted bill to full card, facts-only card, two scam examples (warning first
       on screen and first in speech, no money section), offline after load, no request to another host, delete.
-- [ ] **End-to-end: reminders and photo capture.** Reminder set and cancel on a card with a deadline; a photo
+- [x] **End-to-end: reminders and photo capture.** Web reminder downloads an .ics with the deadline; a rendered
+      bill photo goes through on-device OCR to a card with the right amount (about 4 s headless). Native reminders
+      need a device: covered by unit tests only.
+  Was: Reminder set and cancel on a card with a deadline; a photo
       through OCR to a card (slow: keep it in a separate, tagged test).
 - [x] **Web: network lost while the model downloads.** The encoder and the Piper worker now fetch the
       onnxruntime wasm themselves and hand it over, so a failed download is a normal error (rules and the phone's
@@ -62,3 +65,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-08 | #6 | `release.yml` fails fast with the names of missing signing secrets | 1,362 passed |
 | 2026-11-08 | #7 | Playwright end-to-end tests of the built app (8 flows), run in CI and the local gate | 1,362 unit + 8 e2e passed |
 | 2026-11-08 | #8 | Model download cut on the web: quiet fallback and retry instead of an uncaught abort (encoder and Piper worker) | 1,363 unit + 9 e2e passed |
+| 2026-11-08 | #9 | e2e: web reminder (.ics) and photo through OCR to a card | 1,363 unit + 11 e2e passed |
