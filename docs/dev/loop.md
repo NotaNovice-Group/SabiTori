@@ -28,6 +28,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       on screen and first in speech, no money section), offline after load, no request to another host, delete.
 - [ ] **End-to-end: reminders and photo capture.** Reminder set and cancel on a card with a deadline; a photo
       through OCR to a card (slow: keep it in a separate, tagged test).
+- [ ] **Web: network lost while the model downloads.** On a first web visit, going offline while
+      `ort-wasm-simd-threaded.wasm` loads raises an uncaught "Aborted(NetworkError ...)" page error (found by the
+      e2e offline test). The card still comes from the rules; catch it so it is a quiet fallback and add a test.
 - [ ] **Fact extraction fuzzing.** Property tests for amounts, dates, phones and USSD codes on noisy OCR-like
       input (spacing, O/0, l/1, cut lines). Every fact must keep a valid span; nothing may throw.
 - [ ] **Unseen-set accuracy.** Find the most common error classes on `eval` unseen messages (41% all-three

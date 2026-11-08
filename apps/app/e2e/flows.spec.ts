@@ -107,8 +107,10 @@ for (const example of ['momo', 'prize']) {
 
 test('works with the network switched off after the app has loaded', async ({ page, context }) => {
   const { errors } = await setup(page);
-  await page.goto('#/');
-  await page.waitForSelector('h1', { state: 'attached' });
+  // Load the app and its model once while online (on Android everything is inside the APK; on the web the
+  // service worker keeps them), then cut the network.
+  await paste(page, VAGUE);
+  await page.waitForLoadState('networkidle');
   await context.setOffline(true);
   await paste(page, BILL);
   await expect(page.locator('.card')).toHaveAttribute('data-mode', 'full');
