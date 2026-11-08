@@ -110,13 +110,25 @@ export async function loadEncoder(opts: Pick<EncoderClassifierOptions, 'baseUrl'
   };
 }
 
+/** The onnxruntime-web wasm file the app copies into its `ort/` folder (single-thread SIMD build). */
+export const ORT_WASM_FILE = 'ort-wasm-simd-threaded.wasm';
+
 async function loadOrtWeb(wasmBaseUrl?: string): Promise<OrtLike> {
   const ort = (await import('onnxruntime-web/wasm')) as unknown as OrtLike;
   if (ort.env?.wasm) {
     // One thread: needs no COOP/COEP headers, so it works in the Android WebView.
     ort.env.wasm['numThreads'] = 1;
     ort.env.wasm['proxy'] = false;
-    if (wasmBaseUrl) ort.env.wasm['wasmPaths'] = wasmBaseUrl.endsWith('/') ? wasmBaseUrl : wasmBaseUrl + '/';
+    if (wasmBaseUrl) {
+      const base = wasmBaseUrl.endsWith('/') ? wasmBaseUrl : wasmBaseUrl + '/';
+      ort.env.wasm['wasmPaths'] = base;
+      // Fetch the wasm binary ourselves and hand it over. When the fetch fails (network lost on a first web
+      // visit), this throws a normal, catchable error here; left to the runtime, the same failure surfaces
+      // as an uncaught "Aborted(NetworkError ...)" from inside its loader.
+      const r = await fetch(`${base}${ORT_WASM_FILE}`);
+      if (!r.ok) throw new Error(`HTTP ${r.status} for ${base}${ORT_WASM_FILE}`);
+      ort.env.wasm['wasmBinary'] = await r.arrayBuffer();
+    }
   }
   return ort;
 }
