@@ -53,7 +53,11 @@ describe('crash reporting switch', () => {
     Sentry.captureException(new Error(`render failed for ${MESSAGE}`));
     await flush();
     expect(sent).toHaveLength(1);
-    const text = JSON.stringify(sent[0]);
+    // Random ids and clock values (event_id, sent_at, timestamp) can contain short digit runs such as "450" by
+    // chance; blank them so the check only looks at content that could come from the message.
+    const text = JSON.stringify(sent[0])
+      .replace(/"(event_id|sent_at|timestamp|start_timestamp)":("[^"]*"|[\d.]+)/g, '"$1":"-"')
+      .replace(/"(lineno|colno)":\d+/g, '"$1":0');
     for (const secret of ['18 450', '450', 'novembre', '677', '12 34', 'Mbarga', 'ENEO', 'facture']) expect(text).not.toContain(secret);
     expect(text).toContain('render failed for');
     expect(text).toContain('"pack_fr":"0.1.0"');
