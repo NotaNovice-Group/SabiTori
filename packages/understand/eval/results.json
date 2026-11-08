@@ -4,8 +4,8 @@
  "model": "packages/understand/model/minilm",
  "thresholds": {
   "kind": 0.85,
-  "action": 0.4,
-  "urgency": 0.6
+  "action": 0.6,
+  "urgency": 0.85
  },
  "stats": {
   "ci": "95% percentile bootstrap over rows",
@@ -350,10 +350,10 @@
      },
      "action": {
       "n": 96,
-      "k": 81,
-      "acc": 0.8438,
-      "lo": 0.7708,
-      "hi": 0.9167
+      "k": 84,
+      "acc": 0.875,
+      "lo": 0.8021,
+      "hi": 0.9375
      },
      "urgency": {
       "n": 96,
@@ -366,7 +366,7 @@
       "n": 96,
       "k": 72,
       "acc": 0.75,
-      "lo": 0.6563,
+      "lo": 0.6664,
       "hi": 0.8333
      }
     }
@@ -385,32 +385,32 @@
      },
      "action": {
       "n": 96,
-      "diff": 0.1771,
-      "lo": 0.0729,
-      "hi": 0.2813,
-      "aOnly": 23,
-      "bOnly": 6,
-      "p": 0.0023,
+      "diff": 0.2083,
+      "lo": 0.125,
+      "hi": 0.3021,
+      "aOnly": 22,
+      "bOnly": 2,
+      "p": 0,
       "significant": true
      },
      "urgency": {
       "n": 96,
       "diff": 0.0104,
-      "lo": -0.0521,
-      "hi": 0.0729,
-      "aOnly": 5,
-      "bOnly": 4,
+      "lo": -0.0312,
+      "hi": 0.0521,
+      "aOnly": 3,
+      "bOnly": 2,
       "p": 1,
       "significant": false
      },
      "all": {
       "n": 96,
       "diff": 0.2396,
-      "lo": 0.1354,
-      "hi": 0.3438,
-      "aOnly": 28,
-      "bOnly": 5,
-      "p": 0.0001,
+      "lo": 0.1458,
+      "hi": 0.3333,
+      "aOnly": 25,
+      "bOnly": 2,
+      "p": 0,
       "significant": true
      }
     },
@@ -500,34 +500,34 @@
       },
       "action": {
        "n": 38,
-       "k": 31,
-       "acc": 0.8158,
-       "lo": 0.6842,
-       "hi": 0.9211
+       "k": 33,
+       "acc": 0.8684,
+       "lo": 0.7632,
+       "hi": 0.9737
       },
       "urgency": {
        "n": 38,
-       "k": 34,
-       "acc": 0.8947,
-       "lo": 0.7895,
-       "hi": 0.9737
+       "k": 35,
+       "acc": 0.9211,
+       "lo": 0.8158,
+       "hi": 1
       },
       "all": {
        "n": 38,
-       "k": 27,
-       "acc": 0.7105,
-       "lo": 0.5526,
-       "hi": 0.8421
+       "k": 28,
+       "acc": 0.7368,
+       "lo": 0.5789,
+       "hi": 0.8684
       }
      },
      "combinedVsRules": {
       "n": 38,
-      "diff": 0.2105,
-      "lo": 0.0526,
-      "hi": 0.3684,
+      "diff": 0.2368,
+      "lo": 0.0789,
+      "hi": 0.3947,
       "aOnly": 10,
-      "bOnly": 2,
-      "p": 0.0386,
+      "bOnly": 1,
+      "p": 0.0117,
       "significant": true
      }
     },
@@ -573,10 +573,10 @@
       },
       "action": {
        "n": 43,
-       "k": 39,
-       "acc": 0.907,
-       "lo": 0.814,
-       "hi": 0.9767
+       "k": 40,
+       "acc": 0.9302,
+       "lo": 0.8372,
+       "hi": 1
       },
       "urgency": {
        "n": 43,
@@ -596,12 +596,12 @@
      "combinedVsRules": {
       "n": 43,
       "diff": 0.186,
-      "lo": 0.0233,
-      "hi": 0.3488,
-      "aOnly": 11,
-      "bOnly": 3,
-      "p": 0.0574,
-      "significant": false
+      "lo": 0.0698,
+      "hi": 0.3256,
+      "aOnly": 9,
+      "bOnly": 1,
+      "p": 0.0215,
+      "significant": true
      }
     },
     "wes": {
@@ -653,27 +653,27 @@
       },
       "urgency": {
        "n": 15,
-       "k": 12,
-       "acc": 0.8,
-       "lo": 0.6,
-       "hi": 1
+       "k": 11,
+       "acc": 0.7333,
+       "lo": 0.5333,
+       "hi": 0.9333
       },
       "all": {
        "n": 15,
-       "k": 10,
-       "acc": 0.6667,
-       "lo": 0.4,
+       "k": 9,
+       "acc": 0.6,
+       "lo": 0.3333,
        "hi": 0.8667
       }
      },
      "combinedVsRules": {
       "n": 15,
-      "diff": 0.4667,
-      "lo": 0.2,
-      "hi": 0.7333,
-      "aOnly": 7,
+      "diff": 0.4,
+      "lo": 0.1333,
+      "hi": 0.6667,
+      "aOnly": 6,
       "bOnly": 0,
-      "p": 0.0156,
+      "p": 0.0313,
       "significant": true
      }
     }
@@ -866,8 +866,8 @@
    },
    "changedFromRules": {
     "kind": 10,
-    "action": 31,
-    "urgency": 9
+    "action": 26,
+    "urgency": 5
    }
   },
   "unseen": {
@@ -943,24 +943,24 @@
      },
      "action": {
       "n": 100,
-      "k": 59,
-      "acc": 0.59,
-      "lo": 0.49,
-      "hi": 0.68
+      "k": 63,
+      "acc": 0.63,
+      "lo": 0.53,
+      "hi": 0.72
      },
      "urgency": {
       "n": 100,
-      "k": 73,
-      "acc": 0.73,
-      "lo": 0.64,
+      "k": 72,
+      "acc": 0.72,
+      "lo": 0.63,
       "hi": 0.81
      },
      "all": {
       "n": 100,
-      "k": 46,
-      "acc": 0.46,
-      "lo": 0.36,
-      "hi": 0.56
+      "k": 44,
+      "acc": 0.44,
+      "lo": 0.34,
+      "hi": 0.54
      }
     }
    },
@@ -978,32 +978,32 @@
      },
      "action": {
       "n": 100,
-      "diff": 0.1,
-      "lo": -0.03,
-      "hi": 0.23,
-      "aOnly": 28,
-      "bOnly": 18,
-      "p": 0.1839,
-      "significant": false
+      "diff": 0.14,
+      "lo": 0.03,
+      "hi": 0.25,
+      "aOnly": 23,
+      "bOnly": 9,
+      "p": 0.0201,
+      "significant": true
      },
      "urgency": {
       "n": 100,
-      "diff": 0.01,
-      "lo": -0.05,
-      "hi": 0.08,
-      "aOnly": 6,
-      "bOnly": 5,
+      "diff": 0,
+      "lo": -0.04,
+      "hi": 0.04,
+      "aOnly": 2,
+      "bOnly": 2,
       "p": 1,
       "significant": false
      },
      "all": {
       "n": 100,
-      "diff": 0.16,
+      "diff": 0.14,
       "lo": 0.04,
-      "hi": 0.27,
-      "aOnly": 26,
-      "bOnly": 10,
-      "p": 0.0113,
+      "hi": 0.24,
+      "aOnly": 21,
+      "bOnly": 7,
+      "p": 0.0125,
       "significant": true
      }
     },
@@ -1096,14 +1096,14 @@
        "k": 27,
        "acc": 0.675,
        "lo": 0.525,
-       "hi": 0.8
+       "hi": 0.825
       },
       "urgency": {
        "n": 40,
-       "k": 29,
-       "acc": 0.725,
-       "lo": 0.575,
-       "hi": 0.85
+       "k": 30,
+       "acc": 0.75,
+       "lo": 0.6,
+       "hi": 0.875
       },
       "all": {
        "n": 40,
@@ -1116,11 +1116,11 @@
      "combinedVsRules": {
       "n": 40,
       "diff": 0.225,
-      "lo": 0.025,
-      "hi": 0.4,
-      "aOnly": 13,
-      "bOnly": 4,
-      "p": 0.049,
+      "lo": 0.075,
+      "hi": 0.3756,
+      "aOnly": 11,
+      "bOnly": 2,
+      "p": 0.0225,
       "significant": true
      }
     },
@@ -1166,34 +1166,34 @@
       },
       "action": {
        "n": 38,
-       "k": 20,
-       "acc": 0.5263,
-       "lo": 0.3684,
-       "hi": 0.6842
+       "k": 23,
+       "acc": 0.6053,
+       "lo": 0.4474,
+       "hi": 0.7632
       },
       "urgency": {
        "n": 38,
-       "k": 29,
-       "acc": 0.7632,
-       "lo": 0.6316,
-       "hi": 0.8947
+       "k": 27,
+       "acc": 0.7105,
+       "lo": 0.5526,
+       "hi": 0.8421
       },
       "all": {
        "n": 38,
-       "k": 17,
-       "acc": 0.4474,
-       "lo": 0.2895,
-       "hi": 0.6053
+       "k": 15,
+       "acc": 0.3947,
+       "lo": 0.2368,
+       "hi": 0.5526
       }
      },
      "combinedVsRules": {
       "n": 38,
-      "diff": 0.0789,
-      "lo": -0.1053,
-      "hi": 0.2632,
-      "aOnly": 8,
+      "diff": 0.0263,
+      "lo": -0.1579,
+      "hi": 0.2105,
+      "aOnly": 6,
       "bOnly": 5,
-      "p": 0.5811,
+      "p": 1,
       "significant": false
      }
     },
@@ -1239,10 +1239,10 @@
       },
       "action": {
        "n": 22,
-       "k": 12,
-       "acc": 0.5455,
-       "lo": 0.3182,
-       "hi": 0.7273
+       "k": 13,
+       "acc": 0.5909,
+       "lo": 0.3636,
+       "hi": 0.7727
       },
       "urgency": {
        "n": 22,
@@ -1255,18 +1255,18 @@
        "n": 22,
        "k": 10,
        "acc": 0.4545,
-       "lo": 0.2727,
+       "lo": 0.2716,
        "hi": 0.6818
       }
      },
      "combinedVsRules": {
       "n": 22,
       "diff": 0.1818,
-      "lo": 0,
-      "hi": 0.4091,
-      "aOnly": 5,
-      "bOnly": 1,
-      "p": 0.2188,
+      "lo": 0.0455,
+      "hi": 0.3636,
+      "aOnly": 4,
+      "bOnly": 0,
+      "p": 0.125,
       "significant": false
      }
     }
@@ -1466,8 +1466,8 @@
    },
    "changedFromRules": {
     "kind": 12,
-    "action": 56,
-    "urgency": 17
+    "action": 37,
+    "urgency": 7
    }
   }
  },
@@ -1570,7 +1570,7 @@
      "action": "go_to_place",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.61
+    "combinedConfidence": 0.75
    },
    {
     "id": "sbt-004",
@@ -1834,7 +1834,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.6
+    "combinedConfidence": 0.78
    },
    {
     "id": "sbt-012",
@@ -1900,7 +1900,7 @@
      "action": "unclear",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.46
+    "combinedConfidence": 0.64
    },
    {
     "id": "sbt-014",
@@ -1999,7 +1999,7 @@
      "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.73
+    "combinedConfidence": 0.64
    },
    {
     "id": "sbt-017",
@@ -2230,7 +2230,7 @@
      "action": "reply",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.53
+    "combinedConfidence": 0.89
    },
    {
     "id": "sbt-024",
@@ -2395,7 +2395,7 @@
      "action": "go_to_place",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.61
+    "combinedConfidence": 0.63
    },
    {
     "id": "sbt-029",
@@ -2426,9 +2426,9 @@
     "combined": {
      "kind": "legal",
      "action": "pay",
-     "urgency": "urgent"
+     "urgency": "info"
     },
-    "combinedConfidence": 0.67
+    "combinedConfidence": 0.64
    },
    {
     "id": "sbt-030",
@@ -2461,7 +2461,7 @@
      "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.69
+    "combinedConfidence": 0.21
    },
    {
     "id": "sbt-031",
@@ -2560,7 +2560,7 @@
      "action": "bring_document",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.67
+    "combinedConfidence": 0.5
    },
    {
     "id": "sbt-034",
@@ -2593,7 +2593,7 @@
      "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.48
+    "combinedConfidence": 0.91
    },
    {
     "id": "sbt-035",
@@ -2626,7 +2626,7 @@
      "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.76
+    "combinedConfidence": 0.85
    },
    {
     "id": "sbt-036",
@@ -2656,10 +2656,10 @@
     },
     "combined": {
      "kind": "school",
-     "action": "collect",
+     "action": "unclear",
      "urgency": "info"
     },
-    "combinedConfidence": 0.57
+    "combinedConfidence": 0.21
    },
    {
     "id": "sbt-037",
@@ -2692,7 +2692,7 @@
      "action": "bring_document",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.74
+    "combinedConfidence": 0.81
    },
    {
     "id": "sbt-038",
@@ -2788,10 +2788,10 @@
     },
     "combined": {
      "kind": "legal",
-     "action": "pay",
+     "action": "collect",
      "urgency": "info"
     },
-    "combinedConfidence": 0.58
+    "combinedConfidence": 0.5
    },
    {
     "id": "sbt-041",
@@ -2857,7 +2857,7 @@
      "action": "go_to_place",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.71
+    "combinedConfidence": 0.6
    },
    {
     "id": "sbt-043",
@@ -2923,7 +2923,7 @@
      "action": "bring_document",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.59
+    "combinedConfidence": 0.7
    },
    {
     "id": "sbt-045",
@@ -3086,9 +3086,9 @@
     "combined": {
      "kind": "administrative",
      "action": "pay",
-     "urgency": "urgent"
+     "urgency": "soon"
     },
-    "combinedConfidence": 0.69
+    "combinedConfidence": 0.75
    },
    {
     "id": "sbt-050",
@@ -3185,7 +3185,7 @@
     "combined": {
      "kind": "administrative",
      "action": "nothing",
-     "urgency": "urgent"
+     "urgency": "info"
     },
     "combinedConfidence": 0.63
    },
@@ -3286,7 +3286,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.84
+    "combinedConfidence": 0.69
    },
    {
     "id": "sbt-056",
@@ -3319,7 +3319,7 @@
      "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.76
+    "combinedConfidence": 0.17
    },
    {
     "id": "sbt-057",
@@ -3451,7 +3451,7 @@
      "action": "go_to_place",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.61
+    "combinedConfidence": 0.64
    },
    {
     "id": "sbt-061",
@@ -3481,10 +3481,10 @@
     },
     "combined": {
      "kind": "legal",
-     "action": "nothing",
+     "action": "unclear",
      "urgency": "info"
     },
-    "combinedConfidence": 0.51
+    "combinedConfidence": 0.53
    },
    {
     "id": "sbt-062",
@@ -3583,7 +3583,7 @@
      "action": "unclear",
      "urgency": "info"
     },
-    "combinedConfidence": 0.48
+    "combinedConfidence": 0.17
    },
    {
     "id": "sbt-067",
@@ -3712,10 +3712,10 @@
     },
     "combined": {
      "kind": "telecom",
-     "action": "go_to_place",
+     "action": "bring_document",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.48
+    "combinedConfidence": 0.63
    },
    {
     "id": "sbt-073",
@@ -3781,7 +3781,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.67
+    "combinedConfidence": 0.81
    },
    {
     "id": "sbt-075",
@@ -3812,9 +3812,9 @@
     "combined": {
      "kind": "health",
      "action": "call",
-     "urgency": "info"
+     "urgency": "soon"
     },
-    "combinedConfidence": 0.6
+    "combinedConfidence": 0.63
    },
    {
     "id": "sbt-076",
@@ -3979,7 +3979,7 @@
      "action": "pay",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.72
+    "combinedConfidence": 0.85
    },
    {
     "id": "sbt-084",
@@ -4177,7 +4177,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.55
+    "combinedConfidence": 0.85
    },
    {
     "id": "sbt-091",
@@ -4210,7 +4210,7 @@
      "action": "collect",
      "urgency": "info"
     },
-    "combinedConfidence": 0.74
+    "combinedConfidence": 0.75
    },
    {
     "id": "sbt-092",
@@ -4309,7 +4309,7 @@
      "action": "unclear",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.44
+    "combinedConfidence": 0.64
    },
    {
     "id": "sbt-095",
@@ -4375,7 +4375,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.61
+    "combinedConfidence": 0.89
    },
    {
     "id": "sbt-097",
@@ -4474,7 +4474,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.69
+    "combinedConfidence": 0.85
    },
    {
     "id": "sbt-111",
@@ -4504,10 +4504,10 @@
     },
     "combined": {
      "kind": "health",
-     "action": "pay",
+     "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.54
+    "combinedConfidence": 0.63
    },
    {
     "id": "sbt-120",
@@ -4540,7 +4540,7 @@
      "action": "collect",
      "urgency": "info"
     },
-    "combinedConfidence": 0.71
+    "combinedConfidence": 0.55
    },
    {
     "id": "sbt-126",
@@ -4606,7 +4606,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.82
+    "combinedConfidence": 0.55
    },
    {
     "id": "sbt-156",
@@ -4704,7 +4704,7 @@
     },
     "combined": {
      "kind": "school",
-     "action": "pay",
+     "action": "unclear",
      "urgency": "urgent"
     },
     "combinedConfidence": 0.53
@@ -4771,9 +4771,9 @@
     "combined": {
      "kind": "bank",
      "action": "nothing",
-     "urgency": "info"
+     "urgency": "soon"
     },
-    "combinedConfidence": 0.77
+    "combinedConfidence": 0.63
    },
    {
     "id": "uns-005",
@@ -4839,7 +4839,7 @@
      "action": "unclear",
      "urgency": "info"
     },
-    "combinedConfidence": 0.42
+    "combinedConfidence": 0.64
    },
    {
     "id": "uns-007",
@@ -4872,7 +4872,7 @@
      "action": "take_medicine",
      "urgency": "info"
     },
-    "combinedConfidence": 0.76
+    "combinedConfidence": 0.63
    },
    {
     "id": "uns-008",
@@ -4905,7 +4905,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.66
+    "combinedConfidence": 0.69
    },
    {
     "id": "uns-009",
@@ -4968,7 +4968,7 @@
     },
     "combined": {
      "kind": "bank",
-     "action": "nothing",
+     "action": "collect",
      "urgency": "soon"
     },
     "combinedConfidence": 0.25
@@ -5004,7 +5004,7 @@
      "action": "pay",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.67
+    "combinedConfidence": 0.58
    },
    {
     "id": "uns-012",
@@ -5067,10 +5067,10 @@
     },
     "combined": {
      "kind": "telecom",
-     "action": "nothing",
-     "urgency": "urgent"
+     "action": "unclear",
+     "urgency": "soon"
     },
-    "combinedConfidence": 0.42
+    "combinedConfidence": 0.64
    },
    {
     "id": "uns-014",
@@ -5101,7 +5101,7 @@
     "combined": {
      "kind": "school",
      "action": "pay",
-     "urgency": "urgent"
+     "urgency": "soon"
     },
     "combinedConfidence": 0.69
    },
@@ -5202,7 +5202,7 @@
      "action": "go_to_place",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.72
+    "combinedConfidence": 0.74
    },
    {
     "id": "uns-018",
@@ -5265,10 +5265,10 @@
     },
     "combined": {
      "kind": "administrative",
-     "action": "bring_document",
+     "action": "unclear",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.43
+    "combinedConfidence": 0.64
    },
    {
     "id": "uns-020",
@@ -5298,10 +5298,10 @@
     },
     "combined": {
      "kind": "legal",
-     "action": "pay",
+     "action": "unclear",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.42
+    "combinedConfidence": 0.53
    },
    {
     "id": "uns-021",
@@ -5331,10 +5331,10 @@
     },
     "combined": {
      "kind": "electricity_bill",
-     "action": "nothing",
+     "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.47
+    "combinedConfidence": 0.63
    },
    {
     "id": "uns-022",
@@ -5397,10 +5397,10 @@
     },
     "combined": {
      "kind": "health",
-     "action": "reply",
+     "action": "unclear",
      "urgency": "info"
     },
-    "combinedConfidence": 0.52
+    "combinedConfidence": 0.53
    },
    {
     "id": "uns-024",
@@ -5532,7 +5532,7 @@
      "action": "go_to_place",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.78
+    "combinedConfidence": 0.37
    },
    {
     "id": "uns-028",
@@ -5562,10 +5562,10 @@
     },
     "combined": {
      "kind": "telecom",
-     "action": "nothing",
+     "action": "call",
      "urgency": "info"
     },
-    "combinedConfidence": 0.45
+    "combinedConfidence": 0.88
    },
    {
     "id": "uns-029",
@@ -5596,9 +5596,9 @@
     "combined": {
      "kind": "administrative",
      "action": "go_to_place",
-     "urgency": "urgent"
+     "urgency": "soon"
     },
-    "combinedConfidence": 0.67
+    "combinedConfidence": 0.81
    },
    {
     "id": "uns-030",
@@ -5664,7 +5664,7 @@
      "action": "unclear",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.8
+    "combinedConfidence": 0.64
    },
    {
     "id": "uns-032",
@@ -5829,7 +5829,7 @@
      "action": "go_to_place",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.64
+    "combinedConfidence": 0.67
    },
    {
     "id": "uns-037",
@@ -5862,7 +5862,7 @@
      "action": "pay",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.49
+    "combinedConfidence": 0.63
    },
    {
     "id": "uns-038",
@@ -5893,9 +5893,9 @@
     "combined": {
      "kind": "school",
      "action": "pay",
-     "urgency": "urgent"
+     "urgency": "soon"
     },
-    "combinedConfidence": 0.79
+    "combinedConfidence": 0.75
    },
    {
     "id": "uns-039",
@@ -5959,7 +5959,7 @@
     "combined": {
      "kind": "school",
      "action": "go_to_place",
-     "urgency": "urgent"
+     "urgency": "soon"
     },
     "combinedConfidence": 0.53
    },
@@ -6060,7 +6060,7 @@
      "action": "unclear",
      "urgency": "info"
     },
-    "combinedConfidence": 0.71
+    "combinedConfidence": 0.6
    },
    {
     "id": "uns-044",
@@ -6126,7 +6126,7 @@
      "action": "collect",
      "urgency": "info"
     },
-    "combinedConfidence": 0.48
+    "combinedConfidence": 0.2
    },
    {
     "id": "uns-046",
@@ -6192,7 +6192,7 @@
      "action": "call",
      "urgency": "info"
     },
-    "combinedConfidence": 0.75
+    "combinedConfidence": 0.2
    },
    {
     "id": "uns-048",
@@ -6222,10 +6222,10 @@
     },
     "combined": {
      "kind": "bank",
-     "action": "nothing",
+     "action": "unclear",
      "urgency": "info"
     },
-    "combinedConfidence": 0.53
+    "combinedConfidence": 0.17
    },
    {
     "id": "uns-049",
@@ -6256,9 +6256,9 @@
     "combined": {
      "kind": "legal",
      "action": "go_to_place",
-     "urgency": "urgent"
+     "urgency": "soon"
     },
-    "combinedConfidence": 0.76
+    "combinedConfidence": 0.64
    },
    {
     "id": "uns-050",
@@ -6321,10 +6321,10 @@
     },
     "combined": {
      "kind": "mobile_money",
-     "action": "pay",
+     "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.58
+    "combinedConfidence": 0.89
    },
    {
     "id": "uns-052",
@@ -6357,7 +6357,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.72
+    "combinedConfidence": 0.76
    },
    {
     "id": "uns-053",
@@ -6388,7 +6388,7 @@
     "combined": {
      "kind": "other",
      "action": "pay",
-     "urgency": "info"
+     "urgency": "soon"
     },
     "combinedConfidence": 0.2
    },
@@ -6420,10 +6420,10 @@
     },
     "combined": {
      "kind": "administrative",
-     "action": "bring_document",
+     "action": "unclear",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.42
+    "combinedConfidence": 0.53
    },
    {
     "id": "uns-055",
@@ -6453,10 +6453,10 @@
     },
     "combined": {
      "kind": "school",
-     "action": "reply",
-     "urgency": "urgent"
+     "action": "collect",
+     "urgency": "soon"
     },
-    "combinedConfidence": 0.5
+    "combinedConfidence": 0.75
    },
    {
     "id": "uns-056",
@@ -6555,7 +6555,7 @@
      "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.72
+    "combinedConfidence": 0.73
    },
    {
     "id": "uns-059",
@@ -6654,7 +6654,7 @@
      "action": "go_to_place",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.68
+    "combinedConfidence": 0.75
    },
    {
     "id": "uns-062",
@@ -6783,7 +6783,7 @@
     },
     "combined": {
      "kind": "other",
-     "action": "call",
+     "action": "unclear",
      "urgency": "info"
     },
     "combinedConfidence": 0.17
@@ -6885,7 +6885,7 @@
      "action": "pay",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.45
+    "combinedConfidence": 0.7
    },
    {
     "id": "uns-069",
@@ -6918,7 +6918,7 @@
      "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.83
+    "combinedConfidence": 0.88
    },
    {
     "id": "uns-070",
@@ -6951,7 +6951,7 @@
      "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.78
+    "combinedConfidence": 0.43
    },
    {
     "id": "uns-071",
@@ -7050,7 +7050,7 @@
      "action": "go_to_place",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.76
+    "combinedConfidence": 0.75
    },
    {
     "id": "uns-074",
@@ -7080,10 +7080,10 @@
     },
     "combined": {
      "kind": "legal",
-     "action": "reply",
+     "action": "go_to_place",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.51
+    "combinedConfidence": 0.75
    },
    {
     "id": "uns-075",
@@ -7182,7 +7182,7 @@
      "action": "collect",
      "urgency": "info"
     },
-    "combinedConfidence": 0.51
+    "combinedConfidence": 0.2
    },
    {
     "id": "uns-078",
@@ -7279,9 +7279,9 @@
     "combined": {
      "kind": "bank",
      "action": "collect",
-     "urgency": "urgent"
+     "urgency": "info"
     },
-    "combinedConfidence": 0.61
+    "combinedConfidence": 0.81
    },
    {
     "id": "uns-081",
@@ -7377,7 +7377,7 @@
     },
     "combined": {
      "kind": "administrative",
-     "action": "bring_document",
+     "action": "collect",
      "urgency": "urgent"
     },
     "combinedConfidence": 0.2
@@ -7443,7 +7443,7 @@
     },
     "combined": {
      "kind": "other",
-     "action": "pay",
+     "action": "unclear",
      "urgency": "urgent"
     },
     "combinedConfidence": 0.17
@@ -7578,7 +7578,7 @@
      "action": "call",
      "urgency": "info"
     },
-    "combinedConfidence": 0.58
+    "combinedConfidence": 0.85
    },
    {
     "id": "uns-090",
@@ -7839,10 +7839,10 @@
     },
     "combined": {
      "kind": "legal",
-     "action": "call",
+     "action": "unclear",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.44
+    "combinedConfidence": 0.64
    },
    {
     "id": "uns-098",
@@ -7905,10 +7905,10 @@
     },
     "combined": {
      "kind": "bank",
-     "action": "reply",
+     "action": "call",
      "urgency": "info"
     },
-    "combinedConfidence": 0.54
+    "combinedConfidence": 0.75
    },
    {
     "id": "uns-100",
@@ -7938,7 +7938,7 @@
     },
     "combined": {
      "kind": "other",
-     "action": "nothing",
+     "action": "call",
      "urgency": "info"
     },
     "combinedConfidence": 0.2

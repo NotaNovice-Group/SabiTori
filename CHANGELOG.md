@@ -9,7 +9,9 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 - Rules: a dated task within 7 days is now `urgent` (was 2 days), matching the card's calibration and the evaluation
   labels; more French and English action phrases (fees, collection, invitations, replies to scams, information
   notices); a message that asks for nothing is never `soon` or `urgent`. Rules alone, all three labels right: test 44.8% -> 51.0%, unseen 25.0% -> 30.0%; with the encoder: test
-  69.8% -> 75.0%, unseen 41.0% -> 46.0% (`packages/understand/eval/results.json`). Encoder thresholds unchanged.
+  69.8% -> 75.0%, unseen 41.0% -> 44.0% (`packages/understand/eval/results.json`), after re-selecting the encoder
+  thresholds on the train split (kind 0.85, action 0.6, urgency 0.85; were 0.85, 0.4, 0.6). With the old thresholds the
+  unseen figure was 46.0%; it was not used to choose.
 - Amounts written with an all-zero minor unit ("18 450,00 FCFA") are read; real decimals are still refused.
 - Understanding model: the vocabulary of the bundled MiniLM encoder is now chosen with a general French and English
   word-frequency list instead of Unigram scores. Same size (34.2 MB); much higher fidelity to the original model on

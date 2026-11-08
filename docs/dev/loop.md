@@ -14,6 +14,7 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - Never write a number into docs that was not produced by a run in this repository; never claim users,
   partners, pilots or recordings that do not exist. `[OWNER]` placeholders stay until the owner fills them.
 - Never weaken a safety rule (facts from code only, never "safe", scam warnings first) to make a test pass.
+- After editing any document, run `node scripts/owner-todo.mjs` (keeps `docs/OWNER-TODO.md` line numbers right).
 - If an item is blocked twice, mark it `blocked:` with the reason and move on.
 - When the list is empty, find the next real bug or gap (failing edge case, accessibility issue, slow path,
   missing test) and add it here before working on it.
@@ -43,7 +44,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       Rules now use the 7-day urgent window of the labels and the card; information notices stay `info`; more fr/en
       action phrases. All three right, rules alone: test 44.8% -> 51.0%, unseen 25.0% -> 30.0%; encoder + rules:
       test 69.8% -> 75.0%, unseen 41.0% -> 46.0% (regenerated with `run-rules.mjs`, `run-encoder.mjs`, `model-card.mjs`).
-- [ ] **Re-select encoder thresholds after the rules change.** `run-encoder.mjs --select-threshold` (train OOF only)
+- [x] **Re-select encoder thresholds after the rules change.** Done on train OOF only: kind 0.85, action 0.6,
+      urgency 0.85. Encoder + rules: test 75.0%, unseen 44.0% (46.0% with the old thresholds; not used to choose).
+      Grant draft numbers still to update (owner's Claude Doc).
+  Was: `run-encoder.mjs --select-threshold` (train OOF only)
       now prefers different action/urgency thresholds; re-select, sync `apps/app/public/models/minilm/heads.json`,
       re-run the published results. Also update the grant draft's numbers (owner's Claude Doc) afterwards.
 - [ ] **Pidgin reading words.** `wes` messages score lowest (rules have no Pidgin lexicon). Add a draft `packs/wes`
@@ -76,3 +80,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-08 | #9 | e2e: web reminder (.ics) and photo through OCR to a card | 1,363 unit + 11 e2e passed |
 | 2026-11-08 | #10 | Fuzz/property tests for fact extraction; amounts written with ",00" are now read | 1,377 unit + 11 e2e passed |
 | 2026-11-08 | #11 | Rules: 7-day urgent window, info notices stay info, more fr/en action phrases; published results regenerated | 1,379 unit + 11 e2e passed |
+| 2026-11-08 | #12 | Encoder thresholds re-selected on train after the rules change; results regenerated; `scripts/owner-todo.mjs` | 1,379 unit + 11 e2e passed |
