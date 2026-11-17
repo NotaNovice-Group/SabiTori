@@ -488,6 +488,8 @@ a { color: inherit; text-decoration: none; }
 .sheet-title { font-size: var(--fs-title); line-height: 1.2; flex: 1 1 8rem; min-width: 0; overflow-wrap: break-word; }
 .sheet-head > .btn { margin-inline-start: auto; }
 .source { font-size: var(--fs-body); line-height: 1.6; white-space: pre-wrap; overflow-wrap: break-word; }
+/* Licence texts carry long URLs and file names: let them wrap anywhere so 200% text never scrolls sideways. */
+.md { overflow-wrap: anywhere; min-width: 0; }
 .source mark { background: var(--mark-bg); color: var(--ink); font-weight: 700; padding: 2px 4px; border-radius: 4px; }
 
 .sheet-full { align-items: stretch; }
