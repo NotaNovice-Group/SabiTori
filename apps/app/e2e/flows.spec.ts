@@ -88,6 +88,16 @@ test('a vague message falls back to facts only, and never claims it is safe', as
 for (const example of ['momo', 'prize']) {
   test(`scam example "${example}": the warning comes first on screen and first in speech`, async ({ page }) => {
     const { errors } = await setup(page);
+    // Record which section is lit first when Listen is pressed. This does not depend on which voice speaks
+    // (the phone's voice or a bundled Piper voice), so it holds in every build.
+    await page.addInitScript(() => {
+      const w = window as unknown as { __firstLit?: string };
+      new MutationObserver(() => {
+        if (w.__firstLit) return;
+        const el = document.querySelector('.card .sec[data-active]');
+        if (el) w.__firstLit = [...el.classList].find((c) => c.startsWith('sec-') && c !== 'sec-ic') ?? '';
+      }).observe(document, { subtree: true, attributes: true, attributeFilter: ['data-active'], childList: true });
+    });
     await page.goto(`#/example/${example}`);
     await page.waitForSelector('.card .sec-scam');
     await expect(page.locator('.card')).toHaveAttribute('data-scam', 'likely_scam');
@@ -96,11 +106,8 @@ for (const example of ['momo', 'prize']) {
     // a likely scam never tells the person to pay
     expect(order).not.toContain('sec-money');
 
-    const warning = (await page.locator('.card .sec-scam .sec-text').first().innerText()).trim();
     await page.locator('.dock .play-main').click();
-    await expect.poll(() => page.evaluate(() => window.__spoken.length), { timeout: 10_000 }).toBeGreaterThan(0);
-    const first = await page.evaluate(() => window.__spoken[0]!);
-    expect(first.replace(/\s+/g, ' ')).toContain(warning.replace(/\s+/g, ' ').replace(/[.!]$/, ''));
+    await expect.poll(() => page.evaluate(() => (window as unknown as { __firstLit?: string }).__firstLit ?? null), { timeout: 15_000 }).toBe('sec-scam');
     expect(errors).toEqual([]);
   });
 }
