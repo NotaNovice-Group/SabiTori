@@ -67,7 +67,10 @@ export function assessScam(
       const clause = n.slice(r.start, r.end);
       if (!hasTerm(clause, secret)) return;
       const hasPhone = facts.phones.some((p) => p.span.start >= r.start && p.span.end <= r.end);
-      const own = hasTerm(clause, verbs);
+      // The secret phrase itself never counts as the asking verb ("code de confirmation", "verification code"):
+      // blank it out first, so a code being delivered ("your confirmation code is 482913") is not a request.
+      const asked = findTerms(clause, secret).reduce((c, h) => c.slice(0, h.start) + ' '.repeat(h.end - h.start) + c.slice(h.end), clause);
+      const own = hasTerm(asked, verbs);
       if (hasPhone && own) {
         found.add('asks_pin');
         return;
