@@ -6,6 +6,9 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Voice training recipe (`packages/speech/train-voice/`): a Recorder export becomes a Piper training list
+  (needs the community's agreement for an unlicensed pack), and a check says whether the app can use a trained
+  voice for a pack. No trained local-language voice exists yet.
 - Pilot builds (`VITE_PILOT=1`): on-phone weekly counts of messages explained, scam warnings, listens and reminders,
   shown in Settings and shared only by the participant. No message content is kept. Store builds have no counter.
 - Pilot builds also count how long the phone took (photo to card, text to card, Listen to first sound) in time

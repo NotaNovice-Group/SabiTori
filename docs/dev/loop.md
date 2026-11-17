@@ -65,7 +65,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Pilot counter (off by default).** `VITE_PILOT=1` builds count, on the phone only and per ISO week, messages
       explained by source, facts-only cards, scam warnings, listens, reminders and practice; Settings shows the totals
       with Share and Reset (`apps/app/src/lib/pilot.ts`, docs/impact.md "Pilot build"). No message content is stored.
-- [ ] **Voice training recipe.** `packages/speech/train-voice/`: documented, reproducible steps and scripts to
+- [x] **Voice training recipe.** Done: `packages/speech/train-voice/` (README, `voice-tool.ts dataset|check`, tests).
+  Was: `packages/speech/train-voice/`: documented, reproducible steps and scripts to
       fine-tune a Piper voice with `phoneme_type: "text"` from a Recorder export, plus a check that the result
       loads in the app's Piper runtime. No trained voice is claimed.
 - [x] **Low-end phone performance.** `apps/app/bench/perf.mjs`: start, pasted bill to card, model download, heap,
