@@ -216,3 +216,22 @@ test('a store build has no optional LLM: no model option and no wllama file', as
   const r = await request.get('wllama/wllama.wasm');
   expect(r.ok() && (r.headers()['content-type'] ?? '').includes('wasm')).toBe(false);
 });
+
+test('in English, a bill card is in English and a scam card warns first', async ({ page }) => {
+  const { errors } = await setup(page, { seed: false });
+  await page.addInitScript(() => {
+    if (location.protocol.startsWith('http'))
+      localStorage.setItem('sabitori.settings.v1', JSON.stringify({ onboarded: true, lang: 'en', listenFirst: false, speed: 0, retention: 30, region: 'CM' }));
+  });
+  await page.goto('#/example/eneo');
+  await page.waitForSelector('.card .sec');
+  const bill = (await page.locator('.card').innerText()).replace(/\s+/g, ' ');
+  expect(bill).toContain('electricity bill');
+  expect(bill).toContain('eighteen thousand four hundred and fifty');
+  expect(bill).not.toMatch(/\b(Vous devez|facture|Il s'agit)\b/);
+  await page.goto('#/example/momo');
+  await page.waitForSelector('.card .sec-scam');
+  expect((await sectionClasses(page))[0]).toBe('sec-scam');
+  expect(await page.locator('.card .sec-scam .sec-text').first().innerText()).toMatch(/trick|scam/i);
+  expect(errors).toEqual([]);
+});
