@@ -6,6 +6,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Evaluation on real messages, ready for the pilot: a first-pass anonymiser for consented messages
+  (`packages/understand/eval/anonymise.ts`) and `run-rules.mjs --split=real`. No real message has been added yet.
 - Accessibility checks in the browser tests: axe-core (WCAG 2.1 A and AA, contrast included) on eight screens in the
   light and dark theme, and 200% text on a 320 px screen with no sideways scrolling.
 - CI builds a pilot APK (`sabitori-pilot-apk`, debug-signed) on every push to `main`.

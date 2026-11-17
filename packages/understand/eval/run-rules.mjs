@@ -2,10 +2,10 @@
 //
 // Run from the repository root (vite-node transpiles the TypeScript sources of @sabitori/core on the fly):
 //   node node_modules/.pnpm/vite-node@3.2.4/node_modules/vite-node/vite-node.mjs packages/understand/eval/run-rules.mjs
-// Options: --split=test|train|all|unseen (default test; unseen reads unseen.jsonl)   --no-write (print only, do not write results-rules.md)
+// Options: --split=test|train|all|unseen|real (default test; unseen reads unseen.jsonl; real reads messages.real.jsonl, every row)   --no-write (print only, do not write results-rules.md)
 //          --packs=fr,en,wes (reading lexicons to load; default fr,en)   --lang=wes (only messages in that language)
 //          Either of the last two is for contributors measuring a draft lexicon: it never writes the published results.
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { assessScam, createRulesClassifier, extractFacts } from '../../core/src/index.ts';
@@ -22,13 +22,18 @@ const packs = arg('packs', 'fr,en').split(',').filter(Boolean);
 const langArg = arg('lang', '');
 const lexicons = packs.map((t) => json(`packs/${t}/reading.json`));
 // The published results are always fr + en lexicons on every language; a contributor's run only prints.
-const write = !process.argv.includes('--no-write') && packs.join(',') === 'fr,en' && !langArg;
+const write = !process.argv.includes('--no-write') && packs.join(',') === 'fr,en' && !langArg && splitArg !== 'real';
 
-const rows = readFileSync(join(here, splitArg === 'unseen' ? 'unseen.jsonl' : 'messages.jsonl'), 'utf8')
+const file = splitArg === 'unseen' ? 'unseen.jsonl' : splitArg === 'real' ? 'messages.real.jsonl' : 'messages.jsonl';
+if (!existsSync(join(here, file))) {
+  console.log(`No ${file} yet: add real, consented, anonymised messages first (README, "Adding real, consented, anonymised messages").`);
+  process.exit(0);
+}
+const rows = readFileSync(join(here, file), 'utf8')
   .split('\n')
   .filter(Boolean)
   .map((l) => JSON.parse(l))
-  .filter((r) => splitArg === 'all' || r.split === splitArg)
+  .filter((r) => splitArg === 'all' || splitArg === 'real' || r.split === splitArg)
   .filter((r) => !langArg || r.lang === langArg);
 
 const SOURCE = { sms: 'paste', letter: 'photo', whatsapp: 'share' };

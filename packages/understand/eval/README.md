@@ -108,7 +108,21 @@ Label changes on 2026-11-02 (after review R5): genuine operator promotions are n
 Real messages must never be mixed into the synthetic file.
 
 1. Get explicit, informed consent from the person who received the message, in writing, saying the text will be published under CC-BY-SA-4.0. Do not accept messages from people who cannot consent freely, and never collect from someone else's phone.
-2. Anonymise before the text leaves the phone: replace personal names with obviously fictional ones, phone numbers with `677 00 xx xx` / `699 00 xx xx` numbers (keep the same format and separators), account, meter, ID and reference numbers with random digits of the same length, and addresses and workplaces with generic ones. Keep the senders that are companies (ENEO, MTN) only if the sender is the point of the message. Two people must check the result.
+2. Anonymise before the text leaves the phone (or the collector's computer). `anonymise.ts` does a first pass and
+   writes draft rows: it moves phone numbers to the fictional ranges, gives reference, account, meter and ID numbers
+   random digits of the same shape, keeps amounts, dates, times, menu codes and links, and lists words that may be
+   names. It never decides that a message is anonymous:
+
+   ```bash
+   VN=$(ls -d node_modules/.pnpm/vite-node@*/node_modules/vite-node/vite-node.mjs | head -1)
+   node $VN packages/understand/eval/anonymise.ts raw.txt draft.jsonl --lang fr --source sms --received 2026-11-20
+   ```
+
+   Then, by hand: replace personal names with obviously fictional ones, phone numbers with `677 00 xx xx` / `699 00 xx xx` numbers (keep the same format and separators), account, meter, ID and reference numbers with random digits of the same length, and addresses and workplaces with generic ones. Keep the senders that are companies (ENEO, MTN) only if the sender is the point of the message. Two people must check the result.
 3. Put them in `messages.real.jsonl` (same format) with `"synthetic": false` and ids like `real-001`. `test/dataset.test.ts` validates that file when it exists. Put real rows in `test` only if no model was tuned on them, and keep the 70/30 balance per kind.
 4. Have a native speaker label each message independently of the model output. For `wes` and any other language, the labeller must read the language natively.
 5. Never commit a screenshot, a contact name or a raw export.
+6. Measure: `node $VN packages/understand/eval/run-rules.mjs --split=real` (rules) and
+   `node packages/understand/eval/run-encoder.mjs --data packages/understand/eval/messages.real.jsonl --json /tmp/real.json --out /tmp/real.md`
+   (encoder + rules; rows with `"split": "test"`). Both print or write elsewhere; the published synthetic results
+   are not touched. Report real-message results with their n and confidence interval, next to the synthetic ones.
