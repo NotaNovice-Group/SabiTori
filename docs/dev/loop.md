@@ -52,9 +52,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       re-run the published results. Also update the grant draft's numbers (owner's Claude Doc) afterwards.
 - [ ] **Pidgin reading words.** `wes` messages score lowest (rules have no Pidgin lexicon). Add a draft `packs/wes`
       reading lexicon (marked unreviewed) and measure; native review needed before it is called done.
-- [ ] **Scam detection breadth.** Add test cases and rules for current Cameroonian scam patterns already
-      described in the region data (fake MoMo reversal, prize fee, account block, fake agent number), each with
-      a negative twin (the real message) so false alarms are measured too.
+- [x] **Scam detection breadth.** `packages/core/test/scam-breadth.test.ts`: nine fr/en scam patterns (fake
+      transfer, prize fee, account block, fake agent, fake power-cut payment, job fee), each with the real message it
+      imitates. Found and fixed: a genuine one-time-code SMS ("Your MTN MoMo confirmation code is 482913") was
+      rated likely scam because the secret phrase itself counted as the asking verb. Scam level on the eval sets
+      unchanged (test 94.8%, unseen 92.0%).
 - [ ] **Pilot counter (off by default).** A build flag that counts events on the phone only (messages explained,
       replays, scam warnings shown), shows them to the person on a screen, and lets them share the numbers by
       themselves. No network, no message text (`docs/impact.md`).
@@ -81,3 +83,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-08 | #10 | Fuzz/property tests for fact extraction; amounts written with ",00" are now read | 1,377 unit + 11 e2e passed |
 | 2026-11-08 | #11 | Rules: 7-day urgent window, info notices stay info, more fr/en action phrases; published results regenerated | 1,379 unit + 11 e2e passed |
 | 2026-11-08 | #12 | Encoder thresholds re-selected on train after the rules change; results regenerated; `scripts/owner-todo.mjs` | 1,379 unit + 11 e2e passed |
+| 2026-11-17 | #13 | Scam/twin pairs; a delivered one-time code is no longer flagged as a scam | 1,397 unit + 11 e2e passed |

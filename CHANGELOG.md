@@ -6,6 +6,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Scam checks: a message that delivers a one-time code ("Your confirmation code is 482913") is no longer read as
+  asking for the code; requests for a code are still caught.
 - Rules: a dated task within 7 days is now `urgent` (was 2 days), matching the card's calibration and the evaluation
   labels; more French and English action phrases (fees, collection, invitations, replies to scams, information
   notices); a message that asks for nothing is never `soon` or `urgent`. Rules alone, all three labels right: test 44.8% -> 51.0%, unseen 25.0% -> 30.0%; with the encoder: test
