@@ -18,6 +18,7 @@ import { spawn } from 'node:child_process';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
+import { chromiumPath } from '../../../scripts/chromium-path.mjs';
 
 const app = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const throttle = Number(process.argv[2] ?? 4);
@@ -33,7 +34,7 @@ await new Promise((ok, fail) => {
   server.on('exit', (c) => fail(new Error(`vite preview exited (${c}); build the app first`)));
 });
 const url = `http://localhost:${PORT}/`;
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? '/opt/pw-browsers/chromium', args: ['--no-sandbox', '--enable-precise-memory-info'] });
+const browser = await chromium.launch({ executablePath: chromiumPath(), args: ['--no-sandbox', '--enable-precise-memory-info'] });
 const median = (xs) => [...xs].sort((a, b) => a - b)[Math.floor(xs.length / 2)];
 
 const rows = [];

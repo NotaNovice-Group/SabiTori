@@ -12,6 +12,7 @@ import { mkdirSync, rmSync, writeFileSync, mkdtempSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { chromiumPath } from '../../../scripts/chromium-path.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = resolve(here, '..');
@@ -172,7 +173,7 @@ const TEXT_SPACING = 'html *{line-height:1.5 !important;letter-spacing:0.12em !i
 
 // ---------------------------------------------------------------- run
 const report = { generatedAt: new Date().toISOString(), viewport: VIEWPORT, scales: SCALES, schemes: SCHEMES, states: [], axe: [], manual: [] };
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? '/opt/pw-browsers/chromium' });
+const browser = await chromium.launch({ executablePath: chromiumPath() });
 
 async function makePhotos() {
   const dir = mkdtempSync(resolve(tmpdir(), 'sabitori-a11y-photos-'));

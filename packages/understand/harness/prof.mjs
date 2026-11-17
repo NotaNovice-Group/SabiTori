@@ -1,10 +1,11 @@
 const { createServer } = await import('/home/user/sabitori/apps/app/node_modules/vite/dist/node/index.js');
 import { createRequire } from 'module';
+import { chromiumPath } from '../../../scripts/chromium-path.mjs';
 const require = createRequire('/home/user/sabitori/apps/app/package.json');
 const { chromium } = require('playwright');
 const server = await createServer({ root: new URL('.', import.meta.url).pathname, server: { port: 5199, headers: { 'Cross-Origin-Opener-Policy': 'same-origin', 'Cross-Origin-Embedder-Policy': 'require-corp' }, fs: { allow: ['/home/user'] } }, logLevel: 'error', optimizeDeps: { exclude: ['@wllama/wllama'] } });
 await server.listen();
-const browser = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium' });
+const browser = await chromium.launch({ executablePath: chromiumPath() });
 const page = await browser.newPage();
 const done = new Promise(r => page.on('console', m => { const t = m.text(); if (/^(LOADED|RESULT|DONE|ERROR)/.test(t)) console.log(t); if (/^(DONE|ERROR)/.test(t)) r(); }));
 await page.goto('http://localhost:5199/prof.html');

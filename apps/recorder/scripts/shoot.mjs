@@ -10,6 +10,7 @@ import { spawn } from 'node:child_process';
 import { mkdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { chromiumPath } from '../../../scripts/chromium-path.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..');
@@ -32,7 +33,7 @@ for (let i = 0; i < 60; i++) {
 }
 
 const enRules = readFileSync(join(root, '../../packs/en/rules.json'), 'utf8');
-const exe = process.env.CHROMIUM_PATH ?? '/opt/pw-browsers/chromium-1243/chrome-linux64/chrome';
+const exe = chromiumPath();
 const browser = await chromium.launch({ executablePath: exe });
 
 const seed = async (page) => {
