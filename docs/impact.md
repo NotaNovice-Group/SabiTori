@@ -20,7 +20,8 @@ estimate: a cell stays empty until it is measured.
 
 Build the app with `VITE_PILOT=1` (see `apps/app/.env.example`) for pilot participants. The pilot build counts, on the
 phone only and per ISO week: messages explained (from a photo, a share or a paste), cards that fell back to facts only,
-scam warnings and cautions shown, times the person pressed Listen, reminders set and practice messages opened. It
+scam warnings and cautions shown, times the person pressed Listen, reminders set and practice messages opened,
+and how long the phone took, as counts per time band: photo to card, text to card, and Listen to the first sound. It
 never stores message text, numbers, senders or dates of messages (`apps/app/src/lib/pilot.ts`). The participant sees
 the totals in Settings, "Pilot numbers", and can share them as plain text they read first, or reset them. Store builds
 leave `VITE_PILOT` empty and have no counter at all.
@@ -42,7 +43,7 @@ must uninstall it first; after the pilot, uninstall the pilot APK and install th
 | Accessibility | Whether blind, low-vision and non-reading participants could use it without help | Supervised session, participant's own answer |
 | Languages recorded | Language packs recorded and reviewed by two native speakers, with the speakers' consent | `packs/<tag>/manifest.json` status and contributors |
 | Real-message accuracy | Labels right on consented, anonymised real messages, rules vs on-device model | `packages/understand/eval` with `messages.real.jsonl` |
-| Phone performance | Seconds per photo (OCR), milliseconds per message (model), time to first audio, on the pilot phones | Measured on the devices, as in `docs/release.md` section 1 |
+| Phone performance | Seconds per photo (OCR), milliseconds per message (model), time to first audio, on the pilot phones | Time bands in the pilot build's counter (photo to card, text to card, Listen to first sound), and measured on the devices as in `docs/release.md` section 1 |
 
 ## Results
 
