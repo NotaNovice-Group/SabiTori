@@ -5,7 +5,7 @@ they are decisions, facts about the publisher, or results of steps outside the c
 reads "unfinished", so fill or remove them before the repository is public. `packages/understand/test/model-card.test.ts`
 checks that this list matches the files (regenerate it with `node scripts/owner-todo.mjs` after editing a document).
 
-Total: 100 placeholders in 12 files.
+Total: 101 placeholders in 13 files.
 
 ## `CHANGELOG.md` (3)
 
@@ -22,6 +22,10 @@ Total: 100 placeholders in 12 files.
 - [ ] `SECURITY.md:6` security contact email
 - [ ] `SECURITY.md:34` acknowledgement time, for example 3 working days
 - [ ] `SECURITY.md:35` assessment time
+
+## `docs/accessibility.md` (1)
+
+- [ ] `docs/accessibility.md:37` name the disability organisation that will run or review these sessions, once one has agreed.
 
 ## `docs/impact.md` (1)
 

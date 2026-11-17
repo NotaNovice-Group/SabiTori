@@ -111,6 +111,11 @@ Android APK (needs the Android SDK, platform 36):
 pnpm --filter @sabitori/app build && cd apps/app && npx cap sync android && cd android && ./gradlew assembleDebug
 ```
 
+## Accessibility
+
+What is built in, what machines check on every change, and what has not been tested with people yet:
+[`docs/accessibility.md`](docs/accessibility.md).
+
 ## Check our numbers
 
 Every accuracy number in this repository comes from a script in it, on data in it. To re-run them all and check:
