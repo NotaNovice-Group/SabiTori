@@ -73,7 +73,7 @@ and when we train our own voices: [`docs/languages.md`](docs/languages.md).
 | --- | --- |
 | `packages/core` | Contracts, phrase catalog, the pipeline (facts, scam, card, speech plan) |
 | `packages/speech` | Language-pack rules, rendering, audio player |
-| `packages/understand` | On-device understanding: MiniLM encoder (default), optional Qwen2.5-1.5B second opinion, evaluation set and training code |
+| `packages/understand` | On-device understanding: MiniLM encoder (the only model in store builds), evaluation set and training code; an experimental LLM path (Qwen2.5-1.5B via wllama) exists only in research builds (`VITE_LLM=1`) |
 | `packages/connect` | Optional signed-update client and overlay (no message content, ever) |
 | `apps/app` | The SabiTori app (React PWA, wrapped for Android with Capacitor) |
 | `apps/recorder` | Tool for communities to translate and record a language |
