@@ -39,6 +39,7 @@ export function CaptureScreen() {
     if (!file) return;
     let live = true;
     const abort = new AbortController();
+    const started = performance.now();
     (async () => {
       try {
         // Say it before the sharpness check: no photo can be read on this phone, whatever its quality.
@@ -64,7 +65,7 @@ export function CaptureScreen() {
           return;
         }
         const card = uniqueCard(await engine.analyze(buildInput(text, 'photo', engine.region.code, undefined, todayIso(engine.region.timezone))));
-        recordExplained(pilot, card);
+        recordExplained(pilot, card, false, performance.now() - started);
         if (!live) return;
         if (!(await saveCard(card))) session.setNotice('app.card.not_saved');
         if (!live) return;

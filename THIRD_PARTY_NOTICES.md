@@ -13,7 +13,7 @@ whenever you bundle another component.
 | `@huggingface/tokenizers` 0.2.0 | Tokenizer for MiniLM | Apache-2.0 | https://github.com/huggingface/tokenizers |
 | tesseract.js 7.0.0 and tesseract.js-core 7.0.0 | Text recognition (OCR) of photos | Apache-2.0 | https://github.com/naptha/tesseract.js |
 | Tesseract LSTM models `eng` and `fra`, integer-quantised `best_int` variant (`4.0.0_best_int`, packaged as `@tesseract.js-data/eng` and `/fra` 1.0.0, MIT packaging) | OCR language data | Apache-2.0 | https://github.com/tesseract-ocr/tessdata_best (via the `4.0.0_best_int` folder of the npm packages) |
-| `@wllama/wllama` 3.8.1, a WebAssembly build of llama.cpp | Runs the optional, side-loaded Qwen model | MIT (llama.cpp: MIT) | https://github.com/ngxson/wllama , https://github.com/ggml-org/llama.cpp |
+| `@wllama/wllama` 3.8.1, a WebAssembly build of llama.cpp | Runs the optional, side-loaded Qwen model. Only in research builds (`VITE_LLM=1`); not in store builds | MIT (llama.cpp: MIT) | https://github.com/ngxson/wllama , https://github.com/ggml-org/llama.cpp |
 | Qwen2.5-1.5B-Instruct (NOT bundled; a person may side-load it) | Optional second opinion on unclear messages | Apache-2.0 | https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct |
 
 Notes on the understanding model:

@@ -66,6 +66,35 @@ export interface TermHit {
   end: number;
 }
 
+/**
+ * The longest piece of a term that must appear, as is, in folded text for the term to match (its words without
+ * `{n}` placeholders and the trailing `*`). Checking it with `includes` first means a term's regex is only
+ * compiled and run when the term can match: a message contains few of the lexicons' hundreds of terms, and
+ * compiling the Unicode-aware word-boundary regexes is what made the first message slow on a cheap phone.
+ */
+const literalCache = new Map<string, string>();
+function literal(term: string): string {
+  let l = literalCache.get(term);
+  if (l === undefined) {
+    let t = fold(term).trim();
+    if (t.endsWith('*')) t = t.slice(0, -1);
+    l = t
+      .split(/\s+/)
+      .flatMap((tok) => tok.split(/(?:\{n\})+/))
+      .reduce((a, b) => (b.length > a.length ? b : a), '');
+    literalCache.set(term, l);
+  }
+  return l;
+}
+const mayMatch = (norm: string, term: string): boolean => !!term.trim() && norm.includes(literal(term));
+
+/** The terms of a list that can match this text (same order). */
+function candidates(norm: string, terms: readonly string[]): readonly string[] {
+  let all = true;
+  for (const t of terms) if (!mayMatch(norm, t)) { all = false; break; }
+  return all ? terms : terms.filter((t) => mayMatch(norm, t));
+}
+
 /* One alternation regex per list, compiled once and cached (by list identity, then by content). */
 const byIdentity = new WeakMap<readonly string[], RegExp | null>();
 const byContent = new Map<string, RegExp | null>();
@@ -81,6 +110,7 @@ function listRegex(terms: readonly string[], flags: string): RegExp | null {
       .sort((x, y) => y.length - x.length)
       .map((t) => termSource(t));
     re = srcs.length ? new RegExp(`(?:${srcs.join('|')})`, flags) : null;
+    if (byContent.size > 2000) byContent.clear(); // sub-lists differ per message: keep the cache bounded
     byContent.set(cacheKey, re);
   }
   id?.set(idKey, re);
@@ -94,7 +124,9 @@ function listRegex(terms: readonly string[], flags: string): RegExp | null {
 export function findTerms(norm: string, terms: readonly string[] | undefined): TermHit[] {
   const hits: TermHit[] = [];
   if (!terms) return hits;
-  const base = listRegex(terms, 'gu');
+  const live = candidates(norm, terms);
+  if (!live.length) return hits;
+  const base = listRegex(live, 'gu');
   if (!base) return hits;
   const re = new RegExp(base.source, 'gu');
   let m: RegExpExecArray | null;
@@ -111,7 +143,9 @@ export function findTerms(norm: string, terms: readonly string[] | undefined): T
 
 export function hasTerm(norm: string, terms: readonly string[] | undefined): boolean {
   if (!terms) return false;
-  const re = listRegex(terms, 'u');
+  const live = candidates(norm, terms);
+  if (!live.length) return false;
+  const re = listRegex(live, 'u');
   return !!re && re.test(norm);
 }
 
@@ -122,7 +156,7 @@ export function countTerms(norm: string, terms: readonly string[] | undefined): 
   if (!terms) return 0;
   let n = 0;
   for (const term of terms) {
-    if (!term.trim()) continue;
+    if (!mayMatch(norm, term)) continue;
     let re = singleCache.get(term);
     if (!re) {
       re = new RegExp(termSource(term), 'u');

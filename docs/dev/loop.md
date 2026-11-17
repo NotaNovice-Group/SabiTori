@@ -69,12 +69,18 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
   Was: `packages/speech/train-voice/`: documented, reproducible steps and scripts to
       fine-tune a Piper voice with `phoneme_type: "text"` from a Recorder export, plus a check that the result
       loads in the app's Piper runtime. No trained voice is claimed.
-- [ ] **Low-end phone performance.** Measure cold start, time to first audio and memory with 4x CPU throttle;
-      cut whatever is slowest (lazy-load, smaller chunks). Record the before and after numbers in `docs/model.md`.
-- [ ] **Accessibility sweep.** Screen-reader order, focus after navigation, 200% text, reduced motion, colour
+- [x] **Low-end phone performance.** `apps/app/bench/perf.mjs`: start, pasted bill to card, model download, heap,
+      JS size, at 1x and 4x CPU throttle. Slowest was the first card (word-list regexes compiled for words not in the
+      message); a literal prefilter in `text.ts` cut it from 3.4 s to 1.3 s at 4x with identical results. Numbers in
+      `docs/model.md`, "App start and card time". Time to first audio was already measured (Voices, Measurements).
+- [x] **Accessibility sweep.** (PR #19: axe-core WCAG 2.1 AA on 8 screens, both themes, 200% text.)
+  Was: Screen-reader order, focus after navigation, 200% text, reduced motion, colour
       contrast in both themes; add the cases to the a11y test.
-- [ ] **Recorder robustness.** Interrupted recording, full storage, re-import of an older export, very long
-      phrases; tests for each.
+- [x] **Recorder robustness.** Found and fixed: when a call or another app took the microphone, the recorder
+      stopped by itself and `stop()` waited forever for an event that had already fired (stuck on "saving"). Now a
+      lost microphone, leaving the page, or 30 s without pressing stop end the recording, keep what was recorded and
+      say why; an empty recording counts as silent (`apps/recorder/test/mic.test.ts`). Full storage and older exports
+      were already covered (`review3.test.ts`).
 - [ ] **Docs and OWNER-TODO tidy.** Make sure every doc matches the code after the changes above.
 
 ## Log

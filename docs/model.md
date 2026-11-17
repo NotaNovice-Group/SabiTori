@@ -66,19 +66,12 @@ Phones with 3 GB RAM or less should use the 1.5B model, or rules only. Context i
 
 ## Wasm assets (app build step)
 
-The app is offline, so it must bundle wllama's wasm. wllama 3.8 ships one wasm file:
-
-```
-node_modules/@wllama/wllama/esm/wasm/wllama.wasm      (about 8.7 MB)
-```
-
-Copy it to the app's public folder at build time, for example in `apps/app/package.json`:
-
-```json
-"prebuild": "mkdir -p public/wllama && cp ../../node_modules/@wllama/wllama/esm/wasm/wllama.wasm public/wllama/wllama.wasm"
-```
-
-(adjust the source path to where pnpm links the package, e.g. `node_modules/.pnpm/@wllama+wllama@3.8.1/node_modules/@wllama/wllama/esm/wasm/wllama.wasm`; a Vite static-copy plugin works too). Then pass the same URL base to the classifier: `wasmBaseUrl: import.meta.env.BASE_URL + 'wllama/'`. `wllamaAssetPaths(baseUrl)` returns the config wllama expects (`{ default, 'single-thread/wllama.wasm', 'multi-thread/wllama.wasm' }`, all pointing to `<baseUrl>/wllama.wasm`). Add the wasm to the service worker precache. Do not use `@wllama/wllama/esm/wasm-from-cdn.js`: it needs the internet.
+The optional LLM is **not in store builds**. Build with `VITE_LLM=1` (see `apps/app/.env.example`) to include it:
+the Vite config then copies wllama's single wasm (`@wllama/wllama/esm/wasm/wllama.wasm`, about 8.7 MB) to
+`public/wllama/`, and Settings shows "Add model file". Without the flag the file is not copied, the Settings section
+is hidden and the controller reports `unsupported`, so the built-in encoder and the rules do all the understanding.
+The classifier gets `wasmBaseUrl: <app base> + 'wllama/'`; `wllamaAssetPaths(baseUrl)` returns the config wllama
+expects. Do not use `@wllama/wllama/esm/wasm-from-cdn.js`: it needs the internet.
 
 ## Side-loading the GGUF
 
@@ -102,6 +95,29 @@ const report = await evaluate(classifier, cases);
 ```
 
 Run it for the rules classifier and the LLM classifier on the same set and compare. Build the set from real, consented, anonymised messages in French and English across bills, mobile money, hospital, school and administration; keep some ambiguous and scam-like messages. Fields without an `expected` value are skipped. Ship the model only if it beats the rules on `kind` and `action` accuracy and does not lower `accuracyAll`; use `meanConfidence` and `failures` to tune `prompt.ts` (few-shots, wording) and the card builder's `CONFIDENCE_THRESHOLD`. Re-run after any change to `prompt.ts`.
+
+## App start and card time
+
+`node apps/app/bench/perf.mjs <cpuThrottle> <runs>` (after `pnpm --filter @sabitori/app build`) serves the built app
+and measures, in a fresh headless Chromium profile per run: start (navigation to the first screen drawn), card
+(tap "Explain" on a pasted bill to the card on screen), model (until the built-in model and its runtime have
+downloaded), the JavaScript heap once the card is shown, and the JavaScript loaded for the first screen. Chromium's
+CPU throttling slows the page's main thread only, not Web Workers (OCR and Piper run in workers), and the test
+machine is not a phone: the 4x rows are a stress test, not phone measurements. Medians of 5 runs, 2026-11-17.
+
+| Build | Throttle | Start | Pasted bill to card | Model downloaded | Heap after card | JS for first screen |
+| --- | --- | --- | --- | --- | --- | --- |
+| Before | 1x | 308 ms | 858 ms | 2.9 s | 8.4 MB | 652 KB |
+| Before | 4x | 719 ms | 3,371 ms | 5.1 s | 17.3 MB | 672 KB |
+| After the term prefilter | 1x | 311 ms | 329 ms | 2.9 s | 6.3 MB | 652 KB |
+| After the term prefilter | 4x | 729 ms | 1,300 ms | 3.9 s | 6.8 MB | 673 KB |
+
+What was slow: the first message compiled and warmed up hundreds of word-list regular expressions, each with
+Unicode-aware word boundaries (`\p{L}\p{N}`), most of them for words the message does not contain. Term matching
+(`packages/core/src/text.ts`) now checks that a term's literal text is in the message before compiling or running
+its regex. Results are identical: `packages/core/test/term-prefilter.test.ts` compares every lexicon list on every
+evaluation message, and the published evaluation files regenerate unchanged. In Node, matching for the first
+message went from about 660 ms to about 80 ms.
 
 ## Voices
 
