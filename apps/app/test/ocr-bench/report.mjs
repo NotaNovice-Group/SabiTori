@@ -9,6 +9,8 @@ const final = load('final'), timing = load('timing');
 const kinds = [...new Set(final[0].images.map((i) => i.kind))];
 const byKind = (v) => kinds.map((k) => { const im = v.images.filter((i) => i.kind === k); const tp = im.reduce((a, i) => a + i.facts.tp, 0), fn = im.reduce((a, i) => a + i.facts.fn, 0); return `${(100 * tp / Math.max(1, tp + fn)).toFixed(0)}`; });
 const L = final.find((v) => v.name === 'legacy fra+eng'), D = final.find((v) => v.name === 'default fra+eng +retry');
+const rules = load('rules');
+const rulesKinds = rules.length === 2 ? `| Document | ${kinds.join(' | ')} |\n|---|${kinds.map(() => '---').join('|')}|\n| Before (recall %) | ${byKind(rules[0]).join(' | ')} |\n| Shipped (recall %) | ${byKind(rules[1]).join(' | ')} |` : '';
 const kindTable = `| Document | ${kinds.join(' | ')} |\n|---|${kinds.map(() => '---').join('|')}|\n| Before (recall %) | ${byKind(L).join(' | ')} |\n| After (recall %) | ${byKind(D).join(' | ')} |`;
 const md = `# OCR benchmark results
 
@@ -22,7 +24,21 @@ finds in the ground-truth text (so the metric measures what OCR noise destroys, 
 precision = share of reported facts that are true; a wrong digit is both a miss and a false fact. CER = character error rate of the whole page.
 The default pipeline was chosen by fact F1, not CER.
 
-## Before / after (the headline)
+## Shipped now: table rules erased (2026-11-17)
+
+School-fee notices were the weakest document type: Tesseract skipped the text inside their ruled tables (deadlines and instalment amounts), even on
+clean photos. \`eraseRules\` in \`src/lib/ocr-prep.ts\` now turns long, thin, straight ink runs with paper on both sides into paper, only when the page
+has rules both ways (a table); a lone letterhead line is left alone. Same 30 pages, shipped pipeline with the capped half-turn retry, 3 workers
+(\`OCR_BENCH=rules\`):
+
+${table(rules)}
+
+${rulesKinds}
+
+No document type lost facts; school notices went from a third to about two thirds of their facts. The tables below were measured before this
+step and are kept as the record of how the pipeline was chosen.
+
+## Before / after (the pipeline as first chosen)
 
 ${table(final.filter((v) => ['legacy fra+eng', 'default fra+eng', 'default fra+eng +retry'].includes(v.name)))}
 
@@ -118,7 +134,7 @@ ${table(load('screens'))}
 ## Chosen defaults
 
 \`PREP_DEFAULT\`: invert (dark-mode screenshots, detected at working size) on, crop on, illumination normalisation on, sideways detection on, deskew (+-15 deg) on, rescale to 34 px
-text lines (max 3x up, 2000 px longest side) on, Sauvola off. Language fra+eng. Half-turn retry below 40 % confidence, or below 55 % when the first
+text lines (max 3x up, 2000 px longest side) on, table rules erased (tables only) on, Sauvola off. Language fra+eng. Half-turn retry below 40 % confidence, or below 55 % when the first
 pass found fewer than 2 facts.
 
 ## Known limits

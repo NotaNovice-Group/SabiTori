@@ -10,7 +10,27 @@ finds in the ground-truth text (so the metric measures what OCR noise destroys, 
 precision = share of reported facts that are true; a wrong digit is both a miss and a false fact. CER = character error rate of the whole page.
 The default pipeline was chosen by fact F1, not CER.
 
-## Before / after (the headline)
+## Shipped now: table rules erased (2026-11-17)
+
+School-fee notices were the weakest document type: Tesseract skipped the text inside their ruled tables (deadlines and instalment amounts), even on
+clean photos. `eraseRules` in `src/lib/ocr-prep.ts` now turns long, thin, straight ink runs with paper on both sides into paper, only when the page
+has rules both ways (a table); a lone letterhead line is left alone. Same 30 pages, shipped pipeline with the capped half-turn retry, 3 workers
+(`OCR_BENCH=rules`):
+
+| Variant | CER % | Fact recall % | Fact precision % | Fact F1 % | Pages with every fact right | Prep ms | OCR ms | Total ms (max) |
+|---|---|---|---|---|---|---|---|---|
+| before: no rule erasing (capped retry) | 25.7 | 75.0 | 97.2 | 84.7 | 16/30 | 232 | 3871 | 4103 (11100) |
+| shipped: erase table rules (capped retry) | 23.6 | 83.6 | 97.5 | 90.0 | 20/30 | 299 | 3889 | 4188 (10824) |
+
+| Document | eneo | camwater | school | hospital | momo |
+|---|---|---|---|---|---|
+| Before (recall %) | 90 | 73 | 33 | 88 | 100 |
+| Shipped (recall %) | 93 | 73 | 64 | 88 | 100 |
+
+No document type lost facts; school notices went from a third to about two thirds of their facts. The tables below were measured before this
+step and are kept as the record of how the pipeline was chosen.
+
+## Before / after (the pipeline as first chosen)
 
 | Variant | CER % | Fact recall % | Fact precision % | Fact F1 % | Pages with every fact right | Prep ms | OCR ms | Total ms (max) |
 |---|---|---|---|---|---|---|---|---|
@@ -149,7 +169,7 @@ The reviewer's SMS screenshots (light, dark with a message bubble, dark without;
 ## Chosen defaults
 
 `PREP_DEFAULT`: invert (dark-mode screenshots, detected at working size) on, crop on, illumination normalisation on, sideways detection on, deskew (+-15 deg) on, rescale to 34 px
-text lines (max 3x up, 2000 px longest side) on, Sauvola off. Language fra+eng. Half-turn retry below 40 % confidence, or below 55 % when the first
+text lines (max 3x up, 2000 px longest side) on, table rules erased (tables only) on, Sauvola off. Language fra+eng. Half-turn retry below 40 % confidence, or below 55 % when the first
 pass found fewer than 2 facts.
 
 ## Known limits
