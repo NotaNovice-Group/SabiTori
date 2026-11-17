@@ -23,6 +23,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- The card shows an appointment's time next to its date ("dimanche 22 novembre, 09:00"), not only in speech.
 - "Remind me" on an appointment with a time: the reminder comes two hours before it, and the calendar file is a
   timed event (it was all day, and an early appointment's 08:00 reminder could come too late).
 - Appointment cards say the time written after the date ("Présentez-vous le vingt-deux novembre à neuf heures").

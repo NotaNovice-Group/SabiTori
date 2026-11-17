@@ -27,6 +27,24 @@ export function formatLongDate(iso: string, locale: string): string {
   return formatDay(iso, locale, { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
+/** "09:30" in the locale's way ("09:30", "9:30 AM"); "" for anything that is not HH:MM. */
+export function formatTime(hhmm: string, locale: string): string {
+  const m = /^([01]\d|2[0-3]):([0-5]\d)$/.exec(hhmm);
+  if (!m) return '';
+  const d = new Date(2026, 0, 1, Number(m[1]), Number(m[2]));
+  try {
+    return new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(d);
+  } catch {
+    return hhmm;
+  }
+}
+
+/** The deadline as shown on a card: the long date, and the time when the message gives one. */
+export function formatDeadline(iso: string, time: string | undefined, locale: string): string {
+  const t = time ? formatTime(time, locale) : '';
+  return t ? `${formatLongDate(iso, locale)}, ${t}` : formatLongDate(iso, locale);
+}
+
 export function formatMoney(amount: number, currency: string, locale: string): string {
   try {
     return new Intl.NumberFormat(locale, { style: 'currency', currency, maximumFractionDigits: 0 }).format(amount);

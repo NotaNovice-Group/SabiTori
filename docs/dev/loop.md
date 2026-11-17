@@ -126,6 +126,7 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       novembre à neuf heures" / "Be there on ... at nine o'clock" (number slots; phrases draft; recorded packs fall back).
 - [x] **Reminders at the appointment time.** With a time on the card, the reminder on the day comes two hours before
       (not before 06:00, always before the appointment) and the calendar file is a timed event with a 2-hour alert.
+- [x] **Appointment time on screen.** The date on the card shows the time too ("dimanche 22 novembre, 09:00").
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -168,3 +169,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #39 | Appointment cards say "be there on {date}" instead of "do it by" | local gate (Actions budget) |
 | 2026-11-17 | #40 | Appointment cards say the time: "Be there on {date} at nine o'clock" | local gate (Actions budget) |
 | 2026-11-17 | #41 | Reminders and calendar file use the appointment time (2 h before; timed event) | local gate (Actions budget) |
+| 2026-11-17 | #42 | Card shows the appointment time next to the date | local gate (Actions budget) |
