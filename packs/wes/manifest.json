@@ -12,7 +12,7 @@
   "voice": {
     "kind": "recorded"
   },
-  "reads": false,
+  "reads": true,
   "status": "in_recording",
   "regions": [
     "CM"

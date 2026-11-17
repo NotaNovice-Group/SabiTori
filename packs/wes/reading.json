@@ -1,0 +1,264 @@
+{
+  "formatVersion": 1,
+  "tag": "wes",
+  "name": "Cameroonian Pidgin (draft, not reviewed by a native speaker)",
+  "stopwords": [],
+  "months": [
+    [
+      "january",
+      "jan"
+    ],
+    [
+      "february",
+      "feb"
+    ],
+    [
+      "march",
+      "mar"
+    ],
+    [
+      "april",
+      "apr"
+    ],
+    [
+      "may"
+    ],
+    [
+      "june",
+      "jun"
+    ],
+    [
+      "july",
+      "jul"
+    ],
+    [
+      "august",
+      "aug"
+    ],
+    [
+      "september",
+      "sept",
+      "sep"
+    ],
+    [
+      "october",
+      "oct"
+    ],
+    [
+      "november",
+      "nov"
+    ],
+    [
+      "december",
+      "dec"
+    ]
+  ],
+  "weekdays": [
+    [
+      "sunday"
+    ],
+    [
+      "monday"
+    ],
+    [
+      "tuesday"
+    ],
+    [
+      "wednesday"
+    ],
+    [
+      "thursday"
+    ],
+    [
+      "friday"
+    ],
+    [
+      "saturday"
+    ]
+  ],
+  "relativeDays": {
+    "tumoro": 1,
+    "tomorow": 1,
+    "tideh": 0,
+    "today today": 0
+  },
+  "ordinalSuffixes": [],
+  "dateFillers": [],
+  "dateLeadWords": [
+    "before",
+    "for"
+  ],
+  "weekdayLeadWords": [
+    "before",
+    "dis"
+  ],
+  "currencyWords": [],
+  "amountWords": [
+    "na"
+  ],
+  "balanceWords": [],
+  "referenceLabels": [],
+  "deadlineWords": [
+    "before",
+    "e don reach"
+  ],
+  "contactWords": [
+    "call",
+    "call me for",
+    "call dis number"
+  ],
+  "shortCodeLabels": [
+    "dial"
+  ],
+  "kinds": {
+    "mobile_money": [
+      "mistake send",
+      "wrong money",
+      "send money",
+      "momo"
+    ],
+    "school": [
+      "pikin school",
+      "school fees",
+      "uniform"
+    ],
+    "health": [
+      "tablet",
+      "medicine",
+      "hospital",
+      "sick"
+    ]
+  },
+  "actions": {
+    "pay": [
+      "make you pay",
+      "pay am",
+      "put money",
+      "abeg pay",
+      "send money for",
+      "for unblock am"
+    ],
+    "go_to_place": [
+      "make you go",
+      "make you kam",
+      "make una go",
+      "kam for",
+      "go for di",
+      "go dey for"
+    ],
+    "collect": [
+      "go collect",
+      "collect am",
+      "don ready",
+      "kam take am"
+    ],
+    "bring_document": [
+      "bring yu",
+      "carry yu",
+      "make you bring",
+      "make you carry"
+    ],
+    "reply": [
+      "reply yes",
+      "answer yes"
+    ],
+    "nothing": [
+      "i don send you",
+      "i don put",
+      "check yu phone",
+      "don enter yu",
+      "e don work"
+    ]
+  },
+  "urgency": {
+    "urgent": [
+      "now now",
+      "sharp sharp",
+      "quick quick",
+      "today self",
+      "go cut today",
+      "go block"
+    ],
+    "soon": [
+      "before",
+      "e don reach"
+    ]
+  },
+  "promoWords": [
+    "free data",
+    "you don win bonus",
+    "yu don win bonus"
+  ],
+  "scam": {
+    "secretWords": [
+      "yu code",
+      "yu pin",
+      "secret code",
+      "di code"
+    ],
+    "askVerbs": [
+      "send",
+      "give me",
+      "tell me",
+      "gi me"
+    ],
+    "negations": [
+      "no give",
+      "no share",
+      "no send",
+      "never give"
+    ],
+    "mistakeWords": [
+      "mistake send",
+      "i don mistake",
+      "wrong money",
+      "by mistake"
+    ],
+    "returnWords": [
+      "return am",
+      "send am back",
+      "send back",
+      "return di money"
+    ],
+    "prizeWords": [
+      "you don win",
+      "yu don win",
+      "congrats"
+    ],
+    "feeWords": [
+      "transport fee",
+      "for unblock",
+      "fee",
+      "make you send"
+    ],
+    "blockThreats": [
+      "go block",
+      "don block",
+      "block yu",
+      "yu sim go block"
+    ],
+    "timePressure": [
+      "now now",
+      "sharp sharp",
+      "before 5pm",
+      "today self"
+    ],
+    "moneyReceived": [
+      "i don send you",
+      "you don receive",
+      "yu don receive"
+    ],
+    "callWords": [
+      "call",
+      "call me"
+    ],
+    "viaWords": [],
+    "clauseBreaks": [],
+    "joinWords": [],
+    "payVerbs": [],
+    "dialWords": [],
+    "ussdPurposeWords": [],
+    "numberChangeWords": [],
+    "emergencyWords": []
+  }
+}
