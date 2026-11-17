@@ -87,6 +87,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Real-message evaluation ready for the pilot.** `eval/anonymise.ts` drafts anonymised rows from consented
       messages (phones to fictional ranges, reference numbers re-drawn, amounts/dates/codes kept, possible names listed
       for the two reviewers); `run-rules.mjs --split=real` and `run-encoder.mjs --data` score `messages.real.jsonl`.
+- [x] **Demo video shot list.** `docs/video-script.md`: a two-minute, one-take script using only what the app does today
+      (offline, scam warning first, photo to card, fact source, reminder, listen-first), with what not to claim.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -116,3 +118,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #25 | Voice training recipe and tools (no voice claimed) | 1,426 unit + 37 e2e passed (local gate, #18-#25 together) |
 | 2026-11-17 | #27 | OCR: table rules erased before reading; fact recall 75.0% -> 83.6%, school notices 33% -> 64% | local gate (Actions budget) |
 | 2026-11-17 | #28 | Real-message evaluation tooling: anonymiser draft tool, `--split=real` | local gate (Actions budget) |
+| 2026-11-17 | #29 | Demo video shot list for the application (`docs/video-script.md`) | local gate (Actions budget) |
