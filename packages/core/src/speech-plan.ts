@@ -66,6 +66,10 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
       sections.sender = [
         { key: 'sender.claimed', slots: { sender: { type: 'sender', officialId: scam.claimedSenderId } } },
       ];
+    // The phone showed a name (an SMS sender ID, a WhatsApp contact): say it, as a claim. Names can be faked, so it is
+    // never "is from"; a number or no sender at all stays unknown.
+    else if (namedSender(card))
+      sections.sender = [{ key: 'sender.claimed', slots: { sender: { type: 'sender', fallbackText: namedSender(card)! } } }];
     else sections.sender = [{ key: 'sender.unknown' }];
     sections.about = [{ key: key(`about.${u.kind}`) }];
     // Under caution the message's own call or reply instruction is not repeated.
@@ -103,4 +107,13 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
       utterances: sections[c] as Utterance[],
     })),
   };
+}
+
+/** The sender name the phone showed, cleaned and capped, or undefined for a number or no sender. */
+function namedSender(card: Card): string | undefined {
+  const s = card.input.sender;
+  if (!s || s.kind !== 'name') return undefined;
+  const v = (s.value ?? '').replace(/\s+/g, ' ').trim();
+  if (!v || /^\+?[\d\s().-]+$/.test(v)) return undefined;
+  return v.length > 40 ? v.slice(0, 40).trimEnd() : v;
 }
