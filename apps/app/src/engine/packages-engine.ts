@@ -20,7 +20,7 @@ import { createAppPlayer } from './native-player';
 import { createBrowserPlayer, createPackRegistry, renderPhrase, renderPlan, type PackRegistry } from '@sabitori/speech';
 import { EXTRA, EXTRA_KEYS, isExtraKey } from './extra';
 import { BUNDLE_KEYS, fallbackChain, fillSlots, resolveExtra } from './shared';
-import { createModelController } from './model';
+import { createModelController, llmEnabled } from './model';
 import { createEncoderController } from './encoder';
 import { todayIso } from '../lib/format';
 import type { Bundle, Engine, PlayOptions, Rendered, RenderedSection, SectionView, UiKey } from './types';
@@ -120,7 +120,7 @@ export function createEngineFrom(deps: EngineDeps): Engine {
   const today = () => deps.today?.() ?? todayIso(region.timezone);
   const ctx = () => ({ region, today: today() });
   const rules: Classifier = createRulesClassifier(region, lexicons);
-  const model = createModelController(rules, deps.baseUrl);
+  const model = createModelController(rules, deps.baseUrl, llmEnabled(import.meta.env as unknown as Record<string, string | undefined>));
   /** Default understanding: the built-in small neural model (rules until it has loaded). */
   const encoder = createEncoderController(rules, deps.baseUrl);
   const player = deps.player ?? createAppPlayer();
