@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- A sender shown as a name but not on the official list ("Hôpital Régional") is now said as a claim: "This message
+  says it is from Hôpital Régional" (it was "We do not know who sent this message"). Numbers stay unknown.
 - The card shows an appointment's time next to its date ("dimanche 22 novembre, 09:00"), not only in speech.
 - "Remind me" on an appointment with a time: the reminder comes two hours before it, and the calendar file is a
   timed event (it was all day, and an early appointment's 08:00 reminder could come too late).

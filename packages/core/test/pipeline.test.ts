@@ -554,3 +554,22 @@ describe('time right after the deadline date', () => {
     expect(f.raw).toBe('9h00');
   });
 });
+
+describe('sender line', () => {
+  const senderUtt = async (sender: Parameters<typeof msg>[1]) => {
+    const c = await run('Votre rendez-vous de consultation est fixé au 20/11/2026 à 9h00. Présentez-vous à l’accueil.', sender);
+    return buildSpeechPlan(c, { today: '2026-10-31' }).sections.find((x) => x.section === 'sender')?.utterances[0];
+  };
+  it('a name the phone showed is said as a claim, never as "is from"', async () => {
+    const u = await senderUtt({ kind: 'name', value: '  Hôpital   Régional ' });
+    expect(u?.key).toBe('sender.claimed');
+    expect(u?.slots?.sender).toEqual({ type: 'sender', fallbackText: 'Hôpital Régional' });
+  });
+  it('a number, a number-like name, or no sender stays unknown; a long name is capped', async () => {
+    expect((await senderUtt({ kind: 'number', value: '+237677123456' }))?.key).toBe('sender.unknown');
+    expect((await senderUtt({ kind: 'name', value: '+237 677 12 34 56' }))?.key).toBe('sender.unknown');
+    expect((await senderUtt(undefined))?.key).toBe('sender.unknown');
+    const long = await senderUtt({ kind: 'name', value: 'A'.repeat(80) });
+    expect((long?.slots?.sender as { fallbackText: string }).fallbackText).toHaveLength(40);
+  });
+});
