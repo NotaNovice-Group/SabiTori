@@ -86,14 +86,15 @@ The plan: once a language has about 1–2 hours of clean recordings (the phrase 
 reading sessions), fine-tune a small open text-to-speech model (Piper, about 20–60 MB, runs offline on
 cheap phones) on them, so the voice can say any sentence in that language, still in the speaker's voice.
 The community owns the dataset and the trained voice and decides its licence. Fine-tuning Piper on
-1–2 hours of speech is reported to work, but it is untested here: this repository has no training
-script for voices yet. We expect a few hours on one rented GPU per language; the real work is collecting
+1–2 hours of speech is reported to work, but it is untested here: the recipe and its tools
+(`packages/speech/train-voice/`) prepare the training list and check the result, but no voice has been trained
+with them yet. We expect a few hours on one rented GPU per language; the real work is collecting
 good recordings.
 
 *The runtime for this already exists.* SabiTori runs Piper models on the phone today (French and
 English use open Piper voices; see `docs/model.md`, "Voices"). To ship a community voice:
 
-1. Train or fine-tune a Piper model on the recordings. If espeak-ng has no support for the language,
+1. Train or fine-tune a Piper model on the recordings (steps: `packages/speech/train-voice/README.md`). If espeak-ng has no support for the language,
    train it with `"phoneme_type": "text"` (the model reads the letters directly; no phonemizer, no GPL
    component). Export `<id>.onnx` and `<id>.onnx.json`.
 2. Put both files in `packs/<tag>/voice/`, write `packs/<tag>/voice/VOICE.md` (speakers, consent, licence the
