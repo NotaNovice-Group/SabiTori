@@ -4,6 +4,11 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ## [Unreleased]
 
+### Added
+
+- Pilot builds (`VITE_PILOT=1`): on-phone weekly counts of messages explained, scam warnings, listens and reminders,
+  shown in Settings and shared only by the participant. No message content is kept. Store builds have no counter.
+
 ### Changed
 
 - Scam checks: a message that delivers a one-time code ("Your confirmation code is 482913") is no longer read as

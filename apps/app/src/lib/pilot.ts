@@ -141,6 +141,11 @@ export const pilotTotals = (d: PilotData | null): PilotWeek =>
     return t;
   }, emptyWeek('total'));
 
+/** Count one explained message from its card (no content is read beyond source, mode and scam level). */
+export function recordExplained(p: Pilot, card: { input: { source: 'photo' | 'share' | 'paste' }; mode: 'full' | 'facts_only'; scam: { level: 'likely_scam' | 'caution' | 'no_signs' } }, example = false): void {
+  p.record({ type: 'explained', source: example ? 'example' : card.input.source, mode: card.mode, scam: card.scam.level });
+}
+
 /** The app's pilot instance: a real store only in a pilot build. */
 function browserStore(): KeyValueStore | null {
   try {

@@ -16,6 +16,15 @@ estimate: a cell stays empty until it is measured.
 - **Report everything with `n`.** Each number is published with the number of people it comes from, the
   dates, and how it was collected.
 
+## Pilot build
+
+Build the app with `VITE_PILOT=1` (see `apps/app/.env.example`) for pilot participants. The pilot build counts, on the
+phone only and per ISO week: messages explained (from a photo, a share or a paste), cards that fell back to facts only,
+scam warnings and cautions shown, times the person pressed Listen, reminders set and practice messages opened. It
+never stores message text, numbers, senders or dates of messages (`apps/app/src/lib/pilot.ts`). The participant sees
+the totals in Settings, "Pilot numbers", and can share them as plain text they read first, or reset them. Store builds
+leave `VITE_PILOT` empty and have no counter at all.
+
 ## Metrics
 
 | Metric | Definition | How it is collected |
