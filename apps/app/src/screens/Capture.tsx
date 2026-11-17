@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { pilot, recordExplained } from '../lib/pilot';
 import { Camera, ClipboardPaste, Images } from 'lucide-react';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
@@ -63,6 +64,7 @@ export function CaptureScreen() {
           return;
         }
         const card = uniqueCard(await engine.analyze(buildInput(text, 'photo', engine.region.code, undefined, todayIso(engine.region.timezone))));
+        recordExplained(pilot, card);
         if (!live) return;
         if (!(await saveCard(card))) session.setNotice('app.card.not_saved');
         if (!live) return;

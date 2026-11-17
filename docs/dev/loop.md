@@ -15,6 +15,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
   partners, pilots or recordings that do not exist. `[OWNER]` placeholders stay until the owner fills them.
 - Never weaken a safety rule (facts from code only, never "safe", scam warnings first) to make a test pass.
 - After editing any document, run `node scripts/owner-todo.mjs` (keeps `docs/OWNER-TODO.md` line numbers right).
+- Owner instruction (2026-11-17): proceed with implementation every time there are open todos; do not stop to ask.
+  The Mozilla deadline is Fri 20 Nov; prefer items that strengthen the application.
 - If an item is blocked twice, mark it `blocked:` with the reason and move on.
 - When the list is empty, find the next real bug or gap (failing edge case, accessibility issue, slow path,
   missing test) and add it here before working on it.
@@ -57,9 +59,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       imitates. Found and fixed: a genuine one-time-code SMS ("Your MTN MoMo confirmation code is 482913") was
       rated likely scam because the secret phrase itself counted as the asking verb. Scam level on the eval sets
       unchanged (test 94.8%, unseen 92.0%).
-- [ ] **Pilot counter (off by default).** A build flag that counts events on the phone only (messages explained,
-      replays, scam warnings shown), shows them to the person on a screen, and lets them share the numbers by
-      themselves. No network, no message text (`docs/impact.md`).
+- [x] **Pilot counter (off by default).** `VITE_PILOT=1` builds count, on the phone only and per ISO week, messages
+      explained by source, facts-only cards, scam warnings, listens, reminders and practice; Settings shows the totals
+      with Share and Reset (`apps/app/src/lib/pilot.ts`, docs/impact.md "Pilot build"). No message content is stored.
 - [ ] **Voice training recipe.** `packages/speech/train-voice/`: documented, reproducible steps and scripts to
       fine-tune a Piper voice with `phoneme_type: "text"` from a Recorder export, plus a check that the result
       loads in the app's Piper runtime. No trained voice is claimed.
@@ -84,3 +86,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-08 | #11 | Rules: 7-day urgent window, info notices stay info, more fr/en action phrases; published results regenerated | 1,379 unit + 11 e2e passed |
 | 2026-11-08 | #12 | Encoder thresholds re-selected on train after the rules change; results regenerated; `scripts/owner-todo.mjs` | 1,379 unit + 11 e2e passed |
 | 2026-11-17 | #13 | Scam/twin pairs; a delivered one-time code is no longer flagged as a scam | 1,397 unit + 11 e2e passed |
+| 2026-11-17 | #14 | Pilot counter build flag (on-phone counts, participant shares) | 1,402 unit + 11 e2e passed |

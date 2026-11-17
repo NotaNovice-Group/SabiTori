@@ -12,6 +12,7 @@ import { formatSize } from '../lib/format';
 import { config, anyConnected } from '../config';
 import { clearUpdates, forgetQuarantine, loadMemo, loadQuarantine, runUpdateCheck, type UpdateMemo } from '../lib/updates';
 import { session } from '../lib/session';
+import { pilot, pilotEnabled, pilotSummary, pilotTotals } from '../lib/pilot';
 import type { UpdateResult } from '@sabitori/connect';
 import type { ModelState } from '../engine';
 import type { Retention, SpeedStep } from '../lib/settings';
@@ -241,6 +242,8 @@ export function SettingsScreen() {
         </section>
       )}
 
+      {PILOT && <PilotPanel />}
+
       <section className="panel" aria-labelledby="s-priv">
         <h2 id="s-priv" className="panel-title">{t('app.settings.privacy')}</h2>
         <p className="panel-strong">{t('ui.privacy')}</p>
@@ -288,5 +291,45 @@ export function SettingsScreen() {
         </Sheet>
       )}
     </Screen>
+  );
+}
+
+const PILOT = pilotEnabled(import.meta.env as unknown as Record<string, string | undefined>);
+
+/** Pilot builds only: the counts this phone keeps (never message content), shared only by the participant. */
+function PilotPanel() {
+  const { t } = useApp();
+  const [data, setData] = useState(() => pilot.read());
+  const [note, setNote] = useState(false);
+  const total = pilotTotals(data);
+  const share = async () => {
+    const text = pilotSummary(pilot.read(), __APP_VERSION__);
+    try {
+      if (navigator.share) {
+        await navigator.share({ text });
+        return;
+      }
+    } catch {
+      /* cancelled or unsupported: fall back to copying */
+    }
+    try {
+      await navigator.clipboard.writeText(text);
+      setNote(true);
+    } catch {
+      /* no clipboard: nothing else to do */
+    }
+  };
+  return (
+    <section className="panel" aria-labelledby="s-pilot">
+      <h2 id="s-pilot" className="panel-title">{t('app.pilot.title')}</h2>
+      <p className="panel-hint">{t('app.pilot.body')}</p>
+      <p className="panel-strong">{t('app.pilot.explained', { n: String(total.explained) })}</p>
+      <p className="panel-strong">{t('app.pilot.warnings', { n: String(total.scamWarnings + total.cautionWarnings) })}</p>
+      <p className="panel-strong">{t('app.pilot.listened', { n: String(total.listened) })}</p>
+      {data && <p className="panel-hint">{t('app.pilot.since', { date: data.since })}</p>}
+      <SpeakingButton speakKey="app.pilot.share" variant="secondary" onAct={() => void share()} />
+      {note && <p className="note" role="status">{t('app.pilot.copied')}</p>}
+      <SpeakingButton speakKey="app.pilot.reset" variant="quiet" onAct={() => { pilot.reset(); setData(null); setNote(false); }} />
+    </section>
   );
 }

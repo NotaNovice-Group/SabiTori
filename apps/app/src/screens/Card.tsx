@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { pilot } from '../lib/pilot';
 import { CalendarPlus, CalendarCheck, Phone, RotateCcw, Play, Square, Turtle, Eye, Search, Trash2, Shield, ShieldAlert } from 'lucide-react';
 import type { Card, SourceSpan } from '@sabitori/core';
 import { useApp } from '../app-context';
@@ -107,6 +108,7 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
   const play = useCallback(
     (from = 0, withRate = rate) => {
       if (!views) return;
+      pilot.record({ type: 'listened' });
       engine.playSections(views, {
         rate: withRate,
         from,
@@ -176,6 +178,7 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
       });
       if (r.status === 'set') {
         setReminder('set');
+        pilot.record({ type: 'reminder' });
         // Keep the card (and its history entry) until the reminder, whatever "Keep my messages" says;
         // otherwise a tapped reminder would open a card that is gone.
         if (!example) {

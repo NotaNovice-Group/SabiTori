@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { pilot, recordExplained } from '../lib/pilot';
 import type { Card } from '@sabitori/core';
 import { useApp } from '../app-context';
 import { exampleById } from '../lib/examples';
@@ -17,7 +18,11 @@ export function ExampleRoute({ id }: { id: string }) {
     let live = true;
     const today = todayIso(engine.region.timezone);
     const { text, sender } = ex.build(new Date(today + 'T00:00:00Z'));
-    void engine.analyze(buildInput(text, 'paste', engine.region.code, sender, today)).then((c) => live && setCard(c));
+    void engine.analyze(buildInput(text, 'paste', engine.region.code, sender, today)).then((c) => {
+      if (!live) return;
+      recordExplained(pilot, c, true);
+      setCard(c);
+    });
     return () => { live = false; };
   }, [engine, id]);
   return card ? <CardScreen card={card} example /> : null;

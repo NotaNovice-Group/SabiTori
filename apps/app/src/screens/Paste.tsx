@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { pilot, recordExplained } from '../lib/pilot';
 import { rememberMessage, rememberNames } from '../lib/crash';
 import { ClipboardPaste } from 'lucide-react';
 import type { MessageInput } from '@sabitori/core';
@@ -31,6 +32,7 @@ export function PasteScreen() {
       const sender: MessageInput['sender'] = kind === 'unknown' || !who.trim() ? { kind: 'unknown' } : { kind, value: who.trim() };
       rememberNames(who);
       const card = uniqueCard(await engine.analyze(buildInput(capText(text.trim()).text, 'paste', engine.region.code, sender, todayIso(engine.region.timezone))));
+      recordExplained(pilot, card);
       // Storage that fails or never answers must not keep the person waiting: the card shows anyway.
       if (!(await saveCard(card))) session.setNotice('app.card.not_saved');
       navigate(`/card/${card.id}`, { replace: true });

@@ -185,3 +185,11 @@ test('a photo of a bill is read on the device and becomes a card', async ({ page
   expect(errors).toEqual([]);
   expect(external).toEqual([]);
 });
+
+test('a store build has no pilot counter', async ({ page }) => {
+  await setup(page);
+  await page.goto('#/settings');
+  await page.waitForSelector('h1', { state: 'attached' });
+  await expect(page.locator('#s-pilot')).toHaveCount(0);
+  expect(await page.evaluate(() => localStorage.getItem('sabitori.pilot.v1'))).toBeNull();
+});
