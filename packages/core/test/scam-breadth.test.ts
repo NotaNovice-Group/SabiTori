@@ -64,6 +64,26 @@ const PAIRS: Pair[] = [
     scam: { text: 'Offre d’emploi: gagnez 200 000 FCFA par semaine depuis chez vous. Envoyez 5 000 FCFA de frais d’inscription au 677 22 11 00.', sender: fromNumber('677221100') },
     twin: { text: 'Mairie de Douala: le recrutement des agents municipaux est ouvert. Dépôt des dossiers à la mairie avant le 30 novembre 2026. Aucun frais n’est demandé.', sender: fromName('Mairie de Douala') },
   },
+  {
+    name: 'fr: bank short name from a personal number (bank not in the region list)',
+    scam: { text: 'SGC: Opération suspecte de 260 000 FCFA détectée sur votre compte. Appelez votre conseiller au 699 12 34 56.', sender: fromNumber('699123456') },
+    twin: { text: 'SGC: Votre virement de 260 000 FCFA a été exécuté le 12/11/2026.', sender: fromName('SGC') },
+  },
+  {
+    name: 'en: account closure threat vs a school closed for a holiday',
+    scam: { text: 'Your account will be closed today. Call 677 98 76 54 to keep it open.', sender: fromNumber('677987654') },
+    twin: { text: 'Government Primary School: the school will be closed on 07/11/2026 for a public holiday. Classes resume the next day.', sender: fromName('Government Primary School') },
+  },
+  {
+    name: 'fr: congratulations that ask for a fee vs real school results',
+    scam: { text: 'Félicitations, envoyez 5 000 FCFA de frais au 655 44 33 22 pour recevoir votre bourse.', sender: fromNumber('655443322') },
+    twin: { text: "Lycée Bilingue: Résultats du 1er trimestre: l'élève Blaise est admis en classe supérieure. Félicitations. Paiement de la scolarité bien reçu.", sender: fromName('Lycée Bilingue') },
+  },
+  {
+    name: 'fr: utility switchboard (fixed line) vs the same text from a mobile number',
+    scam: { text: 'CAMWATER: Fuite détectée sur votre branchement. Appelez le 233 00 15 85 immédiatement.', sender: fromNumber('690112233') },
+    twin: { text: "CAMWATER: Fuite détectée sur votre branchement. Pour plus d'informations appelez le service client au 233 00 15 85.", sender: fromName('CAMWATER') },
+  },
 ];
 
 const level = (text: string, sender?: MessageInput['sender']) =>

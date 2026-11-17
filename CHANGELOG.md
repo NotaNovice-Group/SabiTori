@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Scam checks: a utility's own switchboard number, a school closing for a holiday and real exam results no longer
+  raise a warning; a message from a mobile number that opens with a bank's short name ("SGC: ...") now does.
 - Photos: ruled tables (school-fee notices, bills) are read again. Table lines are erased before OCR, which lifts
   the facts recovered on the benchmark photos from 75% to 84% (school notices from 33% to 64%) with no type worse.
 - Store builds no longer include the optional LLM (Qwen2.5 via wllama): it is only in research builds

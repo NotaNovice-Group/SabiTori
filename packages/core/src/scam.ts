@@ -15,6 +15,20 @@ const STRONG: ScamSignal[] = [
 ];
 const digitsOf = (s: string) => s.replace(/\D/g, '');
 
+/** Congratulation words: on their own they open real exam results, not prizes. */
+const CONGRATS = /^(?:felicitations?|congratulations?|congrats)$/;
+
+/**
+ * A message from an ordinary mobile number that opens with an organisation's short name in capitals ("SGC: ...",
+ * "UBA: ...") claims to be that organisation; real organisations send from their sender name. Words a person
+ * may put first ("URGENT:", "INFO:") do not count.
+ */
+const NOT_ORG = new Set(['URGENT', 'INFO', 'INFOS', 'ATTENTION', 'RAPPEL', 'IMPORTANT', 'NB', 'PS', 'OBJET', 'RE', 'TR', 'FWD', 'SVP', 'STP', 'OK', 'NOTE', 'ALERT', 'ALERTE', 'NEW', 'TOP', 'HELLO', 'BONJOUR', 'SALUT', 'MERCI']);
+function claimsOrgPrefix(text: string): boolean {
+  const m = /^\s*([A-Z][A-Z&.\-]{1,11}(?: [A-Z][A-Z&.\-]{1,11})?)\s*:/.exec(text);
+  return !!m && !NOT_ORG.has(m[1]!.replace(/[.\-&]/g, ''));
+}
+
 function isOrdinaryNumber(input: MessageInput): boolean {
   return input.sender?.kind === 'number' && digitsOf(input.sender.value ?? '').length >= 8;
 }
@@ -96,10 +110,20 @@ export function assessScam(
   const isOfficialNumber = (v: string) => officialNumbers.has(digitsOf(v).slice(-9));
   // Verification whitelists only the official numbers; any other number is a personal number whoever sent the text.
   const personalPhones = facts.phones.filter((p) => !isOfficialNumber(p.value));
-  if (hasTerm(n, S((s) => s.prizeWords))) {
+  const prizeHits = findTerms(n, S((s) => s.prizeWords));
+  if (prizeHits.length > 0) {
     // A prize that must be claimed by paying, or by calling a personal number, is a trap.
     const callsNumber = callHits.length > 0 && personalPhones.length > 0;
-    if (hasTerm(n, S((s) => s.feeWords)) || callsNumber) found.add('prize_fee');
+    // "Félicitations" / "congratulations" alone is how real exam and school results start; it is a prize only when a
+    // fee is asked in the same sentence. Any other prize word ("vous avez gagné", "lottery") keeps the wider rule.
+    const realPrize = prizeHits.some((h) => !CONGRATS.test(h.term));
+    const feeHits = findTerms(n, S((s) => s.feeWords));
+    const sens = splitSentences(n);
+    const sameSentence = prizeHits.some((h) => {
+      const sen = sens.find((x) => h.start >= x.start && h.start < x.end);
+      return !!sen && feeHits.some((f) => f.start >= sen.start && f.end <= sen.end);
+    });
+    if ((realPrize && (feeHits.length > 0 || callsNumber)) || sameSentence) found.add('prize_fee');
   }
   // Family impersonation ("j'ai changé de numéro" + rush or money) and the emergency story (accident / hospital
   // + call a personal number) from a sender that is not verified.
@@ -115,7 +139,7 @@ export function assessScam(
   if (hasTerm(n, S((s) => s.blockThreats))) found.add('account_block_threat');
   if (facts.urls.length > 0) found.add('link');
   if (hasTerm(n, S((s) => s.timePressure))) found.add('time_pressure');
-  if (claimedSenderId && !sender.verified && isOrdinaryNumber(input)) found.add('sender_mismatch');
+  if ((claimedSenderId || claimsOrgPrefix(input.text)) && !sender.verified && isOrdinaryNumber(input)) found.add('sender_mismatch');
   if (received && facts.amounts.length > 0 && !sender.verified && isOrdinaryNumber(input)) found.add('fake_balance');
 
   // pay_to_personal_number: an amount, a pay/send verb and an ordinary phone number together.
@@ -181,7 +205,12 @@ export function assessScam(
     const recvHits = findTerms(n, S((s) => s.moneyReceived));
     // A number that merely names who sent money ("reçu de JEAN (677123456)") is not a number to call.
     const named = (p: { span: { start: number } }) => recvHits.some((w) => w.end <= p.span.start && p.span.start - w.end <= 30);
-    const foreign = facts.phones.some((p) => !named(p) && (!h || digitsOf(p.value).slice(-9) !== h));
+    // A fixed line in a message whose sender the phone showed as a name is how a utility or a hospital gives its
+    // switchboard. The trap is a personal mobile number; a message from a mobile number is caught by sender_mismatch,
+    // and a pasted text with no sender keeps the caution (nothing says who wrote it).
+    const mobile = region.phone.mobilePrefixes ?? ['6'];
+    const fixedFromName = (p: { value: string }) => input.sender?.kind === 'name' && !mobile.some((m) => digitsOf(p.value).slice(-9).startsWith(m));
+    const foreign = facts.phones.some((p) => !named(p) && !fixedFromName(p) && (!h || digitsOf(p.value).slice(-9) !== h));
     if (foreign && ((claimedSenderId && !sender.verified) || found.size > 0)) found.add('asks_to_call_number');
   }
 

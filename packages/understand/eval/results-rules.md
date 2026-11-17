@@ -12,7 +12,7 @@ Brackets: 95% percentile bootstrap interval over messages (10000 resamples, seed
 | action | 66.7% [57.3–76.0] |
 | urgency | 87.5% [80.2–93.8] |
 | all three right | 51.0% [40.6–61.5] |
-| scam level (assessScam) | 94.8% [89.6–99.0] |
+| scam level (assessScam) | 100.0% [100.0–100.0] |
 
 Mean rules confidence: 0.66. Classifier errors: 0.
 
@@ -20,19 +20,19 @@ Mean rules confidence: 0.66. Classifier errors: 0.
 
 | Lang | n | kind | action | urgency | all three [95% CI] | scam level |
 |---|---|---|---|---|---|---|
-| fr | 38 | 84.2% | 65.8% | 89.5% | 50.0% [34.2–65.8] | 94.7% |
-| en | 43 | 93.0% | 76.7% | 90.7% | 62.8% [48.8–76.7] | 93.0% |
+| fr | 38 | 84.2% | 65.8% | 89.5% | 50.0% [34.2–65.8] | 100.0% |
+| en | 43 | 93.0% | 76.7% | 90.7% | 62.8% [48.8–76.7] | 100.0% |
 | wes | 15 | 73.3% | 40.0% | 73.3% | 20.0% [0.0–40.0] | 100.0% |
 
 ## Scam level confusion (rows = expected, columns = predicted)
 
 | expected \ predicted | likely_scam | caution | no_signs | recall |
 |---|---|---|---|---|
-| likely_scam | 16 | 1 | 1 | 88.9% |
+| likely_scam | 18 | 0 | 0 | 100.0% |
 | caution | 0 | 4 | 0 | 100.0% |
-| no_signs | 1 | 2 | 71 | 95.9% |
+| no_signs | 0 | 0 | 74 | 100.0% |
 
-Any warning on scam/caution messages: 21/22 (95.5%). Warning on no-signs messages (false alarms): 3/74 (4.1%).
+Any warning on scam/caution messages: 22/22 (100.0%). Warning on no-signs messages (false alarms): 0/74 (0.0%).
 
 ## Confusion summary (most frequent errors, expected -> predicted)
 
@@ -67,12 +67,12 @@ Any warning on scam/caution messages: 21/22 (95.5%). Warning on no-signs message
 
 ### scam level
 
-- no_signs -> caution: 2
-- likely_scam -> caution: 1
-- likely_scam -> no_signs: 1
-- no_signs -> likely_scam: 1
 - caution -> likely_scam: 0
 - caution -> no_signs: 0
+- likely_scam -> caution: 0
+- likely_scam -> no_signs: 0
+- no_signs -> caution: 0
+- no_signs -> likely_scam: 0
 
 ## Per-label recall
 

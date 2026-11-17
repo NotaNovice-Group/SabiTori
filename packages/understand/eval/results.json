@@ -854,14 +854,14 @@
    "scam": {
     "level": {
      "n": 96,
-     "k": 91,
-     "acc": 0.9479,
-     "lo": 0.8958,
-     "hi": 0.9896
+     "k": 96,
+     "acc": 1,
+     "lo": 1,
+     "hi": 1
     },
-    "warned": 21,
+    "warned": 22,
     "flagged": 22,
-    "falseAlarms": 3,
+    "falseAlarms": 0,
     "genuine": 74
    },
    "changedFromRules": {
@@ -1648,7 +1648,7 @@
      "urgency": "info"
     },
     "goldScam": "no_signs",
-    "scam": "likely_scam",
+    "scam": "no_signs",
     "rules": {
      "kind": "school",
      "action": "pay",
@@ -3133,7 +3133,7 @@
      "urgency": "info"
     },
     "goldScam": "no_signs",
-    "scam": "caution",
+    "scam": "no_signs",
     "rules": {
      "kind": "water_bill",
      "action": "call",
@@ -3496,7 +3496,7 @@
      "urgency": "info"
     },
     "goldScam": "likely_scam",
-    "scam": "no_signs",
+    "scam": "likely_scam",
     "rules": {
      "kind": "mobile_money",
      "action": "call",
@@ -3859,7 +3859,7 @@
      "urgency": "info"
     },
     "goldScam": "likely_scam",
-    "scam": "caution",
+    "scam": "likely_scam",
     "rules": {
      "kind": "bank",
      "action": "unclear",
@@ -4288,7 +4288,7 @@
      "urgency": "info"
     },
     "goldScam": "no_signs",
-    "scam": "caution",
+    "scam": "no_signs",
     "rules": {
      "kind": "school",
      "action": "unclear",

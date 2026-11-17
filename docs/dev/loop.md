@@ -89,6 +89,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       for the two reviewers); `run-rules.mjs --split=real` and `run-encoder.mjs --data` score `messages.real.jsonl`.
 - [x] **Demo video shot list.** `docs/video-script.md`: a two-minute, one-take script using only what the app does today
       (offline, scam warning first, photo to card, fact source, reminder, listen-first), with what not to claim.
+- [x] **Scam false alarms and an impersonation gap (train split only).** A utility's switchboard (fixed line, named
+      sender) no longer counts as "call this number"; "will be closed" threatens only an account, line or SIM;
+      "félicitations" alone needs a fee in the same sentence; an ALL-CAPS organisation prefix from a mobile number is
+      sender_mismatch. Train: false alarms 6/157 -> 0/157, misses 4 -> 3 (one is Pidgin, blocked). Test: warnings
+      21/22 -> 22/22, false alarms 3/74 -> 0/74. Unseen unchanged (17/21, 2/79).
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -119,3 +124,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #27 | OCR: table rules erased before reading; fact recall 75.0% -> 83.6%, school notices 33% -> 64% | local gate (Actions budget) |
 | 2026-11-17 | #28 | Real-message evaluation tooling: anonymiser draft tool, `--split=real` | local gate (Actions budget) |
 | 2026-11-17 | #29 | Demo video shot list for the application (`docs/video-script.md`) | local gate (Actions budget) |
+| 2026-11-17 | #30 | Scam rules: fewer false alarms, bank-prefix impersonation; test warnings 22/22, false alarms 0/74 | local gate (Actions budget) |
