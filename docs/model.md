@@ -9,7 +9,7 @@ SabiTori has two on-device understanding models. Both only **choose labels** fro
 | Parameters | 33.0M as shipped (the base model has 117.7M, 96M of them in its 250k-piece vocabulary; pruned to 30k pieces) | 1.5B |
 | Speed | 235 ms median, 367 ms p95 per message in headless Chromium, 4× CPU throttle, main thread, one wasm thread (Intel Xeon 2.1 GHz desktop CPU; `packages/understand/harness/encoder-bench.mjs`). Not yet measured on a phone | 20–24 s per message on a desktop (wasm); not for every message |
 | Runtime | onnxruntime-web (wasm, one thread, no COOP/COEP) | wllama |
-| Classifier id | `minilm-l12-int8@1` | `qwen2.5-1.5b-q4@1` |
+| Classifier id | `minilm-l12-int8@2` | `qwen2.5-1.5b-q4@1` |
 
 ## Built-in model: how it plugs in
 
