@@ -147,6 +147,14 @@
     "text": "Be there on {date}.",
     "status": "draft"
   },
+  "deadline.on_at": {
+    "text": "Be there on {date} at {minutes} minutes past {hour}.",
+    "status": "draft"
+  },
+  "deadline.on_at_hour": {
+    "text": "Be there on {date} at {hour} o'clock.",
+    "status": "draft"
+  },
   "deadline.passed": {
     "text": "The date {date} has already passed.",
     "status": "reviewed"

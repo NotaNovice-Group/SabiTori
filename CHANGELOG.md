@@ -23,6 +23,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Appointment cards say the time written after the date ("Présentez-vous le vingt-deux novembre à neuf heures").
 - Cards for appointments, convocations and hearings now say "Be there on {date}" instead of "Do it by {date}".
 - Model thresholds re-chosen on the train split after the reading-word changes, as the evaluation method requires:
   action 0.6 -> 0.75. All three labels right: 75.0% on test (was 77.1%), 47.0% on the unseen set (unchanged).

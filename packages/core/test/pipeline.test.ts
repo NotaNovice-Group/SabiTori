@@ -516,10 +516,41 @@ describe('appointment dates', () => {
   it('a place to go is ON the date; a bill is BY it', async () => {
     const appt = await run('Hôpital Régional: Votre rendez-vous de consultation est fixé au 20/11/2026 à 9h00. Présentez-vous à l’accueil.');
     expect(appt.understanding.action).toBe('go_to_place');
-    expect(keys(appt, '2026-10-31')).toContain('deadline.on');
+    expect(appt.deadlineTime?.value).toBe('09:00');
+    expect(keys(appt, '2026-10-31')).toContain('deadline.on_at_hour');
     expect(keys(appt, '2026-10-31')).not.toContain('deadline.by');
+    const noTime = await run('Hôpital Régional: Votre rendez-vous de consultation est fixé au 20/11/2026. Présentez-vous à l’accueil.');
+    expect(keys(noTime, '2026-10-31')).toContain('deadline.on');
+    const half = await run('Tribunal de Kumba: vous êtes convoqué à l’audience du 13/11/2026 à 09h30, salle 4. Présentez-vous à l’accueil.');
+    expect(half.deadlineTime?.value).toBe('09:30');
+    if (half.understanding.action === 'go_to_place') {
+      const plan = buildSpeechPlan(half, { today: '2026-10-31' }).sections.flatMap((x) => x.utterances);
+      const u = plan.find((x) => x.key === 'deadline.on_at')!;
+      expect(u.slots).toMatchObject({ hour: { type: 'number', value: 9 }, minutes: { type: 'number', value: 30 } });
+    }
     const bill = await run('ENEO: facture de 15 000 FCFA à payer avant le 15/11/2026.');
     expect(keys(bill, '2026-10-31')).toContain('deadline.by');
     expect(keys(bill, '2026-10-31')).not.toContain('deadline.on');
+  });
+});
+
+describe('time right after the deadline date', () => {
+  it('reads h and colon times close after the date, 24-hour clock', async () => {
+    const { timeAfter } = await import('../src/card.js');
+    const at = (t: string) => timeAfter(t, t.indexOf('#') + 1)?.value;
+    expect(at('le 20/11/2026# à 9h00.')).toBe('09:00');
+    expect(at('le 20/11/2026# à 14h30')).toBe('14:30');
+    expect(at('on 20 November 2026# at 9:30.')).toBe('09:30');
+    expect(at('le 20/11/2026#, 08h')).toBe('08:00');
+    expect(at('le 20/11/2026# a 7 h 15')).toBe('07:15');
+  });
+  it('never takes a number that is not a time, or a time far from the date', async () => {
+    const { timeAfter } = await import('../src/card.js');
+    const at = (t: string) => timeAfter(t, t.indexOf('#') + 1);
+    for (const t of ['le 20/11/2026#. Montant 15 000 FCFA', 'le 20/11/2026# au 677 12 34 56', 'le 20/11/2026# à 25h00', 'le 20/11/2026#. Merci de venir avec votre carnet, à 9h00', 'le 20/11/2026# à 9h75'])
+      expect(at(t)).toBeUndefined();
+    const f = at('le 20/11/2026# à 9h00.')!;
+    expect('le 20/11/2026# à 9h00.'.slice(f.span.start, f.span.end)).toBe(f.raw);
+    expect(f.raw).toBe('9h00');
   });
 });

@@ -164,6 +164,8 @@ export interface Card {
   scam: ScamAssessment;
   /** The single facts chosen for the card. Each must exist in `facts`. */
   deadline?: Fact<IsoDate>;
+  /** "HH:MM", when the message gives a time right after the deadline date ("le 20/11/2026 à 9h00"). Read from the text. */
+  deadlineTime?: Fact<string>;
   amount?: Fact<Money>;
   contactPhone?: Fact<string>;
   reference?: Fact<string>;

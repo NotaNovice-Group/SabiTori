@@ -78,7 +78,15 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
       const date = { type: 'date' as const, value: card.deadline.value, relativeTo: today };
       // Going somewhere (an appointment, a convocation) happens ON the date; anything else is done BY it.
       const goes = card.mode === 'full' && card.understanding.action === 'go_to_place';
-      sections.deadline = [{ key: card.deadline.value < today ? 'deadline.passed' : goes ? 'deadline.on' : 'deadline.by', slots: { date } }];
+      const t = goes && card.deadlineTime ? card.deadlineTime.value.split(':').map(Number) : undefined;
+      sections.deadline =
+        card.deadline.value < today
+          ? [{ key: 'deadline.passed', slots: { date } }]
+          : t && t[1]
+            ? [{ key: 'deadline.on_at', slots: { date, hour: { type: 'number', value: t[0]! }, minutes: { type: 'number', value: t[1]! } } }]
+            : t
+              ? [{ key: 'deadline.on_at_hour', slots: { date, hour: { type: 'number', value: t[0]! } } }]
+              : [{ key: goes ? 'deadline.on' : 'deadline.by', slots: { date } }];
     }
     if (card.amount) sections.money = [{ key: 'money.amount', slots: { amount: { type: 'money', value: card.amount.value } } }];
   }

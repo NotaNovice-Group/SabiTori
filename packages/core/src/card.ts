@@ -184,6 +184,21 @@ function daysBetween(from: IsoDate, to: IsoDate): number {
  * ignore the red.
  */
 export const URGENT_WITHIN_DAYS = 7;
+/**
+ * A time written right after the deadline date: "à 9h00", "a 14h30", "at 9:30", ", 08h". 24-hour clock, h or colon;
+ * only a few characters after the date, so a time elsewhere in the message is never taken for it.
+ */
+const TIME_AFTER = /^[\s,]*(?:(?:à|a|at|vers|dès|des|from)\s+)?([01]?\d|2[0-3])\s?(?:h|H|:)\s?([0-5]\d)?(?![\d:])/u;
+export function timeAfter(text: string, from: number): Fact<string> | undefined {
+  const m = TIME_AFTER.exec(text.slice(from, from + 24));
+  if (!m) return undefined;
+  const hour = Number(m[1]);
+  const minute = m[2] ? Number(m[2]) : 0;
+  const start = from + m.index + m[0].search(/\d/);
+  const end = from + m.index + m[0].length;
+  return { value: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`, span: { start, end }, raw: text.slice(start, end) };
+}
+
 function calibrateUrgency(u: Understanding, deadline: Fact<IsoDate> | undefined, receivedAt: IsoDate): Understanding {
   if (u.urgency !== 'urgent' || !deadline) return u;
   return daysBetween(receivedAt, deadline.value) > URGENT_WITHIN_DAYS ? { ...u, urgency: 'soon' } : u;
@@ -235,6 +250,7 @@ export function buildCard(args: {
   const preMode = unreadable(input.text) || understanding.confidence < CONFIDENCE_THRESHOLD;
   const contactPhone = chooseContact(input, facts, scam, sender, lexicons, args.region, !preMode);
   const reference = facts.references[0];
+  const deadlineTime = deadline ? timeAfter(input.text, deadline.span.end) : undefined;
 
   const ok =
     verified(input.text, deadline, facts.dates) &&
@@ -270,6 +286,7 @@ export function buildCard(args: {
   // A fact that failed verification is never shown.
   if (ok) {
     if (deadline) card.deadline = deadline;
+    if (deadline && deadlineTime) card.deadlineTime = deadlineTime;
     if (amount) card.amount = amount;
     if (contactPhone) card.contactPhone = contactPhone;
     if (reference) card.reference = reference;
