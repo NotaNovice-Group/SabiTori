@@ -82,3 +82,20 @@ jobs:
           name: sabitori-debug-apk
           path: apps/app/android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
+      # Pilot APK (docs/impact.md, "Pilot build"): the same app with the on-phone counter (VITE_PILOT=1), for
+      # pilot participants. Debug-signed for side-loading; built on main only, to keep pull requests fast.
+      - name: Build the pilot APK
+        if: github.event_name == 'push'
+        env:
+          VITE_PILOT: '1'
+        run: |
+          pnpm --filter @sabitori/app build
+          (cd apps/app && npx cap sync android)
+          (cd apps/app/android && ./gradlew assembleDebug --no-daemon)
+          cp apps/app/android/app/build/outputs/apk/debug/app-debug.apk sabitori-pilot-debug.apk
+      - uses: actions/upload-artifact@v4.6.2
+        if: github.event_name == 'push'
+        with:
+          name: sabitori-pilot-apk
+          path: sabitori-pilot-debug.apk
+          if-no-files-found: error

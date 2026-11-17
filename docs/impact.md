@@ -25,6 +25,10 @@ never stores message text, numbers, senders or dates of messages (`apps/app/src/
 the totals in Settings, "Pilot numbers", and can share them as plain text they read first, or reset them. Store builds
 leave `VITE_PILOT` empty and have no counter at all.
 
+Every push to `main` builds a pilot APK in CI (artifact `sabitori-pilot-apk`, debug-signed, for side-loading on
+pilot phones). It has the same app id as the store version but a different signature, so a phone that has the store version
+must uninstall it first; after the pilot, uninstall the pilot APK and install the store version again.
+
 ## Metrics
 
 | Metric | Definition | How it is collected |
