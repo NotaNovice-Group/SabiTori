@@ -79,8 +79,8 @@
     "acc": 0.933
    },
    "action": {
-    "t": 0.6,
-    "acc": 0.808
+    "t": 0.75,
+    "acc": 0.8616
    },
    "urgency": {
     "t": 0.85,
@@ -153,63 +153,63 @@
    "action": [
     {
      "t": 0.3,
-     "acc": 0.7679
+     "acc": 0.7902
     },
     {
      "t": 0.35,
-     "acc": 0.7768
-    },
-    {
-     "t": 0.4,
-     "acc": 0.7857
-    },
-    {
-     "t": 0.45,
-     "acc": 0.7857
-    },
-    {
-     "t": 0.5,
-     "acc": 0.7768
-    },
-    {
-     "t": 0.55,
-     "acc": 0.808
-    },
-    {
-     "t": 0.6,
-     "acc": 0.808
-    },
-    {
-     "t": 0.65,
      "acc": 0.8036
     },
     {
+     "t": 0.4,
+     "acc": 0.8125
+    },
+    {
+     "t": 0.45,
+     "acc": 0.8125
+    },
+    {
+     "t": 0.5,
+     "acc": 0.808
+    },
+    {
+     "t": 0.55,
+     "acc": 0.8438
+    },
+    {
+     "t": 0.6,
+     "acc": 0.8571
+    },
+    {
+     "t": 0.65,
+     "acc": 0.8571
+    },
+    {
      "t": 0.7,
-     "acc": 0.7991
+     "acc": 0.8527
     },
     {
      "t": 0.75,
-     "acc": 0.7991
+     "acc": 0.8616
     },
     {
      "t": 0.8,
-     "acc": 0.7946
+     "acc": 0.8661
     },
     {
      "t": 0.85,
-     "acc": 0.7768
+     "acc": 0.8482
     },
     {
      "t": 0.9,
-     "acc": 0.7679
+     "acc": 0.8393
     },
     {
      "t": 0.95,
-     "acc": 0.7545
+     "acc": 0.8259
     },
     {
      "t": 1.01,
-     "acc": 0.7411
+     "acc": 0.8304
     }
    ],
    "urgency": [
@@ -290,10 +290,10 @@
      },
      "action": {
       "n": 96,
-      "k": 64,
-      "acc": 0.6667,
-      "lo": 0.5729,
-      "hi": 0.7604
+      "k": 73,
+      "acc": 0.7604,
+      "lo": 0.6771,
+      "hi": 0.8438
      },
      "urgency": {
       "n": 96,
@@ -304,10 +304,10 @@
      },
      "all": {
       "n": 96,
-      "k": 49,
-      "acc": 0.5104,
-      "lo": 0.4063,
-      "hi": 0.6146
+      "k": 57,
+      "acc": 0.5938,
+      "lo": 0.5,
+      "hi": 0.6875
      }
     },
     "encoder": {
@@ -350,10 +350,10 @@
      },
      "action": {
       "n": 96,
-      "k": 84,
-      "acc": 0.875,
-      "lo": 0.8021,
-      "hi": 0.9375
+      "k": 85,
+      "acc": 0.8854,
+      "lo": 0.8227,
+      "hi": 0.9479
      },
      "urgency": {
       "n": 96,
@@ -364,10 +364,10 @@
      },
      "all": {
       "n": 96,
-      "k": 72,
-      "acc": 0.75,
-      "lo": 0.6664,
-      "hi": 0.8333
+      "k": 73,
+      "acc": 0.7604,
+      "lo": 0.6771,
+      "hi": 0.8438
      }
     }
    },
@@ -385,12 +385,12 @@
      },
      "action": {
       "n": 96,
-      "diff": 0.2083,
-      "lo": 0.125,
-      "hi": 0.3021,
-      "aOnly": 22,
+      "diff": 0.125,
+      "lo": 0.0521,
+      "hi": 0.2083,
+      "aOnly": 14,
       "bOnly": 2,
-      "p": 0,
+      "p": 0.0042,
       "significant": true
      },
      "urgency": {
@@ -405,12 +405,12 @@
      },
      "all": {
       "n": 96,
-      "diff": 0.2396,
-      "lo": 0.1458,
-      "hi": 0.3333,
-      "aOnly": 25,
+      "diff": 0.1667,
+      "lo": 0.0833,
+      "hi": 0.25,
+      "aOnly": 18,
       "bOnly": 2,
-      "p": 0,
+      "p": 0.0004,
       "significant": true
      }
     },
@@ -427,12 +427,12 @@
      },
      "action": {
       "n": 96,
-      "diff": 0.2083,
-      "lo": 0.0938,
-      "hi": 0.3229,
-      "aOnly": 27,
+      "diff": 0.1146,
+      "lo": 0.0208,
+      "hi": 0.2188,
+      "aOnly": 18,
       "bOnly": 7,
-      "p": 0.0008,
+      "p": 0.0433,
       "significant": true
      },
      "urgency": {
@@ -447,13 +447,13 @@
      },
      "all": {
       "n": 96,
-      "diff": 0.1771,
-      "lo": 0.0521,
-      "hi": 0.3021,
-      "aOnly": 30,
+      "diff": 0.0938,
+      "lo": -0.0312,
+      "hi": 0.2083,
+      "aOnly": 22,
       "bOnly": 13,
-      "p": 0.0137,
-      "significant": true
+      "p": 0.1755,
+      "significant": false
      }
     }
    },
@@ -470,10 +470,10 @@
       },
       "action": {
        "n": 38,
-       "k": 25,
-       "acc": 0.6579,
-       "lo": 0.5,
-       "hi": 0.8158
+       "k": 29,
+       "acc": 0.7632,
+       "lo": 0.6316,
+       "hi": 0.8947
       },
       "urgency": {
        "n": 38,
@@ -484,10 +484,10 @@
       },
       "all": {
        "n": 38,
-       "k": 19,
-       "acc": 0.5,
-       "lo": 0.3421,
-       "hi": 0.6579
+       "k": 23,
+       "acc": 0.6053,
+       "lo": 0.4474,
+       "hi": 0.7632
       }
      },
      "combined": {
@@ -522,13 +522,13 @@
      },
      "combinedVsRules": {
       "n": 38,
-      "diff": 0.2368,
-      "lo": 0.0789,
-      "hi": 0.3947,
-      "aOnly": 10,
+      "diff": 0.1316,
+      "lo": 0,
+      "hi": 0.2632,
+      "aOnly": 6,
       "bOnly": 1,
-      "p": 0.0117,
-      "significant": true
+      "p": 0.125,
+      "significant": false
      }
     },
     "en": {
@@ -543,10 +543,10 @@
       },
       "action": {
        "n": 43,
-       "k": 33,
-       "acc": 0.7674,
-       "lo": 0.6279,
-       "hi": 0.8837
+       "k": 37,
+       "acc": 0.8605,
+       "lo": 0.7442,
+       "hi": 0.9535
       },
       "urgency": {
        "n": 43,
@@ -557,10 +557,10 @@
       },
       "all": {
        "n": 43,
-       "k": 27,
-       "acc": 0.6279,
-       "lo": 0.4884,
-       "hi": 0.7674
+       "k": 31,
+       "acc": 0.7209,
+       "lo": 0.5814,
+       "hi": 0.8605
       }
      },
      "combined": {
@@ -573,9 +573,9 @@
       },
       "action": {
        "n": 43,
-       "k": 40,
-       "acc": 0.9302,
-       "lo": 0.8372,
+       "k": 41,
+       "acc": 0.9535,
+       "lo": 0.8837,
        "hi": 1
       },
       "urgency": {
@@ -587,21 +587,21 @@
       },
       "all": {
        "n": 43,
-       "k": 35,
-       "acc": 0.814,
-       "lo": 0.6977,
+       "k": 36,
+       "acc": 0.8372,
+       "lo": 0.7209,
        "hi": 0.9302
       }
      },
      "combinedVsRules": {
       "n": 43,
-      "diff": 0.186,
-      "lo": 0.0698,
-      "hi": 0.3256,
-      "aOnly": 9,
+      "diff": 0.1163,
+      "lo": 0,
+      "hi": 0.2326,
+      "aOnly": 6,
       "bOnly": 1,
-      "p": 0.0215,
-      "significant": true
+      "p": 0.125,
+      "significant": false
      }
     },
     "wes": {
@@ -616,10 +616,10 @@
       },
       "action": {
        "n": 15,
-       "k": 6,
-       "acc": 0.4,
-       "lo": 0.1333,
-       "hi": 0.6667
+       "k": 7,
+       "acc": 0.4667,
+       "lo": 0.2,
+       "hi": 0.7333
       },
       "urgency": {
        "n": 15,
@@ -866,7 +866,7 @@
    },
    "changedFromRules": {
     "kind": 10,
-    "action": 26,
+    "action": 18,
     "urgency": 5
    }
   },
@@ -883,10 +883,10 @@
      },
      "action": {
       "n": 100,
-      "k": 49,
-      "acc": 0.49,
-      "lo": 0.39,
-      "hi": 0.59
+      "k": 54,
+      "acc": 0.54,
+      "lo": 0.44,
+      "hi": 0.64
      },
      "urgency": {
       "n": 100,
@@ -897,10 +897,10 @@
      },
      "all": {
       "n": 100,
-      "k": 30,
-      "acc": 0.3,
-      "lo": 0.21,
-      "hi": 0.39
+      "k": 34,
+      "acc": 0.34,
+      "lo": 0.25,
+      "hi": 0.43
      }
     },
     "encoder": {
@@ -943,10 +943,10 @@
      },
      "action": {
       "n": 100,
-      "k": 63,
-      "acc": 0.63,
-      "lo": 0.53,
-      "hi": 0.72
+      "k": 66,
+      "acc": 0.66,
+      "lo": 0.56,
+      "hi": 0.75
      },
      "urgency": {
       "n": 100,
@@ -957,10 +957,10 @@
      },
      "all": {
       "n": 100,
-      "k": 44,
-      "acc": 0.44,
-      "lo": 0.34,
-      "hi": 0.54
+      "k": 47,
+      "acc": 0.47,
+      "lo": 0.37,
+      "hi": 0.57
      }
     }
    },
@@ -978,13 +978,13 @@
      },
      "action": {
       "n": 100,
-      "diff": 0.14,
-      "lo": 0.03,
-      "hi": 0.25,
+      "diff": 0.12,
+      "lo": 0.01,
+      "hi": 0.23,
       "aOnly": 23,
-      "bOnly": 9,
-      "p": 0.0201,
-      "significant": true
+      "bOnly": 11,
+      "p": 0.0576,
+      "significant": false
      },
      "urgency": {
       "n": 100,
@@ -998,12 +998,12 @@
      },
      "all": {
       "n": 100,
-      "diff": 0.14,
-      "lo": 0.04,
+      "diff": 0.13,
+      "lo": 0.02,
       "hi": 0.24,
-      "aOnly": 21,
-      "bOnly": 7,
-      "p": 0.0125,
+      "aOnly": 22,
+      "bOnly": 9,
+      "p": 0.0294,
       "significant": true
      }
     },
@@ -1020,12 +1020,12 @@
      },
      "action": {
       "n": 100,
-      "diff": 0.09,
-      "lo": -0.06,
-      "hi": 0.23,
-      "aOnly": 32,
-      "bOnly": 23,
-      "p": 0.2806,
+      "diff": 0.04,
+      "lo": -0.1,
+      "hi": 0.19,
+      "aOnly": 30,
+      "bOnly": 26,
+      "p": 0.6889,
       "significant": false
      },
      "urgency": {
@@ -1040,12 +1040,12 @@
      },
      "all": {
       "n": 100,
-      "diff": 0.04,
-      "lo": -0.08,
-      "hi": 0.16,
+      "diff": 0,
+      "lo": -0.13,
+      "hi": 0.13,
       "aOnly": 22,
-      "bOnly": 18,
-      "p": 0.6358,
+      "bOnly": 22,
+      "p": 1,
       "significant": false
      }
     }
@@ -1063,10 +1063,10 @@
       },
       "action": {
        "n": 40,
-       "k": 18,
-       "acc": 0.45,
-       "lo": 0.3,
-       "hi": 0.6
+       "k": 20,
+       "acc": 0.5,
+       "lo": 0.35,
+       "hi": 0.65
       },
       "urgency": {
        "n": 40,
@@ -1077,10 +1077,10 @@
       },
       "all": {
        "n": 40,
-       "k": 10,
-       "acc": 0.25,
-       "lo": 0.125,
-       "hi": 0.4
+       "k": 11,
+       "acc": 0.275,
+       "lo": 0.15,
+       "hi": 0.425
       }
      },
      "combined": {
@@ -1093,9 +1093,9 @@
       },
       "action": {
        "n": 40,
-       "k": 27,
-       "acc": 0.675,
-       "lo": 0.525,
+       "k": 28,
+       "acc": 0.7,
+       "lo": 0.55,
        "hi": 0.825
       },
       "urgency": {
@@ -1107,20 +1107,20 @@
       },
       "all": {
        "n": 40,
-       "k": 19,
-       "acc": 0.475,
-       "lo": 0.325,
-       "hi": 0.625
+       "k": 20,
+       "acc": 0.5,
+       "lo": 0.35,
+       "hi": 0.65
       }
      },
      "combinedVsRules": {
       "n": 40,
       "diff": 0.225,
-      "lo": 0.075,
-      "hi": 0.3756,
-      "aOnly": 11,
-      "bOnly": 2,
-      "p": 0.0225,
+      "lo": 0.05,
+      "hi": 0.4,
+      "aOnly": 12,
+      "bOnly": 3,
+      "p": 0.0352,
       "significant": true
      }
     },
@@ -1136,10 +1136,10 @@
       },
       "action": {
        "n": 38,
-       "k": 20,
-       "acc": 0.5263,
-       "lo": 0.3684,
-       "hi": 0.6842
+       "k": 21,
+       "acc": 0.5526,
+       "lo": 0.3947,
+       "hi": 0.7105
       },
       "urgency": {
        "n": 38,
@@ -1150,10 +1150,10 @@
       },
       "all": {
        "n": 38,
-       "k": 14,
-       "acc": 0.3684,
-       "lo": 0.2105,
-       "hi": 0.5263
+       "k": 15,
+       "acc": 0.3947,
+       "lo": 0.2368,
+       "hi": 0.5526
       }
      },
      "combined": {
@@ -1188,11 +1188,11 @@
      },
      "combinedVsRules": {
       "n": 38,
-      "diff": 0.0263,
-      "lo": -0.1579,
-      "hi": 0.2105,
+      "diff": 0,
+      "lo": -0.1842,
+      "hi": 0.1842,
       "aOnly": 6,
-      "bOnly": 5,
+      "bOnly": 6,
       "p": 1,
       "significant": false
      }
@@ -1200,36 +1200,6 @@
     "wes": {
      "n": 22,
      "rules": {
-      "kind": {
-       "n": 22,
-       "k": 21,
-       "acc": 0.9545,
-       "lo": 0.8636,
-       "hi": 1
-      },
-      "action": {
-       "n": 22,
-       "k": 11,
-       "acc": 0.5,
-       "lo": 0.2727,
-       "hi": 0.7273
-      },
-      "urgency": {
-       "n": 22,
-       "k": 15,
-       "acc": 0.6818,
-       "lo": 0.5,
-       "hi": 0.8636
-      },
-      "all": {
-       "n": 22,
-       "k": 6,
-       "acc": 0.2727,
-       "lo": 0.0909,
-       "hi": 0.4545
-      }
-     },
-     "combined": {
       "kind": {
        "n": 22,
        "k": 21,
@@ -1253,10 +1223,40 @@
       },
       "all": {
        "n": 22,
-       "k": 10,
-       "acc": 0.4545,
-       "lo": 0.2716,
-       "hi": 0.6818
+       "k": 8,
+       "acc": 0.3636,
+       "lo": 0.1818,
+       "hi": 0.5455
+      }
+     },
+     "combined": {
+      "kind": {
+       "n": 22,
+       "k": 21,
+       "acc": 0.9545,
+       "lo": 0.8636,
+       "hi": 1
+      },
+      "action": {
+       "n": 22,
+       "k": 15,
+       "acc": 0.6818,
+       "lo": 0.4545,
+       "hi": 0.8636
+      },
+      "urgency": {
+       "n": 22,
+       "k": 15,
+       "acc": 0.6818,
+       "lo": 0.5,
+       "hi": 0.8636
+      },
+      "all": {
+       "n": 22,
+       "k": 12,
+       "acc": 0.5455,
+       "lo": 0.3182,
+       "hi": 0.7273
       }
      },
      "combinedVsRules": {
@@ -1981,7 +1981,7 @@
     "scam": "likely_scam",
     "rules": {
      "kind": "mobile_money",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "info"
     },
     "encoder": {
@@ -1999,7 +1999,7 @@
      "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.64
+    "combinedConfidence": 0.75
    },
    {
     "id": "sbt-017",
@@ -2047,7 +2047,7 @@
     "scam": "likely_scam",
     "rules": {
      "kind": "mobile_money",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "info"
     },
     "encoder": {
@@ -2410,7 +2410,7 @@
     "scam": "likely_scam",
     "rules": {
      "kind": "legal",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "info"
     },
     "encoder": {
@@ -2428,7 +2428,7 @@
      "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.64
+    "combinedConfidence": 0.75
    },
    {
     "id": "sbt-030",
@@ -2509,7 +2509,7 @@
     "scam": "no_signs",
     "rules": {
      "kind": "bank",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "urgent"
     },
     "encoder": {
@@ -2527,7 +2527,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.53
+    "combinedConfidence": 0.63
    },
    {
     "id": "sbt-033",
@@ -2707,7 +2707,7 @@
     "scam": "no_signs",
     "rules": {
      "kind": "mobile_money",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "urgent"
     },
     "encoder": {
@@ -2725,7 +2725,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.67
+    "combinedConfidence": 0.79
    },
    {
     "id": "sbt-039",
@@ -2740,7 +2740,7 @@
     "scam": "likely_scam",
     "rules": {
      "kind": "telecom",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "info"
     },
     "encoder": {
@@ -3004,7 +3004,7 @@
     "scam": "no_signs",
     "rules": {
      "kind": "telecom",
-     "action": "unclear",
+     "action": "nothing",
      "urgency": "info"
     },
     "encoder": {
@@ -3019,7 +3019,7 @@
     },
     "combined": {
      "kind": "telecom",
-     "action": "unclear",
+     "action": "nothing",
      "urgency": "info"
     },
     "combinedConfidence": 0.93
@@ -3268,7 +3268,7 @@
     "scam": "likely_scam",
     "rules": {
      "kind": "legal",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "urgent"
     },
     "encoder": {
@@ -3286,7 +3286,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.69
+    "combinedConfidence": 0.81
    },
    {
     "id": "sbt-056",
@@ -3334,7 +3334,7 @@
     "scam": "likely_scam",
     "rules": {
      "kind": "telecom",
-     "action": "nothing",
+     "action": "pay",
      "urgency": "info"
     },
     "encoder": {
@@ -5514,7 +5514,7 @@
     "scam": "no_signs",
     "rules": {
      "kind": "bank",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "soon"
     },
     "encoder": {
@@ -5532,7 +5532,7 @@
      "action": "go_to_place",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.37
+    "combinedConfidence": 0.44
    },
    {
     "id": "uns-028",
@@ -6207,7 +6207,7 @@
     "scam": "no_signs",
     "rules": {
      "kind": "other",
-     "action": "unclear",
+     "action": "nothing",
      "urgency": "info"
     },
     "encoder": {
@@ -6222,10 +6222,10 @@
     },
     "combined": {
      "kind": "bank",
-     "action": "unclear",
+     "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.17
+    "combinedConfidence": 0.2
    },
    {
     "id": "uns-049",
@@ -6933,7 +6933,7 @@
     "scam": "no_signs",
     "rules": {
      "kind": "bank",
-     "action": "unclear",
+     "action": "nothing",
      "urgency": "info"
     },
     "encoder": {
@@ -6951,7 +6951,7 @@
      "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.43
+    "combinedConfidence": 0.5
    },
    {
     "id": "uns-071",
@@ -7428,7 +7428,7 @@
     "scam": "no_signs",
     "rules": {
      "kind": "other",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "urgent"
     },
     "encoder": {
@@ -7443,10 +7443,10 @@
     },
     "combined": {
      "kind": "other",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.17
+    "combinedConfidence": 0.2
    },
    {
     "id": "uns-086",
@@ -7824,7 +7824,7 @@
     "scam": "no_signs",
     "rules": {
      "kind": "legal",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "urgent"
     },
     "encoder": {
@@ -7839,10 +7839,10 @@
     },
     "combined": {
      "kind": "legal",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.64
+    "combinedConfidence": 0.75
    },
    {
     "id": "uns-098",

@@ -94,6 +94,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       "félicitations" alone needs a fee in the same sentence; an ALL-CAPS organisation prefix from a mobile number is
       sender_mismatch. Train: false alarms 6/157 -> 0/157, misses 4 -> 3 (one is Pidgin, blocked). Test: warnings
       21/22 -> 22/22, false alarms 3/74 -> 0/74. Unseen unchanged (17/21, 2/79).
+- [x] **Action words (train split only).** Receipts and notices with nothing to do (credited, approved, renewed, holiday
+      greetings, maintenance) and payment demands worded "send {amount}", "rembourser", "approvisionner votre compte"
+      were "unclear". Rules alone, all three right: test 51.0% -> 59.4%, unseen 30.0% -> 34.0%. Encoder + rules:
+      test 75.0% -> 76.0%, unseen 44.0% -> 47.0%. A "send it back" scam is now action pay; its card still warns
+      first and never says to pay (new test).
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -125,3 +130,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #28 | Real-message evaluation tooling: anonymiser draft tool, `--split=real` | local gate (Actions budget) |
 | 2026-11-17 | #29 | Demo video shot list for the application (`docs/video-script.md`) | local gate (Actions budget) |
 | 2026-11-17 | #30 | Scam rules: fewer false alarms, bank-prefix impersonation; test warnings 22/22, false alarms 0/74 | local gate (Actions budget) |
+| 2026-11-17 | #31 | Action words: unseen all-three 44.0% -> 47.0% (encoder + rules), rules alone 30.0% -> 34.0% | local gate (Actions budget) |

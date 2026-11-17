@@ -523,7 +523,17 @@
       "frais d'inscription",
       "frais d'activation",
       "pour l'inscription",
-      "pour débloquer"
+      "pour débloquer",
+      "rembourser",
+      "remboursez",
+      "approvisionner votre compte",
+      "approvisionnez votre compte",
+      "envoyez {n}",
+      "envoyer {n}",
+      "renvoyer",
+      "renvoyez",
+      "envoyer ça",
+      "échéance de crédit"
     ],
     "collect": [
       "retirer",
@@ -669,7 +679,19 @@
       "merci pour votre compréhension",
       "nous vous remercions de votre compréhension",
       "pour consulter votre solde",
-      "prélèvement des frais"
+      "prélèvement des frais",
+      "crédité",
+      "créditée",
+      "validée",
+      "a été renouvelé",
+      "renouvelé automatiquement",
+      "joyeuses fêtes",
+      "bonne année",
+      "bonne fête",
+      "merci de votre fidélité",
+      "vous remercie de votre fidélité",
+      "maintenance du réseau",
+      "est classé"
     ]
   },
   "urgency": {

@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Reading: receipts and greetings are now "nothing to do", and "send 30 000 FCFA to ..." or "rembourser" are
+  "pay". All three labels right on the unseen set: 44% -> 47% (encoder + rules).
 - Scam checks: a utility's own switchboard number, a school closing for a holiday and real exam results no longer
   raise a warning; a message from a mobile number that opens with a bank's short name ("SGC: ...") now does.
 - Photos: ruled tables (school-fee notices, bills) are read again. Table lines are erased before OCR, which lifts

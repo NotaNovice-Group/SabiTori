@@ -481,7 +481,13 @@
       "file fee",
       "registration fee",
       "processing fee",
-      "for registration"
+      "for registration",
+      "send {n}",
+      "send it back",
+      "send back",
+      "repay",
+      "fund your account",
+      "loan instalment"
     ],
     "collect": [
       "collect",
@@ -613,7 +619,18 @@
       "we apologize",
       "thank you for your understanding",
       "to check your",
-      "withdrawal of"
+      "withdrawal of",
+      "credited",
+      "was received",
+      "approved",
+      "has been renewed",
+      "renewed automatically",
+      "happy new year",
+      "merry christmas",
+      "season's greetings",
+      "thank you for your loyalty",
+      "thanks you for your loyalty",
+      "network maintenance"
     ]
   },
   "urgency": {

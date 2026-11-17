@@ -445,10 +445,19 @@ describe('speech plan', () => {
     expect(keys(c).join(' ')).not.toMatch(/safe/);
   });
   it('facts_only keeps scam warnings first', async () => {
-    const c = await run('ok 50.000 F par erreur renvoyer 699123456', phoneSender);
+    const c = await run('donne code secret vite 699123456', phoneSender);
     expect(c.mode).toBe('facts_only');
     expect(keys(c)[0]).toBe('scam.likely');
     expect(keys(c)).toContain('facts_only.intro');
+  });
+  it('a "send it back" scam read as pay still warns first and never says to pay', async () => {
+    for (const t of ['ok 50.000 F par erreur renvoyer 699123456', 'I sent you 28.000 F CFA by mistake. Please send it back to 6 77 00 86 73.']) {
+      const c = await run(t, phoneSender);
+      expect(c.scam.level).toBe('likely_scam');
+      const k = keys(c);
+      expect(k[0]).toBe('scam.likely');
+      expect(k.some((x) => x.startsWith('money.') || x.startsWith('action.pay') || x.startsWith('deadline.'))).toBe(false);
+    }
   });
 });
 
