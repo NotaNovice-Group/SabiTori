@@ -88,9 +88,9 @@ Two synthetic sets, both labelled by the rules in `eval/README.md`:
 <!-- results:card-eval -->
 | Set | System | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- | --- |
-| test split (n=96) | rules@1 (keyword rules) | 86.5% [79.2–92.7] | 76.0% [67.7–84.4] | 87.5% [80.2–93.8] | 59.4% [50.0–68.8] |
+| test split (n=96) | rules@1 (keyword rules) | 86.5% [79.2–92.7] | 76.0% [67.7–84.4] | 88.5% [81.3–94.8] | 60.4% [51.0–69.8] |
 | test split (n=96) | encoder alone | 88.5% [81.3–94.8] | 87.5% [80.2–93.8] | 84.4% [77.1–91.7] | 68.8% [59.4–77.1] |
-| test split (n=96) | **encoder + rules (default)** | 93.8% [88.5–97.9] | 88.5% [82.3–94.8] | 88.5% [82.3–94.8] | 76.0% [67.7–84.4] |
+| test split (n=96) | **encoder + rules (default)** | 93.8% [88.5–97.9] | 88.5% [82.3–94.8] | 89.6% [83.3–94.8] | 77.1% [68.8–85.4] |
 | unseen set (n=100) | rules@1 (keyword rules) | 88.0% [81.0–94.0] | 54.0% [44.0–64.0] | 72.0% [63.0–81.0] | 34.0% [25.0–43.0] |
 | unseen set (n=100) | encoder alone | 78.0% [70.0–86.0] | 58.0% [48.0–68.0] | 58.0% [48.0–67.0] | 34.0% [25.0–43.0] |
 | unseen set (n=100) | **encoder + rules (default)** | 94.0% [89.0–98.0] | 66.0% [56.0–75.0] | 72.0% [63.0–81.0] | 47.0% [37.0–57.0] |
@@ -100,7 +100,7 @@ Paired differences against rules on the same messages (points, 95% bootstrap int
 | Set | Comparison | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- | --- |
 | test split | encoder + rules vs rules | +7.3 pts [2.1–13.5], 8 vs 1, p = 0.039 * | +12.5 pts [5.2–20.8], 14 vs 2, p = 0.004 * | +1.0 pts [-3.1–5.2], 3 vs 2, p = 1.000 | +16.7 pts [8.3–25.0], 18 vs 2, p < 0.001 * |
-| test split | encoder alone vs rules | +2.1 pts [-5.2–9.4], 8 vs 6, p = 0.790 | +11.5 pts [2.1–21.9], 18 vs 7, p = 0.043 * | -3.1 pts [-12.5–5.2], 8 vs 11, p = 0.648 | +9.4 pts [-3.1–20.8], 22 vs 13, p = 0.175 |
+| test split | encoder alone vs rules | +2.1 pts [-5.2–9.4], 8 vs 6, p = 0.790 | +11.5 pts [2.1–21.9], 18 vs 7, p = 0.043 * | -4.2 pts [-12.5–4.2], 7 vs 11, p = 0.481 | +8.3 pts [-3.1–19.8], 21 vs 13, p = 0.230 |
 | unseen set | encoder + rules vs rules | +6.0 pts [0.0–12.0], 8 vs 2, p = 0.109 | +12.0 pts [1.0–23.0], 23 vs 11, p = 0.058 | +0.0 pts [-4.0–4.0], 2 vs 2, p = 1.000 | +13.0 pts [2.0–24.0], 22 vs 9, p = 0.029 * |
 | unseen set | encoder alone vs rules | -10.0 pts [-20.0–0.0], 8 vs 18, p = 0.075 | +4.0 pts [-10.0–19.0], 30 vs 26, p = 0.689 | -14.0 pts [-26.0–-2.0], 12 vs 26, p = 0.034 * | +0.0 pts [-13.0–13.0], 22 vs 22, p = 1.000 |
 
@@ -109,7 +109,7 @@ By message language (all three labels right):
 | Set | Lang | n | rules, all three | encoder + rules, all three | difference |
 | --- | --- | --- | --- | --- | --- |
 | test split | fr | 38 | 60.5% [44.7–76.3] | 73.7% [57.9–86.8] | +13.2 pts [0.0–26.3], 6 vs 1, p = 0.125 |
-| test split | en | 43 | 72.1% [58.1–86.1] | 83.7% [72.1–93.0] | +11.6 pts [0.0–23.3], 6 vs 1, p = 0.125 |
+| test split | en | 43 | 74.4% [60.5–86.1] | 86.1% [74.4–95.3] | +11.6 pts [0.0–23.3], 6 vs 1, p = 0.125 |
 | test split | wes | 15 | 20.0% [0.0–40.0] | 60.0% [33.3–86.7] | +40.0 pts [13.3–66.7], 6 vs 0, p = 0.031 * |
 | unseen set | fr | 40 | 27.5% [15.0–42.5] | 50.0% [35.0–65.0] | +22.5 pts [5.0–40.0], 12 vs 3, p = 0.035 * |
 | unseen set | en | 38 | 39.5% [23.7–55.3] | 39.5% [23.7–55.3] | +0.0 pts [-18.4–18.4], 6 vs 6, p = 1.000 |
@@ -140,7 +140,7 @@ Threshold grid (train split, out-of-fold, n=224): accuracy of each field when th
 | Field | 0.30 | 0.35 | 0.40 | 0.45 | 0.50 | 0.55 | 0.60 | 0.65 | 0.70 | 0.75 | 0.80 | 0.85 | 0.90 | 0.95 | never | chosen |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | kind | 89.3 | 90.2 | 90.6 | 90.6 | 91.1 | 92.0 | 92.0 | 92.0 | 92.4 | 93.8 | 92.4 | 93.3 | 93.8 | 93.3 | 87.1 | 0.85 |
-| action | 79.0 | 80.4 | 81.3 | 81.3 | 80.8 | 84.4 | 85.7 | 85.7 | 85.3 | 86.2 | 86.6 | 84.8 | 83.9 | 82.6 | 83.0 | 0.75 |
+| action | 79.5 | 80.8 | 81.7 | 81.7 | 81.3 | 84.8 | 86.2 | 86.2 | 85.7 | 86.6 | 87.1 | 85.3 | 84.4 | 82.6 | 83.0 | 0.75 |
 | urgency | 83.9 | 83.9 | 83.9 | 84.4 | 86.6 | 89.7 | 91.5 | 90.6 | 92.0 | 93.3 | 93.3 | 93.8 | 93.8 | 93.8 | 93.8 | 0.85 |
 
 Thresholds shipped in `heads.json`: kind 0.85, action 0.6, urgency 0.85.
