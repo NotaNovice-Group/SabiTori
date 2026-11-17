@@ -11,6 +11,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Recorder: a recording interrupted by a call, another app, leaving the page, or running past 30 seconds now
+  stops, keeps what was recorded and says why, instead of staying on "saving".
 - Scam checks: a message that delivers a one-time code ("Your confirmation code is 482913") is no longer read as
   asking for the code; requests for a code are still caught.
 - Rules: a dated task within 7 days is now `urgent` (was 2 days), matching the card's calibration and the evaluation

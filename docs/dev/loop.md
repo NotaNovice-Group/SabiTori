@@ -72,8 +72,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       cut whatever is slowest (lazy-load, smaller chunks). Record the before and after numbers in `docs/model.md`.
 - [ ] **Accessibility sweep.** Screen-reader order, focus after navigation, 200% text, reduced motion, colour
       contrast in both themes; add the cases to the a11y test.
-- [ ] **Recorder robustness.** Interrupted recording, full storage, re-import of an older export, very long
-      phrases; tests for each.
+- [x] **Recorder robustness.** Found and fixed: when a call or another app took the microphone, the recorder
+      stopped by itself and `stop()` waited forever for an event that had already fired (stuck on "saving"). Now a
+      lost microphone, leaving the page, or 30 s without pressing stop end the recording, keep what was recorded and
+      say why; an empty recording counts as silent (`apps/recorder/test/mic.test.ts`). Full storage and older exports
+      were already covered (`review3.test.ts`).
 - [ ] **Docs and OWNER-TODO tidy.** Make sure every doc matches the code after the changes above.
 
 ## Log
