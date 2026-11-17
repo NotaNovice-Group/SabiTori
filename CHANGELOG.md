@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Model thresholds re-chosen on the train split after the reading-word changes, as the evaluation method requires:
+  action 0.6 -> 0.75. All three labels right: 75.0% on test (was 77.1%), 47.0% on the unseen set (unchanged).
 - Facts: dates and amounts where OCR read 0 as O or 1 as l ("2O26", "59 O00 FCFA", "22/lO/2026") are read, only
   where the number is not in doubt; the card still shows the original characters.
 - Reading: receipts and greetings are now "nothing to do", and "send 30 000 FCFA to ..." or "rembourser" are

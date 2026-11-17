@@ -9,9 +9,9 @@ Total: 100 placeholders in 12 files.
 
 ## `CHANGELOG.md` (3)
 
-- [ ] `CHANGELOG.md:67` release date, once released.
-- [ ] `CHANGELOG.md:98` French review status; resolve before release.
-- [ ] `CHANGELOG.md:99` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
+- [ ] `CHANGELOG.md:69` release date, once released.
+- [ ] `CHANGELOG.md:100` French review status; resolve before release.
+- [ ] `CHANGELOG.md:101` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
 
 ## `CODE_OF_CONDUCT.md` (1)
 

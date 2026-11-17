@@ -102,6 +102,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **OCR letters inside numbers.** `fixOcrDigits` (facts.ts) reads O/l/I/| as digits only where the number is not
       in doubt (between digits, a thousands group, a date part), keeping offsets and the original `raw`; a leading
       confusable ("l5 000") is still refused. Encoder + rules, test: 76.0% -> 77.1%; unseen and photos unchanged.
+- [x] **Thresholds re-selected after the action-word change (#31).** The rules changed, so the train out-of-fold
+      selection now picks action 0.75 (was 0.6); the shipped heads.json is brought back in line with the documented
+      procedure. Encoder + rules all-three: test 77.1% -> 75.0%, unseen 47.0% (unchanged). An overdue-deadline urgency
+      rule was tried in the same run and dropped (no held-out gain; it would have moved thresholds again).
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -135,3 +139,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #30 | Scam rules: fewer false alarms, bank-prefix impersonation; test warnings 22/22, false alarms 0/74 | local gate (Actions budget) |
 | 2026-11-17 | #31 | Action words: unseen all-three 44.0% -> 47.0% (encoder + rules), rules alone 30.0% -> 34.0% | local gate (Actions budget) |
 | 2026-11-17 | #32 | Facts: OCR O/l inside numbers read as digits (unambiguous spots only); test all-three 77.1% | local gate (Actions budget) |
+| 2026-11-17 | #33 | Encoder thresholds re-selected on train after #31 (action 0.6 -> 0.75); test all-three 75.0%, unseen 47.0% | local gate (Actions budget) |
