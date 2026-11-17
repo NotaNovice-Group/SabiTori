@@ -8,8 +8,8 @@ selling anything. It is a plan: none of the funding below exists yet, and no par
 - **The app is free, for everyone, forever.** No price, no paid tier, no in-app purchases, no ads.
 - **No data business.** Messages and photos never leave the phone (`docs/privacy.md`); we do not
   sell, rent or share data, and there is none to sell.
-- **Open by default.** Code is MPL-2.0; language packs are CC-BY-SA-4.0 unless their community
-  chooses another licence (`packs/LICENSE.md`); the evaluation data and training recipe are public.
+- **Open by default.** Code is MPL-2.0; language packs are CC-BY-SA-4.0 by default (French and English are CC-BY-4.0), and each community
+  may choose another licence (`packs/LICENSE.md`); the evaluation data and training recipe are public.
   Anyone may fork it.
 - **Communities own their languages.** Recordings, packs and any voice trained on them belong to the
   language community that made them, which also chooses their licence.

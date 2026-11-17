@@ -5,8 +5,10 @@ code. This page explains how, what it takes, and when we plan to train our own v
 
 ## What a language needs
 
-SabiTori never has to *read* a message in a local language: official messages arrive in French
-or English. It only has to *speak* the card. So a language needs:
+Official messages mostly arrive in French or English, so a language mainly has to *speak* the card.
+The exception is Cameroonian Pidgin, which people also write in (SMS, WhatsApp): a language that is
+written in messages can also get a reading lexicon, written and checked by speakers
+([`reading-lexicon.md`](reading-lexicon.md)). So a language needs:
 
 | Part | What it is | Who makes it |
 | --- | --- | --- |
@@ -37,7 +39,7 @@ until it is recorded. Languages started so far:
 | Adamawa Fulfulde | `fub` | North, Adamawa | Waiting for speakers |
 | Lamnso' | `lns` | Northwest | Waiting for speakers |
 | Limbum | `lmp` | Northwest | Waiting for speakers |
-| Pinyin | `pny` | Northwest | Waiting for speakers |
+| Pinyin (Ngemba group, not the Chinese romanisation) | `pny` | Northwest | Waiting for speakers |
 
 ## Record a language (2–4 days per language)
 
@@ -47,7 +49,7 @@ until it is recorded. Languages started so far:
 2. Each speaker gives written consent and chooses how their voice may be reused (the Recorder
    app explains the licences in plain words). The Recorder keeps two separate consents per speaker:
    to be named as a contributor, and to have their voice published in the pack, with the date it was
-   given; a clip whose speaker has not agreed to publication is not exported. Speakers are paid for
+   given; a clip whose speaker has not agreed to publication is not exported. Speakers will be paid for
    every session.
 3. Speaker A translates and records with the Recorder app (`apps/recorder`). The app has a
    keyboard for the letters of the General Alphabet of Cameroonian Languages (ɓ ɗ ŋ ɛ ɔ ə ʉ ʼ)
@@ -109,8 +111,8 @@ confirm Limbum. They are licensed **non-commercial only** (CC-BY-NC-4.0), sound 
 were trained on Bible readings rather than everyday speech. They could help a first test or serve as
 a starting point that native speakers check, but they cannot be SabiTori's long-term voices: a
 non-commercial licence would stop the packs from being as freely reusable as the rest of the project
-(packs are CC-BY-SA-4.0 by default, so anyone, including partner organisations and other projects, may
-reuse them). SabiTori itself is free and non-commercial; see `docs/sustainability.md`.
+(packs are CC-BY-SA-4.0 by default unless their community chooses another licence, so anyone, including partner
+organisations and other projects, may reuse them). SabiTori itself is free and non-commercial; see `docs/sustainability.md`.
 
 **Reading messages written in local languages.** Official messages are in French or English, but SMS
 between people are often in Cameroonian Pidgin. The on-device MiniLM encoder is multilingual, so we

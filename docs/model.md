@@ -9,7 +9,7 @@ SabiTori has two on-device understanding models. Both only **choose labels** fro
 | Parameters | 33.0M as shipped (the base model has 117.7M, 96M of them in its 250k-piece vocabulary; pruned to 30k pieces) | 1.5B |
 | Speed | 235 ms median, 367 ms p95 per message in headless Chromium, 4× CPU throttle, main thread, one wasm thread (Intel Xeon 2.1 GHz desktop CPU; `packages/understand/harness/encoder-bench.mjs`). Not yet measured on a phone | 20–24 s per message on a desktop (wasm); not for every message |
 | Runtime | onnxruntime-web (wasm, one thread, no COOP/COEP) | wllama |
-| Classifier id | `minilm-l12-int8@1` | `qwen2.5-1.5b-q4@1` |
+| Classifier id | `minilm-l12-int8@2` | `qwen2.5-1.5b-q4@1` |
 
 ## Built-in model: how it plugs in
 
@@ -66,19 +66,12 @@ Phones with 3 GB RAM or less should use the 1.5B model, or rules only. Context i
 
 ## Wasm assets (app build step)
 
-The app is offline, so it must bundle wllama's wasm. wllama 3.8 ships one wasm file:
-
-```
-node_modules/@wllama/wllama/esm/wasm/wllama.wasm      (about 8.7 MB)
-```
-
-Copy it to the app's public folder at build time, for example in `apps/app/package.json`:
-
-```json
-"prebuild": "mkdir -p public/wllama && cp ../../node_modules/@wllama/wllama/esm/wasm/wllama.wasm public/wllama/wllama.wasm"
-```
-
-(adjust the source path to where pnpm links the package, e.g. `node_modules/.pnpm/@wllama+wllama@3.8.1/node_modules/@wllama/wllama/esm/wasm/wllama.wasm`; a Vite static-copy plugin works too). Then pass the same URL base to the classifier: `wasmBaseUrl: import.meta.env.BASE_URL + 'wllama/'`. `wllamaAssetPaths(baseUrl)` returns the config wllama expects (`{ default, 'single-thread/wllama.wasm', 'multi-thread/wllama.wasm' }`, all pointing to `<baseUrl>/wllama.wasm`). Add the wasm to the service worker precache. Do not use `@wllama/wllama/esm/wasm-from-cdn.js`: it needs the internet.
+The optional LLM is **not in store builds**. Build with `VITE_LLM=1` (see `apps/app/.env.example`) to include it:
+the Vite config then copies wllama's single wasm (`@wllama/wllama/esm/wasm/wllama.wasm`, about 8.7 MB) to
+`public/wllama/`, and Settings shows "Add model file". Without the flag the file is not copied, the Settings section
+is hidden and the controller reports `unsupported`, so the built-in encoder and the rules do all the understanding.
+The classifier gets `wasmBaseUrl: <app base> + 'wllama/'`; `wllamaAssetPaths(baseUrl)` returns the config wllama
+expects. Do not use `@wllama/wllama/esm/wasm-from-cdn.js`: it needs the internet.
 
 ## Side-loading the GGUF
 

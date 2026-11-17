@@ -6,7 +6,7 @@ Offline-first, on-device. One pipeline, language-neutral code, data-driven langu
 packages/core        types, phrase catalog, pack + region contracts, the pipeline (pure TS, no DOM)
 packages/speech      pack rules (numbers/dates/money/phones), pack loading, plan rendering, audio player
 packages/understand  on-device understanding: MiniLM encoder classifier (default, bundled, 33M parameters,
-                     onnxruntime-web); optional side-loaded LLM second opinion (wllama, GGUF, OPFS storage);
+                     onnxruntime-web); optional side-loaded LLM second opinion, research builds only (VITE_LLM=1; wllama, GGUF, OPFS);
                      evaluation set and training code
 packages/connect     optional update channel: signature check, atomic install, overlay fetch
 packs/<tag>/         language packs: manifest.json, phrases.json, rules.json, audio/

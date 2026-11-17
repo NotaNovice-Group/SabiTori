@@ -20,7 +20,7 @@ const repo = resolve(here, '../..');
 function sabitoriAssets(): Plugin {
   return {
     name: 'sabitori-assets',
-    config() {
+    config(_cfg, env) {
       const pub = resolve(here, 'public');
       for (const dir of ['packs', 'regions']) {
         const from = resolve(repo, dir);
@@ -50,16 +50,19 @@ function sabitoriAssets(): Plugin {
         // un-gzips them, so a "eng.traineddata.gz" would not exist inside the APK. The APK and the web host compress anyway.
         writeFileSync(resolve(ocr, `${lang}.traineddata`), gunzipSync(readFileSync(resolve(pkg, '4.0.0_best_int', `${lang}.traineddata.gz`))));
       }
-      // wllama wasm (understanding model), resolved from the understand package.
-      try {
-        const reqU = createRequire(resolve(repo, 'packages/understand/package.json'));
-        const wasm = resolve(dirname(reqU.resolve('@wllama/wllama/package.json')), 'esm/wasm/wllama.wasm');
-        if (existsSync(wasm)) {
-          mkdirSync(resolve(pub, 'wllama'), { recursive: true });
-          copyFileSync(wasm, resolve(pub, 'wllama/wllama.wasm'));
+      // wllama wasm (the optional LLM): only in builds with VITE_LLM=1. Store builds ship without it (8-9 MB less).
+      rmSync(resolve(pub, 'wllama'), { recursive: true, force: true });
+      if ((loadEnv(env.mode, here, 'VITE_').VITE_LLM ?? '').trim() === '1') {
+        try {
+          const reqU = createRequire(resolve(repo, 'packages/understand/package.json'));
+          const wasm = resolve(dirname(reqU.resolve('@wllama/wllama/package.json')), 'esm/wasm/wllama.wasm');
+          if (existsSync(wasm)) {
+            mkdirSync(resolve(pub, 'wllama'), { recursive: true });
+            copyFileSync(wasm, resolve(pub, 'wllama/wllama.wasm'));
+          }
+        } catch {
+          /* wllama not installed: rules and the built-in encoder only */
         }
-      } catch {
-        /* wllama not installed: rules only */
       }
       // Built-in understanding model (MiniLM int8 + heads) and the onnxruntime-web wasm that runs it.
       try {
