@@ -6,7 +6,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 
 ## Rules every run follows
 
-- One focused change per PR, branch `loop/<short-name>`, merged only when CI is green.
+- One focused change per PR, branch `loop/<short-name>`, merged only when GitHub CI is green. Check the real
+  run (`gh api repos/NotaNovice-Group/sabitori/commits/<sha>/check-runs`); the local gate does not download the
+  Piper voices, so it can pass where GitHub fails.
 - If GitHub Actions cannot start ("an Actions budget is preventing further use"), the gate is
   `scripts/ci-local.sh` (the same steps as `ci.yml`, Android build included). Merge only when every step
   prints PASS, and paste its output into the PR as a comment. Any other CI failure must be fixed.
@@ -52,8 +54,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
   Was: `run-encoder.mjs --select-threshold` (train OOF only)
       now prefers different action/urgency thresholds; re-select, sync `apps/app/public/models/minilm/heads.json`,
       re-run the published results. Also update the grant draft's numbers (owner's Claude Doc) afterwards.
-- [ ] **Pidgin reading words.** `wes` messages score lowest (rules have no Pidgin lexicon). Add a draft `packs/wes`
-      reading lexicon (marked unreviewed) and measure; native review needed before it is called done.
+- [ ] blocked: **Pidgin reading words.** A draft lexicon was written (branch `loop/pidgin-reading`, train-split Pidgin
+      all-three 11/33 -> 23/33) but is NOT merged: words written without a native speaker would read as bypassing
+      the community. Needs two native speakers to review it first; then merge and re-run the published results.
 - [x] **Scam detection breadth.** `packages/core/test/scam-breadth.test.ts`: nine fr/en scam patterns (fake
       transfer, prize fee, account block, fake agent, fake power-cut payment, job fee), each with the real message it
       imitates. Found and fixed: a genuine one-time-code SMS ("Your MTN MoMo confirmation code is 482913") was
@@ -87,3 +90,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-08 | #12 | Encoder thresholds re-selected on train after the rules change; results regenerated; `scripts/owner-todo.mjs` | 1,379 unit + 11 e2e passed |
 | 2026-11-17 | #13 | Scam/twin pairs; a delivered one-time code is no longer flagged as a scam | 1,397 unit + 11 e2e passed |
 | 2026-11-17 | #14 | Pilot counter build flag (on-phone counts, participant shares) | 1,402 unit + 11 e2e passed |
+| 2026-11-17 | #15 | e2e: scam-first check no longer depends on which voice speaks (GitHub CI bundles Piper) | 1,402 unit + 12 e2e |
