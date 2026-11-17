@@ -113,6 +113,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Threshold protocol guard.** A test fails when heads.json differs from train-only selection (the #31 slip).
 - [x] **One command to check every number.** `pnpm reproduce [--ocr]` re-runs all evaluations and reports whether the
       committed results came out byte-identical (OCR: accuracy columns). README "Check our numbers".
+- [x] **Accessibility statement.** `docs/accessibility.md`; the full audit script could not run on a fresh install
+      (`@axe-core/playwright` missing): added, re-run on today's code, 163 states, 0 violations.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -149,3 +151,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #33 | Encoder thresholds re-selected on train after #31 (action 0.6 -> 0.75); test all-three 75.0%, unseen 47.0% | local gate (Actions budget) |
 | 2026-11-17 | #34 | Guard test: shipped thresholds must equal train-only selection; loop rule added | local gate (Actions budget) |
 | 2026-11-17 | #35 | `pnpm reproduce`: every published number re-run and compared (byte-identical today) | local gate (Actions budget) |
+| 2026-11-17 | #36 | Accessibility statement; a11y audit script fixed (missing dependency) and re-run: 0 violations | local gate (Actions budget) |
