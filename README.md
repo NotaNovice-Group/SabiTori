@@ -2,7 +2,7 @@
 
 SabiTori ("understand the story" in Cameroonian Pidgin) explains official messages out loud.
 A person photographs or shares a bill, a mobile money SMS, a hospital or school paper, and
-SabiTori tells them, in their own language: who sent it, what it is about, what to do, by when,
+SabiTori tells them, in French or English today and in their own language as each community records it: who sent it, what it is about, what to do, by when,
 how much, who to call, and whether it looks like a scam.
 
 It is built for people with disabilities and people who cannot read French or English, on
@@ -43,6 +43,13 @@ Brackets are 95% bootstrap intervals; p is an exact McNemar test on the same mes
 small, so treat these as development numbers, not field accuracy
 ([`packages/understand/eval`](packages/understand/eval), generated from `eval/results.json`).
 <!-- /results:headline -->
+
+Scam warnings come from code, not from the model: 21 of 22 scam or suspicious messages got a warning on the test
+set and 17 of 21 on the unseen set, while 3 of 74 and 2 of 79 genuine messages got a false alarm. For photos, every
+fact is checked against the text the phone read, not against the paper itself: on 30 degraded synthetic photos of
+bills, letters and SMS screenshots, on-device OCR recovers 75% of the dates, amounts and phone numbers with 94.6%
+precision, and gets every fact right on 16 of 30 pages ([`apps/app/test/ocr-bench/RESULTS.md`](apps/app/test/ocr-bench/RESULTS.md)).
+That is why each fact on a card can show where it came from, and a card that is unsure falls back to facts only.
 
 No real message has been evaluated yet: there is no pilot and no user so far. Real, consented, anonymised
 messages from a first pilot are meant to replace the synthetic sets ([`docs/impact.md`](docs/impact.md)
@@ -128,6 +135,9 @@ Read [`CONTRIBUTING.md`](CONTRIBUTING.md) to set up, run the tests and add a lan
 ## License
 
 - Code: [MPL-2.0](LICENSE).
-- Language packs (`packs/`): CC-BY-SA-4.0 by default. A language community can choose another licence in
-  its pack manifest. See [`packs/LICENSE.md`](packs/LICENSE.md).
+- Language packs (`packs/`): CC-BY-SA-4.0 by default, and each language community can choose another licence in its
+  pack manifest. The French and English packs are CC-BY-4.0. The local-language packs have no licence yet
+  (`LicenseRef-community-decides`): their communities will choose one when they record them. See
+  [`packs/LICENSE.md`](packs/LICENSE.md).
+- Evaluation messages (`packages/understand/eval`): CC-BY-SA-4.0.
 - Third-party models, fonts and libraries: see [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
