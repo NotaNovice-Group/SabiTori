@@ -6,6 +6,11 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Accessibility checks in the browser tests: axe-core (WCAG 2.1 A and AA, contrast included) on eight screens in the
+  light and dark theme, and 200% text on a 320 px screen with no sideways scrolling.
+- CI builds a pilot APK (`sabitori-pilot-apk`, debug-signed) on every push to `main`.
+- A guide for speakers who write a reading word list for their language (`docs/reading-lexicon.md`); the rules
+  evaluation can measure a draft list (`--packs`, `--lang`) without changing the published results.
 - Voice training recipe (`packages/speech/train-voice/`): a Recorder export becomes a Piper training list
   (needs the community's agreement for an unlicensed pack), and a check says whether the app can use a trained
   voice for a pack. No trained local-language voice exists yet.
@@ -16,6 +21,9 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Store builds no longer include the optional LLM (Qwen2.5 via wllama): it is only in research builds
+  (`VITE_LLM=1`), and the APK is about 8.7 MB smaller.
+- About screen: long links and file names in the licence text wrap at 200% text instead of scrolling sideways.
 - Recorder: a recording interrupted by a call, another app, leaving the page, or running past 30 seconds now
   stops, keeps what was recorded and says why, instead of staying on "saving".
 - Faster first card: word-list matching skips words that are not in the message, so the first pasted bill

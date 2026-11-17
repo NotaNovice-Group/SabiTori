@@ -81,7 +81,7 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       lost microphone, leaving the page, or 30 s without pressing stop end the recording, keep what was recorded and
       say why; an empty recording counts as silent (`apps/recorder/test/mic.test.ts`). Full storage and older exports
       were already covered (`review3.test.ts`).
-- [ ] **Docs and OWNER-TODO tidy.** Make sure every doc matches the code after the changes above.
+- [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
 
@@ -98,3 +98,13 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #13 | Scam/twin pairs; a delivered one-time code is no longer flagged as a scam | 1,397 unit + 11 e2e passed |
 | 2026-11-17 | #14 | Pilot counter build flag (on-phone counts, participant shares) | 1,402 unit + 11 e2e passed |
 | 2026-11-17 | #15 | e2e: scam-first check no longer depends on which voice speaks (GitHub CI bundles Piper) | 1,402 unit + 12 e2e |
+| 2026-11-17 | #16 | Honest docs: pack licences, "French or English today", scam recall and OCR error rates next to the headline | 1,402 unit + 12 e2e passed |
+| 2026-11-17 | #17 | Reading-lexicon guide for speakers; rules eval can measure a draft list | 1,402 unit + 12 e2e passed |
+| 2026-11-17 | #18 | Optional LLM only in `VITE_LLM=1` builds (store APK 8.7 MB smaller) | local gate (Actions budget) |
+| 2026-11-17 | #19 | Accessibility sweep: axe-core on 8 screens x 2 themes, 200% text; About overflow fixed | local gate (Actions budget) |
+| 2026-11-17 | #20 | CI builds a pilot APK on pushes to main | local gate (Actions budget) |
+| 2026-11-17 | #21 | Pilot build: on-phone timing in bands | local gate (Actions budget) |
+| 2026-11-17 | #22 | e2e: delete-test race on slow runners fixed; Playwright results uploaded on failure | local gate (Actions budget) |
+| 2026-11-17 | #23 | First card 3.4 s -> 1.3 s at 4x CPU throttle (term prefilter, identical results); `apps/app/bench/perf.mjs` | local gate (Actions budget) |
+| 2026-11-17 | #24 | Recorder: interrupted recordings no longer hang; 30 s limit; stop when the page is left | local gate (Actions budget) |
+| 2026-11-17 | #25 | Voice training recipe and tools (no voice claimed) | 1,426 unit + 37 e2e passed (local gate, #18-#25 together) |
