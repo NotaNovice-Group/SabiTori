@@ -109,11 +109,17 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
     (from = 0, withRate = rate) => {
       if (!views) return;
       pilot.record({ type: 'listened' });
+      const pressed = performance.now();
+      let heard = false;
       engine.playSections(views, {
         rate: withRate,
         from,
         onSection: (i) => {
           setActive(i);
+          if (i !== null && !heard) {
+            heard = true;
+            pilot.record({ type: 'first_audio', ms: performance.now() - pressed });
+          }
           if (i !== null) {
             last.current = i;
             const el = els.current[i];
