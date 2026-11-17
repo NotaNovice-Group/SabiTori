@@ -121,8 +121,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       (English text, amount in English words, no French leaking) and that an English scam card warns first.
 - [x] **Appointments are ON a date.** A card whose task is to go somewhere said "Do it by {date}"; it now says
       "Be there on {date}" / "Présentez-vous le {date}" (new phrase `deadline.on`, draft until a speaker reviews it).
-- [ ] **Appointment time.** "fixé au 20/11/2026 à 9h00": the time is not extracted or spoken. Needs a time fact
-      (facts.ts), a {time} slot in the card and speech plan, and number rules for recorded packs (fall back until then).
+- [x] **Appointment time.** A time written right after the date ("le 20/11/2026 à 9h00", "at 9:30") is read into
+      `card.deadlineTime` (checked against the text) and spoken for places to go: "Présentez-vous le vingt-deux
+      novembre à neuf heures" / "Be there on ... at nine o'clock" (number slots; phrases draft; recorded packs fall back).
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -163,3 +164,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #37 | Browser scripts no longer hard-code a machine-specific Chromium path | local gate (Actions budget) |
 | 2026-11-17 | #38 | e2e: English interface (bill card in English, scam warning first); fresh clone verified end to end | local gate (Actions budget) |
 | 2026-11-17 | #39 | Appointment cards say "be there on {date}" instead of "do it by" | local gate (Actions budget) |
+| 2026-11-17 | #40 | Appointment cards say the time: "Be there on {date} at nine o'clock" | local gate (Actions budget) |

@@ -147,6 +147,14 @@
     "text": "Présentez-vous le {date}.",
     "status": "draft"
   },
+  "deadline.on_at": {
+    "text": "Présentez-vous le {date} à {hour} heures {minutes}.",
+    "status": "draft"
+  },
+  "deadline.on_at_hour": {
+    "text": "Présentez-vous le {date} à {hour} heures.",
+    "status": "draft"
+  },
   "deadline.passed": {
     "text": "La date du {date} est déjà passée.",
     "status": "draft"
