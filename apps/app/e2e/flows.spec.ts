@@ -207,3 +207,12 @@ test('a store build has no pilot counter', async ({ page }) => {
   await expect(page.locator('#s-pilot')).toHaveCount(0);
   expect(await page.evaluate(() => localStorage.getItem('sabitori.pilot.v1'))).toBeNull();
 });
+
+test('a store build has no optional LLM: no model option and no wllama file', async ({ page, request }) => {
+  await setup(page);
+  await page.goto('#/settings');
+  await page.waitForSelector('h1', { state: 'attached' });
+  await expect(page.locator('#s-model')).toHaveCount(0);
+  const r = await request.get('wllama/wllama.wasm');
+  expect(r.ok() && (r.headers()['content-type'] ?? '').includes('wasm')).toBe(false);
+});
