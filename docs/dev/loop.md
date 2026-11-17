@@ -15,6 +15,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - Never touch signing keys, secrets, release tags or `.github/workflows/release.yml` secrets handling.
 - Never write a number into docs that was not produced by a run in this repository; never claim users,
   partners, pilots or recordings that do not exist. `[OWNER]` placeholders stay until the owner fills them.
+- After any change to rules or lexicons, re-select the encoder thresholds on train
+  (`node packages/understand/eval/run-encoder.mjs --select-threshold --write`), regenerate the results, and keep the
+  change only if the unseen set does not get worse. `packages/understand/test/thresholds-protocol.test.ts` fails if
+  the shipped thresholds differ from what the selection picks.
 - Never weaken a safety rule (facts from code only, never "safe", scam warnings first) to make a test pass.
 - After editing any document, run `node scripts/owner-todo.mjs` (keeps `docs/OWNER-TODO.md` line numbers right).
 - Owner instruction (2026-11-17): proceed with implementation every time there are open todos; do not stop to ask.
@@ -106,6 +110,7 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       selection now picks action 0.75 (was 0.6); the shipped heads.json is brought back in line with the documented
       procedure. Encoder + rules all-three: test 77.1% -> 75.0%, unseen 47.0% (unchanged). An overdue-deadline urgency
       rule was tried in the same run and dropped (no held-out gain; it would have moved thresholds again).
+- [x] **Threshold protocol guard.** A test fails when heads.json differs from train-only selection (the #31 slip).
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -140,3 +145,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #31 | Action words: unseen all-three 44.0% -> 47.0% (encoder + rules), rules alone 30.0% -> 34.0% | local gate (Actions budget) |
 | 2026-11-17 | #32 | Facts: OCR O/l inside numbers read as digits (unambiguous spots only); test all-three 77.1% | local gate (Actions budget) |
 | 2026-11-17 | #33 | Encoder thresholds re-selected on train after #31 (action 0.6 -> 0.75); test all-three 75.0%, unseen 47.0% | local gate (Actions budget) |
+| 2026-11-17 | #34 | Guard test: shipped thresholds must equal train-only selection; loop rule added | local gate (Actions budget) |
