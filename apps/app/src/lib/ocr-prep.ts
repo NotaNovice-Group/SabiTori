@@ -31,6 +31,8 @@ export interface PrepOptions {
   deskew: boolean;
   /** Resample so text lines are about targetLine px tall (up to maxScale, down to fit maxSide). */
   scale: boolean;
+  /** Erase table ruling lines (long straight ink runs), which make Tesseract skip the text inside the cells. */
+  rules: boolean;
   /** Sauvola adaptive threshold (output is pure black and white). */
   binarise: boolean;
   /** Longest side allowed for the working image (bounds time and memory on phones). */
@@ -49,6 +51,7 @@ export const PREP_OFF: PrepOptions = {
   orient: false,
   deskew: false,
   scale: false,
+  rules: false,
   binarise: false,
   maxSide: 1800,
   targetLine: 40,
@@ -66,6 +69,7 @@ export const PREP_DEFAULT: PrepOptions = {
   orient: true,
   deskew: true,
   scale: true,
+  rules: true,
   binarise: false,
   maxSide: 2000,
   targetLine: 34,
@@ -473,6 +477,112 @@ export function normaliseIllumination(g: GreyImage): GreyImage {
   return { data: out, width: w, height: h };
 }
 
+/* ------------------------------ ruling lines ------------------------------ */
+
+/**
+ * Erase table ruling lines: horizontal ink runs longer than `hMin` and vertical runs longer than `vMin` become
+ * paper. Letters are never that long in one straight run (a vertical stroke is at most about one line tall), so
+ * text, including text inside table cells, is kept. Pixels darker than the page's Otsu threshold count as ink.
+ */
+export function eraseRules(g: GreyImage, lineHeight: number): { image: GreyImage; erased: number } {
+  const { width: w, height: h } = g;
+  const t = otsu(g.data);
+  const lh = Math.max(8, lineHeight);
+  const hMin = Math.max(Math.round(lh * 6), Math.round(w * 0.12));
+  const vMin = Math.round(lh * 2.2);
+  const kill = new Uint8Array(w * h);
+  const ink = (i: number) => g.data[i]! <= t; // otsu returns the top of the dark class
+  const maxThick = Math.max(3, Math.round(lh * 0.3));
+  const d = maxThick + 2;
+  // A rule has paper just beside it along most of its length; a line of (blurred, bold) text has letters there.
+  const clearH = (y: number, x0: number, x1: number) => {
+    if (y - d < 0 || y + d >= h) return false;
+    let c = 0;
+    for (let x = x0; x < x1; x++) if (!ink((y - d) * w + x) && !ink((y + d) * w + x)) c++;
+    return c >= (x1 - x0) * 0.6;
+  };
+  const clearV = (x: number, y0: number, y1: number) => {
+    if (x - d < 0 || x + d >= w) return false;
+    let c = 0;
+    for (let y = y0; y < y1; y++) if (!ink(y * w + x - d) && !ink(y * w + x + d)) c++;
+    return c >= (y1 - y0) * 0.6;
+  };
+  for (let y = 0; y < h; y++) {
+    let start = -1;
+    for (let x = 0; x <= w; x++) {
+      const on = x < w && ink(y * w + x);
+      if (on && start < 0) start = x;
+      else if (!on && start >= 0) {
+        if (x - start >= hMin && clearH(y, start, x)) for (let k = start; k < x; k++) kill[y * w + k] = 1;
+        start = -1;
+      }
+    }
+  }
+  for (let x = 0; x < w; x++) {
+    let start = -1;
+    for (let y = 0; y <= h; y++) {
+      const on = y < h && ink(y * w + x);
+      if (on && start < 0) start = y;
+      else if (!on && start >= 0) {
+        if (y - start >= vMin && clearV(x, start, y)) for (let k = start; k < y; k++) kill[k * w + x] = 1;
+        start = -1;
+      }
+    }
+  }
+  // A ruling line is thin. Where marked pixels stack thicker than that across the line (a dark band from a shadow
+  // or blur, or a whole text line read as ink), they are not a rule: keep them.
+  const hk = new Uint8Array(w * h);
+  const vk = new Uint8Array(w * h);
+  for (let x = 0; x < w; x++) {
+    let start = -1;
+    for (let y = 0; y <= h; y++) {
+      const on = y < h && kill[y * w + x] === 1;
+      if (on && start < 0) start = y;
+      else if (!on && start >= 0) {
+        if (y - start <= maxThick) for (let k = start; k < y; k++) hk[k * w + x] = 1;
+        start = -1;
+      }
+    }
+  }
+  for (let y = 0; y < h; y++) {
+    let start = -1;
+    for (let x = 0; x <= w; x++) {
+      const on = x < w && kill[y * w + x] === 1;
+      if (on && start < 0) start = x;
+      else if (!on && start >= 0) {
+        if (x - start <= maxThick) for (let k = start; k < x; k++) vk[y * w + k] = 1;
+        start = -1;
+      }
+    }
+  }
+  // Keep a pixel marked only if it is a thin part of a horizontal rule or of a vertical rule.
+  let hPix = 0;
+  let vPix = 0;
+  for (let i = 0; i < kill.length; i++) {
+    const keep = kill[i] && (hk[i] || vk[i]);
+    kill[i] = keep ? 1 : 0;
+    if (keep && hk[i]) hPix++;
+    if (keep && vk[i]) vPix++;
+  }
+  // Only a table (rules both ways) is erased. A lone letterhead or signature line is harmless, and changing the
+  // page there for nothing can make Tesseract read the rest differently.
+  if (hPix < hMin * 2 || vPix < vMin * 2) return { image: g, erased: 0 };
+  const out = Uint8ClampedArray.from(g.data);
+  let erased = 0;
+  // Also clear the soft edge of each line (one pixel around it, if it is darker than paper).
+  for (let y = 0; y < h; y++) {
+    for (let x = 0; x < w; x++) {
+      const i = y * w + x;
+      const near = kill[i] || (x > 0 && kill[i - 1]) || (x < w - 1 && kill[i + 1]) || (y > 0 && kill[i - w]) || (y < h - 1 && kill[i + w]);
+      if (near && (kill[i] || g.data[i]! < 235)) {
+        out[i] = 255;
+        if (kill[i]) erased++;
+      }
+    }
+  }
+  return { image: { data: out, width: w, height: h }, erased };
+}
+
 /* ------------------------------ sauvola ------------------------------ */
 
 /** Sauvola adaptive threshold: T = m (1 + k (s/R - 1)). Output is 0 or 255. */
@@ -718,7 +828,7 @@ export function preprocessGrey(input: GreyImage, opts: Partial<PrepOptions> = {}
       steps.push(`orient${quarter * 90}`);
     }
   }
-  if (o.scale || o.binarise) {
+  if (o.scale || o.binarise || o.rules) {
     report.lineHeight = estimateLineHeight(g);
   }
   if (o.scale && report.lineHeight > 0) {
@@ -731,6 +841,13 @@ export function preprocessGrey(input: GreyImage, opts: Partial<PrepOptions> = {}
       report.scale = k;
       report.lineHeight *= k;
       steps.push('scale');
+    }
+  }
+  if (o.rules) {
+    const r = eraseRules(g, report.lineHeight || estimateLineHeight(g));
+    if (r.erased > 0) {
+      g = r.image;
+      steps.push('rules');
     }
   }
   if (o.binarise) {

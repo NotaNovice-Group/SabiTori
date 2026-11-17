@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   PREP_DEFAULT,
   PREP_OFF,
+  eraseRules,
   estimateLineHeight,
   estimateSkew,
   findDocumentBox,
@@ -304,5 +305,52 @@ describe('pipeline', () => {
     const b = preprocessGrey(g, PREP_DEFAULT);
     expect(Array.from(g.data)).toEqual(Array.from(copy));
     expect(Buffer.from(a.image.data).equals(Buffer.from(b.image.data))).toBe(true);
+  });
+});
+
+describe('table rules', () => {
+  /** A 3x3 table with 3 px rules and short "words" (6 x 16 px blocks) in each cell. */
+  function table(withVertical = true): GreyImage {
+    const w = 900, h = 400;
+    const data = new Uint8ClampedArray(w * h).fill(245);
+    const dark = (x0: number, y0: number, x1: number, y1: number) => {
+      for (let y = y0; y < y1; y++) for (let x = x0; x < x1; x++) data[y * w + x] = 30;
+    };
+    for (const y of [50, 150, 250, 350]) dark(50, y, 850, y + 3);
+    if (withVertical) for (const x of [50, 316, 583, 847]) dark(x, 50, x + 3, 353);
+    for (const y of [90, 190, 290]) for (const x of [80, 350, 620]) for (let k = 0; k < 6; k++) dark(x + k * 22, y, x + k * 22 + 16, y + 20);
+    return { data, width: w, height: h };
+  }
+  const inkAt = (g: GreyImage, x: number, y: number) => g.data[y * g.width + x]! < 128;
+
+  it('erases the grid and keeps the words in the cells', () => {
+    const g = table();
+    const r = eraseRules(g, 24);
+    expect(r.erased).toBeGreaterThan(0);
+    expect(inkAt(r.image, 400, 51)).toBe(false); // horizontal rule
+    expect(inkAt(r.image, 317, 200)).toBe(false); // vertical rule
+    for (const [x, y] of [[85, 100], [360, 200], [630, 300]] as const) expect(inkAt(r.image, x, y)).toBe(true); // words
+  });
+
+  it('leaves a page with only a lone line (letterhead, signature) unchanged', () => {
+    const g = table(false);
+    const r = eraseRules(g, 24);
+    expect(r.erased).toBe(0);
+    expect(r.image).toBe(g);
+  });
+
+  it('keeps text lines, even long dark ones, and thick dark bands', () => {
+    const g = textPage(900, 400);
+    expect(eraseRules(g, 22).erased).toBe(0);
+    const band: GreyImage = { width: 900, height: 300, data: new Uint8ClampedArray(900 * 300).fill(245) };
+    for (let y = 100; y < 160; y++) for (let x = 0; x < 900; x++) band.data[y * 900 + x] = 40; // a shadow, 60 px thick
+    for (let y = 0; y < 300; y++) for (let x = 400; x < 460; x++) band.data[y * 900 + x] = 40;
+    expect(eraseRules(band, 22).erased).toBe(0);
+  });
+
+  it('is on in the shipped pipeline, off in PREP_OFF', () => {
+    expect(PREP_DEFAULT.rules).toBe(true);
+    expect(PREP_OFF.rules).toBe(false);
+    expect(preprocessGrey(table(), { ...PREP_OFF, rules: true }).report.steps).toContain('rules');
   });
 });

@@ -51,6 +51,11 @@ export const VARIANT_SETS: Record<string, Variant[]> = {
     { name: 'best_int (4.0.0_best_int)', prep: PREP_DEFAULT, retry: true, langPath: process.env.OCR_DIR_BEST_INT },
     { name: 'fast (tessdata_fast)', prep: PREP_DEFAULT, retry: true, langPath: process.env.OCR_DIR_FAST },
   ],
+  /** Table ruling lines erased before OCR (school-fee tables were the weakest document type). */
+  rules: [
+    { name: 'before: no rule erasing (capped retry)', prep: { ...PREP_DEFAULT, rules: false }, retry: 'capped' },
+    { name: 'shipped: erase table rules (capped retry)', prep: PREP_DEFAULT, retry: 'capped' },
+  ],
   /** Review 3: dark-mode detection at working resolution (both rows) and the capped half-turn retry. Run with OCR_PAR=1. */
   review3: [
     { name: 'default fra+eng +retry (every page < 55)', prep: PREP_DEFAULT, retry: true },

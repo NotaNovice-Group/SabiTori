@@ -81,6 +81,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       lost microphone, leaving the page, or 30 s without pressing stop end the recording, keep what was recorded and
       say why; an empty recording counts as silent (`apps/recorder/test/mic.test.ts`). Full storage and older exports
       were already covered (`review3.test.ts`).
+- [x] **OCR: school-fee tables.** School notices were the weakest document type (33% of facts): Tesseract skipped
+      the text inside ruled tables. `eraseRules` (tables only, thin lines with paper on both sides) lifts fact recall
+      75.0% -> 83.6%, precision 97.2% -> 97.5%, pages fully right 16 -> 20 of 30, school 33% -> 64%, no type worse.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -108,3 +111,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #23 | First card 3.4 s -> 1.3 s at 4x CPU throttle (term prefilter, identical results); `apps/app/bench/perf.mjs` | local gate (Actions budget) |
 | 2026-11-17 | #24 | Recorder: interrupted recordings no longer hang; 30 s limit; stop when the page is left | local gate (Actions budget) |
 | 2026-11-17 | #25 | Voice training recipe and tools (no voice claimed) | 1,426 unit + 37 e2e passed (local gate, #18-#25 together) |
+| 2026-11-17 | #27 | OCR: table rules erased before reading; fact recall 75.0% -> 83.6%, school notices 33% -> 64% | local gate (Actions budget) |

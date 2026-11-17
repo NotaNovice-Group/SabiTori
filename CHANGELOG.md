@@ -21,6 +21,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Photos: ruled tables (school-fee notices, bills) are read again. Table lines are erased before OCR, which lifts
+  the facts recovered on the benchmark photos from 75% to 84% (school notices from 33% to 64%) with no type worse.
 - Store builds no longer include the optional LLM (Qwen2.5 via wllama): it is only in research builds
   (`VITE_LLM=1`), and the APK is about 8.7 MB smaller.
 - About screen: long links and file names in the licence text wrap at 200% text instead of scrolling sideways.
