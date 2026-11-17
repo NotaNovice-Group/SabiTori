@@ -146,8 +146,15 @@ test('a card can be deleted and is gone from history', async ({ page }) => {
   // listen-first is off, so one tap acts; a confirm step may follow
   const confirm = page.locator('.sheet .btn-primary, .sheet .danger');
   if (await confirm.count()) await confirm.first().click();
-  await page.waitForURL((u) => u.toString() !== url);
+  // Deleting ends on the home screen. Wait until the card screen is really gone: jumping back to the card's
+  // address before the app has drawn the home screen would leave the old screen up (same address, no change).
+  await page.waitForURL((u) => !u.hash.startsWith('#/card/'));
+  await expect(page.locator('.card')).toHaveCount(0);
   await page.goto(url.slice(url.indexOf('#')));
+  // The card route shows "not found" or, if the card still exists, the card: wait for either, then say which.
+  await page.locator('.note, .card').first().waitFor({ timeout: 15_000 });
+  const seen = await page.evaluate(() => ({ hash: location.hash, title: document.querySelector('h1')?.textContent ?? '', card: !!document.querySelector('.card') }));
+  expect(seen.card, JSON.stringify(seen)).toBe(false);
   await expect(page.locator('.note')).toBeVisible();
 });
 
