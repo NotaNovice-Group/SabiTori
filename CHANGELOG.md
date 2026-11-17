@@ -8,6 +8,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 - Pilot builds (`VITE_PILOT=1`): on-phone weekly counts of messages explained, scam warnings, listens and reminders,
   shown in Settings and shared only by the participant. No message content is kept. Store builds have no counter.
+- Pilot builds also count how long the phone took (photo to card, text to card, Listen to first sound) in time
+  bands, for the pilot's phone-performance measure. Only band counts are kept, never the times.
 
 ### Changed
 
