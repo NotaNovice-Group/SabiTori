@@ -3,6 +3,8 @@
 // Run from the repository root (vite-node transpiles the TypeScript sources of @sabitori/core on the fly):
 //   node node_modules/.pnpm/vite-node@3.2.4/node_modules/vite-node/vite-node.mjs packages/understand/eval/run-rules.mjs
 // Options: --split=test|train|all|unseen (default test; unseen reads unseen.jsonl)   --no-write (print only, do not write results-rules.md)
+//          --packs=fr,en,wes (reading lexicons to load; default fr,en)   --lang=wes (only messages in that language)
+//          Either of the last two is for contributors measuring a draft lexicon: it never writes the published results.
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
@@ -14,17 +16,20 @@ const here = dirname(fileURLToPath(import.meta.url));
 const root = join(here, '..', '..', '..');
 const json = (p) => JSON.parse(readFileSync(join(root, p), 'utf8'));
 const region = json('regions/CM/region.json');
-const lexicons = [json('packs/fr/reading.json'), json('packs/en/reading.json')];
-
 const arg = (name, dflt) => (process.argv.find((a) => a.startsWith(`--${name}=`)) ?? `--${name}=${dflt}`).split('=')[1];
 const splitArg = arg('split', 'test');
-const write = !process.argv.includes('--no-write');
+const packs = arg('packs', 'fr,en').split(',').filter(Boolean);
+const langArg = arg('lang', '');
+const lexicons = packs.map((t) => json(`packs/${t}/reading.json`));
+// The published results are always fr + en lexicons on every language; a contributor's run only prints.
+const write = !process.argv.includes('--no-write') && packs.join(',') === 'fr,en' && !langArg;
 
 const rows = readFileSync(join(here, splitArg === 'unseen' ? 'unseen.jsonl' : 'messages.jsonl'), 'utf8')
   .split('\n')
   .filter(Boolean)
   .map((l) => JSON.parse(l))
-  .filter((r) => splitArg === 'all' || r.split === splitArg);
+  .filter((r) => splitArg === 'all' || r.split === splitArg)
+  .filter((r) => !langArg || r.lang === langArg);
 
 const SOURCE = { sms: 'paste', letter: 'photo', whatsapp: 'share' };
 const toInput = (r) => ({ text: r.text, source: SOURCE[r.source], receivedAt: r.receivedAt, region: 'CM', sender: r.sender });
@@ -81,7 +86,7 @@ const scam = scamEval(rows);
 
 P('# Rules baseline results');
 P();
-P(`Classifier: \`${classifier.id}\` (region CM, lexicons fr + en, no \`wes\` lexicon exists yet). Split: \`${splitArg}\` (${rows.length} messages).`);
+P(`Classifier: \`${classifier.id}\` (region CM, lexicons ${packs.join(' + ')}${packs.includes('wes') ? '' : ', no \`wes\` lexicon exists yet'}). Split: \`${splitArg}\`${langArg ? `, language \`${langArg}\`` : ''} (${rows.length} messages).`);
 P('Regenerate: see the header of `run-rules.mjs`. Deterministic: same dataset gives the same numbers.');
 P(`Brackets: 95% percentile bootstrap interval over messages (${RESAMPLES} resamples, seed ${SEED}; \`stats.mjs\`). The published comparison with the encoder is in \`results-encoder.md\` / \`results.json\`.`);
 P();
