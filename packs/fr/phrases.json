@@ -143,6 +143,10 @@
     "text": "Faites-le avant le {date}.",
     "status": "draft"
   },
+  "deadline.on": {
+    "text": "Présentez-vous le {date}.",
+    "status": "draft"
+  },
   "deadline.passed": {
     "text": "La date du {date} est déjà passée.",
     "status": "draft"

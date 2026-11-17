@@ -511,3 +511,15 @@ describe('span property checks', () => {
     }
   });
 });
+
+describe('appointment dates', () => {
+  it('a place to go is ON the date; a bill is BY it', async () => {
+    const appt = await run('Hôpital Régional: Votre rendez-vous de consultation est fixé au 20/11/2026 à 9h00. Présentez-vous à l’accueil.');
+    expect(appt.understanding.action).toBe('go_to_place');
+    expect(keys(appt, '2026-10-31')).toContain('deadline.on');
+    expect(keys(appt, '2026-10-31')).not.toContain('deadline.by');
+    const bill = await run('ENEO: facture de 15 000 FCFA à payer avant le 15/11/2026.');
+    expect(keys(bill, '2026-10-31')).toContain('deadline.by');
+    expect(keys(bill, '2026-10-31')).not.toContain('deadline.on');
+  });
+});
