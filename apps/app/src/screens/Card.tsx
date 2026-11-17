@@ -14,7 +14,7 @@ import { session } from '../lib/session';
 import { buildIcs, downloadIcs } from '../lib/ics';
 import { isNative, openSystemSettings } from '../lib/native';
 import { cancelReminders, hasReminders, scheduleReminders } from '../lib/reminders';
-import { formatLongDate, formatMoney, formatPhone, todayIso } from '../lib/format';
+import { formatLongDate, formatMoney, formatPhone, todayIso, formatDeadline } from '../lib/format';
 import { senderName } from './Home';
 import { SPEEDS } from '../lib/settings';
 import { rememberMessage, rememberNames } from '../lib/crash';
@@ -312,7 +312,7 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
     } else if (v.section === 'deadline' && card.deadline) {
       body = (
         <>
-          <FactValue onSource={setSource} raw={card.deadline.raw} span={card.deadline.span} text={formatLongDate(card.deadline.value, locale)} size="sz-lead" />
+          <FactValue onSource={setSource} raw={card.deadline.raw} span={card.deadline.span} text={formatDeadline(card.deadline.value, card.deadlineTime?.value, locale)} size="sz-lead" />
           {lines('sz-small sec-said')}
         </>
       );
@@ -526,7 +526,7 @@ function HelperView({ card, views, locale, phoneCc }: { card: Card; views: Secti
           );
         // numbers are read best as digits: show the fact itself, big
         const digits =
-          v.section === 'deadline' && card.deadline ? formatLongDate(card.deadline.value, locale)
+          v.section === 'deadline' && card.deadline ? formatDeadline(card.deadline.value, card.deadlineTime?.value, locale)
           : v.section === 'money' && card.amount ? formatMoney(card.amount.value.amount, card.amount.value.currency, locale)
           : v.section === 'help' && card.contactPhone ? formatPhone(card.contactPhone.value, phoneCc)
           : undefined;
