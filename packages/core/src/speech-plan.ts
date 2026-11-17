@@ -76,7 +76,9 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
   if (!likely && !trapShape) {
     if (card.deadline) {
       const date = { type: 'date' as const, value: card.deadline.value, relativeTo: today };
-      sections.deadline = [{ key: card.deadline.value < today ? 'deadline.passed' : 'deadline.by', slots: { date } }];
+      // Going somewhere (an appointment, a convocation) happens ON the date; anything else is done BY it.
+      const goes = card.mode === 'full' && card.understanding.action === 'go_to_place';
+      sections.deadline = [{ key: card.deadline.value < today ? 'deadline.passed' : goes ? 'deadline.on' : 'deadline.by', slots: { date } }];
     }
     if (card.amount) sections.money = [{ key: 'money.amount', slots: { amount: { type: 'money', value: card.amount.value } } }];
   }

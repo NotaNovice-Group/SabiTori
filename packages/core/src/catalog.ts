@@ -133,6 +133,7 @@ export const CATALOG = c({
 
   /* ---------- When ---------- */
   'deadline.by': { en: 'Do it by {date}.', context: 'Deadline.', slots: ['date'] },
+  'deadline.on': { en: 'Be there on {date}.', context: 'An appointment, a convocation or a hearing: the day to go (not a deadline).', slots: ['date'] },
   'deadline.passed': { en: 'The date {date} has already passed.', context: 'The deadline is in the past.', slots: ['date'] },
   'deadline.none': { en: 'There is no date in this message.', context: 'No date found.' },
 
