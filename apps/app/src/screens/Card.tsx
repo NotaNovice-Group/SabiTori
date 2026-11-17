@@ -177,6 +177,7 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
       const r = await scheduleReminders({
         cardId: card.id,
         deadline: card.deadline.value,
+        ...(card.deadlineTime ? { time: card.deadlineTime.value } : {}),
         title: who || 'SabiTori',
         body: body || t('ui.remind'),
         route: example ? '/practice' : undefined,
@@ -201,7 +202,7 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
     }
     const about = views.find((v) => v.section === 'about')?.text ?? '';
     const deadlineText = views.find((v) => v.section === 'deadline')?.text ?? '';
-    downloadIcs('sabitori-reminder.ics', buildIcs({ uid: card.id, date: card.deadline.value, title: `${name}. ${about}`.trim(), description: `${deadlineText}\n${card.input.text}` }));
+    downloadIcs('sabitori-reminder.ics', buildIcs({ uid: card.id, date: card.deadline.value, ...(card.deadlineTime ? { time: card.deadlineTime.value } : {}), title: `${name}. ${about}`.trim(), description: `${deadlineText}\n${card.input.text}` }));
   };
   const unremind = async () => {
     await cancelReminders(card.id);

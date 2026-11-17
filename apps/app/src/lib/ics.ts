@@ -26,14 +26,27 @@ function ymd(d: IsoDate): string {
   return d.replace(/-/g, '');
 }
 
+const timed = (time?: string) => !!time && /^([01]\d|2[0-3]):([0-5]\d)$/.test(time);
+
+function when(date: IsoDate, time?: string): string[] {
+  if (!timed(time)) return [`DTSTART;VALUE=DATE:${ymd(date)}`, `DTEND;VALUE=DATE:${ymd(nextDay(date))}`];
+  const [h, m] = time!.split(':').map(Number) as [number, number];
+  const end = h === 23 ? { d: nextDay(date), h: 0 } : { d: date, h: h + 1 };
+  const hm = (hh: number) => `${String(hh).padStart(2, '0')}${String(m).padStart(2, '0')}00`;
+  return [`DTSTART:${ymd(date)}T${hm(h)}`, `DTEND:${ymd(end.d)}T${hm(end.h)}`];
+}
+
 function nextDay(d: IsoDate): IsoDate {
   const t = new Date(d + 'T00:00:00Z');
   t.setUTCDate(t.getUTCDate() + 1);
   return t.toISOString().slice(0, 10);
 }
 
-/** An all-day reminder on `date`, with an alert the evening before. */
-export function buildIcs(args: { uid: string; date: IsoDate; title: string; description?: string; now?: Date }): string {
+/**
+ * A reminder on `date`: all day with an alert the day before, or, with a `time` ("HH:MM", an appointment), a one-hour
+ * event at that local time with alerts the day before and two hours before. Local "floating" time: the phone's own.
+ */
+export function buildIcs(args: { uid: string; date: IsoDate; time?: string; title: string; description?: string; now?: Date }): string {
   const stamp = (args.now ?? new Date()).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const lines = [
     'BEGIN:VCALENDAR',
@@ -43,8 +56,7 @@ export function buildIcs(args: { uid: string; date: IsoDate; title: string; desc
     'BEGIN:VEVENT',
     `UID:${args.uid}@sabitori`,
     `DTSTAMP:${stamp}`,
-    `DTSTART;VALUE=DATE:${ymd(args.date)}`,
-    `DTEND;VALUE=DATE:${ymd(nextDay(args.date))}`,
+    ...when(args.date, args.time),
     `SUMMARY:${esc(args.title)}`,
     ...(args.description ? [`DESCRIPTION:${esc(args.description)}`] : []),
     'BEGIN:VALARM',
@@ -52,6 +64,7 @@ export function buildIcs(args: { uid: string; date: IsoDate; title: string; desc
     `DESCRIPTION:${esc(args.title)}`,
     'TRIGGER:-P1D',
     'END:VALARM',
+    ...(timed(args.time) ? ['BEGIN:VALARM', 'ACTION:DISPLAY', `DESCRIPTION:${esc(args.title)}`, 'TRIGGER:-PT2H', 'END:VALARM'] : []),
     'END:VEVENT',
     'END:VCALENDAR',
   ];

@@ -27,23 +27,37 @@ export function reminderIds(cardId: string): number[] {
 
 /**
  * The reminders for a deadline: 09:00 local the day before, 08:00 local on the day.
- * Those already in the past (relative to `now`) are skipped.
+ * With a time (an appointment, "HH:MM"), the one on the day comes two hours before it instead, not before 06:00 and
+ * always before the appointment. Those already in the past (relative to `now`) are skipped.
  */
-export function planReminders(cardId: string, deadline: IsoDate, now: Date = new Date()): ReminderSlot[] {
+export function planReminders(cardId: string, deadline: IsoDate, now: Date = new Date(), time?: string): ReminderSlot[] {
   const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(deadline);
   if (!m) return [];
   const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])] as [number, number, number];
   const [eveId, dayId] = reminderIds(cardId) as [number, number];
   const slots: ReminderSlot[] = [
     { id: eveId, kind: 'eve', at: new Date(y, mo - 1, d - 1, 9, 0, 0, 0) },
-    { id: dayId, kind: 'day', at: new Date(y, mo - 1, d, 8, 0, 0, 0) },
+    { id: dayId, kind: 'day', at: dayReminder(y, mo, d, time) },
   ];
   return slots.filter((s) => s.at.getTime() > now.getTime());
+}
+
+function dayReminder(y: number, mo: number, d: number, time?: string): Date {
+  const t = time ? /^([01]\d|2[0-3]):([0-5]\d)$/.exec(time) : null;
+  if (!t) return new Date(y, mo - 1, d, 8, 0, 0, 0);
+  const appt = new Date(y, mo - 1, d, Number(t[1]), Number(t[2]), 0, 0);
+  const early = new Date(y, mo - 1, d, 6, 0, 0, 0);
+  const twoBefore = new Date(appt.getTime() - 2 * 3600_000);
+  if (twoBefore >= early) return twoBefore;
+  // An early appointment: 06:00 if that is still before it, else one hour before.
+  return early < appt ? early : new Date(appt.getTime() - 3600_000);
 }
 
 export interface ReminderRequest {
   cardId: string;
   deadline: IsoDate;
+  /** "HH:MM" of an appointment, when the card has one. */
+  time?: string;
   /** Sender name, or "SabiTori". */
   title: string;
   /** The card's action and date, already rendered in the user's language. */
@@ -65,7 +79,7 @@ async function ensurePermission(): Promise<boolean> {
 
 export async function scheduleReminders(req: ReminderRequest): Promise<ReminderResult> {
   try {
-    const slots = planReminders(req.cardId, req.deadline, req.now);
+    const slots = planReminders(req.cardId, req.deadline, req.now, req.time);
     if (slots.length === 0) return { status: 'past' };
     if (!(await ensurePermission())) return { status: 'denied' };
     await LocalNotifications.createChannel({ id: REMINDER_CHANNEL, name: req.channelName ?? 'SabiTori', importance: 4, visibility: 0 });
