@@ -11,6 +11,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Faster first card: word-list matching skips words that are not in the message, so the first pasted bill
+  becomes a card about 2.6 times faster on a 4x-throttled CPU (docs/model.md, "App start and card time").
 - Scam checks: a message that delivers a one-time code ("Your confirmation code is 482913") is no longer read as
   asking for the code; requests for a code are still caught.
 - Rules: a dated task within 7 days is now `urgent` (was 2 days), matching the card's calibration and the evaluation
