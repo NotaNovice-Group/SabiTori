@@ -2,8 +2,8 @@
 
 SabiTori ("understand the story" in Cameroonian Pidgin) explains official messages out loud.
 A person photographs or shares a bill, a mobile money SMS, a hospital or school paper, and
-SabiTori tells them, in their own language: who sent it, what it is about, what to do, by when,
-how much, who to call, and whether it looks like a scam.
+SabiTori tells them, in French or English today (other languages as their communities record them):
+who sent it, what it is about, what to do, by when, how much, who to call, and whether it looks like a scam.
 
 It is built for people with disabilities and people who cannot read French or English, on
 low-cost Android phones, and it works fully offline. Your messages never leave this phone. If you
@@ -44,6 +44,13 @@ small, so treat these as development numbers, not field accuracy
 ([`packages/understand/eval`](packages/understand/eval), generated from `eval/results.json`).
 <!-- /results:headline -->
 
+Scam warnings come from code, not from the model: 21 of 22 scam or suspicious messages got a warning on the test
+set and 17 of 21 on the unseen set, while 3 of 74 and 2 of 79 genuine messages got a false alarm. For photos, every
+fact is checked against the text the phone read, not against the paper itself: on 30 degraded synthetic photos of
+bills, letters and SMS screenshots, on-device OCR recovers three in four of the dates, amounts and phone numbers,
+about one in eighteen facts it reads is wrong, and it gets every fact right on 16 of 30 pages ([`apps/app/test/ocr-bench/RESULTS.md`](apps/app/test/ocr-bench/RESULTS.md)).
+That is why each fact on a card can show where it came from, and a card that is unsure falls back to facts only.
+
 No real message has been evaluated yet: there is no pilot and no user so far. Real, consented, anonymised
 messages from a first pilot are meant to replace the synthetic sets ([`docs/impact.md`](docs/impact.md)
 lists what a pilot would measure).
@@ -73,7 +80,7 @@ and when we train our own voices: [`docs/languages.md`](docs/languages.md).
 | --- | --- |
 | `packages/core` | Contracts, phrase catalog, the pipeline (facts, scam, card, speech plan) |
 | `packages/speech` | Language-pack rules, rendering, audio player |
-| `packages/understand` | On-device understanding: MiniLM encoder (default), optional Qwen2.5-1.5B second opinion, evaluation set and training code |
+| `packages/understand` | On-device understanding: MiniLM encoder (the only model in store builds), evaluation set and training code; an experimental LLM path (Qwen2.5-1.5B via wllama) exists only in research builds (`VITE_LLM=1`) |
 | `packages/connect` | Optional signed-update client and overlay (no message content, ever) |
 | `apps/app` | The SabiTori app (React PWA, wrapped for Android with Capacitor) |
 | `apps/recorder` | Tool for communities to translate and record a language |
@@ -128,6 +135,9 @@ Read [`CONTRIBUTING.md`](CONTRIBUTING.md) to set up, run the tests and add a lan
 ## License
 
 - Code: [MPL-2.0](LICENSE).
-- Language packs (`packs/`): CC-BY-SA-4.0 by default. A language community can choose another licence in
-  its pack manifest. See [`packs/LICENSE.md`](packs/LICENSE.md).
+- Language packs (`packs/`): CC-BY-SA-4.0 by default, and each language community can choose another licence in its
+  pack manifest. The French and English packs are CC-BY-4.0. The local-language packs have no licence yet
+  (`LicenseRef-community-decides`): their communities will choose one when they record them. See
+  [`packs/LICENSE.md`](packs/LICENSE.md).
+- Evaluation messages (`packages/understand/eval`): CC-BY-SA-4.0.
 - Third-party models, fonts and libraries: see [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
