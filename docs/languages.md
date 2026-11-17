@@ -5,8 +5,10 @@ code. This page explains how, what it takes, and when we plan to train our own v
 
 ## What a language needs
 
-SabiTori never has to *read* a message in a local language: official messages arrive in French
-or English. It only has to *speak* the card. So a language needs:
+Official messages mostly arrive in French or English, so a language mainly has to *speak* the card.
+The exception is Cameroonian Pidgin, which people also write in (SMS, WhatsApp): a language that is
+written in messages can also get a reading lexicon, written and checked by speakers
+([`reading-lexicon.md`](reading-lexicon.md)). So a language needs:
 
 | Part | What it is | Who makes it |
 | --- | --- | --- |
