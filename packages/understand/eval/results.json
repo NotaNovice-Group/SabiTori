@@ -4,7 +4,7 @@
  "model": "packages/understand/model/minilm",
  "thresholds": {
   "kind": 0.85,
-  "action": 0.6,
+  "action": 0.75,
   "urgency": 0.85
  },
  "stats": {
@@ -350,10 +350,10 @@
      },
      "action": {
       "n": 96,
-      "k": 85,
-      "acc": 0.8854,
-      "lo": 0.8227,
-      "hi": 0.9479
+      "k": 83,
+      "acc": 0.8646,
+      "lo": 0.7917,
+      "hi": 0.9271
      },
      "urgency": {
       "n": 96,
@@ -364,10 +364,10 @@
      },
      "all": {
       "n": 96,
-      "k": 74,
-      "acc": 0.7708,
-      "lo": 0.6875,
-      "hi": 0.8542
+      "k": 72,
+      "acc": 0.75,
+      "lo": 0.6563,
+      "hi": 0.8333
      }
     }
    },
@@ -385,12 +385,12 @@
      },
      "action": {
       "n": 96,
-      "diff": 0.125,
-      "lo": 0.0521,
-      "hi": 0.2083,
-      "aOnly": 14,
+      "diff": 0.1042,
+      "lo": 0.0313,
+      "hi": 0.1771,
+      "aOnly": 12,
       "bOnly": 2,
-      "p": 0.0042,
+      "p": 0.0129,
       "significant": true
      },
      "urgency": {
@@ -405,12 +405,12 @@
      },
      "all": {
       "n": 96,
-      "diff": 0.1667,
-      "lo": 0.0833,
-      "hi": 0.25,
-      "aOnly": 18,
+      "diff": 0.1458,
+      "lo": 0.0729,
+      "hi": 0.2292,
+      "aOnly": 16,
       "bOnly": 2,
-      "p": 0.0004,
+      "p": 0.0013,
       "significant": true
      }
     },
@@ -573,9 +573,9 @@
       },
       "action": {
        "n": 43,
-       "k": 41,
-       "acc": 0.9535,
-       "lo": 0.8837,
+       "k": 40,
+       "acc": 0.9302,
+       "lo": 0.8372,
        "hi": 1
       },
       "urgency": {
@@ -587,20 +587,20 @@
       },
       "all": {
        "n": 43,
-       "k": 37,
-       "acc": 0.8605,
-       "lo": 0.7442,
-       "hi": 0.9535
+       "k": 36,
+       "acc": 0.8372,
+       "lo": 0.7209,
+       "hi": 0.9302
       }
      },
      "combinedVsRules": {
       "n": 43,
-      "diff": 0.1163,
+      "diff": 0.093,
       "lo": 0,
-      "hi": 0.2326,
-      "aOnly": 6,
+      "hi": 0.2093,
+      "aOnly": 5,
       "bOnly": 1,
-      "p": 0.125,
+      "p": 0.2188,
       "significant": false
      }
     },
@@ -646,10 +646,10 @@
       },
       "action": {
        "n": 15,
-       "k": 11,
-       "acc": 0.7333,
-       "lo": 0.4667,
-       "hi": 0.9333
+       "k": 10,
+       "acc": 0.6667,
+       "lo": 0.4,
+       "hi": 0.8667
       },
       "urgency": {
        "n": 15,
@@ -660,21 +660,21 @@
       },
       "all": {
        "n": 15,
-       "k": 9,
-       "acc": 0.6,
-       "lo": 0.3333,
-       "hi": 0.8667
+       "k": 8,
+       "acc": 0.5333,
+       "lo": 0.2667,
+       "hi": 0.8
       }
      },
      "combinedVsRules": {
       "n": 15,
-      "diff": 0.4,
+      "diff": 0.3333,
       "lo": 0.1333,
-      "hi": 0.6667,
-      "aOnly": 6,
+      "hi": 0.6,
+      "aOnly": 5,
       "bOnly": 0,
-      "p": 0.0313,
-      "significant": true
+      "p": 0.0625,
+      "significant": false
      }
     }
    },
@@ -866,7 +866,7 @@
    },
    "changedFromRules": {
     "kind": 10,
-    "action": 18,
+    "action": 14,
     "urgency": 5
    }
   },
@@ -945,7 +945,7 @@
       "n": 100,
       "k": 66,
       "acc": 0.66,
-      "lo": 0.56,
+      "lo": 0.57,
       "hi": 0.75
      },
      "urgency": {
@@ -979,12 +979,12 @@
      "action": {
       "n": 100,
       "diff": 0.12,
-      "lo": 0.01,
-      "hi": 0.23,
-      "aOnly": 23,
-      "bOnly": 11,
-      "p": 0.0576,
-      "significant": false
+      "lo": 0.03,
+      "hi": 0.21,
+      "aOnly": 17,
+      "bOnly": 5,
+      "p": 0.0169,
+      "significant": true
      },
      "urgency": {
       "n": 100,
@@ -999,11 +999,11 @@
      "all": {
       "n": 100,
       "diff": 0.13,
-      "lo": 0.02,
-      "hi": 0.24,
-      "aOnly": 22,
-      "bOnly": 9,
-      "p": 0.0294,
+      "lo": 0.04,
+      "hi": 0.23,
+      "aOnly": 19,
+      "bOnly": 6,
+      "p": 0.0146,
       "significant": true
      }
     },
@@ -1093,10 +1093,10 @@
       },
       "action": {
        "n": 40,
-       "k": 28,
-       "acc": 0.7,
-       "lo": 0.55,
-       "hi": 0.825
+       "k": 27,
+       "acc": 0.675,
+       "lo": 0.525,
+       "hi": 0.8
       },
       "urgency": {
        "n": 40,
@@ -1107,21 +1107,21 @@
       },
       "all": {
        "n": 40,
-       "k": 20,
-       "acc": 0.5,
-       "lo": 0.35,
-       "hi": 0.65
+       "k": 19,
+       "acc": 0.475,
+       "lo": 0.325,
+       "hi": 0.625
       }
      },
      "combinedVsRules": {
       "n": 40,
-      "diff": 0.225,
-      "lo": 0.05,
-      "hi": 0.4,
-      "aOnly": 12,
+      "diff": 0.2,
+      "lo": 0.025,
+      "hi": 0.375,
+      "aOnly": 11,
       "bOnly": 3,
-      "p": 0.0352,
-      "significant": true
+      "p": 0.0574,
+      "significant": false
      }
     },
     "en": {
@@ -1166,10 +1166,10 @@
       },
       "action": {
        "n": 38,
-       "k": 23,
-       "acc": 0.6053,
-       "lo": 0.4474,
-       "hi": 0.7632
+       "k": 25,
+       "acc": 0.6579,
+       "lo": 0.5,
+       "hi": 0.8158
       },
       "urgency": {
        "n": 38,
@@ -1180,20 +1180,20 @@
       },
       "all": {
        "n": 38,
-       "k": 15,
-       "acc": 0.3947,
-       "lo": 0.2368,
-       "hi": 0.5526
+       "k": 18,
+       "acc": 0.4737,
+       "lo": 0.3158,
+       "hi": 0.6316
       }
      },
      "combinedVsRules": {
       "n": 38,
-      "diff": 0,
-      "lo": -0.1842,
-      "hi": 0.1842,
+      "diff": 0.0789,
+      "lo": -0.0789,
+      "hi": 0.2368,
       "aOnly": 6,
-      "bOnly": 6,
-      "p": 1,
+      "bOnly": 3,
+      "p": 0.5078,
       "significant": false
      }
     },
@@ -1239,10 +1239,10 @@
       },
       "action": {
        "n": 22,
-       "k": 15,
-       "acc": 0.6818,
-       "lo": 0.4545,
-       "hi": 0.8636
+       "k": 14,
+       "acc": 0.6364,
+       "lo": 0.4091,
+       "hi": 0.8182
       },
       "urgency": {
        "n": 22,
@@ -1253,20 +1253,20 @@
       },
       "all": {
        "n": 22,
-       "k": 12,
-       "acc": 0.5455,
-       "lo": 0.3182,
-       "hi": 0.7273
+       "k": 10,
+       "acc": 0.4545,
+       "lo": 0.2273,
+       "hi": 0.6818
       }
      },
      "combinedVsRules": {
       "n": 22,
-      "diff": 0.1818,
-      "lo": 0.0455,
-      "hi": 0.3636,
-      "aOnly": 4,
+      "diff": 0.0909,
+      "lo": 0,
+      "hi": 0.2273,
+      "aOnly": 2,
       "bOnly": 0,
-      "p": 0.125,
+      "p": 0.5,
       "significant": false
      }
     }
@@ -1466,7 +1466,7 @@
    },
    "changedFromRules": {
     "kind": 12,
-    "action": 37,
+    "action": 24,
     "urgency": 7
    }
   }
@@ -1537,7 +1537,7 @@
      "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.64
+    "combinedConfidence": 0.75
    },
    {
     "id": "sbt-003",
@@ -1603,7 +1603,7 @@
      "action": "go_to_place",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.72
+    "combinedConfidence": 0.75
    },
    {
     "id": "sbt-005",
@@ -1798,10 +1798,10 @@
     },
     "combined": {
      "kind": "telecom",
-     "action": "pay",
+     "action": "unclear",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.73
+    "combinedConfidence": 0.77
    },
    {
     "id": "sbt-011",
@@ -1930,10 +1930,10 @@
     },
     "combined": {
      "kind": "bank",
-     "action": "pay",
+     "action": "unclear",
      "urgency": "info"
     },
-    "combinedConfidence": 0.61
+    "combinedConfidence": 0.64
    },
    {
     "id": "sbt-015",
@@ -2098,7 +2098,7 @@
      "action": "go_to_place",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.68
+    "combinedConfidence": 0.75
    },
    {
     "id": "sbt-020",
@@ -2131,7 +2131,7 @@
      "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.64
+    "combinedConfidence": 0.93
    },
    {
     "id": "sbt-021",
@@ -2329,7 +2329,7 @@
      "action": "unclear",
      "urgency": "info"
     },
-    "combinedConfidence": 0.65
+    "combinedConfidence": 0.76
    },
    {
     "id": "sbt-027",
@@ -2458,7 +2458,7 @@
     },
     "combined": {
      "kind": "bank",
-     "action": "nothing",
+     "action": "unclear",
      "urgency": "info"
     },
     "combinedConfidence": 0.21
@@ -2854,7 +2854,7 @@
     },
     "combined": {
      "kind": "mobile_money",
-     "action": "go_to_place",
+     "action": "unclear",
      "urgency": "soon"
     },
     "combinedConfidence": 0.6
@@ -3220,7 +3220,7 @@
      "action": "go_to_place",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.73
+    "combinedConfidence": 0.75
    },
    {
     "id": "sbt-054",
@@ -3352,7 +3352,7 @@
      "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.61
+    "combinedConfidence": 0.85
    },
    {
     "id": "sbt-058",
@@ -4408,7 +4408,7 @@
      "action": "unclear",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.68
+    "combinedConfidence": 0.74
    },
    {
     "id": "sbt-098",
@@ -4573,7 +4573,7 @@
      "action": "pay",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.66
+    "combinedConfidence": 0.85
    },
    {
     "id": "sbt-137",
@@ -4639,7 +4639,7 @@
      "action": "call",
      "urgency": "info"
     },
-    "combinedConfidence": 0.7
+    "combinedConfidence": 0.63
    }
   ],
   "unseen": [
@@ -5034,7 +5034,7 @@
     },
     "combined": {
      "kind": "other",
-     "action": "reply",
+     "action": "pay",
      "urgency": "soon"
     },
     "combinedConfidence": 0.2
@@ -5100,10 +5100,10 @@
     },
     "combined": {
      "kind": "school",
-     "action": "pay",
+     "action": "unclear",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.69
+    "combinedConfidence": 0.72
    },
    {
     "id": "uns-015",
@@ -5169,7 +5169,7 @@
      "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.72
+    "combinedConfidence": 0.79
    },
    {
     "id": "uns-017",
@@ -5199,10 +5199,10 @@
     },
     "combined": {
      "kind": "health",
-     "action": "go_to_place",
+     "action": "reply",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.74
+    "combinedConfidence": 0.81
    },
    {
     "id": "uns-018",
@@ -5235,7 +5235,7 @@
      "action": "pay",
      "urgency": "info"
     },
-    "combinedConfidence": 0.65
+    "combinedConfidence": 0.25
    },
    {
     "id": "uns-019",
@@ -5826,10 +5826,10 @@
     },
     "combined": {
      "kind": "health",
-     "action": "go_to_place",
+     "action": "unclear",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.67
+    "combinedConfidence": 0.69
    },
    {
     "id": "uns-037",
@@ -6552,10 +6552,10 @@
     },
     "combined": {
      "kind": "mobile_money",
-     "action": "pay",
+     "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.73
+    "combinedConfidence": 0.78
    },
    {
     "id": "uns-059",
@@ -6585,7 +6585,7 @@
     },
     "combined": {
      "kind": "electricity_bill",
-     "action": "pay",
+     "action": "unclear",
      "urgency": "soon"
     },
     "combinedConfidence": 0.64
@@ -6684,10 +6684,10 @@
     },
     "combined": {
      "kind": "bank",
-     "action": "nothing",
+     "action": "reply",
      "urgency": "info"
     },
-    "combinedConfidence": 0.65
+    "combinedConfidence": 0.75
    },
    {
     "id": "uns-063",
@@ -6816,7 +6816,7 @@
     },
     "combined": {
      "kind": "other",
-     "action": "nothing",
+     "action": "call",
      "urgency": "info"
     },
     "combinedConfidence": 0.2
@@ -6852,7 +6852,7 @@
      "action": "unclear",
      "urgency": "urgent"
     },
-    "combinedConfidence": 0.61
+    "combinedConfidence": 0.76
    },
    {
     "id": "uns-068",
@@ -7146,10 +7146,10 @@
     },
     "combined": {
      "kind": "telecom",
-     "action": "unclear",
+     "action": "nothing",
      "urgency": "info"
     },
-    "combinedConfidence": 0.63
+    "combinedConfidence": 0.55
    },
    {
     "id": "uns-077",
@@ -7311,7 +7311,7 @@
     },
     "combined": {
      "kind": "other",
-     "action": "call",
+     "action": "nothing",
      "urgency": "info"
     },
     "combinedConfidence": 0.2
@@ -7545,7 +7545,7 @@
      "action": "take_medicine",
      "urgency": "info"
     },
-    "combinedConfidence": 0.68
+    "combinedConfidence": 0.63
    },
    {
     "id": "uns-089",
@@ -7674,7 +7674,7 @@
     },
     "combined": {
      "kind": "other",
-     "action": "go_to_place",
+     "action": "unclear",
      "urgency": "urgent"
     },
     "combinedConfidence": 0.17
@@ -7740,7 +7740,7 @@
     },
     "combined": {
      "kind": "mobile_money",
-     "action": "nothing",
+     "action": "collect",
      "urgency": "info"
     },
     "combinedConfidence": 0.63
@@ -7872,7 +7872,7 @@
     },
     "combined": {
      "kind": "administrative",
-     "action": "collect",
+     "action": "take_medicine",
      "urgency": "info"
     },
     "combinedConfidence": 0.25
