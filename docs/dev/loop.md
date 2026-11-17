@@ -111,6 +111,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       procedure. Encoder + rules all-three: test 77.1% -> 75.0%, unseen 47.0% (unchanged). An overdue-deadline urgency
       rule was tried in the same run and dropped (no held-out gain; it would have moved thresholds again).
 - [x] **Threshold protocol guard.** A test fails when heads.json differs from train-only selection (the #31 slip).
+- [x] **One command to check every number.** `pnpm reproduce [--ocr]` re-runs all evaluations and reports whether the
+      committed results came out byte-identical (OCR: accuracy columns). README "Check our numbers".
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -146,3 +148,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #32 | Facts: OCR O/l inside numbers read as digits (unambiguous spots only); test all-three 77.1% | local gate (Actions budget) |
 | 2026-11-17 | #33 | Encoder thresholds re-selected on train after #31 (action 0.6 -> 0.75); test all-three 75.0%, unseen 47.0% | local gate (Actions budget) |
 | 2026-11-17 | #34 | Guard test: shipped thresholds must equal train-only selection; loop rule added | local gate (Actions budget) |
+| 2026-11-17 | #35 | `pnpm reproduce`: every published number re-run and compared (byte-identical today) | local gate (Actions budget) |

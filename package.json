@@ -11,7 +11,8 @@
     "typecheck": "pnpm -r typecheck",
     "dev": "pnpm --filter @sabitori/app dev",
     "dev:recorder": "pnpm --filter @sabitori/recorder dev",
-    "packs:check": "node scripts/check-packs.mjs"
+    "packs:check": "node scripts/check-packs.mjs",
+    "reproduce": "node scripts/reproduce.mjs"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

@@ -111,6 +111,19 @@ Android APK (needs the Android SDK, platform 36):
 pnpm --filter @sabitori/app build && cd apps/app && npx cap sync android && cd android && ./gradlew assembleDebug
 ```
 
+## Check our numbers
+
+Every accuracy number in this repository comes from a script in it, on data in it. To re-run them all and check:
+
+```bash
+pnpm install && pnpm reproduce --ocr
+```
+
+It regenerates the understanding and scam results in place and says whether they came out byte-identical to the
+committed ones (about 1 minute), then re-runs the 30-photo OCR benchmark and compares its accuracy (about 2 minutes
+more). `pnpm e2e` (in `apps/app`, needs Chromium) runs the 37 browser tests, accessibility checks included, and
+`node apps/app/bench/perf.mjs 4 5` measures the app on a 4x slowed CPU after a build.
+
 ## Before a public release
 
 - Confirm official sender names, help lines and balance codes in `regions/CM/region.json`
