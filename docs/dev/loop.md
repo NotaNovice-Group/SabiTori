@@ -99,6 +99,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       were "unclear". Rules alone, all three right: test 51.0% -> 59.4%, unseen 30.0% -> 34.0%. Encoder + rules:
       test 75.0% -> 76.0%, unseen 44.0% -> 47.0%. A "send it back" scam is now action pay; its card still warns
       first and never says to pay (new test).
+- [x] **OCR letters inside numbers.** `fixOcrDigits` (facts.ts) reads O/l/I/| as digits only where the number is not
+      in doubt (between digits, a thousands group, a date part), keeping offsets and the original `raw`; a leading
+      confusable ("l5 000") is still refused. Encoder + rules, test: 76.0% -> 77.1%; unseen and photos unchanged.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -131,3 +134,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #29 | Demo video shot list for the application (`docs/video-script.md`) | local gate (Actions budget) |
 | 2026-11-17 | #30 | Scam rules: fewer false alarms, bank-prefix impersonation; test warnings 22/22, false alarms 0/74 | local gate (Actions budget) |
 | 2026-11-17 | #31 | Action words: unseen all-three 44.0% -> 47.0% (encoder + rules), rules alone 30.0% -> 34.0% | local gate (Actions budget) |
+| 2026-11-17 | #32 | Facts: OCR O/l inside numbers read as digits (unambiguous spots only); test all-three 77.1% | local gate (Actions budget) |

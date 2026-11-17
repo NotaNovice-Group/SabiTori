@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Facts: dates and amounts where OCR read 0 as O or 1 as l ("2O26", "59 O00 FCFA", "22/lO/2026") are read, only
+  where the number is not in doubt; the card still shows the original characters.
 - Reading: receipts and greetings are now "nothing to do", and "send 30 000 FCFA to ..." or "rembourser" are
   "pay". All three labels right on the unseen set: 44% -> 47% (encoder + rules).
 - Scam checks: a utility's own switchboard number, a school closing for a holiday and real exam results no longer

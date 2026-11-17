@@ -455,7 +455,45 @@ function extractShortCodes(text: string, norm: string, ctx: FactsContext, blocke
 
 /* --------------------------------- main --------------------------------- */
 
-export function extractFacts(text: string, ctx0: FactsContext): Facts {
+const CONFUSABLE: Record<string, string> = { O: '0', o: '0', I: '1', l: '1', '|': '1' };
+const toDigits = (t: string) => t.replace(/[OoIl|]/g, (c) => CONFUSABLE[c]!);
+
+/**
+ * OCR reads 0 as O and 1 as l, I or |, inside numbers ("2O26", "59 O00 FCFA", "22/lO/2026"). Turn them back into
+ * digits only where the reading is not in doubt: between two digits ("2O26", "1l0"), in a 3-character thousands
+ * group right after a digit group ("59 O00"), or as a 1-2 character date part between digit groups joined by / . or -.
+ * A confusable at the START of a number ("l5 000") is left alone: it may be a 1 or a stray mark, and a wrong amount
+ * is worse than none. Same length, so every span and offset stays valid; words ("lol", "Ilona", "IO") are untouched.
+ */
+export function fixOcrDigits(text: string): string {
+  let out = text;
+  // between digits (repeat: "1OO0" needs two passes)
+  for (let i = 0; i < 3; i++) out = out.replace(/(?<=\d)[OoIl|]+(?=\d)/g, toDigits);
+  // thousands group after a digit group: "59 O00", "1 OO0", "110,OO0"
+  out = out.replace(/(?<=\d[ \u00a0\u202f.,])[0-9OoIl|]{3}(?![\p{L}\p{N}])/gu, (t) => (/\d/.test(t) ? toDigits(t) : t));
+  // a date part: "22/lO/2026"
+  out = out.replace(/(?<=\d[/.\-])[OoIl|]{1,2}(?=[/.\-]\d)/g, toDigits);
+  return out;
+}
+
+export function extractFacts(original: string, ctx0: FactsContext): Facts {
+  const text = fixOcrDigits(original);
+  const facts = extractFactsExact(text, ctx0);
+  if (text === original) return facts;
+  // The "show me where" view shows what the message really says.
+  const back = <T>(f: { value: T; span: { start: number; end: number }; raw: string }) => ({ ...f, raw: original.slice(f.span.start, f.span.end) });
+  return {
+    ...facts,
+    dates: facts.dates.map(back),
+    amounts: facts.amounts.map(back),
+    phones: facts.phones.map(back),
+    references: facts.references.map(back),
+    urls: facts.urls.map(back),
+    ussdCodes: facts.ussdCodes.map(back),
+  };
+}
+
+function extractFactsExact(text: string, ctx0: FactsContext): Facts {
   // An invalid receivedAt never reaches a fact: relative words, weekdays, year-less and 2-digit-year dates are skipped.
   const ctx: FactsContext = { ...ctx0, receivedAt: isIsoDate(ctx0.receivedAt) ? ctx0.receivedAt : '' };
   const norm = fold(text);

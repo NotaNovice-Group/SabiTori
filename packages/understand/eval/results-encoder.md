@@ -7,16 +7,16 @@ Intervals: 95% percentile bootstrap, 10000 resamples, seed 20261102. Latency is 
 
 | System | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- |
-| rules@1 (baseline) | 86.5% [79.2–92.7] | 76.0% [67.7–84.4] | 87.5% [80.2–93.8] | 59.4% [50.0–68.8] |
+| rules@1 (baseline) | 86.5% [79.2–92.7] | 76.0% [67.7–84.4] | 88.5% [81.3–94.8] | 60.4% [51.0–69.8] |
 | encoder alone | 88.5% [81.3–94.8] | 87.5% [80.2–93.8] | 84.4% [77.1–91.7] | 68.8% [59.4–77.1] |
-| **encoder + rules (default)** | 93.8% [88.5–97.9] | 88.5% [82.3–94.8] | 88.5% [82.3–94.8] | 76.0% [67.7–84.4] |
+| **encoder + rules (default)** | 93.8% [88.5–97.9] | 88.5% [82.3–94.8] | 89.6% [83.3–94.8] | 77.1% [68.8–85.4] |
 
 Paired difference against rules on the same messages: points, 95% bootstrap interval, messages only the first system gets right vs only rules gets right, exact McNemar p. `*` = significant at 0.05.
 
 | Comparison | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- |
 | encoder + rules vs rules | +7.3 pts [2.1–13.5], 8 vs 1, p = 0.039 * | +12.5 pts [5.2–20.8], 14 vs 2, p = 0.004 * | +1.0 pts [-3.1–5.2], 3 vs 2, p = 1.000 | +16.7 pts [8.3–25.0], 18 vs 2, p < 0.001 * |
-| encoder alone vs rules | +2.1 pts [-5.2–9.4], 8 vs 6, p = 0.790 | +11.5 pts [2.1–21.9], 18 vs 7, p = 0.043 * | -3.1 pts [-12.5–5.2], 8 vs 11, p = 0.648 | +9.4 pts [-3.1–20.8], 22 vs 13, p = 0.175 |
+| encoder alone vs rules | +2.1 pts [-5.2–9.4], 8 vs 6, p = 0.790 | +11.5 pts [2.1–21.9], 18 vs 7, p = 0.043 * | -4.2 pts [-12.5–4.2], 7 vs 11, p = 0.481 | +8.3 pts [-3.1–19.8], 21 vs 13, p = 0.230 |
 
 Scam level (assessScam, code; the same for every system): 100.0% [100.0–100.0]; a warning on 22/22 scam or caution messages; false alarms on 0/74 messages with no signs.
 
@@ -27,7 +27,7 @@ Fields where encoder + rules differs from rules: kind 10, action 18, urgency 5 o
 | Lang | n | rules, all three | encoder + rules, all three | difference |
 | --- | --- | --- | --- | --- |
 | fr | 38 | 60.5% [44.7–76.3] | 73.7% [57.9–86.8] | +13.2 pts [0.0–26.3], 6 vs 1, p = 0.125 |
-| en | 43 | 72.1% [58.1–86.1] | 83.7% [72.1–93.0] | +11.6 pts [0.0–23.3], 6 vs 1, p = 0.125 |
+| en | 43 | 74.4% [60.5–86.1] | 86.1% [74.4–95.3] | +11.6 pts [0.0–23.3], 6 vs 1, p = 0.125 |
 | wes | 15 | 20.0% [0.0–40.0] | 60.0% [33.3–86.7] | +40.0 pts [13.3–66.7], 6 vs 0, p = 0.031 * |
 
 ### Calibration of the encoder heads (alone)
@@ -78,7 +78,7 @@ Fields where encoder + rules differs from rules: kind 12, action 37, urgency 7 o
 | Field | 0.30 | 0.35 | 0.40 | 0.45 | 0.50 | 0.55 | 0.60 | 0.65 | 0.70 | 0.75 | 0.80 | 0.85 | 0.90 | 0.95 | never | chosen |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | kind | 89.3 | 90.2 | 90.6 | 90.6 | 91.1 | 92.0 | 92.0 | 92.0 | 92.4 | 93.8 | 92.4 | 93.3 | 93.8 | 93.3 | 87.1 | 0.85 |
-| action | 79.0 | 80.4 | 81.3 | 81.3 | 80.8 | 84.4 | 85.7 | 85.7 | 85.3 | 86.2 | 86.6 | 84.8 | 83.9 | 82.6 | 83.0 | 0.75 |
+| action | 79.5 | 80.8 | 81.7 | 81.7 | 81.3 | 84.8 | 86.2 | 86.2 | 85.7 | 86.6 | 87.1 | 85.3 | 84.4 | 82.6 | 83.0 | 0.75 |
 | urgency | 83.9 | 83.9 | 83.9 | 84.4 | 86.6 | 89.7 | 91.5 | 90.6 | 92.0 | 93.3 | 93.3 | 93.8 | 93.8 | 93.8 | 93.8 | 0.85 |
 
 Pidgin (`wes`) rows were written without a native speaker: a smoke test only (see eval/README.md).
@@ -101,7 +101,6 @@ Pidgin (`wes`) rows were written without a native speaker: a smoke test only (se
 - sbt-067: expected bank/bring_document/urgent got administrative/bring_document/urgent (rules administrative/go_to_place/urgent)
 - sbt-068: expected water_bill/pay/urgent got water_bill/pay/info (rules water_bill/pay/info)
 - sbt-075: expected health/call/info got health/call/soon (rules health/go_to_place/soon)
-- sbt-076: expected administrative/bring_document/urgent got administrative/bring_document/soon (rules administrative/bring_document/soon)
 - sbt-077: expected bank/unclear/info got bank/unclear/soon (rules bank/unclear/soon)
 - sbt-088: expected other/unclear/info got other/nothing/info (rules administrative/unclear/soon)
 - sbt-090: expected electricity_bill/nothing/info got electricity_bill/pay/urgent (rules electricity_bill/pay/urgent)
