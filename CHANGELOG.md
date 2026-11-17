@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- "Remind me" on an appointment with a time: the reminder comes two hours before it, and the calendar file is a
+  timed event (it was all day, and an early appointment's 08:00 reminder could come too late).
 - Appointment cards say the time written after the date ("Présentez-vous le vingt-deux novembre à neuf heures").
 - Cards for appointments, convocations and hearings now say "Be there on {date}" instead of "Do it by {date}".
 - Model thresholds re-chosen on the train split after the reading-word changes, as the evaluation method requires:

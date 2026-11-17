@@ -124,6 +124,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Appointment time.** A time written right after the date ("le 20/11/2026 à 9h00", "at 9:30") is read into
       `card.deadlineTime` (checked against the text) and spoken for places to go: "Présentez-vous le vingt-deux
       novembre à neuf heures" / "Be there on ... at nine o'clock" (number slots; phrases draft; recorded packs fall back).
+- [x] **Reminders at the appointment time.** With a time on the card, the reminder on the day comes two hours before
+      (not before 06:00, always before the appointment) and the calendar file is a timed event with a 2-hour alert.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -165,3 +167,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #38 | e2e: English interface (bill card in English, scam warning first); fresh clone verified end to end | local gate (Actions budget) |
 | 2026-11-17 | #39 | Appointment cards say "be there on {date}" instead of "do it by" | local gate (Actions budget) |
 | 2026-11-17 | #40 | Appointment cards say the time: "Be there on {date} at nine o'clock" | local gate (Actions budget) |
+| 2026-11-17 | #41 | Reminders and calendar file use the appointment time (2 h before; timed event) | local gate (Actions budget) |
