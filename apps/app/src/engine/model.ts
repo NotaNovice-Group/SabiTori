@@ -68,7 +68,10 @@ export async function storeModelSafely(file: Blob, deps: { dir?: () => Promise<F
  * The optional on-device understanding model. Rules are always the fallback;
  * the model loads lazily after first paint and never blocks the UI.
  */
-export function createModelController(rules: Classifier, baseUrl: string) {
+/** The optional LLM is in the build only when VITE_LLM=1 (research builds); store builds ship without it. */
+export const llmEnabled = (env: Record<string, string | undefined>): boolean => (env.VITE_LLM ?? '').trim() === '1';
+
+export function createModelController(rules: Classifier, baseUrl: string, enabled = true) {
   let llm: Classifier | null = null;
   const waiters = new Set<() => void>();
   let state: ModelState = { status: 'none', size: 0, progress: 0 };
@@ -96,7 +99,7 @@ export function createModelController(rules: Classifier, baseUrl: string) {
   async function load() {
     try {
       loaded = true;
-      if (!(await modelStore.available())) return set({ status: 'unsupported' });
+      if (!enabled || !(await modelStore.available())) return set({ status: 'unsupported' });
       if (!(await modelStore.has())) {
         llm = null;
         return set({ status: 'none', size: 0, progress: 0 });
@@ -127,7 +130,7 @@ export function createModelController(rules: Classifier, baseUrl: string) {
       listeners.add(fn);
       return () => void listeners.delete(fn);
     },
-    available: () => modelStore.available().catch(() => false),
+    available: () => (enabled ? modelStore.available().catch(() => false) : Promise.resolve(false)),
     /** Call after first paint. */
     init: load,
     /**
@@ -136,6 +139,7 @@ export function createModelController(rules: Classifier, baseUrl: string) {
      * the previous model, if any, stays on the phone and comes back at the next start.
      */
     async save(file: Blob) {
+      if (!enabled) throw new ModelStoreError('This build has no LLM', 'unavailable');
       if (!(await checkGgufHeader(file))) throw new ModelStoreError('File is not a GGUF model', 'not_gguf');
       if (!(await modelStore.available())) throw new ModelStoreError('OPFS is not available', 'unavailable');
       const before = state;

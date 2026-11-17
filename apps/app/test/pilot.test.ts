@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createPilot, isoWeek, pilotEnabled, pilotSummary, pilotTotals, PILOT_KEY, type KeyValueStore } from '../src/lib/pilot';
+import { band, createPilot, isoWeek, pilotEnabled, pilotSummary, pilotTotals, PILOT_KEY, type KeyValueStore } from '../src/lib/pilot';
 
 const memory = (): KeyValueStore & { data: Map<string, string> } => {
   const data = new Map<string, string>();
@@ -68,5 +68,37 @@ describe('pilot counters', () => {
     expect(isoWeek(new Date(2026, 0, 1))).toBe('2026-W01');
     expect(isoWeek(new Date(2027, 0, 1))).toBe('2026-W53');
     expect(isoWeek(new Date(2026, 11, 28))).toBe('2026-W53');
+  });
+
+  it('keeps how long things took as counts per time band, never the times themselves', () => {
+    expect([band('photoSec', 0), band('photoSec', 4999), band('photoSec', 5000), band('photoSec', 39_999), band('photoSec', 40_000)]).toEqual([0, 0, 1, 3, 4]);
+    expect([band('textSec', 300), band('textSec', 1500), band('textSec', 9000)]).toEqual([0, 1, 3]);
+    const store = memory();
+    const p = createPilot(store, () => new Date(2026, 10, 17));
+    p.record({ type: 'explained', source: 'photo', mode: 'full', scam: 'no_signs', ms: 12_000 });
+    p.record({ type: 'explained', source: 'paste', mode: 'full', scam: 'no_signs', ms: 400 });
+    p.record({ type: 'explained', source: 'share', mode: 'full', scam: 'no_signs', ms: 2500 });
+    p.record({ type: 'explained', source: 'example', mode: 'full', scam: 'no_signs', ms: 100 }); // practice: not timed
+    p.record({ type: 'explained', source: 'paste', mode: 'full', scam: 'no_signs', ms: Number.NaN }); // ignored
+    p.record({ type: 'first_audio', ms: 1500 });
+    const w = p.read()!.weeks[0]!;
+    expect(w.photoSec).toEqual([0, 0, 1, 0, 0]);
+    expect(w.textSec).toEqual([1, 0, 1, 0]);
+    expect(w.audioSec).toEqual([0, 1, 0, 0]);
+    const s = pilotSummary(p.read(), '1.0.0');
+    expect(s).toContain('photo to card | <5s: 0, 5-10s: 0, 10-20s: 1, 20-40s: 0, 40+s: 0');
+    expect(s).toContain('Listen to first sound | <1s: 0, 1-2s: 1, 2-5s: 0, 5+s: 0');
+    expect(store.data.get(PILOT_KEY)).not.toMatch(/12000|400|2500/);
+  });
+
+  it('counts kept before timing existed still load, with empty bands', () => {
+    const store = memory();
+    store.setItem(PILOT_KEY, JSON.stringify({ version: 1, since: '2026-11-10', weeks: [{ week: '2026-W46', explained: 2, fromPhoto: 1, fromShare: 0, fromPaste: 1, practice: 0, factsOnly: 0, scamWarnings: 0, cautionWarnings: 0, listened: 1, reminders: 0 }] }));
+    const p = createPilot(store, () => new Date(2026, 10, 17));
+    expect(p.read()!.weeks[0]!.photoSec).toEqual([0, 0, 0, 0, 0]);
+    p.record({ type: 'first_audio', ms: 300 });
+    expect(pilotTotals(p.read())).toMatchObject({ explained: 2, audioSec: [1, 0, 0, 0] });
+    store.setItem(PILOT_KEY, JSON.stringify({ version: 1, since: 'x', weeks: [{ ...p.read()!.weeks[0], photoSec: [1, -1] }] }));
+    expect(p.read()).toBeNull();
   });
 });

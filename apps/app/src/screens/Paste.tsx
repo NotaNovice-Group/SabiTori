@@ -28,11 +28,12 @@ export function PasteScreen() {
     if (!text.trim() || busy) return;
     setBusy(true);
     setFailed(false);
+    const started = performance.now();
     try {
       const sender: MessageInput['sender'] = kind === 'unknown' || !who.trim() ? { kind: 'unknown' } : { kind, value: who.trim() };
       rememberNames(who);
       const card = uniqueCard(await engine.analyze(buildInput(capText(text.trim()).text, 'paste', engine.region.code, sender, todayIso(engine.region.timezone))));
-      recordExplained(pilot, card);
+      recordExplained(pilot, card, false, performance.now() - started);
       // Storage that fails or never answers must not keep the person waiting: the card shows anyway.
       if (!(await saveCard(card))) session.setNotice('app.card.not_saved');
       navigate(`/card/${card.id}`, { replace: true });

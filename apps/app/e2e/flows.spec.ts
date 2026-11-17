@@ -146,8 +146,15 @@ test('a card can be deleted and is gone from history', async ({ page }) => {
   // listen-first is off, so one tap acts; a confirm step may follow
   const confirm = page.locator('.sheet .btn-primary, .sheet .danger');
   if (await confirm.count()) await confirm.first().click();
-  await page.waitForURL((u) => u.toString() !== url);
+  // Deleting ends on the home screen. Wait until the card screen is really gone: jumping back to the card's
+  // address before the app has drawn the home screen would leave the old screen up (same address, no change).
+  await page.waitForURL((u) => !u.hash.startsWith('#/card/'));
+  await expect(page.locator('.card')).toHaveCount(0);
   await page.goto(url.slice(url.indexOf('#')));
+  // The card route shows "not found" or, if the card still exists, the card: wait for either, then say which.
+  await page.locator('.note, .card').first().waitFor({ timeout: 15_000 });
+  const seen = await page.evaluate(() => ({ hash: location.hash, title: document.querySelector('h1')?.textContent ?? '', card: !!document.querySelector('.card') }));
+  expect(seen.card, JSON.stringify(seen)).toBe(false);
   await expect(page.locator('.note')).toBeVisible();
 });
 
@@ -199,4 +206,13 @@ test('a store build has no pilot counter', async ({ page }) => {
   await page.waitForSelector('h1', { state: 'attached' });
   await expect(page.locator('#s-pilot')).toHaveCount(0);
   expect(await page.evaluate(() => localStorage.getItem('sabitori.pilot.v1'))).toBeNull();
+});
+
+test('a store build has no optional LLM: no model option and no wllama file', async ({ page, request }) => {
+  await setup(page);
+  await page.goto('#/settings');
+  await page.waitForSelector('h1', { state: 'attached' });
+  await expect(page.locator('#s-model')).toHaveCount(0);
+  const r = await request.get('wllama/wllama.wasm');
+  expect(r.ok() && (r.headers()['content-type'] ?? '').includes('wasm')).toBe(false);
 });
