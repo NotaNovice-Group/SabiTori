@@ -5,7 +5,7 @@ they are decisions, facts about the publisher, or results of steps outside the c
 reads "unfinished", so fill or remove them before the repository is public. `packages/understand/test/model-card.test.ts`
 checks that this list matches the files (regenerate it with `node scripts/owner-todo.mjs` after editing a document).
 
-Total: 98 placeholders in 11 files.
+Total: 100 placeholders in 12 files.
 
 ## `CHANGELOG.md` (3)
 
@@ -137,6 +137,11 @@ Total: 98 placeholders in 11 files.
 - [ ] `docs/sustainability.md:46` publisher — individual founder or charitable vehicle
 - [ ] `docs/sustainability.md:57` publisher — individual founder or charitable vehicle
 - [ ] `docs/sustainability.md:58` first partner, once agreed in writing.
+
+## `docs/video-script.md` (2)
+
+- [ ] `docs/video-script.md:18` one or two sentences: who you are, the person you saw struggle with an official message, why it matters to you
+- [ ] `docs/video-script.md:25` what you ask for: the pilot, the partner, the first Cameroonian language.
 
 ## Checks without a placeholder
 
