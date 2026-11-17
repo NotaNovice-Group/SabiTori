@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { MicSession, playUrl, stopPlayback } from '../lib/audio';
+import { MAX_RECORDING_MS, MicSession, playUrl, stopPlayback, type Interruption } from '../lib/audio';
 import { useProject } from '../store';
 
 export interface RecState {
@@ -12,6 +12,14 @@ export interface RecState {
   message?: { id: string; text: string; tone: 'info' | 'warn' };
   playing: string | null;
 }
+
+/** Why a recording ended on its own, said with the result. */
+export const INTERRUPTED: Record<Interruption, string> = {
+  mic_lost: 'The recording stopped: a call or another app took the microphone.',
+  too_long: `The recording stopped after ${MAX_RECORDING_MS / 1000} seconds.`,
+  hidden: 'The recording stopped because the page was left.',
+};
+const CHECK = ' Listen to it, and record it again if it is cut.';
 
 const toMeter = (rms: number) => Math.max(0, Math.min(1, (20 * Math.log10(rms + 1e-6) + 60) / 54));
 
@@ -32,7 +40,7 @@ export function useRecorder() {
     };
   }, []);
 
-  const stop = useCallback(async () => {
+  const stop = useCallback(async (why?: Interruption) => {
     const m = mic.current;
     const info = meta.current;
     if (!m || !info) return;
@@ -42,7 +50,8 @@ export function useRecorder() {
       const cap = await m.stop();
       if (!alive.current) return;
       if (cap.silent) {
-        setSt((s) => ({ ...s, saving: null, message: { id: info.id, text: 'We did not hear anything. Check the microphone, move closer and try again.', tone: 'warn' } }));
+        const lead = why ? INTERRUPTED[why] + ' ' : '';
+        setSt((s) => ({ ...s, saving: null, message: { id: info.id, text: lead + 'We did not hear anything. Check the microphone, move closer and try again.', tone: 'warn' } }));
         return;
       }
       const saved = await putClip({ id: info.id, blob: cap.blob, durationMs: cap.durationMs, text: info.text, speakerId: project.activeSpeakerId, ext: cap.ext, at: Date.now() });
@@ -51,7 +60,9 @@ export function useRecorder() {
       setSt((s) => ({
         ...s,
         saving: null,
-        message: saved
+        message: saved && why
+          ? { id: info.id, text: `${INTERRUPTED[why]} What was recorded is saved.${CHECK}`, tone: 'warn' }
+          : saved
           ? { id: info.id, text: cap.trimmedMs > 150 ? `Saved. Trimmed ${(cap.trimmedMs / 1000).toFixed(1)} s of silence.` : 'Saved.', tone: 'info' }
           : { id: info.id, text: 'Not saved on this device. Keep this page open and download the pack now.', tone: 'warn' },
       }));
@@ -60,13 +71,20 @@ export function useRecorder() {
     }
   }, [project.activeSpeakerId, putClip, setPhrase]);
 
+  const stopRef = useRef(stop);
+  stopRef.current = stop;
+
   const start = useCallback(
     async (id: string, text: string, phraseKey?: string) => {
       stopPlayback();
       const m = new MicSession();
       try {
         meta.current = { id, text, phraseKey };
-        await m.start((rms, peak) => alive.current && setSt((s) => ({ ...s, level: toMeter(rms), clipping: peak > 0.98 ? true : s.clipping && peak > 0.9 })));
+        await m.start(
+          (rms, peak) => alive.current && setSt((s) => ({ ...s, level: toMeter(rms), clipping: peak > 0.98 ? true : s.clipping && peak > 0.9 })),
+          // Ended without the stop button: keep what was recorded, and say why.
+          (why) => { if (mic.current === m) void stopRef.current(why); },
+        );
         mic.current = m;
         setSt((s) => ({ ...s, recording: id, message: undefined, playing: null }));
       } catch (e) {
