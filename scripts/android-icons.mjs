@@ -5,6 +5,7 @@ import { mkdirSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { chromiumPath } from './chromium-path.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const { chromium } = createRequire(resolve(here, '../apps/app/package.json'))('@playwright/test');
@@ -18,7 +19,7 @@ const mark = (w) => `
   <path d="M39 22.5a7 7 0 0 1 0 9"/><path d="M43.5 17.5a13.5 13.5 0 0 1 0 19"/></svg>`;
 
 const densities = { mdpi: 48, hdpi: 72, xhdpi: 96, xxhdpi: 144, xxxhdpi: 192 };
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? '/opt/pw-browsers/chromium' });
+const browser = await chromium.launch({ executablePath: chromiumPath() });
 for (const [d, size] of Object.entries(densities)) {
   const dir = resolve(res, `mipmap-${d}`);
   mkdirSync(dir, { recursive: true });

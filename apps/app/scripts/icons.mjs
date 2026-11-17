@@ -3,6 +3,7 @@ import { chromium } from '@playwright/test';
 import { mkdirSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { chromiumPath } from '../../../scripts/chromium-path.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const out = resolve(here, '../public/icons');
@@ -13,7 +14,7 @@ const mark = (stroke, w) => `
   <path d="M8 5h17l9 9v29H8z"/><path d="M25 5v9h9"/><path d="M14 25h14M14 32h9"/>
   <path d="M39 22.5a7 7 0 0 1 0 9"/><path d="M43.5 17.5a13.5 13.5 0 0 1 0 19"/></svg>`;
 
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? '/opt/pw-browsers/chromium' });
+const browser = await chromium.launch({ executablePath: chromiumPath() });
 for (const [name, size, scale] of [['icon-192', 192, 0.62], ['icon-512', 512, 0.62], ['icon-maskable-512', 512, 0.5]]) {
   const page = await browser.newPage({ viewport: { width: size, height: size } });
   const inner = Math.round(size * scale);

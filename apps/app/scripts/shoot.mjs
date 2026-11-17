@@ -18,6 +18,7 @@ rmSync(out, { recursive: true, force: true });
 mkdirSync(out, { recursive: true });
 
 import { createServer } from 'node:net';
+import { chromiumPath } from '../../../scripts/chromium-path.mjs';
 const PORT = await new Promise((res) => { const s = createServer().listen(0, () => { const p = s.address().port; s.close(() => res(p)); }); });
 const server = spawn('npx', ['vite', 'preview', '--port', String(PORT), '--strictPort'], { cwd: root, stdio: 'ignore' });
 const base = `http://localhost:${PORT}/`;
@@ -46,7 +47,7 @@ async function makePhotos(browser) {
   await page.close();
 }
 
-const browser = await chromium.launch({ executablePath: process.env.CHROMIUM ?? '/opt/pw-browsers/chromium' });
+const browser = await chromium.launch({ executablePath: chromiumPath() });
 await makePhotos(browser);
 
 const seed = { onboarded: true, lang: 'fr', listenFirst: false, speed: 0, retention: 30, region: 'CM' };
