@@ -594,3 +594,19 @@ describe('12-hour times and notices', () => {
     } else throw new Error(`expected a full card with nothing to do, got ${c.mode} ${c.understanding.action}`);
   });
 });
+
+describe('start dates', () => {
+  it('"from Monday 23rd" or "à partir du" is when something starts, not a deadline', async () => {
+    const { startsOn } = await import('../src/card.js');
+    const at = (t: string) => startsOn(t, t.indexOf('#'));
+    for (const t of ['Collect your slip from Monday #23rd November', 'Retrait à partir du #23/11/2026', 'Inscriptions dès le #5 décembre', 'Open starting on #1 December'])
+      expect(at(t), t).toBe(true);
+    for (const t of ['Pay before #30/11/2026', 'Payez avant le #30/11/2026', 'Rendez-vous le #20/11/2026', 'From the bursary: pay by #30/11/2026'])
+      expect(at(t), t).toBe(false);
+    const c = await run('GHS Bamenda: Your exam results are out. Collect your slip at the school office from Monday 23rd November 2026.', { kind: 'name', value: 'GHS Bamenda' });
+    expect(c.deadlineFrom).toBe(true);
+    const k = keys(c, '2026-11-18');
+    expect(k).toContain('deadline.from');
+    expect(k).not.toContain('deadline.by');
+  });
+});

@@ -159,6 +159,10 @@
     "text": "It is on {date}.",
     "status": "draft"
   },
+  "deadline.from": {
+    "text": "From {date}.",
+    "status": "draft"
+  },
   "deadline.passed": {
     "text": "The date {date} has already passed.",
     "status": "reviewed"

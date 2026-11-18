@@ -137,6 +137,7 @@ export const CATALOG = c({
   'deadline.on_at': { en: 'Be there on {date} at {minutes} minutes past {hour}.', context: 'Appointment day and time (24-hour clock).', slots: ['date', 'hour', 'minutes'] },
   'deadline.on_at_hour': { en: "Be there on {date} at {hour} o'clock.", context: 'Appointment day and time on the hour (24-hour clock).', slots: ['date', 'hour'] },
   'deadline.date': { en: 'It is on {date}.', context: 'The date of something that asks nothing of the person (a planned cut, a holiday).', slots: ['date'] },
+  'deadline.from': { en: 'From {date}.', context: 'The day something starts or becomes available (not a deadline).', slots: ['date'] },
   'deadline.passed': { en: 'The date {date} has already passed.', context: 'The deadline is in the past.', slots: ['date'] },
   'deadline.none': { en: 'There is no date in this message.', context: 'No date found.' },
 
