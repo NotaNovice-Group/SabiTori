@@ -136,6 +136,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Probe 2: sent receipts.** "Vous avez envoyé / You have sent ..." mobile money receipts were "unclear"; now
       nothing to do. Eval unchanged (no such messages); thresholds unchanged. Other probes (loan, job, SIM-swap, fake
       police scams; GCE slip; vaccine reminder) read as intended.
+- [x] **Probe 3: court summons.** "Cité à comparaître à l'audience du ... à 8h30" had no action; court-appearance words
+      join go_to_place (fr/en), so the card says when to be there. Thresholds re-selected (action 0.75 -> 0.65):
+      encoder + rules test 75.0% -> 77.1%, unseen 49.0% unchanged.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -182,3 +185,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #43 | Named senders said as a claim ("says it is from") instead of "unknown" | local gate (Actions budget) |
 | 2026-11-18 | #44 | Ambiguous words (retrait, pension) and outage notices; unseen all-three 47.0% -> 49.0% | local gate (Actions budget) |
 | 2026-11-18 | #45 | "You have sent" receipts are nothing to do; second probe round otherwise clean | local gate (Actions budget) |
+| 2026-11-18 | #46 | Court summons read as "go to a place" with time; thresholds re-selected; test 77.1%, unseen 49.0% | local gate (Actions budget) |

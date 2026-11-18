@@ -23,6 +23,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- A court summons ("cité à comparaître à l'audience du ... à 8h30") now says when to be there.
 - Reading: collecting a document ("retrait au bureau") is no longer mobile money, a CNPS pension is no longer school
   fees, and planned power interruptions ask for nothing. Unseen set, all three right: 47% -> 49%.
 - A sender shown as a name but not on the official list ("Hôpital Régional") is now said as a claim: "This message
