@@ -225,6 +225,13 @@
     "nouvelle date",
     "nouvelle date :"
   ],
+  "annualTotalWords": [
+    "total annuel",
+    "montant annuel",
+    "total de l'année",
+    "frais annuels",
+    "total pour l'année"
+  ],
   "referenceLabels": [
     "n°",
     "n° facture",

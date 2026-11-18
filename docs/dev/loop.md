@@ -191,6 +191,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       hospital letters, mobile-money receipts) from their true text and checks the card's amount, date and appointment
       time. All 30 right today; any later change that breaks a fact choice on a real-shaped document fails it.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
+- [x] **Annual totals on photo cards.** Measured the card itself on the 30 OCR'd benchmark photos (not just the
+      facts): the amount shown was wrong on 4 pages, 3 of them school notices showing the annual total instead of the
+      instalment due. An annual total (`annualTotalWords`) is now the amount only when it is in the deadline's clause,
+      otherwise the card shows the instalment, or no amount if the total is all that was read. Amount right 26/30 -> 27/30, wrong 4 -> 2 (both OCR
+      misreads: "Total annvet", 13 280 for 13 250); dates unchanged (25 right, 0 wrong). Understanding results unchanged.
 
 ## Log
 
@@ -254,3 +259,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #61 | Facts-only cards say "by" only when the message does | local gate (Actions budget) |
 | 2026-11-18 | #62 | e2e: appointment time, moved appointment, start date (built app) | local gate (Actions budget) |
 | 2026-11-18 | #63 | Test: right amount, date and time on the 30 benchmark documents | local gate (Actions budget) |
+| 2026-11-18 | #64 | Annual total is not the amount due on photo cards (wrong amounts 4 -> 2 of 30) | local gate (Actions budget) |

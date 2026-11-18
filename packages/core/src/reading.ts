@@ -46,6 +46,8 @@ export interface ReadingLexicon {
   penaltyWords?: string[];
   /** Words that give the NEW date of something moved ("reporté au", "moved to"); that date replaces the old one. */
   rescheduleWords?: string[];
+  /** Words before a yearly total ("total annuel", "annual total"): not what is due now, unless it is the deadline's amount. */
+  annualTotalWords?: string[];
   /** Labels before a reference number ("n° facture", "ref"). */
   referenceLabels: string[];
   /** Words that introduce a deadline ("avant le", "délai"). */
