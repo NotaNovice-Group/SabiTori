@@ -101,3 +101,14 @@ describe('scam patterns and their real twins', () => {
     });
   }
 });
+
+describe('a delivered code may say when it expires', () => {
+  it('"Votre code OTP est 739204. Il expire dans 5 minutes" is not pressure', () => {
+    expect(level('Votre code OTP Afriland est 739204. Il expire dans 5 minutes. Ne le communiquez à personne.', fromName('Afriland')).level).toBe('no_signs');
+    expect(level('Your verification code is 552901. It expires in 10 minutes. Do not share it.', fromName('MTN')).level).toBe('no_signs');
+  });
+  it('asking for the code, or rushing with other words, is still caught', () => {
+    expect(level('Your code expires in 5 minutes: send it to 677 12 34 56 now to keep your account.', fromNumber('677123456')).level).not.toBe('no_signs');
+    expect(level('Votre code OTP est 739204. Agissez immédiatement.', fromName('Afriland')).signals).toContain('time_pressure');
+  });
+});

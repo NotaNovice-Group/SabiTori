@@ -138,7 +138,13 @@ export function assessScam(
   }
   if (hasTerm(n, S((s) => s.blockThreats))) found.add('account_block_threat');
   if (facts.urls.length > 0) found.add('link');
-  if (hasTerm(n, S((s) => s.timePressure))) found.add('time_pressure');
+  // A code that is delivered ("Votre code OTP est 739204. Il expire dans 5 minutes") says when it expires: that is not
+  // pressure. Expiry wording counts only when the message does not deliver a code; any other rush word still counts.
+  const pressure = findTerms(n, S((s) => s.timePressure));
+  const deliversCode = findTerms(n, S((s) => s.secretWords)).some((h) => /^[^\d]{0,25}\d{4,8}(?!\d)/.test(n.slice(h.end, h.end + 40)));
+  const expiry = [...n.matchAll(/expir/g)].map((m) => m.index!);
+  const aboutExpiry = (h: { start: number; term: string }) => /expir/.test(h.term) || expiry.some((e) => e <= h.start && h.start - e <= 20);
+  if (pressure.some((h) => !(deliversCode && aboutExpiry(h)))) found.add('time_pressure');
   if ((claimedSenderId || claimsOrgPrefix(input.text)) && !sender.verified && isOrdinaryNumber(input)) found.add('sender_mismatch');
   if (received && facts.amounts.length > 0 && !sender.verified && isOrdinaryNumber(input)) found.add('fake_balance');
 

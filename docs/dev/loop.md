@@ -154,6 +154,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       "facture {n}" / "bill {n}" are pay words now. "Call me back urgently on 650 ..." from an unknown mobile got no
       warning; "urgently" is a time-pressure word. The rule that a merely claimed company never hands out a mobile
       number as its help line is kept (test). Headline results unchanged; paired counts regenerated.
+- [x] **Probe 8: false alarms.** A delivered one-time code that says it "expires in 5 minutes" got a caution (time
+      pressure). Expiry wording no longer counts in a message that delivers a code; asking for the code, or other rush
+      words, still do. A link or a menu code from an unverified sender stays a caution (labelling rule). Scam eval unchanged.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -206,3 +209,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #49 | Penalties are never the amount to pay; ordinals after a label are not amounts | local gate (Actions budget) |
 | 2026-11-18 | #50 | Moved appointments give the new date, not the old one | local gate (Actions budget) |
 | 2026-11-18 | #51 | Short bills read as pay; "call me back urgently" lure warned | local gate (Actions budget) |
+| 2026-11-18 | #52 | Delivered codes that say when they expire are not pressure (false alarm removed) | local gate (Actions budget) |

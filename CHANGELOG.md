@@ -23,6 +23,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- A one-time code that says when it expires ("Il expire dans 5 minutes") no longer gets a caution.
 - A short bill ("Facture 15 000 FCFA avant le ...") gives a full card; "call me back urgently" from an unknown
   number now gets a warning.
 - A moved appointment ("reporté au 27/11", "moved to 25 November") now gives the new date and time, not the old one.
