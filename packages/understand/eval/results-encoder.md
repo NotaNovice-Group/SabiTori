@@ -53,7 +53,7 @@ Paired difference against rules on the same messages: points, 95% bootstrap inte
 | encoder + rules vs rules | +5.0 pts [-1.0–12.0], 8 vs 3, p = 0.227 | +11.0 pts [0.0–22.0], 21 vs 10, p = 0.071 | +0.0 pts [-4.0–4.0], 2 vs 2, p = 1.000 | +13.0 pts [3.0–23.0], 21 vs 8, p = 0.024 * |
 | encoder alone vs rules | -12.0 pts [-22.0–-2.0], 8 vs 20, p = 0.036 * | +2.0 pts [-12.0–16.0], 27 vs 25, p = 0.890 | -15.0 pts [-27.0–-4.0], 11 vs 26, p = 0.020 * | -2.0 pts [-15.0–11.0], 20 vs 22, p = 0.878 |
 
-Scam level (assessScam, code; the same for every system): 92.0% [86.0–97.0]; a warning on 17/21 scam or caution messages; false alarms on 2/79 messages with no signs.
+Scam level (assessScam, code; the same for every system): 92.0% [86.0–97.0]; a warning on 18/21 scam or caution messages; false alarms on 2/79 messages with no signs.
 
 Fields where encoder + rules differs from rules: kind 12, action 33, urgency 7 of 100.
 

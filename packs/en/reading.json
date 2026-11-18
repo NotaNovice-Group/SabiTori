@@ -729,7 +729,10 @@
       "{n} digits",
       "{n}-digit code",
       "{n} digit code",
-      "secret digits"
+      "secret digits",
+      "credentials",
+      "login details",
+      "your login"
     ],
     "askVerbs": [
       "send",
@@ -809,7 +812,12 @@
       "you don win",
       "don win",
       "win",
-      "promo"
+      "promo",
+      "inheritance",
+      "million to send you",
+      "large sum of money",
+      "huge sum",
+      "compensation fund"
     ],
     "feeWords": [
       "fee",
@@ -876,7 +884,8 @@
       "before midnight",
       "act now",
       "urgently",
-      "as soon as possible"
+      "as soon as possible",
+      "send it quickly"
     ],
     "moneyReceived": [
       "you have received",
@@ -955,7 +964,11 @@
       "i changed number",
       "my new number",
       "this is my new number",
-      "new phone number"
+      "new phone number",
+      "my phone is spoilt",
+      "my phone is broken",
+      "my phone got lost",
+      "on this number"
     ],
     "emergencyWords": [
       "accident",

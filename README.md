@@ -45,7 +45,7 @@ small, so treat these as development numbers, not field accuracy
 <!-- /results:headline -->
 
 Scam warnings come from code, not from the model: all 22 scam or suspicious messages got a warning on the test
-set and 17 of 21 on the unseen set, while 0 of 74 and 2 of 79 genuine messages got a false alarm (the rules were
+set and 18 of 21 on the unseen set, while 0 of 74 and 2 of 79 genuine messages got a false alarm (the rules were
 tuned on the train split only; the unseen set, never used for tuning, is the fairer number). For photos, every
 fact is checked against the text the phone read, not against the paper itself: on 30 degraded synthetic photos of
 bills, letters and SMS screenshots, on-device OCR recovers about five in six of the dates, amounts and phone numbers,
