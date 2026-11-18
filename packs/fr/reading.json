@@ -630,7 +630,9 @@
       "comparaitre",
       "cité à comparaître",
       "à l'audience",
-      "audience du"
+      "audience du",
+      "doivent être à l'école",
+      "se présenter à l'école"
     ],
     "bring_document": [
       "apporter",
@@ -741,7 +743,12 @@
       "travaux programmés",
       "vous avez envoyé",
       "vous avez transféré",
-      "transfert effectué"
+      "transfert effectué",
+      "sera coupée",
+      "sera coupé",
+      "seront coupés",
+      "travaux de maintenance",
+      "nous regrettons"
     ]
   },
   "urgency": {

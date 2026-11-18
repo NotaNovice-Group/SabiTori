@@ -217,7 +217,7 @@ export function timeAfter(text: string, from: number): Fact<string> | undefined 
 }
 
 /** A start word right before the date, a weekday allowed in between: "from Monday 23rd", "à partir du 23/11", "dès le 5". */
-const STARTS = /(?:\bfrom|\bstarting(?: on| from)?|\bbeginning|à partir d[ue']|a partir d[ue']|dès l[ea']|\bdes le)\s*(?:\p{L}+\s+)?$/iu;
+const STARTS = /(?:\bfrom|\bstarting(?: on| from)?|\bstarts? on|\bbegins? on|\bbeginning|\breopens? on|à partir d[ue']|a partir d[ue']|dès l[ea']|\bdes le|\b(?:débute|commence|reprend)(?:ra)? le|\brentrée(?: scolaire)? le)\s*(?:\p{L}+\s+)?$/iu;
 export function startsOn(text: string, dateStart: number): boolean {
   return STARTS.test(text.slice(Math.max(0, dateStart - 30), dateStart));
 }

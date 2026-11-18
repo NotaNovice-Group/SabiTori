@@ -562,7 +562,11 @@
       "appear before",
       "summoned to appear",
       "hearing on",
-      "attend the hearing"
+      "attend the hearing",
+      "be in school",
+      "must be in school",
+      "report to school",
+      "must be at"
     ],
     "bring_document": [
       "bring",
@@ -668,7 +672,12 @@
       "sorry for the inconvenience",
       "you have sent",
       "you sent",
-      "transfer completed"
+      "transfer completed",
+      "will be off",
+      "we regret any inconvenience",
+      "regret the inconvenience",
+      "maintenance works",
+      "will be interrupted"
     ]
   },
   "urgency": {
