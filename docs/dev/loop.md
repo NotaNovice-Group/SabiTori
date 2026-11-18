@@ -175,6 +175,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Probe 12: forwarded hoaxes.** "The government offers 50 000 FCFA aid ... pay 2 000 FCFA fees" got only a caution
       (link); aid/grant wording joins the prize words, so aid-for-a-fee is a likely scam; a real aid announcement stays
       quiet (test). Chain letters ("forward to 15 contacts") stay without a warning: harmless, and no honest signal fits.
+- [x] **Speed claim re-checked.** On today's (slower) container the term prefilter saves about a quarter (2.08 -> 1.56 s
+      at 4x with the model loaded), not 2.6x; no regression from the words added since. docs/model.md, numbers page and
+      changelog now say so.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -233,3 +236,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #55 | Term start dates and maintenance cuts read correctly (English-region probes) | local gate (Actions budget) |
 | 2026-11-18 | #56 | SMS-style French (rdv, pr travaux); landlord-vs-scam trade-off documented | local gate (Actions budget) |
 | 2026-11-18 | #57 | Fake government aid that asks a fee is a likely scam | local gate (Actions budget) |
+| 2026-11-18 | #58 | Speed claim re-measured on another machine and softened (1.3-2.3 s; gain machine-dependent) | local gate (Actions budget) |
