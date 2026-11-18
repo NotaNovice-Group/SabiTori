@@ -118,6 +118,7 @@ What is built in, what machines check on every change, and what has not been tes
 
 ## Check our numbers
 
+Every number to quote, with its conditions, is on one generated page: [`docs/numbers.md`](docs/numbers.md).
 Every accuracy number in this repository comes from a script in it, on data in it. To re-run them all and check:
 
 ```bash

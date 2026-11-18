@@ -19,6 +19,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
   (`node packages/understand/eval/run-encoder.mjs --select-threshold --write`), regenerate the results, and keep the
   change only if the unseen set does not get worse. `packages/understand/test/thresholds-protocol.test.ts` fails if
   the shipped thresholds differ from what the selection picks.
+- After regenerating results, run `node scripts/numbers.mjs` (`docs/numbers.md`, the page to quote from; a test
+  fails if it is stale).
 - Never weaken a safety rule (facts from code only, never "safe", scam warnings first) to make a test pass.
 - After editing any document, run `node scripts/owner-todo.mjs` (keeps `docs/OWNER-TODO.md` line numbers right).
 - Owner instruction (2026-11-17): proceed with implementation every time there are open todos; do not stop to ask.
@@ -161,6 +163,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       advance fee ("$2 million to send you ... small fee") and credential phishing ("entrez vos identifiants") were missed
       or under-warned; scam words added (fr/en), genuine twins tested. Unseen scams warned 17/21 -> 18/21, false alarms
       unchanged (2/79); train/test unchanged; thresholds unchanged.
+- [x] **One page of numbers to quote.** `docs/numbers.md`, generated from the result files by `scripts/numbers.mjs`,
+      checked by `pnpm reproduce` and a test; README points to it.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -215,3 +219,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #51 | Short bills read as pay; "call me back urgently" lure warned | local gate (Actions budget) |
 | 2026-11-18 | #52 | Delivered codes that say when they expire are not pressure (false alarm removed) | local gate (Actions budget) |
 | 2026-11-18 | #53 | Family-emergency, advance-fee and credential-phishing scams caught; unseen scams 18/21 | local gate (Actions budget) |
+| 2026-11-18 | #54 | `docs/numbers.md`: generated page of every number to quote, kept current by test and reproduce | local gate (Actions budget) |
