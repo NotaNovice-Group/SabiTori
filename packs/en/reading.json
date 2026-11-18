@@ -197,6 +197,16 @@
     "surcharge",
     "fine of"
   ],
+  "rescheduleWords": [
+    "moved to",
+    "rescheduled to",
+    "rescheduled for",
+    "postponed to",
+    "postponed until",
+    "changed to",
+    "new date",
+    "now on"
+  ],
   "referenceLabels": [
     "invoice no",
     "invoice number",

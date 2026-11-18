@@ -209,6 +209,22 @@
     "intérêts de retard",
     "amende"
   ],
+  "rescheduleWords": [
+    "reporté au",
+    "reportée au",
+    "reporté à",
+    "reportée à",
+    "reporté le",
+    "déplacé au",
+    "déplacée au",
+    "décalé au",
+    "décalée au",
+    "repoussé au",
+    "repoussée au",
+    "remplacé par",
+    "nouvelle date",
+    "nouvelle date :"
+  ],
   "referenceLabels": [
     "n°",
     "n° facture",
@@ -266,7 +282,9 @@
     "échu",
     "valable jusqu'au",
     "avant la date du",
-    "au plus tard le"
+    "au plus tard le",
+    "jusqu au",
+    "jusqu a"
   ],
   "contactWords": [
     "appelez",

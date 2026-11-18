@@ -23,6 +23,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- A moved appointment ("reporté au 27/11", "moved to 25 November") now gives the new date and time, not the old one.
 - A late fee or penalty written next to the deadline is no longer shown as the amount to pay (the bill is), and
   "Frais: 1ère tranche" no longer reads an amount of 1.
 - A date that is a start ("collect your slip from Monday 23rd", "à partir du 23/11") is said "From {date}", not
