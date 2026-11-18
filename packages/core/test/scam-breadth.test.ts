@@ -125,3 +125,13 @@ describe('probe round 9: family emergency, advance fee, credential phishing', ()
     expect(level('Notaire Démo: la succession de M. Ngono est ouverte. Les héritiers sont convoqués le 30/11/2026 à l’étude.', fromName('Notaire Démo')).level).toBe('no_signs');
   });
 });
+
+describe('probe round 12: fake aid that needs a fee', () => {
+  it('"aid for every family ... pay 2 000 FCFA fees" is likely a scam; a real aid announcement is not', () => {
+    const scam = level("Le gouvernement offre une aide de 50 000 FCFA à chaque famille. Inscrivez-vous ici avant ce soir: http://aide-minas.example et payez 2 000 FCFA de frais.", fromName('Groupe Famille'));
+    expect(scam.level).toBe('likely_scam');
+    expect(scam.signals).toContain('prize_fee');
+    const real = level('Mairie de Douala 5e: le ministère accorde une aide de 50 000 FCFA aux familles sinistrées. Retrait à la mairie avec votre CNI, du lundi au vendredi.', fromName('Mairie Douala 5'));
+    expect(real.level).toBe('no_signs');
+  });
+});

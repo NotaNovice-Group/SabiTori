@@ -23,6 +23,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- "Free" government aid or scholarships that ask for a fee are now warned as likely scams.
 - Scam checks catch "my phone is broken, send money quickly", advance-fee ("millions to send you ... small fee")
   and credential phishing ("entrez vos identifiants"). Unseen set: 18 of 21 scams warned (was 17), false alarms unchanged.
 - A one-time code that says when it expires ("Il expire dans 5 minutes") no longer gets a caution.

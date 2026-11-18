@@ -172,6 +172,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       nothing. Tried and dropped: "tel"/"contact" as contact words, which cleared a landlord's rent reminder but let
       "Félicitations! Envoyez 10 000 FCFA de frais. Tel 677..." through. The landlord case stays flagged (known
       trade-off, test documents it). Eval unchanged.
+- [x] **Probe 12: forwarded hoaxes.** "The government offers 50 000 FCFA aid ... pay 2 000 FCFA fees" got only a caution
+      (link); aid/grant wording joins the prize words, so aid-for-a-fee is a likely scam; a real aid announcement stays
+      quiet (test). Chain letters ("forward to 15 contacts") stay without a warning: harmless, and no honest signal fits.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -229,3 +232,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #54 | `docs/numbers.md`: generated page of every number to quote, kept current by test and reproduce | local gate (Actions budget) |
 | 2026-11-18 | #55 | Term start dates and maintenance cuts read correctly (English-region probes) | local gate (Actions budget) |
 | 2026-11-18 | #56 | SMS-style French (rdv, pr travaux); landlord-vs-scam trade-off documented | local gate (Actions budget) |
+| 2026-11-18 | #57 | Fake government aid that asks a fee is a likely scam | local gate (Actions budget) |
