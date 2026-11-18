@@ -155,6 +155,22 @@
     "text": "Présentez-vous le {date} à {hour} heures.",
     "status": "draft"
   },
+  "deadline.on_at_pm": {
+    "text": "Présentez-vous le {date} à {hour} heures {minutes} de l'après-midi.",
+    "status": "draft"
+  },
+  "deadline.on_at_hour_pm": {
+    "text": "Présentez-vous le {date} à {hour} heures de l'après-midi.",
+    "status": "draft"
+  },
+  "deadline.on_at_eve": {
+    "text": "Présentez-vous le {date} à {hour} heures {minutes} du soir.",
+    "status": "draft"
+  },
+  "deadline.on_at_hour_eve": {
+    "text": "Présentez-vous le {date} à {hour} heures du soir.",
+    "status": "draft"
+  },
   "deadline.date": {
     "text": "C'est le {date}.",
     "status": "draft"

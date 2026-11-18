@@ -610,3 +610,17 @@ describe('start dates', () => {
     expect(k).not.toContain('deadline.by');
   });
 });
+
+describe('appointment times as people say them', () => {
+  const at = async (time: string) => {
+    const c = await run(`Hôpital Régional: Votre rendez-vous de consultation est fixé au 20/11/2026 à ${time}. Présentez-vous à l’accueil.`);
+    return buildSpeechPlan(c, { today: '2026-10-31' }).sections.flatMap((x) => x.utterances).find((u) => u.key.startsWith('deadline.on_at'))!;
+  };
+  it('morning keeps the hour; afternoon and evening use the 12-hour clock with the part of the day', async () => {
+    expect(await at('9h00')).toMatchObject({ key: 'deadline.on_at_hour', slots: { hour: { value: 9 } } });
+    expect(await at('10h30')).toMatchObject({ key: 'deadline.on_at', slots: { hour: { value: 10 }, minutes: { value: 30 } } });
+    expect(await at('15h00')).toMatchObject({ key: 'deadline.on_at_hour_pm', slots: { hour: { value: 3 } } });
+    expect(await at('12h00')).toMatchObject({ key: 'deadline.on_at_hour_pm', slots: { hour: { value: 12 } } });
+    expect(await at('19h30')).toMatchObject({ key: 'deadline.on_at_eve', slots: { hour: { value: 7 }, minutes: { value: 30 } } });
+  });
+});
