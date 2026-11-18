@@ -205,7 +205,7 @@
     },
     {
      "t": 0.95,
-     "acc": 0.8214
+     "acc": 0.8259
     },
     {
      "t": 1.01,
@@ -900,7 +900,7 @@
       "k": 36,
       "acc": 0.36,
       "lo": 0.27,
-      "hi": 0.46
+      "hi": 0.45
      }
     },
     "encoder": {
@@ -981,9 +981,9 @@
       "diff": 0.11,
       "lo": 0,
       "hi": 0.22,
-      "aOnly": 22,
-      "bOnly": 11,
-      "p": 0.0801,
+      "aOnly": 21,
+      "bOnly": 10,
+      "p": 0.0708,
       "significant": false
      },
      "urgency": {
@@ -999,11 +999,11 @@
      "all": {
       "n": 100,
       "diff": 0.13,
-      "lo": 0.02,
-      "hi": 0.24,
-      "aOnly": 22,
-      "bOnly": 9,
-      "p": 0.0294,
+      "lo": 0.03,
+      "hi": 0.23,
+      "aOnly": 21,
+      "bOnly": 8,
+      "p": 0.0241,
       "significant": true
      }
     },
@@ -1023,9 +1023,9 @@
       "diff": 0.02,
       "lo": -0.12,
       "hi": 0.16,
-      "aOnly": 28,
-      "bOnly": 26,
-      "p": 0.8919,
+      "aOnly": 27,
+      "bOnly": 25,
+      "p": 0.8899,
       "significant": false
      },
      "urgency": {
@@ -1043,9 +1043,9 @@
       "diff": -0.02,
       "lo": -0.15,
       "hi": 0.11,
-      "aOnly": 21,
-      "bOnly": 23,
-      "p": 0.8804,
+      "aOnly": 20,
+      "bOnly": 22,
+      "p": 0.8776,
       "significant": false
      }
     }
@@ -1189,10 +1189,10 @@
      "combinedVsRules": {
       "n": 38,
       "diff": 0,
-      "lo": -0.1842,
-      "hi": 0.1842,
-      "aOnly": 6,
-      "bOnly": 6,
+      "lo": -0.1579,
+      "hi": 0.1579,
+      "aOnly": 5,
+      "bOnly": 5,
       "p": 1,
       "significant": false
      }
@@ -1466,7 +1466,7 @@
    },
    "changedFromRules": {
     "kind": 12,
-    "action": 35,
+    "action": 33,
     "urgency": 7
    }
   }
@@ -4986,7 +4986,7 @@
     "scam": "no_signs",
     "rules": {
      "kind": "water_bill",
-     "action": "unclear",
+     "action": "pay",
      "urgency": "soon"
     },
     "encoder": {
@@ -5004,7 +5004,7 @@
      "action": "pay",
      "urgency": "soon"
     },
-    "combinedConfidence": 0.58
+    "combinedConfidence": 0.68
    },
    {
     "id": "uns-012",
@@ -6537,7 +6537,7 @@
     "scam": "no_signs",
     "rules": {
      "kind": "mobile_money",
-     "action": "nothing",
+     "action": "pay",
      "urgency": "info"
     },
     "encoder": {

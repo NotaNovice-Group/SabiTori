@@ -511,7 +511,10 @@
       "send back",
       "repay",
       "fund your account",
-      "loan instalment"
+      "loan instalment",
+      "bill {n}",
+      "invoice {n}",
+      "bill of {n}"
     ],
     "collect": [
       "collect",
@@ -871,7 +874,9 @@
       "within 24 hours",
       "within 48 hours",
       "before midnight",
-      "act now"
+      "act now",
+      "urgently",
+      "as soon as possible"
     ],
     "moneyReceived": [
       "you have received",

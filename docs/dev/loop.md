@@ -150,6 +150,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Probe 6: which date.** A moved appointment ("du 20/11 reporté au 27/11", "moved to 25 November") gave the OLD
       date; new lexicon field `rescheduleWords` makes the new date win (with its time). "jusqu au" without apostrophe is
       a deadline word. Issue dates, periods and receipts already lost to the due date. Eval reproduces unchanged.
+- [x] **Probe 7: contacts.** A short bill ("ENEO: Facture 15 000 FCFA avant le ...") fell to facts only (action unclear);
+      "facture {n}" / "bill {n}" are pay words now. "Call me back urgently on 650 ..." from an unknown mobile got no
+      warning; "urgently" is a time-pressure word. The rule that a merely claimed company never hands out a mobile
+      number as its help line is kept (test). Headline results unchanged; paired counts regenerated.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -201,3 +205,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #48 | Start dates ("from Monday 23rd", "à partir du") no longer spoken as deadlines | local gate (Actions budget) |
 | 2026-11-18 | #49 | Penalties are never the amount to pay; ordinals after a label are not amounts | local gate (Actions budget) |
 | 2026-11-18 | #50 | Moved appointments give the new date, not the old one | local gate (Actions budget) |
+| 2026-11-18 | #51 | Short bills read as pay; "call me back urgently" lure warned | local gate (Actions budget) |
