@@ -147,6 +147,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       05/12"), the card showed the penalty instead of the bill (2 of 7 multi-amount probes). New lexicon field
       `penaltyWords`: such amounts are never chosen unless all are. Also "Frais: 1ère tranche" no longer yields an amount
       of 1. Eval, thresholds and the OCR benchmark reproduce unchanged.
+- [x] **Probe 6: which date.** A moved appointment ("du 20/11 reporté au 27/11", "moved to 25 November") gave the OLD
+      date; new lexicon field `rescheduleWords` makes the new date win (with its time). "jusqu au" without apostrophe is
+      a deadline word. Issue dates, periods and receipts already lost to the due date. Eval reproduces unchanged.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -197,3 +200,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #47 | am/pm times read; notices with nothing to do give a date, not a deadline | local gate (Actions budget) |
 | 2026-11-18 | #48 | Start dates ("from Monday 23rd", "à partir du") no longer spoken as deadlines | local gate (Actions budget) |
 | 2026-11-18 | #49 | Penalties are never the amount to pay; ordinals after a label are not amounts | local gate (Actions budget) |
+| 2026-11-18 | #50 | Moved appointments give the new date, not the old one | local gate (Actions budget) |

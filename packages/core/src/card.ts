@@ -44,6 +44,10 @@ function chooseDeadline(input: MessageInput, facts: Facts, lexicons: ReadingLexi
   const n = fold(input.text);
   const words = findTerms(n, collect(lexicons, (l) => l.deadlineWords));
   const near = (d: Fact<IsoDate>) => words.some((w) => w.end <= d.span.start && d.span.start - w.end <= NEAR_DEADLINE);
+  // Something moved ("rendez-vous du 20/11 reporté au 27/11"): the new date is the one that counts, never the old one.
+  const moved = findTerms(n, collect(lexicons, (l) => l.rescheduleWords));
+  const newDate = facts.dates.filter((d) => moved.some((w) => w.end <= d.span.start && d.span.start - w.end <= NEAR_DEADLINE));
+  if (newDate.length) return [...newDate].sort((a, b) => b.span.start - a.span.start)[0];
   // Explicit dates ("15/11/2026", "9 novembre") beat words ("demain", "vendredi"); then the earliest.
   const isExplicit = (d: Fact<IsoDate>) => /\d/.test(d.raw);
   const byDate = (a: Fact<IsoDate>, b: Fact<IsoDate>) =>
