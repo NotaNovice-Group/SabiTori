@@ -168,6 +168,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Probe 10: English-region notices.** "Second term starts on Monday 4 January" was a deadline ("Do it by");
       start words now include starts/begins/reopens on, débute/commence/reprend le, rentrée le. A CDC water cut for
       maintenance fell to facts only; English and French outage wording joins nothing-to-do. Eval unchanged.
+- [x] **Probe 11: SMS-style French.** "rdv ... svp venir" is a place to go; "pr travaux ... desole pr la gene" asks for
+      nothing. Tried and dropped: "tel"/"contact" as contact words, which cleared a landlord's rent reminder but let
+      "Félicitations! Envoyez 10 000 FCFA de frais. Tel 677..." through. The landlord case stays flagged (known
+      trade-off, test documents it). Eval unchanged.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -224,3 +228,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #53 | Family-emergency, advance-fee and credential-phishing scams caught; unseen scams 18/21 | local gate (Actions budget) |
 | 2026-11-18 | #54 | `docs/numbers.md`: generated page of every number to quote, kept current by test and reproduce | local gate (Actions budget) |
 | 2026-11-18 | #55 | Term start dates and maintenance cuts read correctly (English-region probes) | local gate (Actions budget) |
+| 2026-11-18 | #56 | SMS-style French (rdv, pr travaux); landlord-vs-scam trade-off documented | local gate (Actions budget) |
