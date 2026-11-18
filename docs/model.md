@@ -119,6 +119,19 @@ its regex. Results are identical: `packages/core/test/term-prefilter.test.ts` co
 evaluation message, and the published evaluation files regenerate unchanged. In Node, matching for the first
 message went from about 660 ms to about 80 ms.
 
+**Re-measured 2026-11-18 on a different, slower test container** (same commands, medians of 5, 4x throttle). The
+gain is real but much smaller there, so read the table above as one machine, not as a general speed-up:
+
+| Commit | Card, tapped at once | Card, tapped after the built-in model has loaded |
+| --- | --- | --- |
+| Before the term prefilter | 2,409 ms | 2,077 ms |
+| After the term prefilter (2026-11-17) | 2,251 ms | not measured |
+| main on 2026-11-18 (all of today's reading words added) | 2,306 ms | 1,556 ms |
+
+On this machine the built-in model loading at the same time dominates a tap made right after start, and with the
+model loaded the prefilter saves about a quarter. No regression from the words added since. None of this is a phone
+measurement.
+
 ## Voices
 
 SabiTori speaks with small open neural voices that run on the phone, replacing the phone maker's closed TTS as the default. The phone's own TTS stays underneath as an automatic fallback.
