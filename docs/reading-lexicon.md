@@ -29,6 +29,7 @@ list may be empty. Write words in lower case, without accents unless the languag
 | `relativeDays` | words for today, tomorrow... with their offset in days | `"tomorrow": 1` |
 | `dateLeadWords`, `deadlineWords` | words before a date, words that make it a deadline | `before`, `due date` |
 | `currencyWords`, `amountWords`, `balanceWords` | money words | `fcfa`, `amount`, `new balance` |
+| `penaltyWords` | words before a penalty or late fee, never the amount to pay | `penalty`, `late fee` |
 | `referenceLabels`, `contactWords`, `shortCodeLabels` | labels before a reference, a phone to call, a USSD code | `invoice no`, `call`, `dial` |
 | `kinds` | words that say what the message is about, per kind (bill, mobile money, health, school...) | `electricity`, `hospital` |
 | `actions` | words that say what to do, per action (pay, go, bring a document, call...) | `please pay`, `bring` |

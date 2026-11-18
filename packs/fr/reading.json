@@ -200,6 +200,15 @@
     "solde disponible",
     "solde actuel"
   ],
+  "penaltyWords": [
+    "pénalité",
+    "penalite",
+    "pénalités",
+    "majoration",
+    "frais de retard",
+    "intérêts de retard",
+    "amende"
+  ],
   "referenceLabels": [
     "n°",
     "n° facture",

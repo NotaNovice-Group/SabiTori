@@ -143,6 +143,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       water cut) said "Do it by {date}", now "It is on {date}" / "C'est le {date}" (new phrase `deadline.date`, draft).
 - [x] **Start dates.** "Collect your slip from Monday 23rd November" said "Do it by": a date right after a start word
       (from, à partir du, dès le) is now spoken "From {date}" / "À partir du {date}" (new phrase `deadline.from`, draft).
+- [x] **Probe 5: amounts.** With a late fee next to the deadline ("Pénalité de retard 720 FCFA si paiement après le
+      05/12"), the card showed the penalty instead of the bill (2 of 7 multi-amount probes). New lexicon field
+      `penaltyWords`: such amounts are never chosen unless all are. Also "Frais: 1ère tranche" no longer yields an amount
+      of 1. Eval, thresholds and the OCR benchmark reproduce unchanged.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -192,3 +196,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #46 | Court summons read as "go to a place" with time; thresholds re-selected; test 77.1%, unseen 49.0% | local gate (Actions budget) |
 | 2026-11-18 | #47 | am/pm times read; notices with nothing to do give a date, not a deadline | local gate (Actions budget) |
 | 2026-11-18 | #48 | Start dates ("from Monday 23rd", "à partir du") no longer spoken as deadlines | local gate (Actions budget) |
+| 2026-11-18 | #49 | Penalties are never the amount to pay; ordinals after a label are not amounts | local gate (Actions budget) |

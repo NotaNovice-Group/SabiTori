@@ -42,6 +42,8 @@ export interface ReadingLexicon {
   amountWords: string[];
   /** Words that label a balance (never the amount to pay). */
   balanceWords: string[];
+  /** Words before an amount that is a penalty or late fee, never the amount to pay ("pénalité", "majoration", "late fee"). */
+  penaltyWords?: string[];
   /** Labels before a reference number ("n° facture", "ref"). */
   referenceLabels: string[];
   /** Words that introduce a deadline ("avant le", "délai"). */
