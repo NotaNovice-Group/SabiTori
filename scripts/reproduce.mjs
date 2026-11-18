@@ -42,6 +42,7 @@ const FILES = [
   'README.md',
   'docs/model.md',
   'packages/understand/eval/README.md',
+  'docs/numbers.md',
 ];
 const dirty = () => execFileSync('git', ['status', '--porcelain', '--', ...FILES], { cwd: root, encoding: 'utf8' }).trim();
 if (dirty()) {
@@ -53,6 +54,7 @@ run('Rules and scam checks, test split', [viteNode, 'packages/understand/eval/ru
 const unseen = run('Rules and scam checks, unseen set', [viteNode, 'packages/understand/eval/run-rules.mjs', '--split=unseen', '--no-write']);
 run('Built-in model (MiniLM) + rules, test and unseen', ['packages/understand/eval/run-encoder.mjs']);
 run('Model card and README tables', ['packages/understand/eval/model-card.mjs']);
+run('Numbers page (docs/numbers.md)', ['scripts/numbers.mjs']);
 
 let ok = true;
 const changed = dirty();
