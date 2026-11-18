@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- A short bill ("Facture 15 000 FCFA avant le ...") gives a full card; "call me back urgently" from an unknown
+  number now gets a warning.
 - A moved appointment ("reporté au 27/11", "moved to 25 November") now gives the new date and time, not the old one.
 - A late fee or penalty written next to the deadline is no longer shown as the amount to pay (the bill is), and
   "Frais: 1ère tranche" no longer reads an amount of 1.

@@ -42,7 +42,7 @@ Fields where encoder + rules differs from rules: kind 10, action 17, urgency 5 o
 
 | System | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- |
-| rules@1 (baseline) | 90.0% [84.0–95.0] | 56.0% [46.0–66.0] | 73.0% [64.0–81.0] | 36.0% [27.0–46.0] |
+| rules@1 (baseline) | 90.0% [84.0–95.0] | 56.0% [46.0–66.0] | 73.0% [64.0–81.0] | 36.0% [27.0–45.0] |
 | encoder alone | 78.0% [70.0–86.0] | 58.0% [48.0–68.0] | 58.0% [48.0–67.0] | 34.0% [25.0–43.0] |
 | **encoder + rules (default)** | 95.0% [90.0–99.0] | 67.0% [58.0–76.0] | 73.0% [64.0–81.0] | 49.0% [39.0–58.0] |
 
@@ -50,19 +50,19 @@ Paired difference against rules on the same messages: points, 95% bootstrap inte
 
 | Comparison | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- |
-| encoder + rules vs rules | +5.0 pts [-1.0–12.0], 8 vs 3, p = 0.227 | +11.0 pts [0.0–22.0], 22 vs 11, p = 0.080 | +0.0 pts [-4.0–4.0], 2 vs 2, p = 1.000 | +13.0 pts [2.0–24.0], 22 vs 9, p = 0.029 * |
-| encoder alone vs rules | -12.0 pts [-22.0–-2.0], 8 vs 20, p = 0.036 * | +2.0 pts [-12.0–16.0], 28 vs 26, p = 0.892 | -15.0 pts [-27.0–-4.0], 11 vs 26, p = 0.020 * | -2.0 pts [-15.0–11.0], 21 vs 23, p = 0.880 |
+| encoder + rules vs rules | +5.0 pts [-1.0–12.0], 8 vs 3, p = 0.227 | +11.0 pts [0.0–22.0], 21 vs 10, p = 0.071 | +0.0 pts [-4.0–4.0], 2 vs 2, p = 1.000 | +13.0 pts [3.0–23.0], 21 vs 8, p = 0.024 * |
+| encoder alone vs rules | -12.0 pts [-22.0–-2.0], 8 vs 20, p = 0.036 * | +2.0 pts [-12.0–16.0], 27 vs 25, p = 0.890 | -15.0 pts [-27.0–-4.0], 11 vs 26, p = 0.020 * | -2.0 pts [-15.0–11.0], 20 vs 22, p = 0.878 |
 
 Scam level (assessScam, code; the same for every system): 92.0% [86.0–97.0]; a warning on 17/21 scam or caution messages; false alarms on 2/79 messages with no signs.
 
-Fields where encoder + rules differs from rules: kind 12, action 35, urgency 7 of 100.
+Fields where encoder + rules differs from rules: kind 12, action 33, urgency 7 of 100.
 
 ### By language (all three labels right)
 
 | Lang | n | rules, all three | encoder + rules, all three | difference |
 | --- | --- | --- | --- | --- |
 | fr | 40 | 32.5% [17.5–47.5] | 55.0% [40.0–70.0] | +22.5 pts [5.0–40.0], 12 vs 3, p = 0.035 * |
-| en | 38 | 39.5% [23.7–55.3] | 39.5% [23.7–55.3] | +0.0 pts [-18.4–18.4], 6 vs 6, p = 1.000 |
+| en | 38 | 39.5% [23.7–55.3] | 39.5% [23.7–55.3] | +0.0 pts [-15.8–15.8], 5 vs 5, p = 1.000 |
 | wes | 22 | 36.4% [18.2–54.5] | 54.5% [31.8–72.7] | +18.2 pts [4.5–36.4], 4 vs 0, p = 0.125 |
 
 ### Calibration of the encoder heads (alone)
@@ -78,7 +78,7 @@ Fields where encoder + rules differs from rules: kind 12, action 35, urgency 7 o
 | Field | 0.30 | 0.35 | 0.40 | 0.45 | 0.50 | 0.55 | 0.60 | 0.65 | 0.70 | 0.75 | 0.80 | 0.85 | 0.90 | 0.95 | never | chosen |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | kind | 89.3 | 90.2 | 90.6 | 90.6 | 91.1 | 92.0 | 92.0 | 92.0 | 92.4 | 93.8 | 92.4 | 93.3 | 93.8 | 93.3 | 87.1 | 0.85 |
-| action | 79.5 | 80.8 | 81.7 | 81.7 | 81.3 | 84.8 | 86.2 | 86.2 | 85.3 | 86.2 | 86.6 | 84.8 | 83.9 | 82.1 | 82.6 | 0.65 |
+| action | 79.5 | 80.8 | 81.7 | 81.7 | 81.3 | 84.8 | 86.2 | 86.2 | 85.3 | 86.2 | 86.6 | 84.8 | 83.9 | 82.6 | 82.6 | 0.65 |
 | urgency | 83.9 | 83.9 | 83.9 | 84.4 | 86.6 | 89.7 | 91.5 | 90.6 | 92.0 | 93.3 | 93.3 | 93.8 | 93.8 | 93.8 | 93.8 | 0.85 |
 
 Pidgin (`wes`) rows were written without a native speaker: a smoke test only (see eval/README.md).

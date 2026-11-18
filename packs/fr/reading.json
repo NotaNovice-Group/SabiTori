@@ -569,7 +569,9 @@
       "renvoyer",
       "renvoyez",
       "envoyer ça",
-      "échéance de crédit"
+      "échéance de crédit",
+      "facture {n}",
+      "facture de {n}"
     ],
     "collect": [
       "retirer",
