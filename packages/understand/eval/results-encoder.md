@@ -42,16 +42,16 @@ Fields where encoder + rules differs from rules: kind 10, action 14, urgency 5 o
 
 | System | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- |
-| rules@1 (baseline) | 88.0% [81.0–94.0] | 54.0% [44.0–64.0] | 72.0% [63.0–81.0] | 34.0% [25.0–43.0] |
+| rules@1 (baseline) | 90.0% [84.0–95.0] | 55.0% [45.0–65.0] | 73.0% [64.0–81.0] | 35.0% [26.0–45.0] |
 | encoder alone | 78.0% [70.0–86.0] | 58.0% [48.0–68.0] | 58.0% [48.0–67.0] | 34.0% [25.0–43.0] |
-| **encoder + rules (default)** | 94.0% [89.0–98.0] | 66.0% [57.0–75.0] | 72.0% [63.0–81.0] | 47.0% [37.0–57.0] |
+| **encoder + rules (default)** | 95.0% [90.0–99.0] | 67.0% [58.0–76.0] | 73.0% [64.0–81.0] | 49.0% [39.0–59.0] |
 
 Paired difference against rules on the same messages: points, 95% bootstrap interval, messages only the first system gets right vs only rules gets right, exact McNemar p. `*` = significant at 0.05.
 
 | Comparison | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- |
-| encoder + rules vs rules | +6.0 pts [0.0–12.0], 8 vs 2, p = 0.109 | +12.0 pts [3.0–21.0], 17 vs 5, p = 0.017 * | +0.0 pts [-4.0–4.0], 2 vs 2, p = 1.000 | +13.0 pts [4.0–23.0], 19 vs 6, p = 0.015 * |
-| encoder alone vs rules | -10.0 pts [-20.0–0.0], 8 vs 18, p = 0.075 | +4.0 pts [-10.0–19.0], 30 vs 26, p = 0.689 | -14.0 pts [-26.0–-2.0], 12 vs 26, p = 0.034 * | +0.0 pts [-13.0–13.0], 22 vs 22, p = 1.000 |
+| encoder + rules vs rules | +5.0 pts [-1.0–12.0], 8 vs 3, p = 0.227 | +12.0 pts [3.0–21.0], 17 vs 5, p = 0.017 * | +0.0 pts [-4.0–4.0], 2 vs 2, p = 1.000 | +14.0 pts [4.0–24.0], 20 vs 6, p = 0.009 * |
+| encoder alone vs rules | -12.0 pts [-22.0–-2.0], 8 vs 20, p = 0.036 * | +3.0 pts [-11.0–17.0], 29 vs 26, p = 0.788 | -15.0 pts [-27.0–-4.0], 11 vs 26, p = 0.020 * | -1.0 pts [-14.0–12.0], 21 vs 22, p = 1.000 |
 
 Scam level (assessScam, code; the same for every system): 92.0% [86.0–97.0]; a warning on 17/21 scam or caution messages; false alarms on 2/79 messages with no signs.
 
@@ -61,7 +61,7 @@ Fields where encoder + rules differs from rules: kind 12, action 24, urgency 7 o
 
 | Lang | n | rules, all three | encoder + rules, all three | difference |
 | --- | --- | --- | --- | --- |
-| fr | 40 | 27.5% [15.0–42.5] | 47.5% [32.5–62.5] | +20.0 pts [2.5–37.5], 11 vs 3, p = 0.057 |
+| fr | 40 | 30.0% [17.5–45.0] | 52.5% [37.5–67.5] | +22.5 pts [5.0–40.0], 12 vs 3, p = 0.035 * |
 | en | 38 | 39.5% [23.7–55.3] | 47.4% [31.6–63.2] | +7.9 pts [-7.9–23.7], 6 vs 3, p = 0.508 |
 | wes | 22 | 36.4% [18.2–54.5] | 45.5% [22.7–68.2] | +9.1 pts [0.0–22.7], 2 vs 0, p = 0.500 |
 

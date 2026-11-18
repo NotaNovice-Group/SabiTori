@@ -431,7 +431,13 @@
       "public service",
       "attestation",
       "collect your card",
-      "ready for collection"
+      "ready for collection",
+      "cnps",
+      "retirement pension",
+      "old-age pension",
+      "voter's card",
+      "voter card",
+      "elecam"
     ],
     "legal": [
       "court",
@@ -630,7 +636,10 @@
       "season's greetings",
       "thank you for your loyalty",
       "thanks you for your loyalty",
-      "network maintenance"
+      "network maintenance",
+      "planned interruption",
+      "scheduled maintenance",
+      "sorry for the inconvenience"
     ]
   },
   "urgency": {

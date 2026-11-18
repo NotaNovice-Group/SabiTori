@@ -129,6 +129,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Appointment time on screen.** The date on the card shows the time too ("dimanche 22 novembre, 09:00").
 - [x] **Named senders.** A sender the phone shows as a name but not on the official list was "we do not know who
       sent this"; it is now said as a claim ("This message says it is from Hôpital Régional"), never as "is from".
+- [x] **Probe: ambiguous words.** Fresh probe messages (not eval data) showed "retrait" (collecting a document read as
+      mobile money), "pension" (a CNPS pension read as school fees) and planned outages read as urgent tasks. Specific
+      wording instead of the bare words; outage words as nothing-to-do. Thresholds unchanged after re-selection.
+      Unseen all-three, encoder + rules: 47.0% -> 49.0% (rules alone 34.0% -> 35.0%); test unchanged.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -173,3 +177,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-17 | #41 | Reminders and calendar file use the appointment time (2 h before; timed event) | local gate (Actions budget) |
 | 2026-11-17 | #42 | Card shows the appointment time next to the date | local gate (Actions budget) |
 | 2026-11-17 | #43 | Named senders said as a claim ("says it is from") instead of "unknown" | local gate (Actions budget) |
+| 2026-11-18 | #44 | Ambiguous words (retrait, pension) and outage notices; unseen all-three 47.0% -> 49.0% | local gate (Actions budget) |
