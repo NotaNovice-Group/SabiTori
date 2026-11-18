@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- A date that is a start ("collect your slip from Monday 23rd", "à partir du 23/11") is said "From {date}", not
+  "Do it by {date}".
 - 12-hour times ("at 3pm") are read; a notice that asks for nothing (a planned water cut) says "It is on {date}"
   instead of "Do it by {date}".
 - A court summons ("cité à comparaître à l'audience du ... à 8h30") now says when to be there.

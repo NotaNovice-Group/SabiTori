@@ -159,6 +159,10 @@
     "text": "C'est le {date}.",
     "status": "draft"
   },
+  "deadline.from": {
+    "text": "À partir du {date}.",
+    "status": "draft"
+  },
   "deadline.passed": {
     "text": "La date du {date} est déjà passée.",
     "status": "draft"

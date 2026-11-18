@@ -166,6 +166,8 @@ export interface Card {
   deadline?: Fact<IsoDate>;
   /** "HH:MM", when the message gives a time right after the deadline date ("le 20/11/2026 à 9h00"). Read from the text. */
   deadlineTime?: Fact<string>;
+  /** The date is when something starts ("from Monday 23 November", "à partir du 23/11"), not a deadline. */
+  deadlineFrom?: boolean;
   amount?: Fact<Money>;
   contactPhone?: Fact<string>;
   reference?: Fact<string>;

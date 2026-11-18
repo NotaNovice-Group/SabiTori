@@ -204,6 +204,12 @@ export function timeAfter(text: string, from: number): Fact<string> | undefined 
   return { value: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`, span: { start, end }, raw: text.slice(start, end) };
 }
 
+/** A start word right before the date, a weekday allowed in between: "from Monday 23rd", "à partir du 23/11", "dès le 5". */
+const STARTS = /(?:\bfrom|\bstarting(?: on| from)?|\bbeginning|à partir d[ue']|a partir d[ue']|dès l[ea']|\bdes le)\s*(?:\p{L}+\s+)?$/iu;
+export function startsOn(text: string, dateStart: number): boolean {
+  return STARTS.test(text.slice(Math.max(0, dateStart - 30), dateStart));
+}
+
 function calibrateUrgency(u: Understanding, deadline: Fact<IsoDate> | undefined, receivedAt: IsoDate): Understanding {
   if (u.urgency !== 'urgent' || !deadline) return u;
   return daysBetween(receivedAt, deadline.value) > URGENT_WITHIN_DAYS ? { ...u, urgency: 'soon' } : u;
@@ -256,6 +262,7 @@ export function buildCard(args: {
   const contactPhone = chooseContact(input, facts, scam, sender, lexicons, args.region, !preMode);
   const reference = facts.references[0];
   const deadlineTime = deadline ? timeAfter(input.text, deadline.span.end) : undefined;
+  const deadlineFrom = deadline ? startsOn(input.text, deadline.span.start) : false;
 
   const ok =
     verified(input.text, deadline, facts.dates) &&
@@ -292,6 +299,7 @@ export function buildCard(args: {
   if (ok) {
     if (deadline) card.deadline = deadline;
     if (deadline && deadlineTime) card.deadlineTime = deadlineTime;
+    if (deadline && deadlineFrom) card.deadlineFrom = true;
     if (amount) card.amount = amount;
     if (contactPhone) card.contactPhone = contactPhone;
     if (reference) card.reference = reference;

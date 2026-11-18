@@ -141,6 +141,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       encoder + rules test 75.0% -> 77.1%, unseen 49.0% unchanged.
 - [x] **Probe 4: formats.** "tomorrow at 3pm" (12-hour times) is now read; a notice that asks for nothing (a planned
       water cut) said "Do it by {date}", now "It is on {date}" / "C'est le {date}" (new phrase `deadline.date`, draft).
+- [x] **Start dates.** "Collect your slip from Monday 23rd November" said "Do it by": a date right after a start word
+      (from, à partir du, dès le) is now spoken "From {date}" / "À partir du {date}" (new phrase `deadline.from`, draft).
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -189,3 +191,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #45 | "You have sent" receipts are nothing to do; second probe round otherwise clean | local gate (Actions budget) |
 | 2026-11-18 | #46 | Court summons read as "go to a place" with time; thresholds re-selected; test 77.1%, unseen 49.0% | local gate (Actions budget) |
 | 2026-11-18 | #47 | am/pm times read; notices with nothing to do give a date, not a deadline | local gate (Actions budget) |
+| 2026-11-18 | #48 | Start dates ("from Monday 23rd", "à partir du") no longer spoken as deadlines | local gate (Actions budget) |

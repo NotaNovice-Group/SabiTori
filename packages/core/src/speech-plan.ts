@@ -85,8 +85,9 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
       // A notice that asks for nothing (a planned cut, a closure) has a date, not a deadline.
       const nothingToDo = card.mode === 'full' && card.understanding.action === 'nothing';
       const t = goes && card.deadlineTime ? card.deadlineTime.value.split(':').map(Number) : undefined;
-      sections.deadline =
-        card.deadline.value < today
+      sections.deadline = card.deadlineFrom
+        ? [{ key: 'deadline.from', slots: { date } }]
+        : card.deadline.value < today
           ? [{ key: 'deadline.passed', slots: { date } }]
           : t && t[1]
             ? [{ key: 'deadline.on_at', slots: { date, hour: { type: 'number', value: t[0]! }, minutes: { type: 'number', value: t[1]! } } }]
