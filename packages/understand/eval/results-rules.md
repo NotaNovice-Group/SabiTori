@@ -14,7 +14,7 @@ Brackets: 95% percentile bootstrap interval over messages (10000 resamples, seed
 | all three right | 60.4% [51.0–69.8] |
 | scam level (assessScam) | 100.0% [100.0–100.0] |
 
-Mean rules confidence: 0.67. Classifier errors: 0.
+Mean rules confidence: 0.68. Classifier errors: 0.
 
 ## By language
 

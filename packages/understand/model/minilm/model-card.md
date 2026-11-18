@@ -91,9 +91,9 @@ Two synthetic sets, both labelled by the rules in `eval/README.md`:
 | test split (n=96) | rules@1 (keyword rules) | 86.5% [79.2–92.7] | 76.0% [67.7–84.4] | 88.5% [81.3–94.8] | 60.4% [51.0–69.8] |
 | test split (n=96) | encoder alone | 88.5% [81.3–94.8] | 87.5% [80.2–93.8] | 84.4% [77.1–91.7] | 68.8% [59.4–77.1] |
 | test split (n=96) | **encoder + rules (default)** | 93.8% [88.5–97.9] | 86.5% [79.2–92.7] | 89.6% [83.3–94.8] | 75.0% [65.6–83.3] |
-| unseen set (n=100) | rules@1 (keyword rules) | 88.0% [81.0–94.0] | 54.0% [44.0–64.0] | 72.0% [63.0–81.0] | 34.0% [25.0–43.0] |
+| unseen set (n=100) | rules@1 (keyword rules) | 90.0% [84.0–95.0] | 55.0% [45.0–65.0] | 73.0% [64.0–81.0] | 35.0% [26.0–45.0] |
 | unseen set (n=100) | encoder alone | 78.0% [70.0–86.0] | 58.0% [48.0–68.0] | 58.0% [48.0–67.0] | 34.0% [25.0–43.0] |
-| unseen set (n=100) | **encoder + rules (default)** | 94.0% [89.0–98.0] | 66.0% [57.0–75.0] | 72.0% [63.0–81.0] | 47.0% [37.0–57.0] |
+| unseen set (n=100) | **encoder + rules (default)** | 95.0% [90.0–99.0] | 67.0% [58.0–76.0] | 73.0% [64.0–81.0] | 49.0% [39.0–59.0] |
 
 Paired differences against rules on the same messages (points, 95% bootstrap interval, messages only that system gets right vs only rules gets right, exact McNemar p; `*` = p < 0.05):
 
@@ -101,8 +101,8 @@ Paired differences against rules on the same messages (points, 95% bootstrap int
 | --- | --- | --- | --- | --- | --- |
 | test split | encoder + rules vs rules | +7.3 pts [2.1–13.5], 8 vs 1, p = 0.039 * | +10.4 pts [3.1–17.7], 12 vs 2, p = 0.013 * | +1.0 pts [-3.1–5.2], 3 vs 2, p = 1.000 | +14.6 pts [7.3–22.9], 16 vs 2, p = 0.001 * |
 | test split | encoder alone vs rules | +2.1 pts [-5.2–9.4], 8 vs 6, p = 0.790 | +11.5 pts [2.1–21.9], 18 vs 7, p = 0.043 * | -4.2 pts [-12.5–4.2], 7 vs 11, p = 0.481 | +8.3 pts [-3.1–19.8], 21 vs 13, p = 0.230 |
-| unseen set | encoder + rules vs rules | +6.0 pts [0.0–12.0], 8 vs 2, p = 0.109 | +12.0 pts [3.0–21.0], 17 vs 5, p = 0.017 * | +0.0 pts [-4.0–4.0], 2 vs 2, p = 1.000 | +13.0 pts [4.0–23.0], 19 vs 6, p = 0.015 * |
-| unseen set | encoder alone vs rules | -10.0 pts [-20.0–0.0], 8 vs 18, p = 0.075 | +4.0 pts [-10.0–19.0], 30 vs 26, p = 0.689 | -14.0 pts [-26.0–-2.0], 12 vs 26, p = 0.034 * | +0.0 pts [-13.0–13.0], 22 vs 22, p = 1.000 |
+| unseen set | encoder + rules vs rules | +5.0 pts [-1.0–12.0], 8 vs 3, p = 0.227 | +12.0 pts [3.0–21.0], 17 vs 5, p = 0.017 * | +0.0 pts [-4.0–4.0], 2 vs 2, p = 1.000 | +14.0 pts [4.0–24.0], 20 vs 6, p = 0.009 * |
+| unseen set | encoder alone vs rules | -12.0 pts [-22.0–-2.0], 8 vs 20, p = 0.036 * | +3.0 pts [-11.0–17.0], 29 vs 26, p = 0.788 | -15.0 pts [-27.0–-4.0], 11 vs 26, p = 0.020 * | -1.0 pts [-14.0–12.0], 21 vs 22, p = 1.000 |
 
 By message language (all three labels right):
 
@@ -111,7 +111,7 @@ By message language (all three labels right):
 | test split | fr | 38 | 60.5% [44.7–76.3] | 73.7% [57.9–86.8] | +13.2 pts [0.0–26.3], 6 vs 1, p = 0.125 |
 | test split | en | 43 | 74.4% [60.5–86.1] | 83.7% [72.1–93.0] | +9.3 pts [0.0–20.9], 5 vs 1, p = 0.219 |
 | test split | wes | 15 | 20.0% [0.0–40.0] | 53.3% [26.7–80.0] | +33.3 pts [13.3–60.0], 5 vs 0, p = 0.063 |
-| unseen set | fr | 40 | 27.5% [15.0–42.5] | 47.5% [32.5–62.5] | +20.0 pts [2.5–37.5], 11 vs 3, p = 0.057 |
+| unseen set | fr | 40 | 30.0% [17.5–45.0] | 52.5% [37.5–67.5] | +22.5 pts [5.0–40.0], 12 vs 3, p = 0.035 * |
 | unseen set | en | 38 | 39.5% [23.7–55.3] | 47.4% [31.6–63.2] | +7.9 pts [-7.9–23.7], 6 vs 3, p = 0.508 |
 | unseen set | wes | 22 | 36.4% [18.2–54.5] | 45.5% [22.7–68.2] | +9.1 pts [0.0–22.7], 2 vs 0, p = 0.500 |
 

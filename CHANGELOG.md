@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Reading: collecting a document ("retrait au bureau") is no longer mobile money, a CNPS pension is no longer school
+  fees, and planned power interruptions ask for nothing. Unseen set, all three right: 47% -> 49%.
 - A sender shown as a name but not on the official list ("Hôpital Régional") is now said as a claim: "This message
   says it is from Hôpital Régional" (it was "We do not know who sent this message"). Numbers stay unknown.
 - The card shows an appointment's time next to its date ("dimanche 22 novembre, 09:00"), not only in speech.

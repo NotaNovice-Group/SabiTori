@@ -322,7 +322,6 @@
       "mtn momo",
       "orange money",
       "transfert",
-      "retrait",
       "dépôt",
       "solde",
       "transaction",
@@ -339,7 +338,9 @@
       "renvoyer",
       "envoyé à",
       "compte momo",
-      "compte orange money"
+      "compte orange money",
+      "retrait d'argent",
+      "retrait de {n}"
     ],
     "telecom": [
       "forfait",
@@ -414,7 +415,6 @@
       "collège",
       "frais de scolarité",
       "scolarité",
-      "pension",
       "enseignant",
       "élève",
       "élèves",
@@ -435,7 +435,10 @@
       "directeur de l'école",
       "proviseur",
       "année scolaire",
-      "tranche"
+      "tranche",
+      "frais de pension",
+      "pension scolaire",
+      "internat"
     ],
     "administrative": [
       "carte nationale d'identité",
@@ -464,7 +467,13 @@
       "nationalité",
       "identification",
       "pièce d'identité",
-      "attestation"
+      "attestation",
+      "cnps",
+      "pension de retraite",
+      "pension de vieillesse",
+      "carte d'électeur",
+      "cartes d'électeur",
+      "elecam"
     ],
     "legal": [
       "tribunal",
@@ -691,7 +700,11 @@
       "merci de votre fidélité",
       "vous remercie de votre fidélité",
       "maintenance du réseau",
-      "est classé"
+      "est classé",
+      "nous nous excusons",
+      "interruption de fourniture",
+      "interruption programmée",
+      "travaux programmés"
     ]
   },
   "urgency": {
