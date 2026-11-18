@@ -536,7 +536,12 @@
       "invited to",
       "meeting",
       "attendance is compulsory",
-      "come as soon as possible"
+      "come as soon as possible",
+      "appear in court",
+      "appear before",
+      "summoned to appear",
+      "hearing on",
+      "attend the hearing"
     ],
     "bring_document": [
       "bring",

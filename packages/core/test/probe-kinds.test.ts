@@ -35,4 +35,9 @@ describe('ambiguous words and notices', () => {
       expect(c.scam.level).toBe('no_signs');
     }
   });
+  it('a court summons says when to be there, with the time', async () => {
+    const c = await analyze(msg("TRIBUNAL DE GRANDE INSTANCE DU MFOUNDI\nCITATION A COMPARAITRE\nVous etes cite a comparaitre a l'audience du 03/12/2026 a 8h30.", undefined, '2026-11-18'), { region, lexicons });
+    expect(c.understanding.action).toBe('go_to_place');
+    expect(c.deadlineTime?.value).toBe('08:30');
+  });
 });

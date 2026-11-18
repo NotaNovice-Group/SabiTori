@@ -114,4 +114,4 @@ Any warning on scam/caution messages: 22/22 (100.0%). Warning on no-signs messag
 
 ## For reference: all 320 messages
 
-kind 86.9%, action 80.9%, urgency 92.2%, all three 65.3% (rules need no training, so train and test are comparable).
+kind 86.9%, action 80.6%, urgency 92.2%, all three 65.0% (rules need no training, so train and test are comparable).
