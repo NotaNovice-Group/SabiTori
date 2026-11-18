@@ -632,7 +632,9 @@
       "à l'audience",
       "audience du",
       "doivent être à l'école",
-      "se présenter à l'école"
+      "se présenter à l'école",
+      "rdv",
+      "venir au centre"
     ],
     "bring_document": [
       "apporter",
@@ -748,7 +750,13 @@
       "sera coupé",
       "seront coupés",
       "travaux de maintenance",
-      "nous regrettons"
+      "nous regrettons",
+      "pour travaux",
+      "pr travaux",
+      "désolé pour la gêne",
+      "desole pr la gene",
+      "désolé pour le désagrément",
+      "excusez la gêne"
     ]
   },
   "urgency": {
