@@ -222,6 +222,11 @@ export function startsOn(text: string, dateStart: number): boolean {
   return STARTS.test(text.slice(Math.max(0, dateStart - 30), dateStart));
 }
 
+function markedDeadline(text: string, d: Fact<IsoDate>, lexicons: ReadingLexicon[]): boolean {
+  const n = fold(text);
+  return findTerms(n, collect(lexicons, (l) => l.deadlineWords)).some((w) => w.end <= d.span.start && d.span.start - w.end <= NEAR_DEADLINE);
+}
+
 function calibrateUrgency(u: Understanding, deadline: Fact<IsoDate> | undefined, receivedAt: IsoDate): Understanding {
   if (u.urgency !== 'urgent' || !deadline) return u;
   return daysBetween(receivedAt, deadline.value) > URGENT_WITHIN_DAYS ? { ...u, urgency: 'soon' } : u;
@@ -275,6 +280,7 @@ export function buildCard(args: {
   const reference = facts.references[0];
   const deadlineTime = deadline ? timeAfter(input.text, deadline.span.end) : undefined;
   const deadlineFrom = deadline ? startsOn(input.text, deadline.span.start) : false;
+  const deadlineMarked = deadline ? markedDeadline(input.text, deadline, lexicons) : false;
 
   const ok =
     verified(input.text, deadline, facts.dates) &&
@@ -312,6 +318,7 @@ export function buildCard(args: {
     if (deadline) card.deadline = deadline;
     if (deadline && deadlineTime) card.deadlineTime = deadlineTime;
     if (deadline && deadlineFrom) card.deadlineFrom = true;
+    if (deadline && deadlineMarked) card.deadlineMarked = true;
     if (amount) card.amount = amount;
     if (contactPhone) card.contactPhone = contactPhone;
     if (reference) card.reference = reference;
