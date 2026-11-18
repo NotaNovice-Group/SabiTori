@@ -183,6 +183,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       "at three p.m.", "à trois heures de l'après-midi", "du soir" (four new draft phrases).
 - [x] **Invitations.** "Venez nombreux", "sont invités", "all members are invited", "présence obligatoire" are a place
       to go, so a church vigil or a parents' meeting says when to be there. Eval and thresholds unchanged.
+- [x] **Facts-only dates.** A facts-only card (the app did not understand what is asked) said "Do it by {date}" for any
+      date; it now says "by" only when the message puts a deadline word before the date, else "It is on {date}".
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -244,3 +246,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #58 | Speed claim re-measured on another machine and softened (1.3-2.3 s; gain machine-dependent) | local gate (Actions budget) |
 | 2026-11-18 | #59 | Spoken times: "three p.m." / "trois heures de l'après-midi" instead of "fifteen o'clock" | local gate (Actions budget) |
 | 2026-11-18 | #60 | Invitations (venez nombreux, are invited) say when to be there | local gate (Actions budget) |
+| 2026-11-18 | #61 | Facts-only cards say "by" only when the message does | local gate (Actions budget) |

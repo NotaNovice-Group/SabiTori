@@ -168,6 +168,8 @@ export interface Card {
   deadlineTime?: Fact<string>;
   /** The date is when something starts ("from Monday 23 November", "à partir du 23/11"), not a deadline. */
   deadlineFrom?: boolean;
+  /** The message itself puts a deadline word right before the date ("avant le", "date limite", "before"). */
+  deadlineMarked?: boolean;
   amount?: Fact<Money>;
   contactPhone?: Fact<string>;
   reference?: Fact<string>;

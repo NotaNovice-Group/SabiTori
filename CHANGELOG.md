@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- When SabiTori is not sure what a message asks (facts-only card), it says "Do it by {date}" only if the message itself
+  says "before" / "avant le"; otherwise "It is on {date}".
 - "Free" government aid or scholarships that ask for a fee are now warned as likely scams.
 - Scam checks catch "my phone is broken, send money quickly", advance-fee ("millions to send you ... small fee")
   and credential phishing ("entrez vos identifiants"). Unseen set: 18 of 21 scams warned (was 17), false alarms unchanged.

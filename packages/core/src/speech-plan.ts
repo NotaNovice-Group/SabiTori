@@ -84,6 +84,8 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
       const goes = card.mode === 'full' && card.understanding.action === 'go_to_place';
       // A notice that asks for nothing (a planned cut, a closure) has a date, not a deadline.
       const nothingToDo = card.mode === 'full' && card.understanding.action === 'nothing';
+      // Facts only: the app did not understand what is asked, so it says "by" only when the message itself does.
+      const unsure = card.mode !== 'full' && !card.deadlineMarked;
       const t = goes && card.deadlineTime ? card.deadlineTime.value.split(':').map(Number) : undefined;
       sections.deadline = card.deadlineFrom
         ? [{ key: 'deadline.from', slots: { date } }]
@@ -91,7 +93,7 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
           ? [{ key: 'deadline.passed', slots: { date } }]
           : t
             ? [timeUtterance(date, t[0]!, t[1]!)]
-              : [{ key: goes ? 'deadline.on' : nothingToDo ? 'deadline.date' : 'deadline.by', slots: { date } }];
+              : [{ key: goes ? 'deadline.on' : nothingToDo || unsure ? 'deadline.date' : 'deadline.by', slots: { date } }];
     }
     if (card.amount) sections.money = [{ key: 'money.amount', slots: { amount: { type: 'money', value: card.amount.value } } }];
   }
