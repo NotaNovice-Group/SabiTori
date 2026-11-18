@@ -112,3 +112,16 @@ describe('a delivered code may say when it expires', () => {
     expect(level('Votre code OTP est 739204. Agissez immédiatement.', fromName('Afriland')).signals).toContain('time_pressure');
   });
 });
+
+describe('probe round 9: family emergency, advance fee, credential phishing', () => {
+  it('each gets a warning', () => {
+    expect(level("Papa c'est moi Junior, j'ai un problème à l'école, envoie vite 15 000 sur ce numéro, mon téléphone est gâté.", fromNumber('651234567')).level).not.toBe('no_signs');
+    expect(level('Hi dear, I am a US soldier in Syria, I have $2 million to send you, I need your help and a small fee for the transfer.', fromNumber('650000999')).level).not.toBe('no_signs');
+    expect(level('Cher client, mise à jour de votre compte bancaire obligatoire. Cliquez ici: http://bicec-maj.example et entrez vos identifiants.', fromNumber('690909090')).level).toBe('likely_scam');
+  });
+  it('their genuine twins stay quiet', () => {
+    expect(level('Maman, quand tu auras le temps, envoie-moi 5 000 pour le taxi de demain. Merci, Paul.', fromNumber('677123456')).level).toBe('no_signs');
+    expect(level('BICEC: pour votre sécurité, ne communiquez jamais vos identifiants, même à un agent de la banque.', fromName('BICEC')).level).toBe('no_signs');
+    expect(level('Notaire Démo: la succession de M. Ngono est ouverte. Les héritiers sont convoqués le 30/11/2026 à l’étude.', fromName('Notaire Démo')).level).toBe('no_signs');
+  });
+});

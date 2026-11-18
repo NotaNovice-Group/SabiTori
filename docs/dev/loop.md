@@ -157,6 +157,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Probe 8: false alarms.** A delivered one-time code that says it "expires in 5 minutes" got a caution (time
       pressure). Expiry wording no longer counts in a message that delivers a code; asking for the code, or other rush
       words, still do. A link or a menu code from an unverified sender stays a caution (labelling rule). Scam eval unchanged.
+- [x] **Probe 9: missed scams.** Family emergency with a "broken phone" ("mon téléphone est gâté, envoie vite"),
+      advance fee ("$2 million to send you ... small fee") and credential phishing ("entrez vos identifiants") were missed
+      or under-warned; scam words added (fr/en), genuine twins tested. Unseen scams warned 17/21 -> 18/21, false alarms
+      unchanged (2/79); train/test unchanged; thresholds unchanged.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -210,3 +214,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #50 | Moved appointments give the new date, not the old one | local gate (Actions budget) |
 | 2026-11-18 | #51 | Short bills read as pay; "call me back urgently" lure warned | local gate (Actions budget) |
 | 2026-11-18 | #52 | Delivered codes that say when they expire are not pressure (false alarm removed) | local gate (Actions budget) |
+| 2026-11-18 | #53 | Family-emergency, advance-fee and credential-phishing scams caught; unseen scams 18/21 | local gate (Actions budget) |

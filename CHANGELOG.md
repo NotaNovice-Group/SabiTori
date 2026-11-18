@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Scam checks catch "my phone is broken, send money quickly", advance-fee ("millions to send you ... small fee")
+  and credential phishing ("entrez vos identifiants"). Unseen set: 18 of 21 scams warned (was 17), false alarms unchanged.
 - A one-time code that says when it expires ("Il expire dans 5 minutes") no longer gets a caution.
 - A short bill ("Facture 15 000 FCFA avant le ...") gives a full card; "call me back urgently" from an unknown
   number now gets a warning.

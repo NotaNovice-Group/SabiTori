@@ -1459,7 +1459,7 @@
      "lo": 0.86,
      "hi": 0.97
     },
-    "warned": 17,
+    "warned": 18,
     "flagged": 21,
     "falseAlarms": 2,
     "genuine": 79
@@ -5742,7 +5742,7 @@
      "urgency": "info"
     },
     "goldScam": "likely_scam",
-    "scam": "no_signs",
+    "scam": "caution",
     "rules": {
      "kind": "other",
      "action": "unclear",

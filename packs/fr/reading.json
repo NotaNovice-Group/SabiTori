@@ -800,7 +800,10 @@
       "chiffres secrets",
       "code à {n} chiffres",
       "code a {n} chiffres",
-      "{n} chiffres secrets"
+      "{n} chiffres secrets",
+      "identifiants",
+      "vos identifiants",
+      "identifiant de connexion"
     ],
     "askVerbs": [
       "envoy*",
@@ -880,7 +883,11 @@
       "bonus de",
       "tirage",
       "gagn*",
-      "promo"
+      "promo",
+      "héritage",
+      "grosse somme",
+      "somme importante d'argent",
+      "millions de dollars"
     ],
     "feeWords": [
       "frais",
@@ -947,7 +954,9 @@
       "aujourd'hui même",
       "dans les 24h",
       "dans les 48h",
-      "avant minuit"
+      "avant minuit",
+      "envoie vite",
+      "envoyez vite"
     ],
     "moneyReceived": [
       "vous avez reçu",
@@ -1050,7 +1059,13 @@
       "changé de numéro",
       "mon nouveau numéro",
       "mon nouveau numero",
-      "ceci est mon nouveau numéro"
+      "ceci est mon nouveau numéro",
+      "mon téléphone est gâté",
+      "téléphone gâté",
+      "mon téléphone est en panne",
+      "mon téléphone est tombé",
+      "nouveau numéro",
+      "sur ce numéro"
     ],
     "emergencyWords": [
       "accident",
