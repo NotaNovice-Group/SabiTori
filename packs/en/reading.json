@@ -639,7 +639,10 @@
       "network maintenance",
       "planned interruption",
       "scheduled maintenance",
-      "sorry for the inconvenience"
+      "sorry for the inconvenience",
+      "you have sent",
+      "you sent",
+      "transfer completed"
     ]
   },
   "urgency": {

@@ -704,7 +704,10 @@
       "nous nous excusons",
       "interruption de fourniture",
       "interruption programmée",
-      "travaux programmés"
+      "travaux programmés",
+      "vous avez envoyé",
+      "vous avez transféré",
+      "transfert effectué"
     ]
   },
   "urgency": {
