@@ -25,4 +25,14 @@ describe('ambiguous words and notices', () => {
     const c = await read("Retrait d'argent de 20 000 FCFA effectué avec succès. Nouveau solde: 5 000 FCFA.", 'MTN MoMo');
     expect(c.understanding.kind).toBe('mobile_money');
   });
+  it('a "you sent" mobile money receipt asks for nothing', async () => {
+    for (const [t, v] of [
+      ['Orange Money: Vous avez envoyé 10 000 FCFA à JEAN (699887766). Frais 100 FCFA. Solde 23 400 FCFA.', 'Orange Money'],
+      ['MTN MoMo: You have sent 5,000 FCFA to MARY (677112233). Fee 50 FCFA. New balance 12,000 FCFA.', 'MTN MoMo'],
+    ] as const) {
+      const c = await read(t, v);
+      expect(c.understanding.action).toBe('nothing');
+      expect(c.scam.level).toBe('no_signs');
+    }
+  });
 });
