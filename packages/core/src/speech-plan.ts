@@ -82,6 +82,8 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
       const date = { type: 'date' as const, value: card.deadline.value, relativeTo: today };
       // Going somewhere (an appointment, a convocation) happens ON the date; anything else is done BY it.
       const goes = card.mode === 'full' && card.understanding.action === 'go_to_place';
+      // A notice that asks for nothing (a planned cut, a closure) has a date, not a deadline.
+      const nothingToDo = card.mode === 'full' && card.understanding.action === 'nothing';
       const t = goes && card.deadlineTime ? card.deadlineTime.value.split(':').map(Number) : undefined;
       sections.deadline =
         card.deadline.value < today
@@ -90,7 +92,7 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
             ? [{ key: 'deadline.on_at', slots: { date, hour: { type: 'number', value: t[0]! }, minutes: { type: 'number', value: t[1]! } } }]
             : t
               ? [{ key: 'deadline.on_at_hour', slots: { date, hour: { type: 'number', value: t[0]! } } }]
-              : [{ key: goes ? 'deadline.on' : 'deadline.by', slots: { date } }];
+              : [{ key: goes ? 'deadline.on' : nothingToDo ? 'deadline.date' : 'deadline.by', slots: { date } }];
     }
     if (card.amount) sections.money = [{ key: 'money.amount', slots: { amount: { type: 'money', value: card.amount.value } } }];
   }

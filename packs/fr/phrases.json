@@ -155,6 +155,10 @@
     "text": "Présentez-vous le {date} à {hour} heures.",
     "status": "draft"
   },
+  "deadline.date": {
+    "text": "C'est le {date}.",
+    "status": "draft"
+  },
   "deadline.passed": {
     "text": "La date du {date} est déjà passée.",
     "status": "draft"

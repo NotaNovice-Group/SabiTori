@@ -189,11 +189,16 @@ export const URGENT_WITHIN_DAYS = 7;
  * only a few characters after the date, so a time elsewhere in the message is never taken for it.
  */
 const TIME_AFTER = /^[\s,]*(?:(?:à|a|at|vers|dès|des|from)\s+)?([01]?\d|2[0-3])\s?(?:h|H|:)\s?([0-5]\d)?(?![\d:])/u;
+/** 12-hour clock with am/pm: "3pm", "3 pm", "10:30 am", "8 a.m.". */
+const TIME_AFTER_12 = /^[\s,]*(?:(?:at|from)\s+)?(1[0-2]|0?[1-9])(?::([0-5]\d))?\s?([ap])\.?m\b\.?/iu;
 export function timeAfter(text: string, from: number): Fact<string> | undefined {
-  const m = TIME_AFTER.exec(text.slice(from, from + 24));
+  const window = text.slice(from, from + 24);
+  const m12 = TIME_AFTER_12.exec(window);
+  const m = m12 ?? TIME_AFTER.exec(window);
   if (!m) return undefined;
-  const hour = Number(m[1]);
+  let hour = Number(m[1]);
   const minute = m[2] ? Number(m[2]) : 0;
+  if (m12) hour = (hour % 12) + (m12[3]!.toLowerCase() === 'p' ? 12 : 0);
   const start = from + m.index + m[0].search(/\d/);
   const end = from + m.index + m[0].length;
   return { value: `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`, span: { start, end }, raw: text.slice(start, end) };
