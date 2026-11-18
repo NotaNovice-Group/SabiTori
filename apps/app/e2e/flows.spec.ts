@@ -235,3 +235,24 @@ test('in English, a bill card is in English and a scam card warns first', async 
   expect(await page.locator('.card .sec-scam .sec-text').first().innerText()).toMatch(/trick|scam/i);
   expect(errors).toEqual([]);
 });
+
+test('appointments show and say the time; a moved one gives the new date; a start date is not a deadline', async ({ page }) => {
+  const { errors } = await setup(page);
+  await page.goto('#/example/hospital');
+  await page.waitForSelector('.card .sec-deadline');
+  const appt = (await page.locator('.card .sec-deadline').innerText()).replace(/\s+/g, ' ');
+  expect(appt).toMatch(/, 09:00/);
+  expect(appt).toContain('Présentez-vous');
+  expect(appt).toContain('neuf heures');
+
+  await paste(page, 'Hôpital Régional: Votre rendez-vous du 20/11/2026 est reporté au 27/11/2026 à 10h30. Présentez-vous à l’accueil.');
+  const moved = (await page.locator('.card .sec-deadline').innerText()).replace(/\s+/g, ' ');
+  expect(moved).toMatch(/27 novembre, 10:30/);
+  expect(moved).not.toMatch(/20 novembre/);
+
+  await paste(page, 'GHS Bamenda: Your exam results are out. Collect your slip at the school office from Monday 23rd November 2026.');
+  const from = (await page.locator('.card .sec-deadline').innerText()).replace(/\s+/g, ' ');
+  expect(from).toContain('À partir du');
+  expect(from).not.toContain('Faites-le avant');
+  expect(errors).toEqual([]);
+});

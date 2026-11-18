@@ -185,6 +185,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       to go, so a church vigil or a parents' meeting says when to be there. Eval and thresholds unchanged.
 - [x] **Facts-only dates.** A facts-only card (the app did not understand what is asked) said "Do it by {date}" for any
       date; it now says "by" only when the message puts a deadline word before the date, else "It is on {date}".
+- [x] **Browser test for today's dates.** One e2e test checks, in the built app, the appointment time on screen and in
+      speech, a moved appointment's new date, and a start date that is not a deadline.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -247,3 +249,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #59 | Spoken times: "three p.m." / "trois heures de l'après-midi" instead of "fifteen o'clock" | local gate (Actions budget) |
 | 2026-11-18 | #60 | Invitations (venez nombreux, are invited) say when to be there | local gate (Actions budget) |
 | 2026-11-18 | #61 | Facts-only cards say "by" only when the message does | local gate (Actions budget) |
+| 2026-11-18 | #62 | e2e: appointment time, moved appointment, start date (built app) | local gate (Actions budget) |
