@@ -155,6 +155,10 @@
     "text": "Be there on {date} at {hour} o'clock.",
     "status": "draft"
   },
+  "deadline.date": {
+    "text": "It is on {date}.",
+    "status": "draft"
+  },
   "deadline.passed": {
     "text": "The date {date} has already passed.",
     "status": "reviewed"

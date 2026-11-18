@@ -573,3 +573,24 @@ describe('sender line', () => {
     expect((long?.slots?.sender as { fallbackText: string }).fallbackText).toHaveLength(40);
   });
 });
+
+describe('12-hour times and notices', () => {
+  it('reads am/pm times after the date', async () => {
+    const { timeAfter } = await import('../src/card.js');
+    const at = (t: string) => timeAfter(t, t.indexOf('#') + 1)?.value;
+    expect(at('tomorrow# at 3pm.')).toBe('15:00');
+    expect(at('on 20 November 2026# at 10:30 am')).toBe('10:30');
+    expect(at('on 20/11/2026# at 12 p.m.')).toBe('12:00');
+    expect(at('on 20/11/2026# at 12am')).toBe('00:00');
+    expect(at('on 20/11/2026# at 8 a.m.')).toBe('08:00');
+    expect(at('on 20/11/2026#, 13pm')).toBeUndefined();
+  });
+  it('a notice that asks for nothing gives its date, not a deadline', async () => {
+    const c = await run('CAMWATER: Water supply will be interrupted on 26/11/2026 from 8am to 4pm in Molyko. Sorry for the inconvenience.', { kind: 'name', value: 'CAMWATER' });
+    if (c.mode === 'full' && c.understanding.action === 'nothing') {
+      const k = keys(c, '2026-11-18');
+      expect(k).toContain('deadline.date');
+      expect(k).not.toContain('deadline.by');
+    } else throw new Error(`expected a full card with nothing to do, got ${c.mode} ${c.understanding.action}`);
+  });
+});
