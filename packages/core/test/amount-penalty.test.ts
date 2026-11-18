@@ -17,6 +17,16 @@ describe('a penalty is never the amount to pay', () => {
     expect(await amountOf('ENEO: Facture de 18 450 FCFA. Ancien solde impayé: 6 000 FCFA. Total à payer: 24 450 FCFA avant le 30/11/2026.')).toBe(24450);
     expect(await amountOf('Frais de scolarité: 1ère tranche 40 000 FCFA (payée), 2ème tranche 40 000 FCFA à payer avant le 15/12/2026. Total annuel 95 000 FCFA.')).toBe(40000);
   });
+  it('an annual total is not the amount due now (photo benchmark pages 14, 16, 17)', async () => {
+    expect(await amountOf('Total annuel : 100 000 FCFA. 1ère tranche : 40 000 FCFA à payer avant le 15/12/2026.')).toBe(40000);
+    expect(await amountOf('School fees: annual total 90,000 FCFA. First instalment 30,000 FCFA due by 30/11/2026.')).toBe(30000);
+  });
+  it('only the annual total legible: no amount rather than a wrong one', async () => {
+    expect(await amountOf('Frais de scolarité de votre enfant, à régler avant le 15/12/2026. Total annuel : 70 000 FCFA.')).toBeUndefined();
+  });
+  it('an annual total in the deadline clause is the amount', async () => {
+    expect(await amountOf('Total annuel de 70 000 FCFA à payer avant le 15/12/2026.')).toBe(70000);
+  });
   it('an ordinal after a label is not an amount ("Frais: 1ère tranche")', async () => {
     const { extractFacts } = await import('../src/index.js');
     const { ctx } = await import('./helpers.js');

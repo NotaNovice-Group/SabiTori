@@ -90,8 +90,19 @@ function chooseAmount(
   // to pay, even when it stands next to the deadline. It is dropped unless every amount is one.
   const penalties = findTerms(n, collect(lexicons, (l) => l.penaltyWords));
   const isPenalty = (a: Fact<Money>) => penalties.some((w) => w.end <= a.span.start && a.span.start - w.end <= NEAR_PENALTY);
-  const unpenalised = facts.amounts.filter((a) => !isBalance(a) && !isPenalty(a));
-  const pool = unpenalised.length ? unpenalised : facts.amounts.filter((a) => !isBalance(a));
+  // A yearly total ("Total annuel : 70 000 FCFA") is not what is due now. When the instalments cannot be read (a
+  // photo whose table is lost), showing the total as "the amount" would ask for money not owed yet: no amount is
+  // safer. It stays only when it is the amount of the deadline's own clause ("total annuel 70 000 à payer avant le").
+  const annuals = findTerms(n, collect(lexicons, (l) => l.annualTotalWords));
+  const isAnnual = (a: Fact<Money>) => annuals.some((w) => w.end <= a.span.start && a.span.start - w.end <= NEAR_PENALTY);
+  const inDeadlineClause = (a: Fact<Money>) => {
+    if (!deadline) return false;
+    const c = clauseAround(n, deadline.span.start, deadline.span.end);
+    return a.span.start >= c.start && a.span.end <= c.end;
+  };
+  const due = facts.amounts.filter((a) => !isAnnual(a) || inDeadlineClause(a));
+  const unpenalised = due.filter((a) => !isBalance(a) && !isPenalty(a));
+  const pool = unpenalised.length ? unpenalised : due.filter((a) => !isBalance(a));
   if (!pool.length) return undefined;
   const score = (a: Fact<Money>) => (labels.some((w) => w.end <= a.span.start && a.span.start - w.end <= NEAR_AMOUNT) ? 3 : 0);
 

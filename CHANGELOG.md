@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- A school-fee notice's annual total ("Total annuel", "annual total") is no longer shown as the amount to
+  pay when an instalment is due; with only the total legible, the card shows no amount rather than the wrong one.
 - When SabiTori is not sure what a message asks (facts-only card), it says "Do it by {date}" only if the message itself
   says "before" / "avant le"; otherwise "It is on {date}".
 - "Free" government aid or scholarships that ask for a fee are now warned as likely scams.
