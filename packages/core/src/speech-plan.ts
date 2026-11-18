@@ -1,4 +1,4 @@
-import type { Card, CardSection, IsoDate, MessageKind, SpeechPlan, Utterance } from './types.js';
+import type { Card, CardSection, IsoDate, MessageKind, SlotValue, SpeechPlan, Utterance } from './types.js';
 import { CARD_SECTIONS } from './types.js';
 import type { PhraseKey } from './catalog.js';
 
@@ -89,10 +89,8 @@ export function buildSpeechPlan(card: Card, opts: { today?: IsoDate } = {}): Spe
         ? [{ key: 'deadline.from', slots: { date } }]
         : card.deadline.value < today
           ? [{ key: 'deadline.passed', slots: { date } }]
-          : t && t[1]
-            ? [{ key: 'deadline.on_at', slots: { date, hour: { type: 'number', value: t[0]! }, minutes: { type: 'number', value: t[1]! } } }]
-            : t
-              ? [{ key: 'deadline.on_at_hour', slots: { date, hour: { type: 'number', value: t[0]! } } }]
+          : t
+            ? [timeUtterance(date, t[0]!, t[1]!)]
               : [{ key: goes ? 'deadline.on' : nothingToDo ? 'deadline.date' : 'deadline.by', slots: { date } }];
     }
     if (card.amount) sections.money = [{ key: 'money.amount', slots: { amount: { type: 'money', value: card.amount.value } } }];
@@ -119,4 +117,17 @@ function namedSender(card: Card): string | undefined {
   const v = (s.value ?? '').replace(/\s+/g, ' ').trim();
   if (!v || /^\+?[\d\s().-]+$/.test(v)) return undefined;
   return v.length > 40 ? v.slice(0, 40).trimEnd() : v;
+}
+
+/**
+ * The appointment time as people say it: the 12-hour clock with the part of the day (English "p.m.", French "de
+ * l'après-midi" / "du soir"); the morning keeps the plain hour.
+ */
+function timeUtterance(date: Extract<SlotValue, { type: 'date' }>, hour: number, minute: number): Utterance {
+  const part = hour < 12 ? '' : hour < 18 ? '_pm' : '_eve';
+  const h12 = hour === 0 ? 0 : hour > 12 ? hour - 12 : hour;
+  const hourSlot: SlotValue = { type: 'number', value: h12 };
+  return minute
+    ? { key: `deadline.on_at${part}` as PhraseKey, slots: { date, hour: hourSlot, minutes: { type: 'number', value: minute } } }
+    : { key: `deadline.on_at_hour${part}` as PhraseKey, slots: { date, hour: hourSlot } };
 }

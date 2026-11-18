@@ -178,6 +178,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Speed claim re-checked.** On today's (slower) container the term prefilter saves about a quarter (2.08 -> 1.56 s
       at 4x with the model loaded), not 2.6x; no regression from the words added since. docs/model.md, numbers page and
       changelog now say so.
+- [x] **Times as people say them.** A render sweep (all examples and new phrases, fr/en, no leaked placeholders) found
+      "at fifteen o'clock" in English. Afternoon/evening times now use the 12-hour clock with the part of the day:
+      "at three p.m.", "à trois heures de l'après-midi", "du soir" (four new draft phrases).
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -237,3 +240,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #56 | SMS-style French (rdv, pr travaux); landlord-vs-scam trade-off documented | local gate (Actions budget) |
 | 2026-11-18 | #57 | Fake government aid that asks a fee is a likely scam | local gate (Actions budget) |
 | 2026-11-18 | #58 | Speed claim re-measured on another machine and softened (1.3-2.3 s; gain machine-dependent) | local gate (Actions budget) |
+| 2026-11-18 | #59 | Spoken times: "three p.m." / "trois heures de l'après-midi" instead of "fifteen o'clock" | local gate (Actions budget) |

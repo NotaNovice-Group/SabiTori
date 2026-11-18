@@ -148,11 +148,27 @@
     "status": "draft"
   },
   "deadline.on_at": {
-    "text": "Be there on {date} at {minutes} minutes past {hour}.",
+    "text": "Be there on {date} at {hour} {minutes} a.m.",
     "status": "draft"
   },
   "deadline.on_at_hour": {
-    "text": "Be there on {date} at {hour} o'clock.",
+    "text": "Be there on {date} at {hour} a.m.",
+    "status": "draft"
+  },
+  "deadline.on_at_pm": {
+    "text": "Be there on {date} at {hour} {minutes} p.m.",
+    "status": "draft"
+  },
+  "deadline.on_at_hour_pm": {
+    "text": "Be there on {date} at {hour} p.m.",
+    "status": "draft"
+  },
+  "deadline.on_at_eve": {
+    "text": "Be there on {date} at {hour} {minutes} p.m.",
+    "status": "draft"
+  },
+  "deadline.on_at_hour_eve": {
+    "text": "Be there on {date} at {hour} p.m.",
     "status": "draft"
   },
   "deadline.date": {
