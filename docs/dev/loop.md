@@ -187,6 +187,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       date; it now says "by" only when the message puts a deadline word before the date, else "It is on {date}".
 - [x] **Browser test for today's dates.** One e2e test checks, in the built app, the appointment time on screen and in
       speech, a moved appointment's new date, and a start date that is not a deadline.
+- [x] **Cards for the benchmark documents.** A test reads the 30 OCR-benchmark documents (bills, school-fee notices,
+      hospital letters, mobile-money receipts) from their true text and checks the card's amount, date and appointment
+      time. All 30 right today; any later change that breaks a fact choice on a real-shaped document fails it.
 - [x] **Docs and OWNER-TODO tidy.** Changelog and this log brought up to date after #16-#25; OWNER-TODO regenerated.
 
 ## Log
@@ -250,3 +253,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #60 | Invitations (venez nombreux, are invited) say when to be there | local gate (Actions budget) |
 | 2026-11-18 | #61 | Facts-only cards say "by" only when the message does | local gate (Actions budget) |
 | 2026-11-18 | #62 | e2e: appointment time, moved appointment, start date (built app) | local gate (Actions budget) |
+| 2026-11-18 | #63 | Test: right amount, date and time on the 30 benchmark documents | local gate (Actions budget) |
