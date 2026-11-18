@@ -390,7 +390,8 @@ function extractAmounts(text: string, norm0: string, ctx: FactsContext, blocked:
   }
 
   // Labelled amount near a currency word: "Montant: 2 500 (FCFA)"
-  const C = new RegExp(`^[ \\u00a0]*[:=\\-]?[ \\u00a0]*(${NUM})(?![\\d])(?![ \\u00a0\\u202f]\\d)`, 'u');
+  // The number must end there: "Frais de scolarité: 1ère tranche" is an ordinal, not an amount of 1.
+  const C = new RegExp(`^[ \\u00a0]*[:=\\-]?[ \\u00a0]*(${NUM})(?![\\d\\p{L}])(?![ \\u00a0\\u202f]\\d)`, 'u');
   const near = new RegExp(`(?<![\\p{L}\\p{N}])(?:${alias})(?![\\p{L}\\p{N}])`, 'u');
   for (const h of findTerms(norm, collect(ctx.lexicons, (l) => l.amountWords))) {
     const c = C.exec(norm.slice(h.end));

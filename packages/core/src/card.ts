@@ -59,6 +59,9 @@ function chooseDeadline(input: MessageInput, facts: Facts, lexicons: ReadingLexi
   return future[0];
 }
 
+/** How far after a penalty word an amount still belongs to it ("Majoration de 10% (1 200 FCFA)"). */
+const NEAR_PENALTY = 30;
+
 function chooseAmount(
   input: MessageInput,
   facts: Facts,
@@ -79,7 +82,12 @@ function chooseAmount(
     const nearestBalance = Math.max(...b.map((w) => w.end));
     return !labels.some((w) => w.end > nearestBalance && w.end <= a.span.start);
   };
-  const pool = facts.amounts.filter((a) => !isBalance(a));
+  // A penalty or late fee ("Pénalité de retard 720 FCFA si paiement après le 05/12") is a consequence, not the amount
+  // to pay, even when it stands next to the deadline. It is dropped unless every amount is one.
+  const penalties = findTerms(n, collect(lexicons, (l) => l.penaltyWords));
+  const isPenalty = (a: Fact<Money>) => penalties.some((w) => w.end <= a.span.start && a.span.start - w.end <= NEAR_PENALTY);
+  const unpenalised = facts.amounts.filter((a) => !isBalance(a) && !isPenalty(a));
+  const pool = unpenalised.length ? unpenalised : facts.amounts.filter((a) => !isBalance(a));
   if (!pool.length) return undefined;
   const score = (a: Fact<Money>) => (labels.some((w) => w.end <= a.span.start && a.span.start - w.end <= NEAR_AMOUNT) ? 3 : 0);
 

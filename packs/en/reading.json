@@ -189,6 +189,14 @@
     "available balance",
     "current balance"
   ],
+  "penaltyWords": [
+    "penalty",
+    "late fee",
+    "late payment fee",
+    "late charge",
+    "surcharge",
+    "fine of"
+  ],
   "referenceLabels": [
     "invoice no",
     "invoice number",

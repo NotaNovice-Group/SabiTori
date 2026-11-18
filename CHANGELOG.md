@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- A late fee or penalty written next to the deadline is no longer shown as the amount to pay (the bill is), and
+  "Frais: 1ère tranche" no longer reads an amount of 1.
 - A date that is a start ("collect your slip from Monday 23rd", "à partir du 23/11") is said "From {date}", not
   "Do it by {date}".
 - 12-hour times ("at 3pm") are read; a notice that asks for nothing (a planned water cut) says "It is on {date}"
