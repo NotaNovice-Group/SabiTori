@@ -264,6 +264,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       web view ignores without the VIBRATE permission; the manifest had none. Added (normal permission, no prompt);
       privacy policy section 6, Data safety notes, release checklist and ARCHITECTURE updated. Not yet felt on a
       phone (no device here).
+- [x] **Picture card on a caution.** A caution (for example a water bill whose customer-service number is a mobile)
+      showed the same full-width stop sign as a likely scam and hid the bill. It now starts with an amber warning tile,
+      and every picture follows the card's own sections: no money or date picture when the card does not say them, no
+      action picture when the action is unclear. Browser test on a CAMWATER caution.
 
 ## Log
 
@@ -343,3 +347,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #77 | Dark mode: solid stop red for scam signs; settings language rows tidy | local gate (Actions budget) |
 | 2026-11-19 | #78 | e2e: a scam SMS screenshot read by OCR warns first and shows no paying | local gate (Actions budget) |
 | 2026-11-19 | #79 | Android VIBRATE permission so the scam vibration works in the app; privacy and store docs updated | local gate (Actions budget) |
+| 2026-11-19 | #80 | Picture card: amber tile on a caution, pictures follow the card sections | local gate (Actions budget) |

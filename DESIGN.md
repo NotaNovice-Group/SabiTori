@@ -48,8 +48,9 @@ the earlier grey "ink on stone" read as unfinished and gave nothing to find a bu
 For people who cannot read the words and cannot hear them (deaf, or no sound around): above the sections, the
 card's facts as pictures in a fixed order, numerals only. The action as a big drawn symbol (paying hand, walking
 feet, phone, pill), the deadline as a calendar page (month, big day, a dot per day left up to 14, the time when
-given, crossed out in red once passed), the amount as CFA notes and coins. A scam card shows only a red stop sign:
-never a paying hand or the money. A likely scam also vibrates three long pulses when the card opens, a caution one.
+given, crossed out in red once passed), the amount as CFA notes and coins. A likely scam shows only a red stop sign:
+never a paying hand or the money. A caution starts with an amber warning tile; every picture follows the card's own
+sections (no picture of what the card does not say). A likely scam also vibrates three long pulses when the card opens, a caution one.
 Hidden from screen readers (the same facts are in the sections and the speech).
 
 ## Shape and space

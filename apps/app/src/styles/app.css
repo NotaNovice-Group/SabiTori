@@ -612,6 +612,8 @@ a { color: inherit; text-decoration: none; }
 .pic-money .note { display: inline-grid; place-items: center; min-width: 62px; height: 34px; padding: 0 6px; border-radius: 6px; background: var(--surface); color: var(--money); font-weight: 700; font-size: var(--fs-small); box-shadow: inset 0 0 0 2px var(--money); }
 .pic-money .coin { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--surface); color: var(--money); font-weight: 700; font-size: 0.75rem; box-shadow: inset 0 0 0 2px var(--money); }
 .pic-money .more { align-self: center; font-weight: 700; color: var(--money); }
+.pic-caution { width: 112px; background: var(--soon-tint); color: var(--soon); box-shadow: inset 0 0 0 3px var(--soon), var(--shadow); }
+.pic-caution svg { width: 64px; height: 64px; }
 .pics-scam .pic-stop { width: 100%; min-height: 128px; background: var(--stop); color: var(--on-stop); }
 .pic-stop svg { width: 88px; height: 88px; }
 

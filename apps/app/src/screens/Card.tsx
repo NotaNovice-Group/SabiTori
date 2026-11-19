@@ -418,6 +418,11 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
           <>
             <PictureCard
               scam={scamLevel}
+              shows={{
+                action: views.some((v) => v.section === 'action' && !v.lines.some((l) => l.key === 'action.unclear')),
+                deadline: views.some((v) => v.section === 'deadline'),
+                money: views.some((v) => v.section === 'money'),
+              }}
               action={card.understanding.action}
               deadline={card.deadline?.value}
               time={card.deadlineTime?.value}

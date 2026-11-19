@@ -308,3 +308,15 @@ test('a screenshot of a scam SMS, read from a photo, warns first and never shows
   expect(errors).toEqual([]);
   expect(external).toEqual([]);
 });
+
+test('picture card on a caution: an amber warning tile, no stop sign, and only pictures of what the card says', async ({ page }) => {
+  const { errors } = await setup(page);
+  await paste(page, "CAMWATER: Avis de facture d'eau. Net à payer : 14 300 FCFA. À régler avant le 25 décembre 2026. Pour toute réclamation, appelez le service clientèle au 678 31 42 03.");
+  await expect(page.locator('.card')).toHaveAttribute('data-scam', 'caution');
+  await expect(page.locator('.card .pic-caution')).toBeVisible();
+  await expect(page.locator('.card .pic-stop')).toHaveCount(0);
+  // a picture never shows what the card itself does not say
+  expect(await page.locator('.card .pic-money').count()).toBe(await page.locator('.card .sec-money').count());
+  expect(await page.locator('.card .pic-date').count()).toBe(await page.locator('.card .sec-deadline').count());
+  expect(errors).toEqual([]);
+});
