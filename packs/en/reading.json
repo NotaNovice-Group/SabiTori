@@ -136,6 +136,10 @@
   "dateFillers": [
     "of"
   ],
+  "monthEndWords": [
+    "end of",
+    "the end of"
+  ],
   "dateLeadWords": [
     "on",
     "by",
