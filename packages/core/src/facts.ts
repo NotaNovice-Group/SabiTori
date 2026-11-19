@@ -274,6 +274,14 @@ function extractDates(text: string, norm: string, ctx: FactsContext, blocked: Sp
       }
       finish(m.index, end, y, mon, d);
     }
+
+    // 3b. OCR-garbled month name ("27 noveribwe 2026"): only between a day and a 4-digit year, and only when one month
+    //     is clearly closest (up to 2 letter changes for names of 7+ letters, 1 for 6, none below).
+    re = /(?<![\p{L}\p{N}/.\-])(\d{1,2})\s+(\p{L}{5,13})\.?\s*,?\s*(20\d\d)(?!\d)/gu;
+    while ((m = re.exec(norm))) {
+      const mon = nearMonth(m[2] ?? '', monthMap);
+      if (mon) finish(m.index, m.index + m[0].length, Number(m[3]), mon, Number(m[1]));
+    }
   }
 
   // 4. dd/mm without a year, only after a lead word ("avant le 15/11")
@@ -452,6 +460,46 @@ function extractShortCodes(text: string, norm: string, ctx: FactsContext, blocke
     out.push(mk(text, start, end, m[1]));
   }
   return out;
+}
+
+/** Letter edits (insert, delete, change) from a to b, or max + 1 once it is clearly larger. */
+function editDistance(a: string, b: string, max: number): number {
+  if (Math.abs(a.length - b.length) > max) return max + 1;
+  let prev = Array.from({ length: b.length + 1 }, (_, j) => j);
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    let best = i;
+    for (let j = 1; j <= b.length; j++) {
+      cur[j] = Math.min(prev[j]! + 1, cur[j - 1]! + 1, prev[j - 1]! + (a[i - 1] === b[j - 1] ? 0 : 1));
+      best = Math.min(best, cur[j]!);
+    }
+    if (best > max) return max + 1;
+    prev = cur;
+  }
+  return prev[b.length]!;
+}
+
+/**
+ * The month a garbled word most likely is, or undefined if it is not close to one, or as close to two months.
+ * OCR often reads "m" as "rn" or "ri" ("Decernber", "noveribre"), so that reading is tried too.
+ */
+export function nearMonth(word: string, monthMap: Map<string, number>): number | undefined {
+  if (monthMap.has(word)) return undefined; // an exact name is read by the strict rule
+  const forms = [word, word.replace(/r[ni]/g, 'm')];
+  let best = 3;
+  const found = new Set<number>();
+  for (const [name, mon] of monthMap) {
+    if (name.length < 6 || /[^\p{L}]/u.test(name)) continue;
+    const allowed = name.length >= 7 ? 2 : 1;
+    const d = Math.min(...forms.map((f) => editDistance(f, name, allowed)));
+    if (d > allowed) continue;
+    if (d < best) {
+      best = d;
+      found.clear();
+    }
+    if (d === best) found.add(mon);
+  }
+  return found.size === 1 ? [...found][0] : undefined;
 }
 
 /* --------------------------------- main --------------------------------- */

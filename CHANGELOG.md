@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Photos: a month name the OCR garbled ("27 noveribwe 2026", "18 Decernber 2026") is read when it sits between a day
+  and a year and is clearly one month. Fact recall on the 30 benchmark photos 83.6% -> 84.3%, precision unchanged.
 - A school-fee notice's annual total ("Total annuel", "annual total") is no longer shown as the amount to
   pay when an instalment is due; with only the total legible, the card shows no amount rather than the wrong one.
 - When SabiTori is not sure what a message asks (facts-only card), it says "Do it by {date}" only if the message itself

@@ -196,6 +196,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       instalment due. An annual total (`annualTotalWords`) is now the amount only when it is in the deadline's clause,
       otherwise the card shows the instalment, or no amount if the total is all that was read. Amount right 26/30 -> 27/30, wrong 4 -> 2 (both OCR
       misreads: "Total annvet", 13 280 for 13 250); dates unchanged (25 right, 0 wrong). Understanding results unchanged.
+- [x] **OCR-garbled month names.** Of the 5 photo cards with no date, one lost it to a garbled month ("27 noveribwe
+      2026"). The fact reader now reads a word close to a month name between a day and a 4-digit year (edit distance 2
+      for 7+ letters, 1 for 6, "rn"/"ri" read as "m"; never for short names or when two months are as close). Photo
+      fact recall 83.6% -> 84.3%, precision 97.5% unchanged; understanding results byte-identical. The other 4 are
+      text OCR never returned (day missing, year read as 6026).
 
 ## Log
 
@@ -260,3 +265,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #62 | e2e: appointment time, moved appointment, start date (built app) | local gate (Actions budget) |
 | 2026-11-18 | #63 | Test: right amount, date and time on the 30 benchmark documents | local gate (Actions budget) |
 | 2026-11-18 | #64 | Annual total is not the amount due on photo cards (wrong amounts 4 -> 2 of 30) | local gate (Actions budget) |
+| 2026-11-19 | #65 | OCR-garbled month names read between a day and a year; photo fact recall 83.6% -> 84.3% | local gate (Actions budget) |
