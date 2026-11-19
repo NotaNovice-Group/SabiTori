@@ -308,3 +308,33 @@ test('a screenshot of a scam SMS, read from a photo, warns first and never shows
   expect(errors).toEqual([]);
   expect(external).toEqual([]);
 });
+
+test('picture card on a caution: an amber warning tile, no stop sign, and only pictures of what the card says', async ({ page }) => {
+  const { errors } = await setup(page);
+  await paste(page, "CAMWATER: Avis de facture d'eau. Net à payer : 14 300 FCFA. À régler avant le 25 décembre 2026. Pour toute réclamation, appelez le service clientèle au 678 31 42 03.");
+  await expect(page.locator('.card')).toHaveAttribute('data-scam', 'caution');
+  await expect(page.locator('.card .pic-caution')).toBeVisible();
+  await expect(page.locator('.card .pic-stop')).toHaveCount(0);
+  // a picture never shows what the card itself does not say
+  expect(await page.locator('.card .pic-money').count()).toBe(await page.locator('.card .sec-money').count());
+  expect(await page.locator('.card .pic-date').count()).toBe(await page.locator('.card .sec-deadline').count());
+  expect(errors).toEqual([]);
+});
+
+test('in the message list, a likely scam shows the stop sign and no amount or date', async ({ page }) => {
+  const { errors } = await setup(page);
+  await paste(page, 'Félicitations! Votre numéro a gagné 500 000 FCFA à la promo MTN. Pour recevoir votre gain, envoyez 5 000 FCFA de frais au 677 12 34 56 avant le 30/11/2026.');
+  await expect(page.locator('.card')).toHaveAttribute('data-scam', 'likely_scam');
+  await paste(page, BILL);
+  await page.goto('#/');
+  const rows = page.locator('.rows .row');
+  await expect(rows).toHaveCount(2);
+  const scamRow = rows.filter({ has: page.locator('.row-ic-stop') });
+  await expect(scamRow).toHaveCount(1);
+  await expect(scamRow.locator('.row-fact')).toHaveCount(0);
+  await expect(scamRow.locator('.chip[data-level="urgent"]')).toBeVisible();
+  // the bill keeps its amount and date
+  const bill = rows.filter({ hasNot: page.locator('.row-ic-stop') });
+  await expect(bill.locator('.row-fact')).toHaveCount(2);
+  expect(errors).toEqual([]);
+});
