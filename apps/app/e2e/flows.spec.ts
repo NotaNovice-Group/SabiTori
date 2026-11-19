@@ -256,3 +256,27 @@ test('appointments show and say the time; a moved one gives the new date; a star
   expect(from).not.toContain('Faites-le avant');
   expect(errors).toEqual([]);
 });
+
+test('picture card: a bill shows what to do, the date and the money; a scam shows only a stop sign and vibrates', async ({ page }) => {
+  const { errors } = await setup(page);
+  await page.addInitScript(() => {
+    const w = window as unknown as { __vibrations: unknown[] };
+    w.__vibrations = [];
+    Object.defineProperty(navigator, 'vibrate', { configurable: true, value: (p: unknown) => { w.__vibrations.push(p); return true; } });
+  });
+  await paste(page, BILL);
+  const pics = page.locator('.card .pics');
+  await expect(pics).toHaveAttribute('aria-hidden', 'true');
+  await expect(pics.locator('.pic-act[data-action="pay"]')).toBeVisible();
+  await expect(pics.locator('.pic-date .cal-day')).toHaveText('12');
+  await expect(pics.locator('.pic-money .note').first()).toContainText('10');
+  expect(await page.evaluate(() => (window as unknown as { __vibrations: unknown[] }).__vibrations)).toEqual([]);
+
+  await page.goto('#/example/prize');
+  await page.waitForSelector('.card .sec-scam');
+  await expect(page.locator('.card .pics-scam .pic-stop')).toBeVisible();
+  // never a picture of paying, never the money, on a scam
+  await expect(page.locator('.card .pic-act, .card .pic-money, .card .pic-date')).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => (window as unknown as { __vibrations: unknown[] }).__vibrations)).toEqual([[400, 200, 400, 200, 400]]);
+  expect(errors).toEqual([]);
+});
