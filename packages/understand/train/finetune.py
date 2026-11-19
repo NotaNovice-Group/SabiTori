@@ -142,6 +142,7 @@ def main() -> None:
     ap.add_argument("--train-emb", action="store_true", help="also train the word-embedding table (slow on CPU)")
     ap.add_argument("--w-action", type=float, default=1.0, help="loss weight of the action head")
     ap.add_argument("--tag", default="")
+    ap.add_argument("--final-only", metavar="CV_DIR", help="skip the out-of-fold run: reuse oof.json and cv-*.json from a --cv-only run with the same settings, train only the shipped model")
     ap.add_argument("--cv-only", action="store_true", help="only the out-of-fold run (to compare settings); no final model")
     args = ap.parse_args()
     dev = device()
@@ -156,6 +157,20 @@ def main() -> None:
                 weights={"kind": 1.0, "action": args.w_action, "urgency": 1.0})
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
+
+    if args.final_only:  # same settings, out-of-fold part already done
+        import shutil
+        cvdir = Path(args.final_only)
+        rep = [json.loads(p.read_text("utf8")) for p in cvdir.glob("cv-*.json")]
+        assert len(rep) == 1, "expected one cv-*.json in " + str(cvdir)
+        report = rep[0]
+        for k in ("epochs", "lr", "batch", "smoothing", "w_action", "n_train"):
+            want = {"epochs": args.epochs, "lr": args.lr, "batch": args.batch, "smoothing": args.smoothing, "w_action": args.w_action, "n_train": len(rows)}[k]
+            assert report[k] == want, f"{k}: cv run {report[k]} != {want}"
+        temps = {f: report["cv"][f]["temperature"] for f in FIELDS}
+        shutil.copy(cvdir / "oof.json", out / "oof.json")
+        t0 = time.time() - report["seconds_cv"]
+        return final(args, rows, opts, temps, report, out, dev, t0)
 
     # 1. out-of-fold predictions (thresholds, temperature, the honest train-side estimate)
     strat = np.array([LABELS["kind"].index(r["expected"]["kind"]) * 3 + LABELS["urgency"].index(r["expected"]["urgency"]) for r in rows])
@@ -191,6 +206,10 @@ def main() -> None:
     if args.cv_only:  # oof.json is still written so run-encoder.mjs --select-threshold can score the setting combined
         return
 
+    return final(args, rows, opts, temps, report, out, dev, t0)
+
+
+def final(args, rows, opts, temps, report, out, dev, t0) -> None:
     # 2. the shipped model: all train rows, same settings
     print("  final model on all train rows", flush=True)
     net = train_one(rows, args.epochs, args.lr, args.seed, dev, **opts)
