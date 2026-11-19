@@ -13,6 +13,7 @@ const STRONG: ScamSignal[] = [
   'fake_balance',
   'pay_to_personal_number',
   'promised_return',
+  'offer_fee',
 ];
 const digitsOf = (s: string) => s.replace(/\D/g, '');
 
@@ -98,10 +99,32 @@ export function assessScam(
     });
   }
 
+  // "I sent a 6-digit code to your number by mistake. Please forward it to me": the code is named in one sentence and
+  // asked back in another. A code, a mistake and a send-it-back request that is not a warning ask for the secret.
+  if (!found.has('asks_pin') && hasTerm(n, secret) && hasTerm(n, S((s) => s.mistakeWords))) {
+    // A warning ("Someone may say they sent you a code by mistake and ask for it back. Never do it.") puts its "never"
+    // in the same or the next sentence.
+    const back = S((s) => s.returnWords);
+    const sens = splitSentences(n);
+    const asksBack = sens.some(
+      (x, i) =>
+        hasTerm(n.slice(x.start, x.end), back) &&
+        !hasTerm(n.slice(x.start, sens[i + 1]?.end ?? x.end), neg),
+    );
+    if (asksBack) found.add('asks_pin');
+  }
+
   const received = hasTerm(n, S((s) => s.moneyReceived));
+  // An operator's warning ("Someone may say they sent you money by mistake and ask you to send it back. Never do it.")
+  // names the trick: from a sender shown as a name, a return request with "never" in its sentence or the next is not one.
+  const backWords = S((s) => s.returnWords);
+  const sensAll = splitSentences(n);
+  const warnsOnly =
+    input.sender?.kind === 'name' &&
+    sensAll.every((x, i) => !hasTerm(n.slice(x.start, x.end), backWords) || hasTerm(n.slice(x.start, sensAll[i + 1]?.end ?? x.end), neg));
   if (
     hasTerm(n, S((s) => s.mistakeWords)) &&
-    (hasTerm(n, S((s) => s.returnWords)) || (facts.amounts.length > 0 && received))
+    ((hasTerm(n, backWords) && !warnsOnly) || (facts.amounts.length > 0 && received))
   )
     found.add('wrong_transfer');
   const callHits = findTerms(n, S((s) => s.callWords));
@@ -151,7 +174,9 @@ export function assessScam(
 
   // pay_to_personal_number: an amount, a pay/send verb and an ordinary phone number together.
   if (personalPhones.length > 0 && facts.amounts.length > 0) {
-    const payHits = findTerms(n, S((s) => s.payVerbs));
+    // "Envoyez votre CV au 677...": a send verb whose object is a document, not money, is not a payment.
+    const docs = S((s) => s.documentObjects ?? []);
+    const payHits = findTerms(n, S((s) => s.payVerbs)).filter((v) => !findTerms(n.slice(v.end, v.end + 30), docs).some((d) => d.start <= 2));
     const recv = findTerms(n, S((s) => s.moneyReceived));
     const contactHits = findTerms(n, collect(lexicons, (l) => l.contactWords));
     const sens = splitSentences(n);
@@ -203,6 +228,44 @@ export function assessScam(
         ),
       );
     if (promise || multiplies) found.add('promised_return');
+  }
+
+  // offer_fee: a job, a place, a scholarship, a visa or a loan said to be granted, with a fee and an amount in one
+  // sentence, and a personal number to pay or call (written, or "this number" from a mobile). Real recruiters,
+  // schools and lenders take fees at a bank or an office; a real admission notice with no personal number is not caught.
+  const thisNumberHits = findTerms(n, S((s) => s.thisNumberWords ?? []));
+  const toThisNumber = isOrdinaryNumber(input) && thisNumberHits.length > 0;
+  const sentences = splitSentences(n);
+  const within = (h: { start: number; end: number }, x: { start: number; end: number }) => h.start >= x.start && h.end <= x.end;
+  if (!sender.verified && hasTerm(n, S((s) => s.offerWords ?? [])) && (personalPhones.length > 0 || toThisNumber)) {
+    // A fee word that is only a send/pay verb does not count here: "send your CV to 677..." next to a salary is a real
+    // job advert; a fee noun ("frais", "fee", "pour garantir votre place") is what makes it a charge.
+    const verbs = findTerms(n, S((s) => s.payVerbs ?? []));
+    const fees = findTerms(n, S((s) => s.feeWords)).filter((f) => !verbs.some((v) => v.start < f.end && f.start < v.end));
+    const charged = sentences.some(
+      (x) =>
+        fees.some((f) => within(f, x)) &&
+        facts.amounts.some((a) => within(a.span, x)) &&
+        !hasTerm(n.slice(x.start, x.end), neg),
+    );
+    if (charged) found.add('offer_fee');
+  }
+
+  // distress_money: an accident, an arrest or someone stranded abroad, and money asked in the same sentence, from a
+  // mobile number (or to a personal number). Real family emergencies are written the same way, so this is a caution
+  // on its own: the advice is to call the person back on the number you already know.
+  if (!sender.verified && (isOrdinaryNumber(input) || personalPhones.length > 0)) {
+    const story = hasTerm(n, S((s) => s.emergencyWords ?? [])) || hasTerm(n, S((s) => s.distressWords ?? []));
+    if (story) {
+      const pays = findTerms(n, S((s) => s.payVerbs ?? []));
+      const asks = sentences.some(
+        (x) =>
+          pays.some((v) => within(v, x)) &&
+          (facts.amounts.some((a) => within(a.span, x)) || thisNumberHits.some((h) => within(h, x))) &&
+          !hasTerm(n.slice(x.start, x.end), neg),
+      );
+      if (asks) found.add('distress_money');
+    }
   }
 
   // ussd_instruction: a *...# code, or a dial instruction, from a sender that is not verified.

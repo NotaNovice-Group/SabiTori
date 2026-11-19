@@ -751,7 +751,11 @@
       "secret digits",
       "credentials",
       "login details",
-      "your login"
+      "your login",
+      "the code you will receive",
+      "code you will receive",
+      "the code we will send you",
+      "whatsapp code"
     ],
     "askVerbs": [
       "send",
@@ -810,7 +814,9 @@
       "reverse",
       "give back",
       "send me the money",
-      "return the money"
+      "return the money",
+      "forward it to me",
+      "send it to me"
     ],
     "prizeWords": [
       "congratulations",
@@ -861,7 +867,14 @@
       "processing fee",
       "activation",
       "to collect",
-      "to validate"
+      "to validate",
+      "to secure your place",
+      "to secure your slot",
+      "to book your slot",
+      "insurance fee",
+      "clearance charges",
+      "clearance fee",
+      "bail"
     ],
     "blockThreats": [
       "will be blocked",
@@ -909,7 +922,9 @@
       "act now",
       "urgently",
       "as soon as possible",
-      "send it quickly"
+      "send it quickly",
+      "quick quick",
+      "sharp sharp"
     ],
     "investWords": [
       "invest",
@@ -1033,7 +1048,46 @@
       "medical emergency",
       "emergency at the hospital",
       "is in hospital",
-      "is in the hospital"
+      "is in the hospital",
+      "get accident",
+      "don get accident",
+      "dey hospital",
+      "for hospital now"
+    ],
+    "offerWords": [
+      "recruitment",
+      "you have been selected",
+      "you have been recruited",
+      "you have been shortlisted",
+      "selected for a job",
+      "job offer",
+      "your application has been approved",
+      "your application has been accepted",
+      "scholarship",
+      "loan approved",
+      "your loan",
+      "easy loan",
+      "visa approved"
+    ],
+    "distressWords": [
+      "stuck at the airport",
+      "stranded at the airport",
+      "stranded",
+      "stuck at the border",
+      "has been arrested",
+      "have been arrested",
+      "was arrested",
+      "in police custody",
+      "seized my luggage",
+      "seized my bags",
+      "i was robbed",
+      "they robbed me"
+    ],
+    "documentObjects": [
+      "your cv",
+      "your resume",
+      "your documents",
+      "the documents"
     ]
   },
   "promoWords": [
