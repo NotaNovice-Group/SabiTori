@@ -36,7 +36,6 @@ Your photos and the text of your messages never leave your phone. SabiTori has n
 
 LANGUAGES
 French and English are available now. Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum and Pinyin are waiting for native speakers to translate and record them. Until then they speak French or English.
-[OWNER: French review status. Remove this line before publication if the French review in docs/release.md is not finished.]
 
 A VOICE THAT WORKS OFFLINE
 French is spoken by a natural-sounding voice built into the app, which runs on your phone. English uses your phone's offline voice. If the built-in voice cannot run, your phone's voice speaks instead. You can change the speaking speed. Scam warnings come first.
@@ -44,24 +43,19 @@ French is spoken by a natural-sounding voice built into the app, which runs on y
 DEADLINES
 Tap "Remind me" on a card with a deadline. SabiTori reminds you the day before, and on the day. The reminder stays on your phone.
 
-TWO OPTIONAL FEATURES, OFF BY DEFAULT
-- Updates: download new languages and scam warnings. SabiTori sends no message and no identifier. As with any internet request, the server sees your IP address.
-- Error reports: help us fix crashes. Reports have no messages, numbers, amounts, dates or phone model.
-You switch each one on in Settings. The privacy policy says exactly what is sent.
-
 WHAT SABITORI DOES NOT DO
 SabiTori explains a message. It does not replace the office that sent it, a doctor or a lawyer. It never says that a message is safe. If you are not sure, do not pay, and call the official number of the organisation, found on its own website.
 
-PRIVACY POLICY: [OWNER: public URL of the privacy policy]
-CONTACT: [OWNER: contact email]
-Published by [OWNER: publisher — individual founder or charitable vehicle].
+PRIVACY POLICY: https://sabitori.pages.dev/privacy.html
+CONTACT: legal@usesabitori.com
+Published by NotaNovice UG (haftungsbeschränkt).
 ```
 
-Character count of the full description above: 2,410 characters (limit 4000, counted with a script on the text between the fences). Recount after any edit.
+Character count of the full description above: 1,886 characters (limit 4000, counted with a script on the text between the fences). Recount after any edit.
 
 ## Suggested category
 
-Tools (primary). [OWNER: Play Console category at submission.]
+Tools (primary). Chosen: Tools.
 
 ## Content rating notes
 
@@ -71,11 +65,11 @@ Answer the IARC questionnaire in the Play Console. Expected answers, based on th
 - No user-generated content and no way for users to talk to each other.
 - No location sharing. No in-app purchases (the app has no billing code or billing permission).
 - No ads.
-- Scam warnings describe scams. [OWNER: content-rating questionnaire answer about content that discusses financial scams.]
+- Scam warnings describe scams. Answer: the app contains no such content itself; it warns about scams. Declare no gambling and no financial services.
 
-Expected rating: Everyone (IARC). [OWNER: content-rating questionnaire result.]
+Expected rating: Everyone (IARC). Fill in the result the Console shows after you submit the questionnaire.
 
-Target audience: adults and young people. Do not mark the app as designed for children. [OWNER: final target audience and age policy.]
+Target audience: adults and young people. Do not mark the app as designed for children. Chosen: 18 and over, plus 13 to 17. Not designed for children.
 
 App access: the app needs no login. Declare that no restricted access is needed.
 
@@ -105,6 +99,6 @@ Keep the text short and large. Do not add a phone frame or claims that are not i
 
 ## Other listing fields
 
-- Website: [OWNER: product website, if any]
-- Email: [OWNER: contact email]
-- Privacy policy: [OWNER: public URL of the privacy policy]. Host docs/privacy.md and docs/privacy.fr.md at a public address (for example GitHub Pages).
+- Website: https://sabitori.pages.dev
+- Email: legal@usesabitori.com
+- Privacy policy: https://sabitori.pages.dev/privacy.html. Host docs/privacy.md and docs/privacy.fr.md at a public address (for example GitHub Pages).

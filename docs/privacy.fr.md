@@ -1,6 +1,6 @@
 # Politique de confidentialité de SabiTori
 
-Version 1.0.0. Dernière mise à jour : [OWNER : date de dernière mise à jour].
+Version 1.0.0. Dernière mise à jour : 19 novembre 2026.
 English: [privacy.md](privacy.md)
 
 ## En bref (Facile à lire)
@@ -13,9 +13,9 @@ English: [privacy.md](privacy.md)
 
 ## 1. Qui nous sommes
 
-SabiTori est publié par [OWNER : éditeur — fondateur à titre individuel ou structure à but non lucratif], [OWNER : adresse postale], Allemagne.
-Questions sur la vie privée : [OWNER : adresse e-mail de contact].
-Délégué à la protection des données : [OWNER : délégué à la protection des données, s'il est obligatoire ou désigné : nom et contact].
+SabiTori est publié par NotaNovice UG (haftungsbeschränkt), 58256 Ennepetal, Allemagne.
+Questions sur la vie privée : legal@usesabitori.com.
+Délégué à la protection des données : aucun n'est désigné ; écrivez à l'adresse ci-dessus.
 
 Pour les données décrites à la section 5, nous sommes responsables du traitement au sens du Règlement
 général sur la protection des données (RGPD). Nous ne sommes pas responsables des messages et des
@@ -77,10 +77,9 @@ vérifie pas lorsque votre téléphone indique qu'il utilise les données mobile
 requête ne contient ni message, ni identifiant, ni cookie, ni référent. Comme toute requête sur internet,
 le serveur peut voir votre adresse IP et l'en-tête User-Agent (le nom du moteur web de votre téléphone).
 
-**À qui.** Au serveur des mises à jour : [OWNER : nom, pays et exploitant du serveur qui héberge les mises
-à jour]. Comme la plupart des serveurs, il peut conserver des journaux ordinaires des requêtes (par exemple
+**À qui.** Au serveur des mises à jour : aucun dans la version 1.0.0. Cette version est construite sans serveur de mises à jour : l'application n'envoie aucune demande de mise à jour. Comme la plupart des serveurs, il peut conserver des journaux ordinaires des requêtes (par exemple
 adresse IP, heure, fichier demandé et User-Agent). L'application n'ajoute aucun identifiant à ces requêtes.
-Durée de conservation des journaux : [OWNER : durée de conservation des journaux du serveur de mises à jour].
+Durée de conservation des journaux : sans objet dans la version 1.0.0.
 
 **Vérifications.** Chaque mise à jour est contrôlée par une signature numérique et une somme de contrôle avant
 d'être utilisée. Une mise à jour échouée ou incomplète ne modifie pas ce que l'application utilise.
@@ -121,9 +120,7 @@ contactez-nous et nous la supprimerons.
 session ou d'installation. Le suivi de sessions, le traçage de performance et l'enregistrement de session sont
 tous désactivés. Le seul identifiant d'un rapport est un identifiant d'événement aléatoire, créé pour ce seul rapport.
 
-**À qui.** Sentry, Inc. (États-Unis), qui traite les rapports pour nous. [OWNER : région de données de notre
-projet Sentry (UE ou États-Unis) et, si États-Unis, la base du transfert, par exemple le Cadre UE-États-Unis de
-protection des données ou les clauses contractuelles types.] Les serveurs de Sentry reçoivent la requête comme
+**À qui.** Sentry, Inc. (États-Unis), qui traite les rapports pour nous. La version 1.0.0 est construite sans rapports d'erreur : aucun rapport n'est envoyé. Avant d'activer cette fonction dans une version ultérieure, cette page indiquera la région des données et la base juridique du transfert. Les serveurs de Sentry reçoivent la requête comme
 toute requête sur internet ; ils voient donc votre adresse IP et votre en-tête User-Agent. Sentry peut enregistrer
 l'adresse IP de l'expéditeur, sauf si le réglage du projet « Prevent Storing of IP Addresses » (ne pas conserver les
 adresses IP) est activé. Notre liste de contrôle de publication exige que ce réglage soit activé avant de proposer la
@@ -149,7 +146,7 @@ SabiTori ne demande ni votre position, ni vos contacts, ni votre microphone.
   votre consentement en activant une fonction. Vous pouvez le retirer à tout moment en la désactivant, sans avoir
   à donner de motif. Le retrait ne remet pas en cause ce qui était licite auparavant.
 - **Rapports d'erreur :** Sentry les traite pour notre compte, en qualité de sous-traitant, au sens de l'article 28 du RGPD.
-  [OWNER : accord de traitement des données avec Sentry : signé, et date.]
+  Sans objet dans la version 1.0.0, qui n'envoie aucun rapport d'erreur.
 - **Informations de santé :** un document d'hôpital peut contenir des informations de santé. Il s'agit d'une catégorie
   particulière au sens de l'article 9 du RGPD. Nous ne les recevons jamais, donc nous ne les traitons pas. Elles restent
   sur votre téléphone, sous votre contrôle.
@@ -175,10 +172,10 @@ Sur votre téléphone :
 De notre côté :
 
 - Nous ne conservons aucun message ni aucune photo, car nous ne les recevons jamais.
-- **Rapports d'erreur :** Sentry les conserve pendant [OWNER : durée définie dans le projet Sentry]. Nous les conservons
-  pendant [OWNER : notre propre durée], puis nous les supprimons.
+- **Rapports d'erreur :** Sentry les conserve pendant aucune durée dans la version 1.0.0, car aucun n'est envoyé. Nous les conservons
+  pendant aucune durée non plus, puis nous les supprimons.
 - **Journaux du serveur de mises à jour :** le serveur peut conserver des journaux ordinaires des requêtes (voir
-  section 5.1). Durée : [OWNER : durée de conservation des journaux du serveur de mises à jour, ou « aucun journal conservé par nous »].
+  section 5.1). Durée : aucun journal conservé par nous ; la version 1.0.0 n'a pas de serveur de mises à jour.
 
 ## 9. Qui reçoit les données
 
@@ -205,7 +202,7 @@ De notre côté :
 SabiTori est destiné à toute personne qui a besoin d'aide pour lire des documents officiels, y compris les jeunes.
 Par défaut, nous ne collectons de données personnelles auprès de personne, y compris les enfants. Si un parent ou un
 tuteur pense que les données d'un enfant ont été envoyées dans un rapport d'erreur, qu'il nous contacte : nous les
-supprimerons. [OWNER : public cible et âge minimum, et position de l'application au regard de la politique Google Play pour les familles.]
+supprimerons. SabiTori est fait pour les adultes et les jeunes. L'application ne s'adresse pas aux enfants de moins de 13 ans et ne fait pas partie du programme Google Play pour les familles.
 
 ## 12. Vos droits
 
@@ -217,25 +214,23 @@ En vertu du RGPD, vous avez le droit de :
 - recevoir vos données dans un format portable ;
 - retirer votre consentement à tout moment (section 7) ;
 - introduire une réclamation auprès d'une autorité de protection des données. Pour l'Allemagne, il s'agit de l'autorité
-  du Land où l'éditeur a son siège : [OWNER : nom et contact de l'autorité].
+  du Land où l'éditeur a son siège : Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen, Kavalleriestraße 2-4, 40213 Düsseldorf, Allemagne, www.ldi.nrw.de.
 
-Pour exercer ces droits, écrivez à [OWNER : adresse e-mail de contact]. Si vous avez l'identifiant d'événement d'un rapport, merci de
+Pour exercer ces droits, écrivez à legal@usesabitori.com. Si vous avez l'identifiant d'événement d'un rapport, merci de
 l'indiquer. Nous pourrons avoir besoin de vérifier votre identité avant d'agir.
 
 ## 13. Utilisateurs au Cameroun
 
-[OWNER : loi camerounaise sur la protection des données personnelles applicable aux utilisateurs au Cameroun, les
-droits qu'elle accorde et l'autorité à contacter. Cette section doit être vérifiée au regard de cette loi avant publication.]
+La loi camerounaise n° 2024/017 du 23 décembre 2024 relative à la protection des données à caractère personnel s'applique aussi aux utilisateurs au Cameroun. Dans la version 1.0.0, SabiTori n'envoie aucune donnée personnelle depuis votre téléphone : nous n'avons donc rien à vous remettre, à corriger ou à supprimer. Pour une question ou une réclamation, écrivez à legal@usesabitori.com et nous vous répondrons. Vous pouvez aussi vous adresser à l'autorité camerounaise de protection des données.
 
 ## 14. Modifications
 
 Nous mettons à jour cette page lorsque le comportement de l'application change. La version et la date en haut indiquent la
 dernière modification. Si une modification ajoute une collecte de données, nous vous demanderons de nouveau votre consentement,
-dans l'application, avant qu'elle ne prenne effet. [OWNER : comment les changements sont annoncés hors de l'application,
-par exemple dans la fiche du magasin.]
+dans l'application, avant qu'elle ne prenne effet. Nous annonçons aussi les changements sur le site de SabiTori (https://sabitori.pages.dev) et dans le texte « Nouveautés » de la fiche du store.
 
 ## 15. Contact
 
-[OWNER : raison sociale]
-[OWNER : adresse postale]
-[OWNER : adresse e-mail de contact]
+NotaNovice UG (haftungsbeschränkt)
+58256 Ennepetal
+legal@usesabitori.com

@@ -1,6 +1,6 @@
 # SabiTori privacy policy
 
-Version 1.0.0. Last updated: [OWNER: date of last update].
+Version 1.0.0. Last updated: 19 November 2026.
 Français: [privacy.fr.md](privacy.fr.md)
 
 ## In short (Easy Read)
@@ -13,9 +13,9 @@ Français: [privacy.fr.md](privacy.fr.md)
 
 ## 1. Who we are
 
-SabiTori is published by [OWNER: publisher — individual founder or charitable vehicle], [OWNER: postal address], Germany.
-Questions about privacy: [OWNER: contact email].
-Data protection officer: [OWNER: data protection officer, if one is required or appointed: name and contact].
+SabiTori is published by NotaNovice UG (haftungsbeschränkt), 58256 Ennepetal, Germany.
+Questions about privacy: legal@usesabitori.com.
+Data protection officer: none appointed; write to the address above.
 
 For the data described in section 5, we are the controller under the EU General Data Protection
 Regulation (GDPR). We are not a controller of the messages and photos on your phone, because we
@@ -79,10 +79,10 @@ phone says it is on mobile data. You can also press "Check now" in Settings.
 message, no identifier, no cookie and no referrer. Like any internet request, the server can see your
 IP address and the User-Agent header (the name of the web engine your phone uses).
 
-**To whom.** The update server: [OWNER: name, country and operator of the server that hosts the updates].
+**To whom.** The update server: none in version 1.0.0. This version is built without an update server, so the app makes no update request.
 Like most servers, it may keep standard server logs of requests (for example IP address, time, file
 requested and User-Agent). The app adds no identifier of its own to these requests. How long the logs
-are kept: [OWNER: update-server log retention].
+are kept: not applicable in version 1.0.0.
 
 **Checks.** Every update is checked with a digital signature and a checksum before it is used. A
 failed or partial update does not change what the app uses.
@@ -122,9 +122,7 @@ If you see something personal in a report, contact us and we will delete it.
 identifier. Session tracking, performance tracing and session replay are all off. The only identifier in
 a report is a random event identifier, created for that one report.
 
-**To whom.** Sentry, Inc. (United States), which processes the reports for us. [OWNER: data region of
-our Sentry project (EU or US) and, if US, the transfer basis, for example the EU-US Data Privacy
-Framework or standard contractual clauses.] Sentry's servers receive the request like any internet
+**To whom.** Sentry, Inc. (United States), which processes the reports for us. Version 1.0.0 is built without crash reporting, so no report is sent. Before this feature is switched on in a later version, this page will name the data region and the legal basis for the transfer. Sentry's servers receive the request like any internet
 request, so they see your IP address and User-Agent header. Sentry may record the IP address of the
 sender unless the project setting "Prevent Storing of IP Addresses" is enabled. Our release checklist
 requires that setting to be enabled before the error-report feature is offered.
@@ -150,7 +148,7 @@ SabiTori does not ask for your location, contacts or microphone.
   switching a feature on. You can withdraw it at any time by switching it off, without giving a
   reason. Withdrawing does not affect what was lawful before.
 - **Crash reports:** Sentry processes them for us, as a processor under Article 28 GDPR.
-  [OWNER: data processing agreement with Sentry: signed, and date.]
+  Not applicable in version 1.0.0, which sends no crash reports.
 - **Health information:** a hospital paper may contain health information. This is a special category
   under Article 9 GDPR. We never receive it, so we do not process it. It stays on your phone, under your
   control.
@@ -176,10 +174,10 @@ On your phone:
 On our side:
 
 - We keep no messages and no photos, because we never receive them.
-- **Crash reports:** Sentry keeps them for [OWNER: retention period set in the Sentry project]. We keep
-  them for [OWNER: our own retention period] and then delete them.
+- **Crash reports:** Sentry keeps them for no time in version 1.0.0, because none are sent. We keep
+  them for no time either and then delete them.
 - **Update server logs:** the server may keep standard request logs (see section 5.1). Retention:
-  [OWNER: update-server log retention, or "none kept by us"].
+  none kept by us; version 1.0.0 has no update server.
 
 ## 9. Who receives data
 
@@ -205,7 +203,7 @@ On our side:
 SabiTori is for anyone who needs help reading official messages, including young people. We collect no
 personal data by default, from anyone, including children. If a parent or guardian believes that a
 child's data was sent in a crash report, contact us and we will delete it.
-[OWNER: target audience and minimum age policy, and the app's position under the Google Play Families policy.]
+SabiTori is made for adults and young people. It is not directed at children under 13 and is not part of the Google Play Families programme.
 
 ## 12. Your rights
 
@@ -217,24 +215,23 @@ Under the GDPR you have the right to:
 - receive it in a portable form;
 - withdraw consent at any time (section 7);
 - complain to a data protection authority. For Germany, this is the authority of the state where the
-  publisher has its seat: [OWNER: name and contact of the authority].
+  publisher has its seat: Landesbeauftragte für Datenschutz und Informationsfreiheit Nordrhein-Westfalen, Kavalleriestraße 2-4, 40213 Düsseldorf, Germany, www.ldi.nrw.de.
 
-To use these rights, write to [OWNER: contact email]. If you have the event identifier from a report, please
+To use these rights, write to legal@usesabitori.com. If you have the event identifier from a report, please
 include it. We may need to check your identity before we act.
 
 ## 13. Users in Cameroon
 
-[OWNER: Cameroonian personal data protection law that applies to users in Cameroon, the rights it
-gives, and the authority to contact. This section must be checked against that law before publication.]
+Cameroon's Law No. 2024/017 of 23 December 2024 on the protection of personal data also applies to users in Cameroon. In version 1.0.0 SabiTori sends no personal data from your phone, so there is nothing for us to hand over, correct or delete. If you have a question or a complaint, write to legal@usesabitori.com and we will answer. You may also contact the data protection authority of Cameroon.
 
 ## 14. Changes
 
 We update this page when the app's behaviour changes. The version and date at the top show the latest
 change. If a change adds new data collection, we will ask for your consent again, in the app, before it
-takes effect. [OWNER: how changes are announced outside the app, for example in the store listing.]
+takes effect. We also announce changes on the SabiTori website (https://sabitori.pages.dev) and in the "What's new" text of the store listing.
 
 ## 15. Contact
 
-[OWNER: legal name]
-[OWNER: postal address]
-[OWNER: contact email]
+NotaNovice UG (haftungsbeschränkt)
+58256 Ennepetal
+legal@usesabitori.com

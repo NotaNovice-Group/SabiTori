@@ -18,7 +18,7 @@ Yes, but only when the person turns on error reports (crash reports). With that 
 Yes. All network traffic is HTTPS (`usesCleartextTraffic="false"` and the network security config allow HTTPS only).
 
 **Do you provide a way for users to request that their data be deleted?**
-Yes, in the app: turn off "Send error reports" (stops all reports at once), and "Delete downloaded updates" in Settings. Uninstalling removes data stored on the phone (Android deletes the app's storage, and Android backup is off: `allowBackup="false"` and `data_extraction_rules.xml`). The history can also be emptied in Settings ("Delete all my messages"). Crash reports that have already reached Sentry can be deleted on request by contacting [OWNER: contact email]. [OWNER: confirm that the publisher can delete reports in the Sentry project; if the form asks for a web address, use the privacy policy contact section.]
+Yes, in the app: turn off "Send error reports" (stops all reports at once), and "Delete downloaded updates" in Settings. Uninstalling removes data stored on the phone (Android deletes the app's storage, and Android backup is off: `allowBackup="false"` and `data_extraction_rules.xml`). The history can also be emptied in Settings ("Delete all my messages"). Crash reports that have already reached Sentry can be deleted on request by contacting legal@usesabitori.com. There are no reports to delete in version 1.0.0; for the web address field use https://sabitori.pages.dev/privacy.html#12-your-rights
 
 ## 2. Data types
 
@@ -49,9 +49,9 @@ Note on IP addresses and User-Agent: any request to a server (the update host or
 **Is any user data shared with third parties?**
 Crash reports are sent to Sentry, Inc., which processes them for the publisher as a service provider. Under Play's definitions, a service provider processing data only for the developer is not "sharing", so answer:
 
-- Crash logs and diagnostics: **processed by a service provider, optional**, not shared. [OWNER: confirm this against Play's current definitions. If your reading is stricter, mark them as shared to Sentry. Sentry does not use the data for its own purposes.]
+- Crash logs and diagnostics: **processed by a service provider, optional**, not shared. Not applicable in version 1.0.0: crash reporting is not in the build, so declare no data collected.
 
-The update host is not a third party receiving data for its own purposes; it serves files. The update client sends no identifier, but the host may keep standard server logs (IP address, time, file, User-Agent), and the privacy policy says so. [OWNER: update host operator and log retention.]
+The update host is not a third party receiving data for its own purposes; it serves files. The update client sends no identifier, but the host may keep standard server logs (IP address, time, file, User-Agent), and the privacy policy says so. None in version 1.0.0.
 
 **Is data sold?** No.
 
@@ -69,9 +69,9 @@ Use only these purposes, all optional and all with the person's consent:
 
 - **Does the app have user accounts?** No. Provide no account-deletion link.
 - **Does the app use Android's advertising ID?** No.
-- **Is the data processed ephemerally?** No. Sentry stores crash reports for [OWNER: retention period set in the Sentry project].
-- **Is there an independent security review?** No. Do not claim one. [OWNER: if a review is done before release, state it.]
-- **Families policy:** the app is not designed for children. [OWNER: the answer must match the target audience chosen in the Play Console.]
+- **Is the data processed ephemerally?** No. Sentry stores crash reports for no time in version 1.0.0, because none are sent.
+- **Is there an independent security review?** No. Do not claim one. None done.
+- **Families policy:** the app is not designed for children. Matches: 13 and over, not designed for children.
 
 ## 6. When to review these answers
 

@@ -5,7 +5,7 @@ they are decisions, facts about the publisher, or results of steps outside the c
 reads "unfinished", so fill or remove them before the repository is public. `packages/understand/test/model-card.test.ts`
 checks that this list matches the files (regenerate it with `node scripts/owner-todo.mjs` after editing a document).
 
-Total: 104 placeholders in 15 files.
+Total: 40 placeholders in 12 files.
 
 ## `CHANGELOG.md` (3)
 
@@ -36,46 +36,6 @@ Total: 104 placeholders in 15 files.
 - [ ] `docs/ios.md:20` iOS app icon (1024 px) and launch screen
 - [ ] `docs/ios.md:76` Apple developer account
 
-## `docs/privacy.fr.md` (16)
-
-- [ ] `docs/privacy.fr.md:3` date de dernière mise à jour
-- [ ] `docs/privacy.fr.md:16` éditeur — fondateur à titre individuel ou structure à but non lucratif
-- [ ] `docs/privacy.fr.md:16` adresse postale
-- [ ] `docs/privacy.fr.md:17` adresse e-mail de contact
-- [ ] `docs/privacy.fr.md:18` délégué à la protection des données, s'il est obligatoire ou désigné : nom et contact
-- [ ] `docs/privacy.fr.md:83` durée de conservation des journaux du serveur de mises à jour
-- [ ] `docs/privacy.fr.md:152` accord de traitement des données avec Sentry : signé, et date.
-- [ ] `docs/privacy.fr.md:178` durée définie dans le projet Sentry
-- [ ] `docs/privacy.fr.md:179` notre propre durée
-- [ ] `docs/privacy.fr.md:181` durée de conservation des journaux du serveur de mises à jour, ou « aucun journal conservé par nous »
-- [ ] `docs/privacy.fr.md:208` public cible et âge minimum, et position de l'application au regard de la politique Google Play pour les familles.
-- [ ] `docs/privacy.fr.md:220` nom et contact de l'autorité
-- [ ] `docs/privacy.fr.md:222` adresse e-mail de contact
-- [ ] `docs/privacy.fr.md:239` raison sociale
-- [ ] `docs/privacy.fr.md:240` adresse postale
-- [ ] `docs/privacy.fr.md:241` adresse e-mail de contact
-
-## `docs/privacy.md` (18)
-
-- [ ] `docs/privacy.md:3` date of last update
-- [ ] `docs/privacy.md:16` publisher — individual founder or charitable vehicle
-- [ ] `docs/privacy.md:16` postal address
-- [ ] `docs/privacy.md:17` contact email
-- [ ] `docs/privacy.md:18` data protection officer, if one is required or appointed: name and contact
-- [ ] `docs/privacy.md:82` name, country and operator of the server that hosts the updates
-- [ ] `docs/privacy.md:85` update-server log retention
-- [ ] `docs/privacy.md:153` data processing agreement with Sentry: signed, and date.
-- [ ] `docs/privacy.md:179` retention period set in the Sentry project
-- [ ] `docs/privacy.md:180` our own retention period
-- [ ] `docs/privacy.md:182` update-server log retention, or "none kept by us"
-- [ ] `docs/privacy.md:208` target audience and minimum age policy, and the app's position under the Google Play Families policy.
-- [ ] `docs/privacy.md:220` name and contact of the authority
-- [ ] `docs/privacy.md:222` contact email
-- [ ] `docs/privacy.md:234` how changes are announced outside the app, for example in the store listing.
-- [ ] `docs/privacy.md:238` legal name
-- [ ] `docs/privacy.md:239` postal address
-- [ ] `docs/privacy.md:240` contact email
-
 ## `docs/release.md` (16)
 
 - [ ] `docs/release.md:3` ...
@@ -95,50 +55,17 @@ Total: 104 placeholders in 15 files.
 - [ ] `docs/release.md:136` Sentry organisation and project names.
 - [ ] `docs/release.md:169` testing period.
 
-## `docs/site.md` (1)
-
-- [ ] `docs/site.md:13` domain
-
-## `docs/store/data-safety.md` (8)
+## `docs/store/data-safety.md` (1)
 
 - [ ] `docs/store/data-safety.md:3` ...
-- [ ] `docs/store/data-safety.md:21` contact email
-- [ ] `docs/store/data-safety.md:21` confirm that the publisher can delete reports in the Sentry project; if the form asks for a web address, use the privacy policy contact section.
-- [ ] `docs/store/data-safety.md:52` confirm this against Play's current definitions. If your reading is stricter, mark them as shared to Sentry. Sentry does not use the data for its own purposes.
-- [ ] `docs/store/data-safety.md:54` update host operator and log retention.
-- [ ] `docs/store/data-safety.md:72` retention period set in the Sentry project
-- [ ] `docs/store/data-safety.md:73` if a review is done before release, state it.
-- [ ] `docs/store/data-safety.md:74` the answer must match the target audience chosen in the Play Console.
 
-## `docs/store/listing.en.md` (12)
+## `docs/store/listing.en.md` (1)
 
 - [ ] `docs/store/listing.en.md:3` ...
-- [ ] `docs/store/listing.en.md:39` French review status. Remove this line before publication if the French review in docs/release.md is not finished.
-- [ ] `docs/store/listing.en.md:55` public URL of the privacy policy
-- [ ] `docs/store/listing.en.md:56` contact email
-- [ ] `docs/store/listing.en.md:57` publisher — individual founder or charitable vehicle
-- [ ] `docs/store/listing.en.md:64` Play Console category at submission.
-- [ ] `docs/store/listing.en.md:74` content-rating questionnaire answer about content that discusses financial scams.
-- [ ] `docs/store/listing.en.md:76` content-rating questionnaire result.
-- [ ] `docs/store/listing.en.md:78` final target audience and age policy.
-- [ ] `docs/store/listing.en.md:108` product website, if any
-- [ ] `docs/store/listing.en.md:109` contact email
-- [ ] `docs/store/listing.en.md:110` public URL of the privacy policy
 
-## `docs/store/listing.fr.md` (12)
+## `docs/store/listing.fr.md` (1)
 
 - [ ] `docs/store/listing.fr.md:3` ...
-- [ ] `docs/store/listing.fr.md:39` état de la relecture du français. Supprimez cette ligne avant publication si la relecture décrite dans docs/release.md n'est pas terminée.
-- [ ] `docs/store/listing.fr.md:55` adresse publique de la politique de confidentialité
-- [ ] `docs/store/listing.fr.md:56` adresse e-mail de contact
-- [ ] `docs/store/listing.fr.md:57` éditeur — fondateur à titre individuel ou structure à but non lucratif
-- [ ] `docs/store/listing.fr.md:62` catégorie dans la Play Console au moment de l'envoi.
-- [ ] `docs/store/listing.fr.md:72` réponse du questionnaire de classement sur le contenu qui traite des arnaques financières.
-- [ ] `docs/store/listing.fr.md:74` résultat du questionnaire de classement.
-- [ ] `docs/store/listing.fr.md:76` choix final du public cible et politique d'âge.
-- [ ] `docs/store/listing.fr.md:106` site du produit, s'il existe
-- [ ] `docs/store/listing.fr.md:107` adresse e-mail de contact
-- [ ] `docs/store/listing.fr.md:108` adresse publique de la politique de confidentialité
 
 ## `docs/sustainability.md` (8)
 

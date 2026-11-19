@@ -10,12 +10,18 @@ A static page: `site/index.html`, `styles.css`, `main.js`, `img/`. No build step
    Production branch **`main`**.
 3. Save and deploy. Every push to `main` redeploys; pull requests get preview URLs. This does not use the GitHub
    Actions budget.
-4. Optional: **Custom domains** → add the domain ([OWNER: domain]).
+4. Optional: **Custom domains** → add the domain (not chosen yet; the site is live at https://sabitori.pages.dev).
 
 `site/_headers` sets security and cache headers on Cloudflare Pages.
 
-Alternative without the dashboard link (needs a Cloudflare API token, kept out of the repository):
-`npx wrangler pages deploy site --project-name sabitori`.
+Deploy by hand (how the live site at https://sabitori.pages.dev was published; needs `npx wrangler login` once):
+
+```bash
+rsync -a --exclude '._*' site/ /tmp/sabitori-site/ && npx wrangler pages deploy /tmp/sabitori-site --project-name sabitori --branch main --force
+```
+
+`--force` keeps it on classic Cloudflare Pages, so the address stays `sabitori.pages.dev`. Copy the folder off an
+exFAT disk first, or the hidden `._` files are uploaded too.
 
 ## Keep it true
 

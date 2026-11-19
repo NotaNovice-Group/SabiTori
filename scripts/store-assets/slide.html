@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<title>SabiTori store slide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Young+Serif&display=swap">
+<style>
+@font-face { font-family: Andika; font-weight: 400; src: url("../../apps/app/src/fonts/Andika-Regular.woff2") format("woff2"); }
+@font-face { font-family: Andika; font-weight: 700; src: url("../../apps/app/src/fonts/Andika-Bold.woff2") format("woff2"); }
+* { box-sizing: border-box; margin: 0; }
+html, body { width: 100vw; height: 100vh; overflow: hidden; }
+body { background: #F4EEE3; color: #1F1A14; font-family: Andika, sans-serif; }
+body.green { background: #0D5C4C; color: #FFFCF6; }
+body.red { background: #B3261E; color: #FFFCF6; }
+
+/* phone slide */
+.slide { height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 5.2vh 7vw 4vh; }
+.brand { display: flex; align-items: center; gap: 1.6vw; font-weight: 700; font-size: 2.1vh; opacity: .9; }
+.brand svg { width: 3vh; height: 3vh; }
+h1 { font-family: "Young Serif", Georgia, serif; font-weight: 400; font-size: 4.9vh; line-height: 1.1; text-align: center; margin-top: 2.2vh; max-width: 88vw; text-wrap: balance; }
+p.sub { font-size: 2.35vh; line-height: 1.3; text-align: center; margin-top: 1.4vh; opacity: .86; max-width: 84vw; text-wrap: balance; }
+.phone { margin-top: 3.2vh; flex: none; height: 60vh; aspect-ratio: 780 / 1688; border-radius: 3.6vh; border: .75vh solid #1F1A14; overflow: hidden; background: #F4EEE3; box-shadow: 0 2.4vh 5vh rgba(31,26,20,.28); }
+body.green .phone, body.red .phone { border-color: #15120E; box-shadow: 0 2.4vh 5vh rgba(0,0,0,.35); }
+.phone img { width: 100%; height: 100%; display: block; }
+
+/* feature graphic */
+.feature { height: 100vh; display: flex; align-items: center; gap: 5vw; padding: 0 7vw; }
+.feature .tile { height: 52vh; aspect-ratio: 1; border-radius: 9vh; background: #FFFCF6; display: grid; place-items: center; flex: none; }
+.feature .tile svg { width: 70%; height: 70%; }
+.feature h1 { text-align: left; font-size: 13.5vh; margin: 0; max-width: none; }
+.feature p { font-size: 6.4vh; margin-top: 3vh; display: inline-block; background: #F0A43A; color: #1F1A14; font-weight: 700; padding: 1.2vh 3.4vh; border-radius: 99vh; }
+.feature .name { font-weight: 700; font-size: 6.2vh; opacity: .9; margin-bottom: 2.4vh; }
+
+/* icon */
+.icon { width: 100vw; height: 100vh; background: #0D5C4C; display: grid; place-items: center; }
+.icon svg { width: 62%; height: 62%; }
+</style>
+<body>
+<script>
+const q = new URLSearchParams(location.search);
+const mark = (stroke) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="${stroke}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5h17l9 9v29H8z"/><path d="M25 5v9h9"/><path d="M14 25h14M14 32h9"/><path d="M39 22.5a7 7 0 0 1 0 9"/><path d="M43.5 17.5a13.5 13.5 0 0 1 0 19"/></svg>`;
+const theme = q.get("theme") || "";
+if (theme) document.body.className = theme;
+const light = theme === "green" || theme === "red";
+const kind = q.get("kind") || "phone";
+if (kind === "phone") {
+  document.body.innerHTML = `<main class="slide">
+    <div class="brand">${mark(light ? "#FFFCF6" : "#0D5C4C")}<span>SabiTori</span></div>
+    <h1>${q.get("h")}</h1><p class="sub">${q.get("sub") || ""}</p>
+    <div class="phone"><img src="../../site/img/${q.get("img")}" alt=""></div></main>`;
+  // Size the phone to the space left under the text, once the fonts have set the text height.
+  const fit = () => { const ph = document.querySelector(".phone"); ph.style.height = (innerHeight * 0.96 - ph.getBoundingClientRect().top) + "px"; };
+  fit(); document.fonts.ready.then(fit); addEventListener("load", fit);
+} else if (kind === "feature") {
+  document.body.className = "green";
+  document.body.innerHTML = `<main class="feature"><div class="tile">${mark("#0D5C4C")}</div>
+    <div><div class="name">SabiTori</div><h1>${q.get("h")}</h1><p>${q.get("sub")}</p></div></main>`;
+} else {
+  document.body.innerHTML = `<main class="icon">${mark("#FFFCF6")}</main>`;
+}
+</script>
+</body>
+</html>

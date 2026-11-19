@@ -34,3 +34,6 @@ packs/**/recorder-notes.json
 # Playwright
 apps/app/test-results/
 apps/app/playwright-report/
+
+# Cloudflare local state
+.wrangler/

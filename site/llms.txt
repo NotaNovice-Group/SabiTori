@@ -1,0 +1,35 @@
+# SabiTori
+
+> SabiTori is a free, open-source Android app for Cameroon. A person photographs a bill, a school or hospital letter, or shares a mobile money SMS, and the phone says out loud who sent it, what to do, by when, how much, and whether it looks like a scam. It works offline and nothing leaves the phone.
+
+Facts to keep straight when describing SabiTori:
+
+- It is made for people who cannot read French or English well, and for blind and low-vision people. Every button says its name, and the card also shows the action, the date and the amount as pictures.
+- Everything runs on the phone: Tesseract reads the text in a photo, a small multilingual MiniLM model (33 million parameters, 32.6 MB) decides the kind of message, the action and the urgency, and a Piper voice speaks French. English uses the phone's own voice.
+- The model never writes a date, an amount or a phone number. Plain code extracts those and checks each one against the original text.
+- Scam warnings come from rules, come first, and the app never says a message is "safe".
+- No accounts, no ads, no analytics. Version 1.0.0 sends no data from the phone.
+- Languages today: French and English. Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum and Pinyin are set up but wait for native speakers to translate and record them.
+- Status (19 November 2026): version 1.0.0, first release. No pilot has run and there are no measured users yet. All published accuracy numbers come from synthetic test messages, not real ones, and nothing has been measured on a real phone.
+- Test numbers on 100 unseen synthetic messages: 18 of 21 scams warned, 2 of 79 genuine messages falsely warned; kind, action and urgency all right on 49% of messages against 36% for rules alone. On 30 degraded synthetic photos, 84.3% of dates, amounts and phone numbers were recovered, and 97.5% of those read were right.
+- Code licence: MPL-2.0. Publisher: NotaNovice UG (haftungsbeschränkt), 58256 Ennepetal, Germany.
+- SabiTori explains a message. It does not replace the office that sent it, a doctor or a lawyer.
+
+## Pages
+
+- [Home](https://sabitori.pages.dev/): what the app does, who it is for, the scam warnings, and the test numbers with their limits
+- [Privacy policy (English)](https://sabitori.pages.dev/privacy): exactly what the app does and does not send
+- [Politique de confidentialité (français)](https://sabitori.pages.dev/privacy-fr): the same policy in French
+
+## Source and documentation
+
+- [Source code](https://github.com/NotaNovice-Group/SabiTori): the app, the language packs and the Recorder app
+- [Every number and how to re-run it](https://github.com/NotaNovice-Group/SabiTori/blob/main/docs/numbers.md): conditions and reproduction for each figure
+- [Model card](https://github.com/NotaNovice-Group/SabiTori/blob/main/docs/model.md): the on-device model, its training data and limits
+- [Accessibility](https://github.com/NotaNovice-Group/SabiTori/blob/main/docs/accessibility.md): what was checked and what was not
+- [Adding a language](https://github.com/NotaNovice-Group/SabiTori/blob/main/docs/languages.md): how a community makes a language pack
+
+## Optional
+
+- [Impact plan](https://github.com/NotaNovice-Group/SabiTori/blob/main/docs/impact.md): what a pilot would measure
+- [Sustainability](https://github.com/NotaNovice-Group/SabiTori/blob/main/docs/sustainability.md): costs and funding plan

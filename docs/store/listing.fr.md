@@ -36,7 +36,6 @@ Vos photos et le texte de vos messages ne quittent jamais votre téléphone. Sab
 
 LANGUES
 Le français et l'anglais sont disponibles aujourd'hui. Le pidgin camerounais, le duala, l'ewondo, le fulfulde de l'Adamaoua, le lamnso', le limbum et le pinyin attendent des locuteurs natifs pour les traduire et les enregistrer. En attendant, ils parlent français ou anglais.
-[OWNER : état de la relecture du français. Supprimez cette ligne avant publication si la relecture décrite dans docs/release.md n'est pas terminée.]
 
 UNE VOIX QUI FONCTIONNE HORS LIGNE
 Le français est lu par une voix naturelle intégrée à l'application, qui fonctionne sur votre téléphone. L'anglais utilise la voix hors ligne de votre téléphone. Si la voix intégrée ne peut pas fonctionner, la voix de votre téléphone prend le relais. Vous pouvez changer la vitesse de lecture. Les alertes arnaque passent en premier.
@@ -44,22 +43,17 @@ Le français est lu par une voix naturelle intégrée à l'application, qui fonc
 ÉCHÉANCES
 Touchez « Me rappeler » sur une fiche avec une échéance. SabiTori vous rappelle la veille et le jour même. Le rappel reste sur votre téléphone.
 
-DEUX FONCTIONS FACULTATIVES, DÉSACTIVÉES PAR DÉFAUT
-- Mises à jour : téléchargez de nouvelles langues et alertes arnaque. SabiTori n'envoie ni message, ni identifiant. Comme pour toute requête sur internet, le serveur voit votre adresse IP.
-- Rapports d'erreur : aidez-nous à corriger les plantages. Les rapports ne contiennent ni message, ni numéro, ni montant, ni date, ni modèle de téléphone.
-Vous activez chacune d'elles dans les Paramètres. La politique de confidentialité indique exactement ce qui est envoyé.
-
 CE QUE SABITORI NE FAIT PAS
 SabiTori explique un message. Il ne remplace ni l'organisme qui l'a envoyé, ni un médecin, ni un avocat. Il ne dit jamais qu'un message est sûr. En cas de doute, ne payez pas, et appelez le numéro officiel de l'organisme, indiqué sur son propre site.
 
-POLITIQUE DE CONFIDENTIALITÉ : [OWNER : adresse publique de la politique de confidentialité]
-CONTACT : [OWNER : adresse e-mail de contact]
-Publié par [OWNER : éditeur — fondateur à titre individuel ou structure à but non lucratif].
+POLITIQUE DE CONFIDENTIALITÉ : https://sabitori.pages.dev/privacy-fr.html
+CONTACT : legal@usesabitori.com
+Publié par NotaNovice UG (haftungsbeschränkt).
 ```
 
 ## Catégorie suggérée
 
-Outils (principale). [OWNER : catégorie dans la Play Console au moment de l'envoi.]
+Outils (principale). Choisie : Outils.
 
 ## Notes pour le classement du contenu
 
@@ -69,11 +63,11 @@ Répondez au questionnaire IARC dans la Play Console. Réponses attendues, d'apr
 - Pas de contenu créé par les utilisateurs, et aucun moyen pour eux de se parler.
 - Pas de partage de position. Pas d'achats intégrés (l'application n'a ni code de paiement ni autorisation de facturation).
 - Pas de publicité.
-- Les alertes arnaque décrivent des arnaques. [OWNER : réponse du questionnaire de classement sur le contenu qui traite des arnaques financières.]
+- Les alertes arnaque décrivent des arnaques. Réponse : l'application ne contient pas ce type de contenu ; elle met en garde contre les arnaques.
 
-Classement attendu : Tout public (IARC). [OWNER : résultat du questionnaire de classement.]
+Classement attendu : Tout public (IARC). Indiquez le résultat affiché par la Console après l'envoi du questionnaire.
 
-Public cible : adultes et jeunes. Ne déclarez pas l'application comme destinée aux enfants. [OWNER : choix final du public cible et politique d'âge.]
+Public cible : adultes et jeunes. Ne déclarez pas l'application comme destinée aux enfants. Choisi : 18 ans et plus, et 13 à 17 ans. Non destinée aux enfants.
 
 Accès à l'application : aucune connexion n'est nécessaire. Déclarez qu'aucun accès restreint n'est requis.
 
@@ -103,6 +97,6 @@ Gardez un texte court et lisible. N'ajoutez ni cadre de téléphone, ni promesse
 
 ## Autres champs de la fiche
 
-- Site web : [OWNER : site du produit, s'il existe]
-- E-mail : [OWNER : adresse e-mail de contact]
-- Politique de confidentialité : [OWNER : adresse publique de la politique de confidentialité]. Publiez docs/privacy.md et docs/privacy.fr.md à une adresse publique (par exemple GitHub Pages).
+- Site web : https://sabitori.pages.dev
+- E-mail : legal@usesabitori.com
+- Politique de confidentialité : https://sabitori.pages.dev/privacy-fr.html. Publiez docs/privacy.md et docs/privacy.fr.md à une adresse publique (par exemple GitHub Pages).
