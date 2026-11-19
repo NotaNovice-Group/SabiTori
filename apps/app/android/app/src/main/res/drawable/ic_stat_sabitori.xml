@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- The SabiTori mark (apps/app/public/mark.svg), drawn as a vector so it is crisp at every density. -->
+<!-- The SabiTori mark, a talking drum with two sound arcs (apps/app/src/components/Mark.tsx), as a vector. -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="48"
     android:viewportHeight="48">
     <group android:scaleX="1" android:scaleY="1">
-        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M8 5h17l9 9v29H8z" />
-        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M25 5v9h9" />
-        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M14 25h14M14 32h9" />
-        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M39 22.5a7 7 0 0 1 0 9" />
-        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M43.5 17.5a13.5 13.5 0 0 1 0 19" />
+        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M7 14a13 4.5 0 1 0 26 0a13 4.5 0 1 0 -26 0" />
+        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M7 14c0 8 8 8.5 8 12.5s-8 4.5-8 12.5" />
+        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M33 14c0 8-8 8.5-8 12.5s8 4.5 8 12.5" />
+        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M7 39a13 4.5 0 0 0 26 0" />
+        <path android:strokeColor="#FFFFFF" android:strokeWidth="2.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M20 19v24.5" />
+        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M38 9.5a5.5 5.5 0 0 1 4.5 4.5" />
+        <path android:strokeColor="#FFFFFF" android:strokeWidth="3.2" android:strokeLineCap="round" android:strokeLineJoin="round" android:pathData="M39.5 3a11 11 0 0 1 6.5 10" />
     </group>
 </vector>

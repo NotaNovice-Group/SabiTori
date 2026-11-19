@@ -10,6 +10,15 @@ Precision and restraint, not decoration. Every rule below has a reason from that
 sections light up one at a time as they are spoken, like a finger following the words.
 Everything else stays quiet so that this moment carries the screen.
 
+## The mark
+
+A **talking drum** with two sound arcs: the drum that carries messages by sound across West and Central Africa,
+which is what the app does with a paper. In colour (launcher, store and site icons) it is a paper drum with a
+saffron head and arcs on the brand green; in the app header and on the site it is drawn in one colour
+(`apps/app/src/components/Mark.tsx`). The first mark, a sheet of paper with sound arcs, was replaced on 2026-11-19
+because it read as a copy of DocFila's document mark. After changing it, run `apps/app/scripts/icons.mjs`,
+`scripts/android-icons.mjs` and `scripts/store-assets/make.mjs`.
+
 ## Type
 
 - **Andika** (SIL, OFL) 7.000, the full unmodified font self-hosted from the SIL release (`apps/app/src/fonts/`), weights 400 and 700. The `@fontsource` subsets lack the combining circumflex and caron used as tone marks.

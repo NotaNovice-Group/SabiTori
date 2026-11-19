@@ -3,5 +3,5 @@
 <resources>
     <color name="sabitori_ground">#EEF0EC</color>
     <color name="sabitori_ink">#121A16</color>
-    <color name="ic_launcher_background">#EEF0EC</color>
+    <color name="ic_launcher_background">#0D5C4C</color>
 </resources>

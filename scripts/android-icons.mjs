@@ -10,13 +10,10 @@ import { chromiumPath } from './chromium-path.mjs';
 const here = dirname(fileURLToPath(import.meta.url));
 const { chromium } = createRequire(resolve(here, '../apps/app/package.json'))('@playwright/test');
 const res = resolve(here, '../apps/app/android/app/src/main/res');
-const GROUND = '#EEF0EC';
-const INK = '#121A16';
+const GROUND = '#0D5C4C';
 
 const mark = (w) => `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="6 3 43 43" width="${w}" height="${w}" fill="none" stroke="${INK}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M8 5h17l9 9v29H8z"/><path d="M25 5v9h9"/><path d="M14 25h14M14 32h9"/>
-  <path d="M39 22.5a7 7 0 0 1 0 9"/><path d="M43.5 17.5a13.5 13.5 0 0 1 0 19"/></svg>`;
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="13.5 5 80 80" width="${w}" height="${w}"><g transform="translate(-4 3)"><path d="M26 28C26 42 40 42 40 50C40 58 26 58 26 72L70 72C70 58 56 58 56 50C56 42 70 42 70 28Z" fill="#FFFCF6"/><ellipse cx="48" cy="72" rx="22" ry="7" fill="#FFFCF6"/><path d="M34 34L45 50L34 66M48 36L48 65M62 34L51 50L62 66" fill="none" stroke="#0D5C4C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="48" cy="28" rx="22" ry="7" fill="#F0A43A"/><path d="M72 14a9 9 0 0 1 8 8" fill="none" stroke="#F0A43A" stroke-width="3.6" stroke-linecap="round"/><path d="M74 5a17 17 0 0 1 15 15" fill="none" stroke="#F0A43A" stroke-width="3.6" stroke-linecap="round"/></g></svg>`;
 
 const densities = { mdpi: 48, hdpi: 72, xhdpi: 96, xxhdpi: 144, xxxhdpi: 192 };
 const browser = await chromium.launch({ executablePath: chromiumPath() });
@@ -26,7 +23,7 @@ for (const [d, size] of Object.entries(densities)) {
   for (const [name, radius] of [['ic_launcher', '22%'], ['ic_launcher_round', '50%']]) {
     const page = await browser.newPage({ viewport: { width: size, height: size } });
     await page.setContent(
-      `<body style="margin:0;background:transparent"><div style="width:${size}px;height:${size}px;border-radius:${radius};background:${GROUND};display:grid;place-items:center">${mark(Math.round(size * 0.58))}</div></body>`,
+      `<body style="margin:0;background:transparent"><div style="width:${size}px;height:${size}px;border-radius:${radius};background:${GROUND};display:grid;place-items:center">${mark(Math.round(size * 0.7))}</div></body>`,
     );
     await page.screenshot({ path: resolve(dir, `${name}.png`), omitBackground: true });
     await page.close();

@@ -1,8 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="#121A16" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
-  <rect x="-4" y="-4" width="56" height="56" fill="#EEF0EC" stroke="none"/>
-  <path d="M8 5h17l9 9v29H8z"/>
-  <path d="M25 5v9h9"/>
-  <path d="M14 25h14M14 32h9"/>
-  <path d="M39 22.5a7 7 0 0 1 0 9"/>
-  <path d="M43.5 17.5a13.5 13.5 0 0 1 0 19"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <!-- The SabiTori mark: a talking drum, the drum that carries messages by sound, with two sound arcs. -->
+  <rect width="96" height="96" rx="22" fill="#0D5C4C"/>
+  <g transform="translate(-4 3)"><path d="M26 28C26 42 40 42 40 50C40 58 26 58 26 72L70 72C70 58 56 58 56 50C56 42 70 42 70 28Z" fill="#FFFCF6"/><ellipse cx="48" cy="72" rx="22" ry="7" fill="#FFFCF6"/><path d="M34 34L45 50L34 66M48 36L48 65M62 34L51 50L62 66" fill="none" stroke="#0D5C4C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="48" cy="28" rx="22" ry="7" fill="#F0A43A"/><path d="M72 14a9 9 0 0 1 8 8" fill="none" stroke="#F0A43A" stroke-width="3.6" stroke-linecap="round"/><path d="M74 5a17 17 0 0 1 15 15" fill="none" stroke="#F0A43A" stroke-width="3.6" stroke-linecap="round"/></g>
 </svg>

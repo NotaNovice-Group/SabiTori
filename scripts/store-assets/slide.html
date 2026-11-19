@@ -24,20 +24,22 @@ body.green .phone, body.red .phone { border-color: #15120E; box-shadow: 0 2.4vh 
 
 /* feature graphic */
 .feature { height: 100vh; display: flex; align-items: center; gap: 5vw; padding: 0 7vw; }
-.feature .tile { height: 52vh; aspect-ratio: 1; border-radius: 9vh; background: #FFFCF6; display: grid; place-items: center; flex: none; }
-.feature .tile svg { width: 70%; height: 70%; }
+.feature .tile { height: 52vh; aspect-ratio: 1; border-radius: 9vh; background: #0A4A3D; display: grid; place-items: center; flex: none; }
+.feature .tile svg { width: 78%; height: 78%; }
 .feature h1 { text-align: left; font-size: 13.5vh; margin: 0; max-width: none; }
 .feature p { font-size: 6.4vh; margin-top: 3vh; display: inline-block; background: #F0A43A; color: #1F1A14; font-weight: 700; padding: 1.2vh 3.4vh; border-radius: 99vh; }
 .feature .name { font-weight: 700; font-size: 6.2vh; opacity: .9; margin-bottom: 2.4vh; }
 
 /* icon */
 .icon { width: 100vw; height: 100vh; background: #0D5C4C; display: grid; place-items: center; }
-.icon svg { width: 62%; height: 62%; }
+.icon svg { width: 72%; height: 72%; }
 </style>
 <body>
 <script>
 const q = new URLSearchParams(location.search);
-const mark = (stroke) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="${stroke}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5h17l9 9v29H8z"/><path d="M25 5v9h9"/><path d="M14 25h14M14 32h9"/><path d="M39 22.5a7 7 0 0 1 0 9"/><path d="M43.5 17.5a13.5 13.5 0 0 1 0 19"/></svg>`;
+const mark = (stroke) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="${stroke}" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="20" cy="14" rx="13" ry="4.5"/><path d="M7 14c0 8 8 8.5 8 12.5s-8 4.5-8 12.5"/><path d="M33 14c0 8-8 8.5-8 12.5s8 4.5 8 12.5"/><path d="M7 39a13 4.5 0 0 0 26 0"/><path d="M20 19v24.5" stroke-width="2.2"/><path d="M38 9.5a5.5 5.5 0 0 1 4.5 4.5"/><path d="M39.5 3a11 11 0 0 1 6.5 10"/></svg>`;
+// The full-colour drum without its tile, for the icon and the feature graphic.
+const drum = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="13.5 5 80 80"><g transform="translate(-4 3)"><path d="M26 28C26 42 40 42 40 50C40 58 26 58 26 72L70 72C70 58 56 58 56 50C56 42 70 42 70 28Z" fill="#FFFCF6"/><ellipse cx="48" cy="72" rx="22" ry="7" fill="#FFFCF6"/><path d="M34 34L45 50L34 66M48 36L48 65M62 34L51 50L62 66" fill="none" stroke="#0D5C4C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="48" cy="28" rx="22" ry="7" fill="#F0A43A"/><path d="M72 14a9 9 0 0 1 8 8" fill="none" stroke="#F0A43A" stroke-width="3.6" stroke-linecap="round"/><path d="M74 5a17 17 0 0 1 15 15" fill="none" stroke="#F0A43A" stroke-width="3.6" stroke-linecap="round"/></g></svg>`;
 const theme = q.get("theme") || "";
 if (theme) document.body.className = theme;
 const light = theme === "green" || theme === "red";
@@ -52,10 +54,10 @@ if (kind === "phone") {
   fit(); document.fonts.ready.then(fit); addEventListener("load", fit);
 } else if (kind === "feature") {
   document.body.className = "green";
-  document.body.innerHTML = `<main class="feature"><div class="tile">${mark("#0D5C4C")}</div>
+  document.body.innerHTML = `<main class="feature"><div class="tile">${drum}</div>
     <div><div class="name">SabiTori</div><h1>${q.get("h")}</h1><p>${q.get("sub")}</p></div></main>`;
 } else {
-  document.body.innerHTML = `<main class="icon">${mark("#FFFCF6")}</main>`;
+  document.body.innerHTML = `<main class="icon">${drum}</main>`;
 }
 </script>
 </body>
