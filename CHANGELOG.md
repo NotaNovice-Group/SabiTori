@@ -6,6 +6,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Landing page in `site/` (static), ready for Cloudflare Pages (`docs/site.md`).
 - Picture card for people who cannot read and cannot hear: the action, the deadline (calendar page, days left) and
   the amount (CFA notes and coins) as pictures; a scam card shows a stop sign only. A likely scam vibrates the phone.
 - Probe 14 scam signals (French and English; both phrases are drafts until reviewed): `offer_fee` (likely scam) for a

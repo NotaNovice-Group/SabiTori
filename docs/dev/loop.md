@@ -244,6 +244,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Card loading state.** For about 0.75 s while a card was prepared the screen showed only "Show someone" and
       "Delete" (seen in the demo recording). It now shows the card's shape (skeleton, static with reduced motion) and
       the footer buttons appear with the card.
+- [x] **Landing page.** `site/` (static, no build): what it does, demo video, scam warnings first, who it is for,
+      privacy, languages, test numbers with their limits, open source. Screenshots of the redesigned app (English, 2x)
+      and the 60 s demo; `site/_headers` and `docs/site.md` for Cloudflare Pages (owner connects the repository).
+      axe-core WCAG 2.2 AA: 0 violations at 1440 and 390, light and dark.
 
 ## Log
 
@@ -317,3 +321,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #71 | Probe 14: 59 scam/look-alike messages; job-fee and emergency-money signals, code-theft and SIM-swap code asks caught; eval unchanged | local gate (Actions budget) |
 | 2026-11-19 | #72 | iOS project (Capacitor, SPM), iOS-safe reminders/settings, unsigned simulator CI; untested on Apple hardware | local gate (Actions budget) |
 | 2026-11-19 | #73 | Card loading skeleton instead of an empty page with Delete | local gate (Actions budget) |
+| 2026-11-19 | #74 | Landing page (site/), Cloudflare Pages config, redesigned screenshots and demo video | local gate (Actions budget) |

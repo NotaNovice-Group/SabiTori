@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SabiTori: official messages, explained out loud</title>
+<meta name="description" content="SabiTori is a free Android app for Cameroon that reads bills, mobile money SMS and letters, and explains them out loud, scam warnings first. It works offline.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F7F2E8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#16140F" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="SabiTori: official messages, explained out loud">
+<meta property="og:description" content="A free, offline Android app for Cameroon that explains official messages out loud, scam warnings first.">
+<meta property="og:image" content="img/card-bill.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="img/mark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Young+Serif&display=swap">
+<link rel="stylesheet" href="styles.css">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+<!--
+  Screenshots in img/ are replaced later by redesigned ones with the SAME file names:
+  home.png, card-bill.png, card-scam.png, photo.png, language.png (360 x 780 portrait).
+  The demo video goes in img/demo.mp4.
+-->
+<header class="nav">
+  <div class="wrap nav__row">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="brand" href="#top" aria-label="SabiTori, back to the top">
+      <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 5h17l9 9v29H8z"/><path d="M25 5v9h9"/><path d="M14 25h14M14 32h9"/><path class="wave" d="M39 22.5a7 7 0 0 1 0 9"/><path class="wave" d="M43.5 17.5a13.5 13.5 0 0 1 0 19"/></svg>
+      <span>SabiTori</span>
+    </a>
+    <nav class="nav__links" id="menu" aria-label="Sections">
+      <a href="#how">How it works</a>
+      <a href="#scams">Scams</a>
+      <a href="#access">Access</a>
+      <a href="#privacy">Privacy</a>
+      <a href="#languages">Languages</a>
+      <a href="#numbers">Numbers</a>
+    </nav>
+    <a class="btn btn--primary nav__cta" href="https://github.com/NotaNovice-Group/SabiTori/releases">Get the Android app (pilot)</a>
+    <button class="menu-btn" type="button" aria-expanded="false" aria-controls="menu">
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      <span>Menu</span>
+    </button>
+  </div>
+</header>
+
+<main id="top" tabindex="-1">
+
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap hero__grid">
+      <div class="hero__text" data-enter>
+        <h1 id="hero-title">A phone app that explains official messages out loud</h1>
+        <p class="lead">Bills, mobile money SMS, letters from the hospital or the school. Take a photo or paste the text, and SabiTori says who sent it, what to do, by when and how much. If it looks like a scam, you hear that first.</p>
+        <p class="hero__facts">Free. Works with no internet. Android 7 or newer, iPhone coming. French and English today.</p>
+        <div class="btn-row">
+          <a class="btn btn--primary" href="https://github.com/NotaNovice-Group/SabiTori/releases">
+            <svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+            Get the Android app (pilot)
+          </a>
+          <a class="btn btn--secondary" href="#demo">See how it works</a>
+        </div>
+        <p class="small">The pilot build installs from GitHub, not from the Play Store.</p>
+      </div>
+      <div class="hero__art" data-enter>
+        <div class="stage">
+          <figure class="phone phone--lg">
+            <img src="img/card-bill.png" width="360" height="780" alt="SabiTori card for a French electricity bill, explained in English: a picture of a paying hand, a calendar page for 28 November and the amount as banknotes and coins, then: this message says it is from ENEO, it is about your electricity bill, soon, you must pay. Listen button at the bottom.">
+          </figure>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="how" aria-labelledby="how-title">
+    <div class="wrap split">
+      <div class="split__text">
+        <h2 id="how-title">How SabiTori explains a message</h2>
+        <p class="lead">Small models on the phone read the message and sort it. Plain code then finds every date, amount and phone number, and checks each one against the message itself.</p>
+        <ol class="steps">
+          <li>
+            <svg class="i i--step" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+            <div><h3>Show it the message</h3><p>Take a photo of a paper or a screen, or share or paste an SMS.</p></div>
+          </li>
+          <li>
+            <svg class="i i--step" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M8 13h8M8 17h5"/></svg>
+            <div><h3>Get a card</h3><p>Who sent it, what it is about, what you must do, by when, how much, and who to call.</p></div>
+          </li>
+          <li>
+            <svg class="i i--step" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.8"/></svg>
+            <div><h3>Listen to it</h3><p>The card is spoken part by part. Tap an amount or a date to see where it is in the message.</p></div>
+          </li>
+        </ol>
+        <p class="note">When SabiTori is unsure what a message means, it shows only the facts it found, and says so.</p>
+      </div>
+      <div class="split__art">
+        <figure class="phone">
+          <img src="img/photo.png" width="360" height="780" loading="lazy" alt="SabiTori card made from a photo of a paper ENEO bill: a paying hand, a calendar page for 15 December and the amount 30,474 FCFA as notes and coins, then the sender and what the bill is about.">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="demo" aria-labelledby="demo-title">
+    <div class="wrap split split--rev">
+      <div class="split__text">
+        <h2 id="demo-title">The app in one minute</h2>
+        <p class="lead">A screen recording of SabiTori explaining three messages:</p>
+        <ul class="ticks">
+          <li>a French electricity bill, pasted and explained in English;</li>
+          <li>a mobile money SMS that gets a scam warning before anything else;</li>
+          <li>a photo of a paper bill, read on the device.</li>
+        </ul>
+        <p class="note">Recorded from the app running in a desktop browser at phone size, not on a phone. The wait while the photo is read is shortened by about 3 seconds.</p>
+      </div>
+      <div class="split__art">
+        <div class="video-frame">
+          <video src="img/demo.mp4" poster="img/card-bill.png" controls playsinline preload="none" aria-label="One-minute demo of the SabiTori app"></video>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="scams" aria-labelledby="scams-title">
+    <div class="wrap">
+      <h2 id="scams-title">Scam warnings come first</h2>
+      <p class="lead measure">When a message looks like a trick, SabiTori says so before anything else and gives its reasons. The warnings come from written rules in code, not from the model, so anyone can check why one appeared.</p>
+
+      <div class="demo">
+        <div class="sms" aria-labelledby="sms-label">
+          <p class="sms__head" id="sms-label">A practice message from the app</p>
+          <div class="sms__bubble" lang="fr">
+            <p class="sms__from">650 55 66 77</p>
+            <p>Vous avez reçu 25 000 FCFA de Jean Paul. Il s’agit d’une erreur, merci de me renvoyer l’argent immédiatement. Appelez-moi vite au 650 55 66 77.</p>
+          </div>
+          <p class="never">SabiTori never calls a message safe. When it finds nothing, it says: <q>We found no warning signs. Never share your PIN with anyone.</q></p>
+          <svg class="demo__arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </div>
+
+        <div class="card" id="spoken-card">
+          <div class="card__sec card__sec--scam" data-say="This looks like a trick. Do not send money. Do not share your PIN.">
+            <svg class="i i--scam" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+            <p class="card__warn">This looks like a trick. Do not send money. Do not share your PIN.</p>
+          </div>
+          <ul class="card__reasons">
+            <li class="card__sec" data-say="This message pushes you to act very fast.">This message pushes you to act very fast.</li>
+            <li class="card__sec" data-say="This balance message does not come from your operator.">This balance message does not come from your operator.</li>
+            <li class="card__sec" data-say="This message asks you to call a number. Use the official number instead.">This message asks you to call a number. Use the official number instead.</li>
+          </ul>
+          <p class="card__sec card__advice" data-say="Check your balance with your operator's own code, not with a number from this message.">Check your balance with your operator’s own code, not with a number from this message.</p>
+          <div class="card__dock">
+            <button class="listen" type="button" id="listen" aria-describedby="listen-note">
+              <svg class="i i--play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 4v16l13-8z"/></svg>
+              <svg class="i i--stop" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="6" y="6" width="12" height="12" rx="1.5"/></svg>
+              <span class="listen__label">Listen to this card</span>
+            </button>
+            <p class="small" id="listen-note">Spoken by your browser’s voice here. In the app, by the voice in the language pack.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="section section--alt" id="tricks" aria-labelledby="tricks-title">
+    <div class="wrap split">
+      <div class="split__text">
+        <h2 id="tricks-title">The tricks SabiTori warns about</h2>
+        <p class="lead">The common mobile money and SMS tricks, each with the sentence the app says.</p>
+        <dl class="tricks">
+          <div><dt>A prize you must pay to receive</dt><dd><q>This message says you won something, but you must pay first.</q></dd></div>
+          <div><dt>Money to send to a personal number</dt><dd><q>This message asks you to send money to a personal phone number.</q></dd></div>
+          <div><dt>A fake “you received money” SMS</dt><dd><q>This balance message does not come from your operator.</q></dd></div>
+          <div><dt>A request for your PIN</dt><dd><q>This message asks for your secret code.</q></dd></div>
+          <div><dt>An offer to double your money</dt><dd><q>This message promises your money will grow fast. This is a common trick.</q></dd></div>
+        </dl>
+        <p class="note">It also warns about links, threats to block your SIM, codes to dial, and messages that claim a company name from an ordinary number.</p>
+      </div>
+      <div class="split__art">
+        <figure class="phone">
+          <img src="img/card-scam.png" width="360" height="780" loading="lazy" alt="SabiTori scam card: a large red stop sign, then in red: this looks like a trick, do not send money, do not share your PIN, with two reasons: it says you won something but must pay first, and it asks you to send money to a personal phone number.">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="access" aria-labelledby="access-title">
+    <div class="wrap split split--rev">
+      <div class="split__text">
+        <h2 id="access-title">Who SabiTori is for</h2>
+        <p class="lead">People an official message leaves out: because of reading, sight, hearing, or the language it is written in.</p>
+        <dl class="who">
+          <div><dt>People who cannot read well</dt><dd>Every card is spoken. With “Listen first” on, a button says its name on the first tap and acts on the second. The text is set in Andika, a typeface made for beginning readers.</dd></div>
+          <div><dt>People who are blind or have low vision</dt><dd>Built to work with TalkBack. Each new screen puts focus on its title, and text grows to 200&nbsp;% with nothing going off the screen.</dd></div>
+          <div><dt>People who are deaf or hard of hearing</dt><dd>Every spoken card is also written, and urgency is a colour, an icon and a word. Each card also opens with a picture card: what to do as a symbol, the deadline as a calendar page, the amount as notes and coins. A likely scam shows a stop sign and makes the phone vibrate.</dd></div>
+          <div><dt>People who do not speak the message’s language</dt><dd>A message in French can be explained in English. Cameroonian languages follow as their speakers record them.</dd></div>
+        </dl>
+        <p class="note">No blind, low-vision, deaf or non-reading person has tested SabiTori yet. Automated checks find no known barrier; testing with disabled people is the first job of the pilot.</p>
+      </div>
+      <div class="split__art">
+        <figure class="phone">
+          <img src="img/home.png" width="360" height="780" loading="lazy" alt="SabiTori home screen: a list of recent messages with their urgency, date and amount, and two large buttons to take a photo of a message or paste one.">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--band" id="privacy" aria-labelledby="privacy-title">
+    <div class="wrap band">
+      <h2 id="privacy-title" class="statement">Your messages never leave your phone.</h2>
+      <div class="privacy">
+        <p>SabiTori reads, understands and speaks on the phone itself. It works in airplane mode.</p>
+        <p>There is no account and no sign-in. There are no ads and no analytics.</p>
+        <p>Updates and error reports are off by default. If you switch them on, they never carry your messages.</p>
+        <p>It is free for everyone, with no paid tier and no sale of data, and it stays that way.</p>
+        <p class="band__link"><a class="link" href="https://github.com/NotaNovice-Group/SabiTori/blob/main/docs/privacy.md">Read the privacy policy</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="languages" aria-labelledby="languages-title">
+    <div class="wrap split">
+      <div class="split__text">
+        <h2 id="languages-title">French and English today. Cameroonian languages next.</h2>
+        <p class="lead">SabiTori means “understand the story” in Cameroonian Pidgin. Every word it says comes from a language pack, so a new language needs no change to the code.</p>
+        <ul class="langs" aria-label="Languages waiting for speakers">
+          <li><span lang="pcm">Cameroonian Pidgin</span></li>
+          <li>Duala</li>
+          <li>Ewondo</li>
+          <li>Adamawa Fulfulde</li>
+          <li>Lamnso’</li>
+          <li>Limbum</li>
+          <li>Pinyin</li>
+        </ul>
+        <p>These seven are set up in the app and waiting for native speakers. Until their voices are recorded, each one speaks its fallback language and says so.</p>
+        <p>Two speakers record a language in 2 to 4 days with the Recorder app: about 70 short sentences and 60 number words. Each gives written consent, chooses how their voice may be used, and is paid for every session.</p>
+      </div>
+      <div class="split__art">
+        <figure class="phone">
+          <img src="img/language.png" width="360" height="780" loading="lazy" alt="SabiTori welcome screen: choose your language, with French, English, Cameroonian Pidgin and Duala, each with a play button that says its name.">
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" id="numbers" aria-labelledby="numbers-title">
+    <div class="wrap">
+      <h2 id="numbers-title">Our test numbers, with their limits</h2>
+      <p class="lead measure">All messages and photos are synthetic, written or rendered for testing. No real message has been evaluated yet, and nothing here was measured on a phone. There has been no pilot and there are no users yet.</p>
+      <div class="table-wrap">
+        <table class="numbers">
+          <thead><tr><th scope="col">What was tested</th><th scope="col">Result</th><th scope="col">Conditions</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Scam warnings</th><td><strong>18 of 21</strong> scams warned; <strong>2 of 79</strong> genuine messages falsely warned</td><td>Unseen set of 100 synthetic messages, never used for tuning</td></tr>
+            <tr><th scope="row">Understanding a message (kind, action and urgency all right)</th><td><strong>49.0%</strong> [39.0–58.0], against 36.0% [27.0–45.0] for rules alone</td><td>Same unseen set; +13.0 points, p = 0.024 (exact McNemar test); brackets are 95% bootstrap intervals</td></tr>
+            <tr><th scope="row">Reading photos on the phone</th><td><strong>84.3%</strong> of dates, amounts and phone numbers recovered; 97.5% of those read are right; every fact right on 20 of 30 pages</td><td>30 degraded synthetic photos of bills, letters and SMS screenshots</td></tr>
+            <tr><th scope="row">Time from a pasted bill to a card</th><td><strong>1.3 to 2.3 s</strong></td><td>Desktop CPU slowed 4x as a slow-phone stand-in, not a phone</td></tr>
+            <tr><th scope="row">Size of the understanding model</th><td><strong>32.6 MB</strong> (int8, 33 M parameters)</td><td>Runs on the phone, offline</td></tr>
+            <tr><th scope="row">Accessibility checks</th><td><strong>163</strong> screen states, 0 violations</td><td>WCAG 2.2 AA (axe-core) plus manual-class checks; no disabled person has tested the app yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="numbers__more"><a class="link" href="https://github.com/NotaNovice-Group/SabiTori/blob/main/docs/numbers.md">See every number and how to re-run it</a></p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="closing" id="open" aria-labelledby="open-title">
+  <div class="wrap">
+    <div class="closing__main">
+      <h2 id="open-title">SabiTori is open source</h2>
+      <p class="lead measure">The code is under MPL-2.0. Language packs belong to the communities that record them. Every number on this page comes from a script in the repository, on data in it, and can be re-run with one command.</p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="https://github.com/NotaNovice-Group/SabiTori/releases">
+          <svg class="i" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></svg>
+          Get the Android app (pilot)
+        </a>
+        <a class="btn btn--secondary" href="https://github.com/NotaNovice-Group/SabiTori">Read the code on GitHub</a>
+      </div>
+      <p class="contact">Contact: [OWNER: contact email]</p>
+    </div>
+    <div class="closing__legal">
+      <a class="brand brand--small" href="#top" aria-label="SabiTori, back to the top">
+        <svg class="brand__mark" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><path d="M8 5h17l9 9v29H8z"/><path d="M25 5v9h9"/><path d="M14 25h14M14 32h9"/><path class="wave" d="M39 22.5a7 7 0 0 1 0 9"/><path class="wave" d="M43.5 17.5a13.5 13.5 0 0 1 0 19"/></svg>
+        <span>SabiTori</span>
+      </a>
+      <ul class="legal">
+        <li><a class="link" href="https://github.com/NotaNovice-Group/SabiTori/blob/main/docs/privacy.md">Privacy</a></li>
+        <li><a class="link" href="https://github.com/NotaNovice-Group/SabiTori/blob/main/docs/accessibility.md">Accessibility</a></li>
+        <li><a class="link" href="https://github.com/NotaNovice-Group/SabiTori/blob/main/LICENSE">Licence (MPL-2.0)</a></li>
+      </ul>
+      <p class="small">Free, non-commercial, community-owned. Text set in Andika by SIL International (OFL) and Young Serif.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="main.js" defer></script>
+</body>
+</html>

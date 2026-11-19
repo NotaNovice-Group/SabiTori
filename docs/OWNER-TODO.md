@@ -5,13 +5,13 @@ they are decisions, facts about the publisher, or results of steps outside the c
 reads "unfinished", so fill or remove them before the repository is public. `packages/understand/test/model-card.test.ts`
 checks that this list matches the files (regenerate it with `node scripts/owner-todo.mjs` after editing a document).
 
-Total: 103 placeholders in 14 files.
+Total: 104 placeholders in 15 files.
 
 ## `CHANGELOG.md` (3)
 
-- [ ] `CHANGELOG.md:122` release date, once released.
-- [ ] `CHANGELOG.md:153` French review status; resolve before release.
-- [ ] `CHANGELOG.md:154` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
+- [ ] `CHANGELOG.md:123` release date, once released.
+- [ ] `CHANGELOG.md:154` French review status; resolve before release.
+- [ ] `CHANGELOG.md:155` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
 
 ## `CODE_OF_CONDUCT.md` (1)
 
@@ -94,6 +94,10 @@ Total: 103 placeholders in 14 files.
 - [ ] `docs/release.md:116` whether CI uploads to Play, or the AAB is uploaded by hand.
 - [ ] `docs/release.md:136` Sentry organisation and project names.
 - [ ] `docs/release.md:169` testing period.
+
+## `docs/site.md` (1)
+
+- [ ] `docs/site.md:13` domain
 
 ## `docs/store/data-safety.md` (8)
 
