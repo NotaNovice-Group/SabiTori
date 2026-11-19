@@ -9,9 +9,9 @@ Total: 101 placeholders in 13 files.
 
 ## `CHANGELOG.md` (3)
 
-- [ ] `CHANGELOG.md:105` release date, once released.
-- [ ] `CHANGELOG.md:136` French review status; resolve before release.
-- [ ] `CHANGELOG.md:137` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
+- [ ] `CHANGELOG.md:107` release date, once released.
+- [ ] `CHANGELOG.md:138` French review status; resolve before release.
+- [ ] `CHANGELOG.md:139` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
 
 ## `CODE_OF_CONDUCT.md` (1)
 
@@ -144,8 +144,8 @@ Total: 101 placeholders in 13 files.
 
 ## `docs/video-script.md` (2)
 
-- [ ] `docs/video-script.md:18` one or two sentences: who you are, the person you saw struggle with an official message, why it matters to you
-- [ ] `docs/video-script.md:25` what you ask for: the pilot, the partner, the first Cameroonian language.
+- [ ] `docs/video-script.md:24` one or two sentences: who you are, the person you saw struggle with an official message, why it matters to you
+- [ ] `docs/video-script.md:31` what you ask for: the pilot, the partner, the first Cameroonian language.
 
 ## Checks without a placeholder
 
