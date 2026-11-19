@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-17T14:57:18.274Z",
+  "generatedAt": "2026-11-19T03:56:13.721Z",
   "viewport": {
     "width": 360,
     "height": 780
@@ -1466,7 +1466,7 @@
     {
       "name": "reduced motion: no transitions and the bar shows full",
       "pass": true,
-      "detail": "{\"tr\":\"0s\",\"trb\":\"0s\",\"p\":\"1\",\"tf\":\"matrix(1, 0, 0, 1, 0, 0)\"}"
+      "detail": "{\"tr\":\"0s\",\"trb\":\"0s\",\"p\":\"1\",\"tf\":\"none\"}"
     }
   ],
   "summary": {

@@ -248,6 +248,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       privacy, languages, test numbers with their limits, open source. Screenshots of the redesigned app (English, 2x)
       and the 60 s demo; `site/_headers` and `docs/site.md` for Cloudflare Pages (owner connects the repository).
       axe-core WCAG 2.2 AA: 0 violations at 1440 and 390, light and dark.
+- [x] **Accessibility audit after the redesign.** `node apps/app/scripts/a11y.mjs` re-run on the redesigned app with the
+      picture card: 163 screen states, WCAG 2.2 AA plus manual-class checks, 0 violations, 0 failures.
 
 ## Log
 
@@ -322,3 +324,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #72 | iOS project (Capacitor, SPM), iOS-safe reminders/settings, unsigned simulator CI; untested on Apple hardware | local gate (Actions budget) |
 | 2026-11-19 | #73 | Card loading skeleton instead of an empty page with Delete | local gate (Actions budget) |
 | 2026-11-19 | #74 | Landing page (site/), Cloudflare Pages config, redesigned screenshots and demo video | local gate (Actions budget) |
+| 2026-11-19 | #75 | Full accessibility audit re-run after the redesign: 163 states, 0 violations | local gate (Actions budget) |
