@@ -89,6 +89,11 @@ export const CATALOG = c({
     context: 'Reason: money is requested to an ordinary mobile number, not an official account.',
   },
 
+  'scam.signal.promised_return': {
+    en: 'This message promises your money will grow fast. This is a common trick.',
+    context: 'Reason: the message promises a large, quick gain on money paid in (investment or "doubling" scheme).',
+  },
+
   /* ---------- Sender ---------- */
   'sender.known': {
     en: 'This message is from {sender}.',

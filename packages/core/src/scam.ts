@@ -12,6 +12,7 @@ const STRONG: ScamSignal[] = [
   'prize_fee',
   'fake_balance',
   'pay_to_personal_number',
+  'promised_return',
 ];
 const digitsOf = (s: string) => s.replace(/\D/g, '');
 
@@ -185,6 +186,23 @@ export function assessScam(
         facts.amounts.some((a) => a.span.start >= x.start && a.span.end <= x.end),
     );
     if (together) found.add('pay_to_personal_number');
+  }
+
+  // promised_return: "invest 50 000, receive 200 000 in 7 days", or "double your money". A sender that promises
+  // money grows fast is the trap whoever sends it (no real bank or tontine does), so a verified name does not excuse it.
+  {
+    const promise = hasTerm(n, S((s) => s.returnPromises ?? []));
+    const invest = findTerms(n, S((s) => s.investWords ?? []));
+    const back = findTerms(n, S((s) => s.gainWords ?? []));
+    const multiplies =
+      invest.length > 0 &&
+      facts.amounts.some((a) =>
+        invest.some((i) => Math.abs(a.span.start - i.end) <= 40) &&
+        facts.amounts.some(
+          (b) => b.span.start > a.span.end && b.value.amount >= 1.5 * a.value.amount && back.some((r) => r.end <= b.span.start && b.span.start - r.end <= 30 && r.start > a.span.end),
+        ),
+      );
+    if (promise || multiplies) found.add('promised_return');
   }
 
   // ussd_instruction: a *...# code, or a dial instruction, from a sender that is not verified.

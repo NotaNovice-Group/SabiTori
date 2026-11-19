@@ -318,5 +318,9 @@
   "scam.signal.pay_to_personal_number": {
     "text": "This message asks you to send money to a personal phone number.",
     "status": "reviewed"
+  },
+  "scam.signal.promised_return": {
+    "text": "This message promises your money will grow fast. This is a common trick.",
+    "status": "draft"
   }
 }

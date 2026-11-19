@@ -990,6 +990,36 @@
       "envoie vite",
       "envoyez vite"
     ],
+    "investWords": [
+      "investissez",
+      "investir",
+      "investi",
+      "placez",
+      "placer"
+    ],
+    "gainWords": [
+      "recevez",
+      "recevoir",
+      "gagnez",
+      "gagner",
+      "obtenez",
+      "récupérez",
+      "recuperez",
+      "touchez",
+      "encaissez"
+    ],
+    "returnPromises": [
+      "doublez votre argent",
+      "doubler votre argent",
+      "triplez votre argent",
+      "bénéfice garanti",
+      "benefice garanti",
+      "gain garanti",
+      "gains garantis",
+      "rendement garanti",
+      "argent multiplié",
+      "argent multiplie"
+    ],
     "thisNumberWords": [
       "ce numéro",
       "ce numero",

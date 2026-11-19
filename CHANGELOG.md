@@ -6,6 +6,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Scam signal `promised_return`: "Investissez 50 000 FCFA et recevez 200 000 FCFA dans 7 jours", "double your
+  money", "guaranteed profit" now warn as likely scam (French and English; phrase is a draft until reviewed).
 - Evaluation on real messages, ready for the pilot: a first-pass anonymiser for consented messages
   (`packages/understand/eval/anonymise.ts`) and `run-rules.mjs --split=real`. No real message has been added yet.
 - Accessibility checks in the browser tests: axe-core (WCAG 2.1 A and AA, contrast included) on eight screens in the

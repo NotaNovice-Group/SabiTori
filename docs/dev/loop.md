@@ -214,8 +214,12 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       Money + a send word + "this number"/"ce numéro" (`scam.thisNumberWords`) in one sentence, from an unverified
       mobile number, is now `pay_to_personal_number`. Unseen scam level 92.0% -> 93.0% (warned 18/21 and false alarms
       2/79 unchanged; train and test no new false alarm). All 5 genuine probes stay clean.
-- [ ] **Investment-doubling scams.** "Investissez 50 000 FCFA et recevez 200 000 FCFA dans 7 jours" is not caught;
-      needs its own signal and a phrase a speaker reviews (prize_fee's "you won something" does not fit).
+- [x] **Investment-doubling scams.** New signal `promised_return` (strong): "invest/placez X ... receive/récupérez
+      Y" with Y at least 1.5 x X, or a stand-alone promise ("doublez votre argent", "guaranteed profit"); words in
+      `scam.investWords`, `gainWords`, `returnPromises` (fr + en). A verified name does not excuse it. "Cotisez",
+      "misez" and "stake" left out (tontines, licensed betting). Phrase `scam.signal.promised_return` is draft until a
+      speaker reviews it. Train/test/unseen scam results unchanged (no false alarm added); tests cover tontine,
+      savings and school-fee look-alikes.
 
 ## Log
 
@@ -283,3 +287,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #65 | OCR-garbled month names read between a day and a year; photo fact recall 83.6% -> 84.3% | local gate (Actions budget) |
 | 2026-11-19 | #66 | Mobile-money "you sent" receipts no longer cautioned (photo false cautions 7 -> 3) | local gate (Actions budget) |
 | 2026-11-19 | #67 | "Send money to this number" from a mobile number warns; unseen scam level 92.0% -> 93.0% | local gate (Actions budget) |
+| 2026-11-19 | #68 | Investment-doubling scams warn (new signal promised_return, draft phrase) | local gate (Actions budget) |
