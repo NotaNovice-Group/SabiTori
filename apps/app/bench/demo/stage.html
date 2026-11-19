@@ -1,0 +1,58 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+:root{--bg:#14110f;--ink:#f6efe4;--muted:#b9ad9c;--acc:#f2a541;--red:#e5533d}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:radial-gradient(1200px 800px at 75% 40%,#2a2119 0%,var(--bg) 70%);color:var(--ink);font-family:Inter,system-ui,sans-serif;overflow:hidden}
+.wrap{position:absolute;inset:0;display:grid;grid-template-columns:1fr 560px;gap:40px;padding:70px 110px 60px 120px;align-items:center}
+.brand{font-size:30px;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);font-weight:700;margin-bottom:26px}
+h1{font-size:76px;line-height:1.04;margin:0 0 26px;font-weight:800;letter-spacing:-.02em}
+.sub{font-size:32px;line-height:1.4;color:var(--muted);max-width:900px}
+.steps{list-style:none;padding:0;margin:56px 0 0;display:grid;gap:22px}
+.steps li{font-size:32px;color:#6f665b;display:flex;gap:22px;align-items:center;transition:color .4s,transform .4s}
+.steps li b{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:50%;border:2px solid currentColor;font-size:24px;flex:none}
+.steps li.on{color:var(--ink);transform:translateX(10px)}.steps li.on b{background:var(--acc);border-color:var(--acc);color:#1b140c}
+.steps li.done{color:#9c917f}
+.phone{position:relative;width:440px;height:900px;border-radius:58px;background:#050505;padding:16px;box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 0 2px #3a332b inset;justify-self:center}
+.phone iframe{width:390px;height:844px;border:0;border-radius:44px;background:#fff;transform-origin:0 0;transform:scale(1.0256);display:block}
+.say{position:absolute;left:50%;bottom:-8px;transform:translate(-50%,100%);width:620px;min-height:0;font-size:24px;line-height:1.35;background:rgba(242,165,65,.12);border:1px solid rgba(242,165,65,.5);color:var(--ink);padding:14px 20px 14px 58px;border-radius:18px;opacity:0;transition:opacity .25s}
+.say.on{opacity:1}.say:before{content:"";position:absolute;left:18px;top:16px;width:26px;height:26px;background:var(--acc);-webkit-mask:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9v6h4l5 4V5L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4z"/></svg>') center/contain no-repeat}
+.wrap{padding-bottom:150px}
+.tap{position:fixed;width:70px;height:70px;margin:-35px 0 0 -35px;border-radius:50%;background:rgba(242,165,65,.45);border:3px solid var(--acc);pointer-events:none;animation:tap .7s ease-out forwards;z-index:9}
+@keyframes tap{from{transform:scale(.3);opacity:1}to{transform:scale(1.25);opacity:0}}
+.photo{position:absolute;inset:16px;border-radius:44px;overflow:hidden;background:#000;opacity:0;transition:opacity .4s;pointer-events:none}
+.photo.on{opacity:1}.photo img{width:100%;height:100%;object-fit:contain;background:#0b0907}
+.photo .bar{position:absolute;left:0;right:0;height:4px;background:var(--acc);box-shadow:0 0 30px var(--acc);animation:scan 1.6s linear infinite}
+.photo .lbl{position:absolute;left:24px;right:24px;bottom:40px;text-align:center;font-size:24px;background:rgba(0,0,0,.65);padding:14px;border-radius:14px}
+@keyframes scan{from{top:8%}to{top:92%}}
+.tick{position:fixed;right:0;bottom:0;width:6px;height:6px;background:#14110f;animation:tk .2s linear infinite alternate}@keyframes tk{to{background:#16130f}}
+.cover{position:absolute;inset:0;display:grid;place-items:center;text-align:center;background:var(--bg);opacity:0;transition:opacity .6s;pointer-events:none}
+.cover.on{opacity:1}.cover h2{font-size:96px;margin:0 0 20px;font-weight:800}.cover p{font-size:36px;color:var(--muted);margin:10px}
+.cover .pills{display:flex;gap:18px;justify-content:center;margin-top:44px}.cover .pills span{font-size:28px;border:2px solid #4a4036;border-radius:999px;padding:12px 26px}
+.cover .url{margin-top:50px;color:var(--acc);font-size:30px}
+</style></head><body>
+<div class="wrap">
+  <div>
+    <div class="brand">SabiTori</div>
+    <h1 id="h">Official messages,<br>explained out loud.</h1>
+    <div class="sub" id="s">For people in Cameroon who cannot read a bill, a letter or an SMS. On the phone, without internet.</div>
+    <ul class="steps" id="steps">
+      <li><b>1</b>Paste a French bill: explained in English, spoken</li>
+      <li><b>2</b>A scam SMS: the warning comes first</li>
+      <li><b>3</b>A photo of a paper bill: read on the phone</li>
+    </ul>
+  </div>
+  <div class="phone"><iframe id="app" src="/#/"></iframe><div class="photo" id="photo"><img src="/__bill.jpg"><div class="bar"></div><div class="lbl">Reading the photo on the phone…</div></div><div class="say" id="say"></div></div>
+</div>
+<div class="cover" id="cover"><div><h2>SabiTori</h2><p>Reads official messages and photos, then says what they mean.</p><p>Scam warnings first. Nothing leaves the phone.</p>
+<div class="pills"><span>Works offline</span><span>French &amp; English</span><span>No account</span><span>Android</span></div>
+<div class="url">github.com/NotaNovice-Group/SabiTori</div></div></div>
+<div class="tick"></div>
+<script>
+const H=[["Official messages,<br>explained out loud.","For people in Cameroon who cannot read a bill, a letter or an SMS. On the phone, without internet."],
+["A bill in French?","Paste it. SabiTori says what it is, how much, by when and what to do, in the listener's language."],
+["Is it a scam?","Prize, fee, personal number: the warning is the first thing on screen and the first thing said."],
+["A paper letter?","Take a photo. The text is read on the phone itself; the photo never leaves it."],null];
+window.__step=i=>{const c=document.getElementById('cover');if(H[i]){document.getElementById('h').innerHTML=H[i][0];document.getElementById('s').textContent=H[i][1]}
+document.querySelectorAll('#steps li').forEach((li,k)=>{li.className=k+1===i?'on':k+1<i?'done':''});c.classList.toggle('on',i===4)};
+window.__say=t=>{const s=document.getElementById('say');if(t){s.textContent=t;s.classList.add('on')}else s.classList.remove('on')};
+window.__tap=(x,y)=>{const d=document.createElement('div');d.className='tap';d.style.left=x+'px';d.style.top=y+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),800)};
+window.__photo=on=>document.getElementById('photo').classList.toggle('on',on);
+</script></body></html>

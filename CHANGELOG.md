@@ -6,6 +6,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- A one-minute demo video can be re-recorded from the code (`apps/app/bench/demo/record.mjs`): the real app, scripted,
+  with captions and spoken words as subtitles.
 - Scam signal `promised_return`: "Investissez 50 000 FCFA et recevez 200 000 FCFA dans 7 jours", "double your
   money", "guaranteed profit" now warn as likely scam (French and English; phrase is a draft until reviewed).
 - Evaluation on real messages, ready for the pilot: a first-pass anonymiser for consented messages

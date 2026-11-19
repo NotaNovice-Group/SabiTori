@@ -4,6 +4,12 @@ For the Mozilla application and anyone who asks "show me". One take on a real An
 a second camera on the hands if you have one. Everything shown below exists in the app today; do not show or say
 anything else. Speak slowly; add captions in English and French.
 
+**Ready-made one-minute screen demo.** `apps/app/bench/demo/record.mjs` records the built app in a phone frame
+(pasted French bill explained in English, scam SMS warned first, photo of a paper bill read on the device) with
+captions and the spoken words as subtitles; no soundtrack, for a voice-over. Recorded in desktop Chromium at phone
+size, not on a phone; the photo-reading wait is cut by about 3 s. Say both if you use it. The phone recording below
+is still the stronger proof (airplane mode visible, real voice).
+
 **Before recording**
 
 - Install the latest APK (`docs/release.md`). French voice bundled. Turn on **airplane mode** and leave it on: the

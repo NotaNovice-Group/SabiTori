@@ -220,6 +220,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       "misez" and "stake" left out (tontines, licensed betting). Phrase `scam.signal.promised_return` is draft until a
       speaker reviews it. Train/test/unseen scam results unchanged (no false alarm added); tests cover tontine,
       savings and school-fee look-alikes.
+- [x] **One-minute demo video, reproducible.** `apps/app/bench/demo/` (record.mjs, stage.html, assemble.py) records
+      the built app driven by script: pasted bill spoken in English, scam warned first, bench photo 04 read to a card.
+      60 s at 1920x1080 for a voice-over; the only edit is a ~3 s cut of the OCR wait, stated in docs/video-script.md.
 
 ## Log
 
@@ -288,3 +291,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #66 | Mobile-money "you sent" receipts no longer cautioned (photo false cautions 7 -> 3) | local gate (Actions budget) |
 | 2026-11-19 | #67 | "Send money to this number" from a mobile number warns; unseen scam level 92.0% -> 93.0% | local gate (Actions budget) |
 | 2026-11-19 | #68 | Investment-doubling scams warn (new signal promised_return, draft phrase) | local gate (Actions budget) |
+| 2026-11-19 | #69 | Reproducible one-minute demo video (real app, scripted; OCR wait cut ~3 s, disclosed) | local gate (Actions budget) |
