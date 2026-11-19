@@ -342,6 +342,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **How it works, in pictures, on the empty home screen.** A first-time user who does not read saw only text.
       The empty state now starts with three picture tiles: camera -> card -> speaker (the picture card's style,
       hidden from screen readers, which hear the same steps). App-side only (the owner's open #93 touches the core).
+- [x] **"Who sent it?" in pictures.** The Paste screen's sender choices were words only. Each now has a picture
+      (building = a name, phone = a number, question mark = I do not know); the chosen one keeps its check beside the
+      picture, never colour alone. `SegOption.icon` is optional, so the Settings choices are unchanged.
 
 ## Log
 
@@ -437,3 +440,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #92 | Landing photo row generated with the card numbers (27/30 amounts, 21/25 dates) | local gate (Actions budget) |
 | 2026-11-19 | #94 | Probe 17: SMS-shorthand scams; first unseen scams warned 18/21 -> 20/21, no new false alarm | local gate (Actions budget) |
 | 2026-11-19 | #95 | Empty home screen shows how it works in three pictures | local gate (Actions budget) |
+| 2026-11-20 | #96 | Paste: "Who sent it?" choices carry pictures | local gate (Actions budget) |

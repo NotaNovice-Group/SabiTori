@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { pilot, recordExplained } from '../lib/pilot';
 import { rememberMessage, rememberNames } from '../lib/crash';
-import { ClipboardPaste } from 'lucide-react';
+import { ClipboardPaste, Building2, Phone, CircleHelp } from 'lucide-react';
 import type { MessageInput } from '@sabitori/core';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
@@ -62,9 +62,9 @@ export function PasteScreen() {
           value={kind}
           onChange={setKind}
           options={[
-            { value: 'name', key: 'app.paste.sender.name', label: t('app.paste.sender.name') },
-            { value: 'number', key: 'app.paste.sender.number', label: t('app.paste.sender.number') },
-            { value: 'unknown', key: 'app.paste.sender.unknown', label: t('app.paste.sender.unknown') },
+            { value: 'name', key: 'app.paste.sender.name', label: t('app.paste.sender.name'), icon: <Building2 size={24} strokeWidth={2} aria-hidden /> },
+            { value: 'number', key: 'app.paste.sender.number', label: t('app.paste.sender.number'), icon: <Phone size={24} strokeWidth={2} aria-hidden /> },
+            { value: 'unknown', key: 'app.paste.sender.unknown', label: t('app.paste.sender.unknown'), icon: <CircleHelp size={24} strokeWidth={2} aria-hidden /> },
           ]}
         />
         {kind !== 'unknown' && (
