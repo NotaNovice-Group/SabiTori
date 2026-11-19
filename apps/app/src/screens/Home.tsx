@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Camera, CalendarClock, ClipboardPaste, FileText, Images, Info, Settings as Cog, Smartphone, Lightbulb } from 'lucide-react';
+import { Camera, CalendarClock, ClipboardPaste, FileText, Images, Info, Settings as Cog, Smartphone, Lightbulb, OctagonX } from 'lucide-react';
 import type { Card } from '@sabitori/core';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
@@ -23,6 +23,9 @@ function Row({ card }: { card: Card }) {
   const Kind = KIND_ICON[card.understanding.kind] ?? FileText;
   const U = URGENCY_ICON[card.understanding.urgency] ?? Info;
   const scam = card.scam.level !== 'no_signs' && card.scam.level !== undefined;
+  // A likely scam is never listed like a bill: no amount, no date, and the stop sign as its picture.
+  const likely = card.scam.level === 'likely_scam';
+  const Pic = likely ? OctagonX : Kind;
   const level = scam ? 'urgent' : card.understanding.urgency;
   const Chip = scam ? URGENCY_ICON.urgent : U;
   // a card we could not fully understand has no urgency to claim
@@ -30,7 +33,7 @@ function Row({ card }: { card: Card }) {
   return (
     <li>
       <a className="row" href={`#/card/${card.id}`}>
-        <Kind className="row-ic" size={28} strokeWidth={2} aria-hidden />
+        <Pic className={likely ? 'row-ic row-ic-stop' : 'row-ic'} size={28} strokeWidth={2} aria-hidden />
         <span className="row-main">
           <span className="row-top">
             <b className="row-name">{senderName(card, t('app.sender.unknown'))}</b>
@@ -43,10 +46,10 @@ function Row({ card }: { card: Card }) {
                 {scam ? t('app.scam.title') : t(`app.urgency.${card.understanding.urgency}`)}
               </span>
             )}
-            {card.deadline && (
+            {!likely && card.deadline && (
               <span className="row-fact"><CalendarClock size={18} strokeWidth={2} aria-hidden />{formatShortDate(card.deadline.value, locale)}</span>
             )}
-            {card.amount && <b className="num row-fact">{formatMoney(card.amount.value.amount, card.amount.value.currency, locale)}</b>}
+            {!likely && card.amount && <b className="num row-fact">{formatMoney(card.amount.value.amount, card.amount.value.currency, locale)}</b>}
           </span>
         </span>
       </a>

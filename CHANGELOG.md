@@ -38,6 +38,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- In the message list a likely scam shows a stop sign and no amount or date, so it never reads like a bill to pay.
 - Android: the VIBRATE permission is declared so the scam warning vibration works in the app (privacy policy updated).
 - While a card is being prepared, its shape is shown instead of an empty page with only "Delete".
 - New look: warm paper and ink, a deep green for what to do, saffron for listening, a picture tile for every kind of

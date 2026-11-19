@@ -320,3 +320,21 @@ test('picture card on a caution: an amber warning tile, no stop sign, and only p
   expect(await page.locator('.card .pic-date').count()).toBe(await page.locator('.card .sec-deadline').count());
   expect(errors).toEqual([]);
 });
+
+test('in the message list, a likely scam shows the stop sign and no amount or date', async ({ page }) => {
+  const { errors } = await setup(page);
+  await paste(page, 'Félicitations! Votre numéro a gagné 500 000 FCFA à la promo MTN. Pour recevoir votre gain, envoyez 5 000 FCFA de frais au 677 12 34 56 avant le 30/11/2026.');
+  await expect(page.locator('.card')).toHaveAttribute('data-scam', 'likely_scam');
+  await paste(page, BILL);
+  await page.goto('#/');
+  const rows = page.locator('.rows .row');
+  await expect(rows).toHaveCount(2);
+  const scamRow = rows.filter({ has: page.locator('.row-ic-stop') });
+  await expect(scamRow).toHaveCount(1);
+  await expect(scamRow.locator('.row-fact')).toHaveCount(0);
+  await expect(scamRow.locator('.chip[data-level="urgent"]')).toBeVisible();
+  // the bill keeps its amount and date
+  const bill = rows.filter({ hasNot: page.locator('.row-ic-stop') });
+  await expect(bill.locator('.row-fact')).toHaveCount(2);
+  expect(errors).toEqual([]);
+});
