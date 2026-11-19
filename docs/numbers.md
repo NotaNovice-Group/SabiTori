@@ -22,7 +22,7 @@ Brackets: 95% bootstrap intervals. Comparison: exact McNemar test on the same me
 
 ## Reading photos (on-device OCR)
 
-30 degraded synthetic photos of bills, letters and SMS screenshots: 83.6% of dates, amounts and
+30 degraded synthetic photos of bills, letters and SMS screenshots: 84.3% of dates, amounts and
 phone numbers recovered, 97.5% of those read are right, every fact right on 20 of 30 pages
 (`apps/app/test/ocr-bench/RESULTS.md`).
 

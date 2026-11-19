@@ -20,14 +20,17 @@ has rules both ways (a table); a lone letterhead line is left alone. Same 30 pag
 | Variant | CER % | Fact recall % | Fact precision % | Fact F1 % | Pages with every fact right | Prep ms | OCR ms | Total ms (max) |
 |---|---|---|---|---|---|---|---|---|
 | before: no rule erasing (capped retry) | 25.7 | 75.0 | 97.2 | 84.7 | 16/30 | 232 | 3871 | 4103 (11100) |
-| shipped: erase table rules (capped retry) | 23.6 | 83.6 | 97.5 | 90.0 | 20/30 | 299 | 3889 | 4188 (10824) |
+| shipped: erase table rules (capped retry) | 23.6 | 84.3 | 97.5 | 90.4 | 20/30 | 299 | 3889 | 4188 (10824) |
 
 | Document | eneo | camwater | school | hospital | momo |
 |---|---|---|---|---|---|
 | Before (recall %) | 90 | 73 | 33 | 88 | 100 |
-| Shipped (recall %) | 93 | 73 | 64 | 88 | 100 |
+| Shipped (recall %) | 93 | 73 | 67 | 88 | 100 |
 
-No document type lost facts; school notices went from a third to about two thirds of their facts. The tables below were measured before this
+No document type lost facts; school notices went from a third to about two thirds of their facts. Since 2026-11-19 the
+fact reader also reads an OCR-garbled month between a day and a year ("27 noveribwe 2026"; `nearMonth` in
+`packages/core/src/facts.ts`): shipped recall 83.6% -> 84.3% (school 64% -> 67%), precision unchanged. Timing columns are from
+the first run. The tables below were measured before this
 step and are kept as the record of how the pipeline was chosen.
 
 ## Before / after (the pipeline as first chosen)
