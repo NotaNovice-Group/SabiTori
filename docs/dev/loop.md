@@ -250,6 +250,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       axe-core WCAG 2.2 AA: 0 violations at 1440 and 390, light and dark.
 - [x] **Accessibility audit after the redesign.** `node apps/app/scripts/a11y.mjs` re-run on the redesigned app with the
       picture card: 163 screen states, WCAG 2.2 AA plus manual-class checks, 0 violations, 0 failures.
+- [x] **Browser test for the picture card.** In the built app: a bill shows the pay symbol, the date and notes; a
+      scam shows only the stop sign (no pay symbol, money or date) and vibrates three long pulses; a bill does not
+      vibrate. Pictures stay hidden from screen readers.
 
 ## Log
 
@@ -325,3 +328,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #73 | Card loading skeleton instead of an empty page with Delete | local gate (Actions budget) |
 | 2026-11-19 | #74 | Landing page (site/), Cloudflare Pages config, redesigned screenshots and demo video | local gate (Actions budget) |
 | 2026-11-19 | #75 | Full accessibility audit re-run after the redesign: 163 states, 0 violations | local gate (Actions budget) |
+| 2026-11-19 | #76 | e2e: picture card on a bill; scam shows only the stop sign and vibrates | local gate (Actions budget) |
