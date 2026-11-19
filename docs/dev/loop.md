@@ -331,6 +331,14 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Landing photo row generated, with the card numbers.** The landing page's photo row (fact recall and
       precision) is now generated with the understanding and scam rows, and adds what the card shows: right amount on
       27 of 30 photos, right date on 21 of 25, wrong and not-shown counts, no false likely-scam.
+- [x] **Probe 17: scams in SMS shorthand.** 9 messages (6 scams, 3 genuine) in the shorthand people really text
+      ("stp envoi 15 000f sur ce num", "pls send 5000 frs to this nbr", "snd me 10 000 for dis numba 677..."). 1 scam
+      unwarned, 2 only a caution. Added: shorthand "this number" words (fr: ce num, ce no, ce nmr, ce nbr; en: this
+      num/nbr/numba, dis number/numba/num/nbr), "snd" as a send word, and a number grouped in thousands right after a
+      send or pay word as an amount without a currency ("envoie-moi 15.000"; never a year, a bare 3-digit number, a
+      phone or a distance). All 6 now likely scam; genuine shorthand stays clean. First unseen set scams warned
+      18/21 -> 20/21, false alarms 2/79 unchanged; no new false alarm on any split; second unseen set unchanged;
+      thresholds unchanged; OCR benchmark unchanged.
 
 ## Log
 
@@ -424,3 +432,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #90 | Pidgin cards checked end to end (warning first, no money on a scam); regression test | local gate (Actions budget) |
 | 2026-11-19 | #91 | Photo cards published: right amount 27/30, right date 21/25, no false likely-scam (reproducible) | local gate (Actions budget) |
 | 2026-11-19 | #92 | Landing photo row generated with the card numbers (27/30 amounts, 21/25 dates) | local gate (Actions budget) |
+| 2026-11-19 | #94 | Probe 17: SMS-shorthand scams; first unseen scams warned 18/21 -> 20/21, no new false alarm | local gate (Actions budget) |
