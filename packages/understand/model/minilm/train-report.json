@@ -1,20 +1,28 @@
 {
- "n_train": 453,
+ "n_train": 2115,
+ "epochs": 8,
+ "lr": 5e-05,
+ "batch": 16,
+ "smoothing": 0.05,
+ "train_emb": false,
+ "w_action": 1.0,
+ "folds": 5,
+ "seconds_cv": 3136,
  "cv": {
   "kind": {
-   "cv_accuracy": 0.8455,
-   "C": 100,
-   "temperature": 0.919
+   "cv_accuracy": 0.9598,
+   "temperature": 0.634
   },
   "action": {
-   "cv_accuracy": 0.8168,
-   "C": 100,
-   "temperature": 0.969
+   "cv_accuracy": 0.9504,
+   "temperature": 0.667
   },
   "urgency": {
-   "cv_accuracy": 0.7682,
-   "C": 10,
-   "temperature": 1.013
+   "cv_accuracy": 0.8312,
+   "temperature": 1.261
   }
- }
+ },
+ "cv_all_three": 0.7645,
+ "seconds_total": 3939,
+ "method": "finetune.py: encoder fine-tuned with the three heads (word-embedding table frozen), 5-fold out-of-fold on train rows"
 }

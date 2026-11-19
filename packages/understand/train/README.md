@@ -1,9 +1,71 @@
 # Training the built-in understanding model
 
 The app ships a small neural model that reads every message on the phone: the multilingual sentence
-encoder `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (Apache-2.0), exported to int8
-ONNX, plus three small logistic-regression heads (kind, action, urgency) trained on its embeddings.
-Everything below runs on a CPU in a few minutes.
+encoder `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (Apache-2.0), fine-tuned on the train
+messages together with three linear heads (kind, action, urgency), then exported to int8 ONNX.
+Since `minilm-l12-int8@4` the encoder itself is fine-tuned (`finetune.py`, below); up to `@3` it was frozen and
+only the heads were trained (`train.py`, kept for comparison). The fine-tune takes about 65 minutes on a 4-core
+CPU; everything else runs in a few minutes.
+
+## Fine-tune (what ships since `minilm-l12-int8@4`)
+
+From the repository root, after the setup lines of "Reproduce" below:
+
+```bash
+cd packages/understand/train
+EXTRA="--extra ../eval/train-extra.jsonl $(for g in ../eval/train-gen/g*.jsonl; do echo --extra $g; done)"
+
+# 1. 5-fold out-of-fold run on TRAIN rows, then the shipped model on all train rows (writes st/, heads.json, oof.json)
+python finetune.py --data ../eval/messages.jsonl $EXTRA --out ../model/minilm-ft --epochs 8 --lr 5e-5
+
+# 2. export the fine-tuned encoder (vocabulary from TRAIN texts and the packs; fidelity on held-out sentences)
+python export.py --base ../model/minilm-ft/st --out ../model/minilm \
+  --corpus ../eval/messages.jsonl $(echo $EXTRA | sed 's/--extra/--corpus/g') \
+  --corpus ../../../packs/fr/reading.json --corpus ../../../packs/en/reading.json \
+  --heldout heldout-sentences.txt
+cp ../model/minilm-ft/heads.json ../model/minilm-ft/oof.json ../model/minilm/
+cp ../model/minilm-ft/finetune-report.json ../model/minilm/train-report.json
+
+# 3. thresholds from the out-of-fold predictions, through the app's combine code; then the parity fixture
+cd ../../..
+node packages/understand/eval/run-encoder.mjs --select-threshold --write
+cd packages/understand/train && python make_fixtures.py --model ../model/minilm --out ../test/fixtures/encoder-parity.json
+```
+
+Then step 4 of "Reproduce" (the one-time evaluation on the test split and the unseen sets) and `model-card.mjs`.
+
+How it trains: mean-pooled, L2-normalised embedding, three linear heads (logits scaled by 20), summed cross-entropy
+with label smoothing 0.05, AdamW (encoder lr 5e-5, heads 2e-3), 10% warm-up then linear decay, batch 16, 8 epochs,
+max 128 tokens. The word-embedding table (96M of 118M parameters) stays frozen: it is pruned to 30k rows at export
+anyway, and freezing it makes a CPU step about 3x cheaper. The calibration temperature per field is fitted on the
+out-of-fold logits. Settings were compared only on out-of-fold "all three right" through `combineWithRules`
+(`run-encoder.mjs --select-threshold --model <dir>`, which reads `oof.json` and never the test or unseen sets):
+
+| Setting (5-fold, train rows) | encoder alone: kind / action / urgency | combined: kind / action / urgency | combined: all three |
+|---|---|---|---|
+| frozen encoder + logistic heads (`@3`, old guard input), 1,953 rows | n/a | 91.4 / 83.7 / 93.4 | 74.2 |
+| 5 epochs, lr 4e-5, 1,953 rows | 93.7 / 94.0 / 84.9 | 95.7 / 89.0 / 92.1 | 83.8 |
+| 8 epochs, lr 5e-5, 1,953 rows | 95.3 / 95.0 / 85.0 | 95.8 / 89.8 / 92.2 | 84.6 |
+| 8 epochs, lr 5e-5, action loss x2, smoothing 0.1, 1,953 rows | 94.9 / 95.0 / 85.6 | 95.9 / 89.7 / 92.1 | 84.4 |
+| **shipped**: 8 epochs, lr 5e-5, + `g6.jsonl`, 2,115 rows | 96.0 / 95.0 / 83.1 | 97.1 / 89.5 / 92.6 | 85.3 (84.0 on the original 1,953) |
+
+"Encoder alone" is the argmax of each head; "combined" is what the app shows (rules + encoder, thresholds chosen on
+the same out-of-fold predictions). Urgency alone is low on purpose: code decides it from the action and the dates.
+(Fine-tuned rows are with the corrected guard input described below; before it, the first row's 83.8 was 81.2.)
+
+Two things cap the combined number below the encoder's own accuracy: urgency is decided by code from the chosen
+action and the deadline cues (on purpose), and `guardUnderstanding` keeps the rules' action when the encoder says
+"nothing" next to a future date. With a perfect encoder (gold labels at confidence 1) the combined "all three right"
+on these train rows is 92.0%, so the 92% goal is not reachable by the encoder alone with the combine code as it is.
+The combine step used to pass "any amount in the text" as the guard's `amountNearPay`; it now passes the precise
+test (an amount within 40 characters of a pay/send verb, `amountNearPayIn` in core, the same one `card.ts` uses),
+which on its own raised the perfect-encoder ceiling from 89.2% to 92.0%.
+
+`eval/train-gen/g6.jsonl` (162 rows, ids `ft-`, generator `eval/gen/g6-finetune.py`) adds messages where an optional
+"call for info" line sits next to the real ask (pay, bring a document, go, collect, reply, take medicine; receipts are
+`nothing`), plus rows where calling is the ask. They were written from the labelling rules after the 8-epoch model
+answered `call` on the review test "school fees ... pay am before 20/11 ... Call ... for info"
+(`test/review3.test.ts`); their urgency agrees with the code's deadline arithmetic on every row.
 
 ## Reproduce
 
