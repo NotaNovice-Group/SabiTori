@@ -304,6 +304,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       are refused. 8 messages with several dates: 7 right; "initialement le 20/11, il est fixé au 27/11" chose the old
       date. Reschedule words added (fr: fixé(e) au, désormais le/au, désormais lieu le, reprogrammé(e) au; en: now set
       for, will now be on, will now hold on). Every evaluation unchanged, OCR benchmark included.
+- [x] **Landing page numbers generated.** The landing page still quoted 51.0% on the second unseen set after the
+      owner's retrain moved it to 57.0% (and its rules-alone and p values). Its understanding and scam rows are now
+      written by `scripts/numbers.mjs` between markers, from the same result files as docs/numbers.md, and checked
+      by `numbers.mjs --check` and `pnpm reproduce`. Links in genuine official messages were also probed: every link
+      is a caution by design (labels), and allowing official sites needs confirmed domains (owner), so unchanged.
 
 ## Log
 
@@ -392,3 +397,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #86 | "5 mille" read as 5 000 FCFA (SMS amounts in thousands); evaluations unchanged | local gate (Actions budget) |
 | 2026-11-19 | #87 | "Avant fin novembre" / "end of November" read as the last day of the month | local gate (Actions budget) |
 | 2026-11-19 | #88 | Phone and multi-date probes; "fixé au" / "now set for" move an appointment | local gate (Actions budget) |
+| 2026-11-19 | #89 | Landing page numbers generated from the results (57.0% second unseen set) and checked by reproduce | local gate (Actions budget) |
