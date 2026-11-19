@@ -11,7 +11,8 @@ import type {
 } from './types.js';
 import type { ReadingLexicon } from './reading.js';
 import type { RegionConfig } from './region.js';
-import { collect, findTerms, fold } from './text.js';
+import { collect, findTerms, fold, hasTerm } from './text.js';
+import { withinDays } from './classifier.js';
 import { amountNearPayIn, guardUnderstanding, NEAR_PAY } from './guard.js';
 
 /** Below this confidence the card falls back to facts only. */
@@ -289,11 +290,14 @@ export function buildCard(args: {
   const deadline = chooseDeadline(input, facts, lexicons);
   let understanding = args.understanding;
   if (args.rules) {
-    const amountNearPay = amountNearPayIn(fold(input.text), facts, lexicons);
+    const n = fold(input.text);
+    const amountNearPay = amountNearPayIn(n, facts, lexicons);
+    const timeAlarm = hasTerm(n, collect(lexicons, (l) => l.urgency.urgent)) || withinDays(n) !== undefined;
     understanding = guardUnderstanding(understanding, args.rules, {
       facts,
       receivedAt: input.receivedAt,
       amountNearPay,
+      timeAlarm,
       scamLevel: scam.level,
     });
   }

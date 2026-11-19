@@ -38,6 +38,8 @@ export interface GuardContext {
   /** An amount sits next to a pay/send verb (precise when the caller has the lexicons; else "any amount"). */
   amountNearPay: boolean;
   scamLevel?: 'no_signs' | 'caution' | 'likely_scam';
+  /** An alarm word ("today", "tonight") or "within N days/hours" is in the text. Unknown (undefined) = assume yes. */
+  timeAlarm?: boolean;
 }
 
 export function guardUnderstanding(u: Understanding, rules: Understanding, ctx: GuardContext): Understanding {
@@ -46,7 +48,10 @@ export function guardUnderstanding(u: Understanding, rules: Understanding, ctx: 
   let { action, urgency } = u;
 
   // (a) "Nothing to do" cannot stand next to a future deadline or an amount to pay.
-  if (action === 'nothing' && rules.action !== 'nothing' && (days !== undefined || ctx.amountNearPay)) action = rules.action;
+  // A date alone does not block "nothing" when the rules themselves found no task (their answer is "unclear") and the
+  // text has no amount and no alarm word: a dated notice (planned cut, holiday) needs nothing from the reader.
+  const datedNotice = rules.action === 'unclear' && ctx.timeAlarm === false && ctx.facts.amounts.length === 0;
+  if (action === 'nothing' && rules.action !== 'nothing' && ((days !== undefined && !datedNotice) || ctx.amountNearPay)) action = rules.action;
   // (c) Under caution the model may not turn a message into "you must pay" when the rules found no payment.
   if (ctx.scamLevel === 'caution' && action === 'pay' && (rules.action === 'unclear' || rules.action === 'nothing'))
     action = rules.action;
