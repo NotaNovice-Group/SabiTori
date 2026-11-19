@@ -289,6 +289,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       a consequence ("attracts a fine of 10,000 FCFA") was shown as the amount (when every amount is a penalty, one is
       shown only if a pay word is in its clause). Rules alone: test 60.4% -> 61.5%, second unseen set 44% -> 45%;
       encoder + rules unchanged on every set; thresholds unchanged (0.75 / 0.7 / 0.75 after the owner's retrain).
+- [x] **"5 mille" is an amount.** 17 ways people write amounts probed: standard forms all read; "5 mille" (how
+      people write 5 000 FCFA in an SMS, common in "send money" scams) was not an amount, so "Envoie-moi 15 mille sur
+      ce numéro" had no money fact. `thousandWords` (fr: mille, milles): 1-3 digits (one decimal) before it, with or
+      without a currency. "10k" and amounts in words ("cinq mille") left out (ambiguous / rare). Every evaluation
+      unchanged, OCR benchmark included; thresholds unchanged.
 
 ## Log
 
@@ -374,3 +379,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #83 | Message list names the claimed sender ("Says: ENEO"), never for a likely scam | local gate (Actions budget) |
 | 2026-11-19 | #84 | Probe 15: public-service messages; "amenez", "présence des parents", near start date not urgent | local gate (Actions budget) |
 | 2026-11-19 | #85 | Probe 16: English official messages; "must be paid", consequence-only fines not shown as the amount | local gate (Actions budget) |
+| 2026-11-19 | #86 | "5 mille" read as 5 000 FCFA (SMS amounts in thousands); evaluations unchanged | local gate (Actions budget) |

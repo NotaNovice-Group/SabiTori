@@ -50,6 +50,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- "5 mille", "30 mille FCFA" are read as amounts (5 000, 30 000 FCFA), the way people write them in an SMS.
 - "Must be paid by" / "doit être payée avant" are read as a payment; a fine that is only a consequence ("late
   registration attracts a fine of 10,000 FCFA") is no longer shown as the amount to pay.
 - "Amenez vos enfants au centre de santé" and "Présence des parents obligatoire" are read as "go there"; a near start
