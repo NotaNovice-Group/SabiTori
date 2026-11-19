@@ -299,6 +299,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       novembre" / "end of November", common on bills and school notices, which gave no date. `monthEndWords` (fr: fin,
       fin du mois de, fin de; en: end of, the end of) + a month name = its last day (leap years too). Every evaluation
       unchanged, OCR benchmark included.
+- [x] **Phones and several dates probed; "fixé au" moves a date.** 15 phone forms (+237, 00237, dashes, dots,
+      brackets, landlines, two numbers with a slash) all read, and the two invalid ones (leading 0, one digit short)
+      are refused. 8 messages with several dates: 7 right; "initialement le 20/11, il est fixé au 27/11" chose the old
+      date. Reschedule words added (fr: fixé(e) au, désormais le/au, désormais lieu le, reprogrammé(e) au; en: now set
+      for, will now be on, will now hold on). Every evaluation unchanged, OCR benchmark included.
 
 ## Log
 
@@ -386,3 +391,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #85 | Probe 16: English official messages; "must be paid", consequence-only fines not shown as the amount | local gate (Actions budget) |
 | 2026-11-19 | #86 | "5 mille" read as 5 000 FCFA (SMS amounts in thousands); evaluations unchanged | local gate (Actions budget) |
 | 2026-11-19 | #87 | "Avant fin novembre" / "end of November" read as the last day of the month | local gate (Actions budget) |
+| 2026-11-19 | #88 | Phone and multi-date probes; "fixé au" / "now set for" move an appointment | local gate (Actions budget) |
