@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Trash2, FileUp, X, RefreshCw, Info } from 'lucide-react';
+import { Trash2, FileUp, X, RefreshCw, Info, RotateCcw } from 'lucide-react';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
 import { SpeakingButton } from '../components/SpeakingButton';
@@ -36,6 +36,7 @@ export function SettingsScreen() {
   const [deleting, setDeleting] = useState(false);
   const [confirmClear, setConfirmClear] = useState(false);
   const [clearing, setClearing] = useState(false);
+  const [confirmRestart, setConfirmRestart] = useState(false);
   const [quarantined, setQuarantined] = useState(() => (config.updates ? loadQuarantine() : null));
 
   useEffect(() => {
@@ -183,6 +184,12 @@ export function SettingsScreen() {
           onAct={() => { setCleared(false); setConfirmClear(true); }}
         />
         <p className="panel-hint" role="status">{cleared ? t('app.settings.cleared') : ''}</p>
+        <SpeakingButton
+          speakKey="app.settings.restart"
+          variant="secondary"
+          icon={<RotateCcw size={24} strokeWidth={2} aria-hidden />}
+          onAct={() => setConfirmRestart(true)}
+        />
       </section>
 
       <section className="panel" aria-labelledby="s-builtin">
@@ -275,6 +282,30 @@ export function SettingsScreen() {
                 setClearing(false);
                 setConfirmClear(false);
                 setCleared(true);
+              }}
+            />
+          </div>
+        </Sheet>
+      )}
+
+      {confirmRestart && (
+        <Sheet title={t('app.settings.restart')} onClose={() => !clearing && setConfirmRestart(false)}>
+          <div className="confirm">
+            <p>{t('app.settings.restart_hint')}</p>
+            <SpeakingButton speakKey="app.settings.clear_keep" variant="secondary" disabled={clearing} onAct={() => setConfirmRestart(false)} />
+            <SpeakingButton
+              speakKey="app.settings.restart_confirm"
+              variant="danger"
+              icon={<RotateCcw size={24} strokeWidth={2} aria-hidden />}
+              disabled={clearing}
+              onAct={async () => {
+                setClearing(true);
+                engine.stop();
+                await clearCards(); // and their reminders
+                session.clearCards();
+                await refreshHistory();
+                setSettings({ onboarded: false });
+                navigate('/welcome', { replace: true });
               }}
             />
           </div>

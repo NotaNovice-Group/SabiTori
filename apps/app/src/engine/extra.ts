@@ -235,6 +235,14 @@ export const EXTRA = x({
   'app.pilot.reset': { en: 'Start counting again', fr: 'Recommencer à compter', context: 'Button.' },
   'app.settings.clear': { en: 'Delete all my messages', fr: 'Effacer tous mes messages', context: 'Button.' },
   'app.settings.cleared': { en: 'Deleted', fr: 'Effacé', context: 'Confirmation.' },
+  'app.nav.home': { en: 'Home', fr: 'Accueil', context: 'Button in the top bar of every inner screen: go to the first screen of the app.' },
+  'app.settings.restart': { en: 'Start again from the beginning', fr: 'Recommencer depuis le début', context: 'Button in Settings. SabiTori has no account, so this is its "sign out": it deletes the kept messages and shows the language choice again.' },
+  'app.settings.restart_hint': {
+    en: 'This deletes every message kept on this phone, and their reminders, and takes you back to choose your language. SabiTori has no account, so there is nothing else to sign out of. It cannot be undone.',
+    fr: 'Cela efface tous les messages gardés sur ce téléphone, et leurs rappels, et vous ramène au choix de la langue. SabiTori n’a pas de compte : il n’y a rien d’autre à déconnecter. On ne peut pas revenir en arrière.',
+    context: 'Confirmation text before starting again.',
+  },
+  'app.settings.restart_confirm': { en: 'Delete and start again', fr: 'Effacer et recommencer', context: 'Button: confirm starting again.' },
   'app.settings.clear_hint': {
     en: 'This deletes every message kept on this phone, and their reminders. It cannot be undone.',
     fr: 'Cela efface tous les messages gardés sur ce téléphone, et leurs rappels. On ne peut pas revenir en arrière.',

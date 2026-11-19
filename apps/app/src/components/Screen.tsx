@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, type ReactNode } from 'react';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, House } from 'lucide-react';
+import { navigate } from '../lib/router';
 import { useApp } from '../app-context';
 import { SpeakingButton } from './SpeakingButton';
 
@@ -14,6 +15,8 @@ interface Props {
   quietTitle?: boolean;
   /** Content above the title row (the product mark on the first screen). */
   above?: ReactNode;
+  /** No Home button beside Back (first-run screens, where there is no home yet). */
+  noHome?: boolean;
 }
 
 /**
@@ -21,9 +24,9 @@ interface Props {
  * every route change), scrolling content, optional bottom dock. The whole screen is the one <main> landmark,
  * dock included, so nothing sits outside a landmark.
  */
-export function Screen({ title, back, right, children, dock, className, quietTitle, above }: Props) {
+export function Screen({ title, back, right, children, dock, className, quietTitle, above, noHome }: Props) {
   const h1 = useRef<HTMLHeadingElement>(null);
-  const { t } = useApp();
+  const { t, engine } = useApp();
   const root = useRef<HTMLDivElement>(null);
   const dockEl = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
@@ -56,6 +59,11 @@ export function Screen({ title, back, right, children, dock, className, quietTit
           {title}
         </h1>
         {right && <div className="topbar-right">{right}</div>}
+        {!right && back && !noHome && (
+          <div className="topbar-right">
+            <SpeakingButton speakKey="app.nav.home" variant="quiet" icon={<House size={24} strokeWidth={2} aria-hidden />} label={<span className="sr-only">{t('app.nav.home')}</span>} onAct={() => { engine.stop(); navigate('/'); }} className="topbar-home" />
+          </div>
+        )}
       </header>
       <div className="screen-body">{children}</div>
       {dock && (

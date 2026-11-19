@@ -34,7 +34,7 @@ export function ModeScreen() {
     navigate(session.takeResume() ?? '/', { replace: true });
   };
   return (
-    <Screen title={t('app.mode.title')} back={() => navigate('/welcome')} className="mode">
+    <Screen title={t('app.mode.title')} back={() => navigate('/welcome')} noHome className="mode">
       <div className="choices">
         <SpeakingButton speakKey="app.mode.listen" variant="hero" className="choice" icon={<Ear size={32} strokeWidth={2} aria-hidden />} label={<span className="choice-text"><b>{t('app.mode.listen')}</b><small>{t('app.mode.listen_hint')}</small></span>} onAct={() => choose(true)} />
         <SpeakingButton speakKey="app.mode.read" variant="hero" className="choice choice-alt" icon={<BookOpen size={32} strokeWidth={2} aria-hidden />} label={<span className="choice-text"><b>{t('app.mode.read')}</b><small>{t('app.mode.read_hint')}</small></span>} onAct={() => choose(false)} />

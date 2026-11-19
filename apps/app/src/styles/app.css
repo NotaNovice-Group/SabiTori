@@ -166,11 +166,23 @@ a { color: inherit; text-decoration: none; }
   gap: var(--s2) var(--s3);
   min-height: 72px;
   padding-block: var(--s2);
+  /* Stays at the top while the page scrolls, so Back and Home are always reachable. The spread shadow
+     paints the full width and the strip under the status bar; the clip keeps it from covering the page. */
+  position: sticky;
+  top: env(safe-area-inset-top);
+  z-index: 6;
+  background: var(--ground);
+  box-shadow: 0 0 0 100vmax var(--ground);
+  clip-path: inset(calc(-1 * env(safe-area-inset-top)) -100vmax 0);
 }
+/* At very large text a wrapped top bar would eat the screen: let it scroll away as before. */
+@media (max-height: 520px) { .topbar { position: static; box-shadow: none; clip-path: none; } }
 .topbar-back { margin-inline-start: calc(var(--s2) * -1); } /* outline stays on screen */
 /* A title that does not fit beside the back button takes the next line, full width. */
 .screen-title { font-size: var(--fs-title); line-height: 1.2; font-weight: 700; flex: 1 0 auto; max-width: 100%; min-width: 0; overflow-wrap: break-word; }
 .topbar-right { margin-inline-start: auto; }
+.screen-title { flex: 1 1 0; } /* shares the row with Back and Home; wraps inside its own space */
+.topbar-home { min-width: 56px; justify-content: center; }
 .topbar .btn-quiet { padding-inline: var(--s3); text-decoration: none; }
 .topbar-right .btn-quiet { background: var(--surface); }
 
