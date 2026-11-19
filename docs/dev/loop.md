@@ -323,6 +323,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       rendered in Pidgin: every section is said in Pidgin ("This message look like wayo. No send money..."), the
       warning comes first and a scam card has no money section. Engine regression test. The Pidgin wording is the
       owner's draft and still needs a native speaker's review.
+- [x] **Photo cards measured and published.** `packages/understand/eval/run-photo-cards.mjs` scores the card a person
+      sees on the 30 OCR-benchmark photos (shipped OCR text, rules path) against each photo's amount due and deadline,
+      and the same photos' true text: amount 27/30 right (2 wrong, 1 not shown), date 21/25 dated pages right (0 wrong,
+      4 not shown), 0 genuine photos warned as a likely scam; true text 30/30 and 25/25. Written to
+      `results/cards.json`, quoted in docs/numbers.md, re-run and checked by `pnpm reproduce`.
 
 ## Log
 
@@ -414,3 +419,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #89 | Landing page numbers generated from the results (57.0% second unseen set) and checked by reproduce | local gate (Actions budget) |
 | 2026-11-19 | #89 | Pidgin app strings accepted by the shared pack validator (main tests green again); reproduce byte-identical again | local gate (Actions budget) |
 | 2026-11-19 | #90 | Pidgin cards checked end to end (warning first, no money on a scam); regression test | local gate (Actions budget) |
+| 2026-11-19 | #91 | Photo cards published: right amount 27/30, right date 21/25, no false likely-scam (reproducible) | local gate (Actions budget) |

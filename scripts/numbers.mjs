@@ -30,6 +30,7 @@ const scam = (name) => {
 };
 const u2 = Boolean(r.sets.unseen2);
 const u3 = Boolean(r.sets.unseen3);
+const cards = json('apps/app/test/ocr-bench/results/cards.json');
 const shipped = ocr.find((v) => v.name.startsWith('shipped')) ?? ocr[ocr.length - 1];
 
 const md = `# Numbers to quote
@@ -60,7 +61,10 @@ ${u3 ? `- Third unseen set: ${scam('unseen3')}.\n` : ''}${u2 ? `- Second unseen 
 
 ${shipped.images.length} degraded synthetic photos of bills, letters and SMS screenshots: ${pct(shipped.recall)} of dates, amounts and
 phone numbers recovered, ${pct(shipped.precision)} of those read are right, every fact right on ${shipped.perfect} of ${shipped.images.length} pages
-(\`apps/app/test/ocr-bench/RESULTS.md\`).
+(\`apps/app/test/ocr-bench/RESULTS.md\`). On the card a person sees, from the same photos: the right amount on ${cards.ocr.amount.right} of ${cards.photos} (${cards.ocr.amount.wrong} wrong, ${cards.ocr.amount.missing}
+shown without an amount), the right date on ${cards.ocr.date.right} of ${cards.dated} dated pages (${cards.ocr.date.wrong} wrong, ${cards.ocr.date.missing} without a date), and no genuine
+photo warned as a likely scam (${cards.ocr.falseScam}); from the photos' true text: ${cards.truth.amount.right} of ${cards.photos} amounts, ${cards.truth.date.right} of ${cards.dated} dates
+(\`packages/understand/eval/run-photo-cards.mjs\`).
 
 ## Other measured facts (with their source)
 

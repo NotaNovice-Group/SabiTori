@@ -26,7 +26,10 @@ Brackets: 95% bootstrap intervals. Comparison: exact McNemar test on the same me
 
 30 degraded synthetic photos of bills, letters and SMS screenshots: 84.3% of dates, amounts and
 phone numbers recovered, 97.5% of those read are right, every fact right on 20 of 30 pages
-(`apps/app/test/ocr-bench/RESULTS.md`).
+(`apps/app/test/ocr-bench/RESULTS.md`). On the card a person sees, from the same photos: the right amount on 27 of 30 (2 wrong, 1
+shown without an amount), the right date on 21 of 25 dated pages (0 wrong, 4 without a date), and no genuine
+photo warned as a likely scam (0); from the photos' true text: 30 of 30 amounts, 25 of 25 dates
+(`packages/understand/eval/run-photo-cards.mjs`).
 
 ## Other measured facts (with their source)
 
