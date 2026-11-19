@@ -93,6 +93,14 @@ export const CATALOG = c({
     en: 'This message promises your money will grow fast. This is a common trick.',
     context: 'Reason: the message promises a large, quick gain on money paid in (investment or "doubling" scheme).',
   },
+  'scam.signal.offer_fee': {
+    en: 'This message offers a job, a place, a loan or a scholarship, but asks you to pay first.',
+    context: 'Reason: a job, a place in a competitive exam, a scholarship, a visa or a loan is said to be granted, but a fee must be paid to a personal number first.',
+  },
+  'scam.signal.distress_money': {
+    en: 'This message tells of an emergency to ask for money. Call the person back on the number you already know.',
+    context: 'Reason: an accident, an arrest or someone stranded is used to ask for money from an ordinary number.',
+  },
 
   /* ---------- Sender ---------- */
   'sender.known': {

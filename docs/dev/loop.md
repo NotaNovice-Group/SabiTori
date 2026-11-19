@@ -227,6 +227,16 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       the impeccable craft floor and taste rules: no side bars, no hyphenated words, one icon system). Picture card
       for deaf and non-reading users (action symbol, calendar page with days left, CFA notes and coins; stop sign only
       on a scam) and vibration on scam cards. Unit tests for the picture helpers; a11y and e2e re-run in the gate.
+- [x] **Probe 14: Cameroon scam patterns.** 59 new messages (36 scams, 23 genuine look-alikes; fr, en, Pidgin) in
+      `packages/core/test/probe14-scams.test.ts`. Before: 6 scams under-warned (5 no warning: army recruitment fee,
+      SONARA "frais de dossier ... contact 677", stranded-abroad romance, Pidgin accident, "forward me the code I sent by
+      mistake"; 1 caution only: "reply with the code you will receive") and 4 genuine flagged (job advert "envoyez
+      votre CV au 677", an operator's warning about the code trick, a tontine "sur ce numéro", a results notice with a
+      link). Fixed 8 of 10: all 36 scams warn (romance as a caution); two new signals `offer_fee` (strong) and
+      `distress_money` (caution), draft phrases; job adverts and operator warnings clean. Left, documented in the test:
+      the tontine "send to this number" (same words as the probe-13 scam) and the link caution (labelling rule). Rules
+      eval unchanged: train warned 64/67, false alarms 0/157; test 22/22, 0/74; unseen 18/21, 2/79 (scam level 93.0%).
+      Thresholds unchanged (kind 0.85, action 0.65, urgency 0.85); `pnpm reproduce` byte-identical.
 
 ## Log
 
@@ -297,3 +307,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #68 | Investment-doubling scams warn (new signal promised_return, draft phrase) | local gate (Actions budget) |
 | 2026-11-19 | #69 | Reproducible one-minute demo video (real app, scripted; OCR wait cut ~3 s, disclosed) | local gate (Actions budget) |
 | 2026-11-19 | #70 | Redesign (warm paper, brand green, saffron listen) + picture card and scam vibration for deaf/non-reading users | local gate (Actions budget) |
+| 2026-11-19 | #71 | Probe 14: 59 scam/look-alike messages; job-fee and emergency-money signals, code-theft and SIM-swap code asks caught; eval unchanged | local gate (Actions budget) |

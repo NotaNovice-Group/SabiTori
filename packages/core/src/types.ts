@@ -115,6 +115,8 @@ export const SCAM_SIGNALS = [
   'ussd_instruction',
   'pay_to_personal_number',
   'promised_return',
+  'offer_fee',
+  'distress_money',
 ] as const;
 export type ScamSignal = (typeof SCAM_SIGNALS)[number];
 

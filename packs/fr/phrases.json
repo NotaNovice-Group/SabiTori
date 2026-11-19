@@ -322,5 +322,13 @@
   "scam.signal.promised_return": {
     "text": "Ce message promet que votre argent va vite grandir. C'est une ruse fréquente.",
     "status": "draft"
+  },
+  "scam.signal.offer_fee": {
+    "text": "Ce message propose un emploi, une place, un prêt ou une bourse, mais demande de payer d'abord.",
+    "status": "draft"
+  },
+  "scam.signal.distress_money": {
+    "text": "Ce message raconte une urgence pour demander de l'argent. Rappelez la personne sur le numéro que vous connaissez déjà.",
+    "status": "draft"
   }
 }

@@ -110,5 +110,11 @@ export interface ReadingLexicon {
     emergencyWords?: string[];
     /** Purposes a scam gives for dialling: receive, unlock, confirm, verify money or account. */
     ussdPurposeWords?: string[];
+    /** "recrutement", "selected for a job", "bourse accordée", "loan approved": a job, place or money offered. */
+    offerWords?: string[];
+    /** "stuck at the airport", "arrêté par la police", "seized my luggage": a story told to rush someone into sending money. */
+    distressWords?: string[];
+    /** "votre CV", "your documents": what a send verb names when it is not money ("Envoyez votre CV au 677..."). */
+    documentObjects?: string[];
   };
 }

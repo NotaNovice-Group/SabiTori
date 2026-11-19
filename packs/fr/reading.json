@@ -829,7 +829,11 @@
       "{n} chiffres secrets",
       "identifiants",
       "vos identifiants",
-      "identifiant de connexion"
+      "identifiant de connexion",
+      "le code que vous allez recevoir",
+      "le code que vous recevrez",
+      "code que vous allez recevoir",
+      "code whatsapp"
     ],
     "askVerbs": [
       "envoy*",
@@ -939,7 +943,13 @@
       "frais de dossier",
       "activation",
       "pour toucher",
-      "pour valider"
+      "pour valider",
+      "pour garantir votre place",
+      "pour réserver votre place",
+      "garantir votre place",
+      "frais de prise en charge",
+      "frais d'assurance",
+      "caution de"
     ],
     "blockThreats": [
       "sera bloqu*",
@@ -1153,6 +1163,51 @@
       "urgence medicale",
       "est à l'hôpital",
       "hospitalisé*"
+    ],
+    "offerWords": [
+      "recrutement",
+      "votre recrutement",
+      "vous êtes retenu",
+      "vous êtes retenue",
+      "vous avez été retenu",
+      "vous avez été retenue",
+      "vous avez été sélectionné",
+      "vous avez été sélectionnée",
+      "votre candidature a été retenue",
+      "offre d'emploi",
+      "bourse accordée",
+      "bourse d'études",
+      "prêt approuvé",
+      "prêt accordé",
+      "prêt rapide",
+      "votre prêt",
+      "visa accordé",
+      "place garantie"
+    ],
+    "distressWords": [
+      "bloqué à l'aéroport",
+      "bloquée à l'aéroport",
+      "coincé à l'aéroport",
+      "coincée à l'aéroport",
+      "bloqué à la frontière",
+      "bloquée à la frontière",
+      "arrêté par la police",
+      "arrêtée par la police",
+      "a été arrêté",
+      "a été arrêtée",
+      "en garde à vue",
+      "ont saisi mes bagages",
+      "mes bagages ont été saisis",
+      "on m'a volé",
+      "j'ai été agressé",
+      "j'ai été agressée"
+    ],
+    "documentObjects": [
+      "votre cv",
+      "ton cv",
+      "le cv",
+      "vos documents",
+      "vos pièces"
     ]
   },
   "promoWords": [
