@@ -61,11 +61,18 @@ describe('engine adapter over the real packages', () => {
 
   it('a pack that cannot render (no rules) speaks through its fallback', async () => {
     const { e } = engine();
-    const r = await e.phrase('ui.welcome', 'wes');
+    const r = await e.phrase('ui.welcome', 'dua');
     expect(['en', 'fr']).toContain(r.lang);
     expect(r.text.length).toBeGreaterThan(3);
-    const soon = await e.phrase('app.lang.soon', 'wes', { name: 'Français' });
+    const soon = await e.phrase('app.lang.soon', 'dua', { name: 'Français' });
     expect(soon.text).toContain('Français');
+  });
+
+  it('the Pidgin pack (rules and app strings) loads and is used, not silently replaced by its fallback', async () => {
+    const { e } = engine();
+    const empty = await e.phrase('app.home.empty', 'wes');
+    expect(empty.lang).toBe('wes');
+    expect(empty.text).toBe('Message never dey');
   });
 
   it('analyzes a bill with the rules classifier, renders sections and lines', async () => {

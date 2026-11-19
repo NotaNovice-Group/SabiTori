@@ -43,6 +43,7 @@ const FILES = [
   'docs/model.md',
   'packages/understand/eval/README.md',
   'docs/numbers.md',
+  'site/index.html',
 ];
 const dirty = () => execFileSync('git', ['status', '--porcelain', '--', ...FILES], { cwd: root, encoding: 'utf8' }).trim();
 if (dirty()) {
