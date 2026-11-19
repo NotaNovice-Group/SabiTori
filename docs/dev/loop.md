@@ -315,7 +315,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       key, so the connect tests (publish round trip, content validation) failed on main and the publisher refused to
       publish. `app.*` entries are now accepted as plain texts (shape and status checked; check-packs still checks
       the key list and slots). Unit tests (every repo pack validates) and a browser test (Pidgin home screen shows
-      the pack's own words). Also: `pnpm reproduce` was not byte-identical on main (urgency threshold table from the
+      the pack's own words). The pack registry runs the same validator, so before this fix the app could not load the
+      Pidgin pack and fell back to English/French silently (an engine test that expected the fallback now sees the
+      Pidgin text; it moved to a pack that really has no rules). Also: `pnpm reproduce` was not byte-identical on main (urgency threshold table from the
       retrain); regenerated, headline numbers unchanged.
 
 ## Log
