@@ -148,6 +148,11 @@
     "ème"
   ],
   "dateFillers": [],
+  "monthEndWords": [
+    "fin",
+    "fin du mois de",
+    "fin de"
+  ],
   "dateLeadWords": [
     "le",
     "avant le",

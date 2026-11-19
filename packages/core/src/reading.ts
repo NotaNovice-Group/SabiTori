@@ -33,6 +33,8 @@ export interface ReadingLexicon {
   dateFillers: string[];
   /** Words that may directly precede a day/month written without a year ("avant le 15/11"). */
   dateLeadWords: string[];
+  /** "fin", "end of": "avant fin novembre" is the last day of that month. */
+  monthEndWords?: string[];
   /** Words that may directly precede a weekday name used as a date ("avant vendredi"). */
   weekdayLeadWords: string[];
 

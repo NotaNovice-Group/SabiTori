@@ -308,6 +308,20 @@ function extractDates(text: string, norm: string, ctx: FactsContext, blocked: Sp
     }
   }
 
+  // 5b. end of a month ("avant fin novembre", "by the end of December 2026"): its last day.
+  const endWords = collect(L, (l) => l.monthEndWords ?? []).map((w) => termSource(w));
+  if (monthAlt && endWords.length) {
+    re = new RegExp(`(?<![\\p{L}\\p{N}])(?:${endWords.join('|')})\\s+(${monthAlt})(?![\\p{L}\\p{N}])\\.?(\\s*,?\\s*(20\\d\\d)(?!\\d))?`, 'gu');
+    while ((m = re.exec(norm))) {
+      const mon = monthMap.get(m[1] ?? '');
+      if (!mon) continue;
+      const probe = m[3] ? Number(m[3]) : inferYear(mon, 28, ctx.receivedAt);
+      if (probe === undefined) continue;
+      const last = new Date(Date.UTC(probe, mon, 0)).getUTCDate();
+      finish(m.index, m.index + m[0].length, probe, mon, last);
+    }
+  }
+
   const explicit = [...out];
 
   if (!ctx.receivedAt) return out.sort((a, b) => a.span.start - b.span.start);

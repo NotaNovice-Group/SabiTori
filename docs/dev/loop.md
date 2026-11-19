@@ -294,6 +294,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       ce numéro" had no money fact. `thousandWords` (fr: mille, milles): 1-3 digits (one decimal) before it, with or
       without a currency. "10k" and amounts in words ("cinq mille") left out (ambiguous / rare). Every evaluation
       unchanged, OCR benchmark included; thresholds unchanged.
+- [x] **"Avant fin novembre" is a date.** 17 date forms probed (5/12, 05-12-2026, 5 déc., 5th December, Dec 5th,
+      d'ici vendredi, 1er décembre, 05/12/26, 5.12.2026, jusqu'au 31/12, until 31st Dec...): all read except "fin
+      novembre" / "end of November", common on bills and school notices, which gave no date. `monthEndWords` (fr: fin,
+      fin du mois de, fin de; en: end of, the end of) + a month name = its last day (leap years too). Every evaluation
+      unchanged, OCR benchmark included.
 
 ## Log
 
@@ -380,3 +385,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #84 | Probe 15: public-service messages; "amenez", "présence des parents", near start date not urgent | local gate (Actions budget) |
 | 2026-11-19 | #85 | Probe 16: English official messages; "must be paid", consequence-only fines not shown as the amount | local gate (Actions budget) |
 | 2026-11-19 | #86 | "5 mille" read as 5 000 FCFA (SMS amounts in thousands); evaluations unchanged | local gate (Actions budget) |
+| 2026-11-19 | #87 | "Avant fin novembre" / "end of November" read as the last day of the month | local gate (Actions budget) |
