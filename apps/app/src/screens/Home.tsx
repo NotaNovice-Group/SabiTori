@@ -18,7 +18,7 @@ export function senderName(card: Card, fallback: string): string {
 }
 
 function Row({ card }: { card: Card }) {
-  const { t, locale } = useApp();
+  const { t, locale, engine } = useApp();
   // A record from an older or damaged history may carry a kind or urgency this version does not know.
   const Kind = KIND_ICON[card.understanding.kind] ?? FileText;
   const U = URGENCY_ICON[card.understanding.urgency] ?? Info;
@@ -26,6 +26,13 @@ function Row({ card }: { card: Card }) {
   // A likely scam is never listed like a bill: no amount, no date, and the stop sign as its picture.
   const likely = card.scam.level === 'likely_scam';
   const Pic = likely ? OctagonX : Kind;
+  // No sender was given (a paste, a photo) but the message names a known company: say it as a claim, never as fact.
+  // A likely scam keeps "Unknown sender": the list never repeats a scam's claim.
+  const claimed =
+    !likely && !card.sender.displayName && !card.input.sender?.value && card.scam.claimedSenderId
+      ? engine.region.officialSenders.find((o) => o.id === card.scam.claimedSenderId)?.displayName
+      : undefined;
+  const name = claimed ? t('app.sender.says', { name: claimed }) : senderName(card, t('app.sender.unknown'));
   const level = scam ? 'urgent' : card.understanding.urgency;
   const Chip = scam ? URGENCY_ICON.urgent : U;
   // a card we could not fully understand has no urgency to claim
@@ -36,7 +43,7 @@ function Row({ card }: { card: Card }) {
         <Pic className={likely ? 'row-ic row-ic-stop' : 'row-ic'} size={28} strokeWidth={2} aria-hidden />
         <span className="row-main">
           <span className="row-top">
-            <b className="row-name">{senderName(card, t('app.sender.unknown'))}</b>
+            <b className="row-name">{name}</b>
             <span className="row-ago">{formatAgo(card.createdAt, locale)}</span>
           </span>
           <span className="row-meta">

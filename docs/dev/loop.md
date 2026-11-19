@@ -273,6 +273,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       or date; caution and ordinary rows unchanged. Browser test.
 - [x] **Landing screenshots follow the app.** `site/img/home.png` still showed a scam listed with its amount (fixed in
       #81); all five landing screenshots retaken from the current build (English, 2x); only the home screen changed.
+- [x] **Claimed sender in the message list.** A pasted or photographed ENEO bill was listed as "Unknown sender" though
+      its card says "This message says it is from ENEO". The row now reads "Says: ENEO" / "Dit : ENEO" (a claim, not
+      a fact). A likely scam keeps "Unknown sender" so the list never repeats a scam's claim. Browser test.
 
 ## Log
 
@@ -355,3 +358,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #80 | Picture card: amber tile on a caution, pictures follow the card sections | local gate (Actions budget) |
 | 2026-11-19 | #81 | Message list: a likely scam shows the stop sign, no amount or date | local gate (Actions budget) |
 | 2026-11-19 | #82 | Landing home screenshot: scam row without amount | local gate (Actions budget) |
+| 2026-11-19 | #83 | Message list names the claimed sender ("Says: ENEO"), never for a likely scam | local gate (Actions budget) |

@@ -97,6 +97,7 @@ export const EXTRA = x({
   'app.scam.title': { en: 'Warning', fr: 'Attention', context: 'Word on the scam block.' },
   'app.fact.reference': { en: 'Reference', fr: 'Référence', context: 'Label of a reference number.' },
   'app.sender.unknown': { en: 'Unknown sender', fr: 'Expéditeur inconnu', context: 'History row without sender.' },
+  'app.sender.says': { en: 'Says: {name}', fr: 'Dit : {name}', context: 'History row: the company the message claims to be from, not confirmed.' },
   'app.close': { en: 'Close', fr: 'Fermer', context: 'Button.' },
   'app.original': { en: 'The message as written', fr: 'Le message tel qu’il est écrit', context: 'Title of the source sheet.' },
   'app.settings.listen_first': { en: 'Listen first', fr: 'Écouter d’abord', context: 'Setting name.' },
