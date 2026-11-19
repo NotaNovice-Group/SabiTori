@@ -238,9 +238,19 @@ function markedDeadline(text: string, d: Fact<IsoDate>, lexicons: ReadingLexicon
   return findTerms(n, collect(lexicons, (l) => l.deadlineWords)).some((w) => w.end <= d.span.start && d.span.start - w.end <= NEAR_DEADLINE);
 }
 
-function calibrateUrgency(u: Understanding, deadline: Fact<IsoDate> | undefined, receivedAt: IsoDate): Understanding {
+function calibrateUrgency(
+  u: Understanding,
+  deadline: Fact<IsoDate> | undefined,
+  receivedAt: IsoDate,
+  start?: { text: string; lexicons: ReadingLexicon[] },
+): Understanding {
   if (u.urgency !== 'urgent' || !deadline) return u;
-  return daysBetween(receivedAt, deadline.value) > URGENT_WITHIN_DAYS ? { ...u, urgency: 'soon' } : u;
+  if (daysBetween(receivedAt, deadline.value) > URGENT_WITHIN_DAYS) return { ...u, urgency: 'soon' };
+  // A start date ("disponible à partir du 25 novembre") is not a deadline: being near does not make the card urgent.
+  // Words that say it is urgent still do.
+  if (start && startsOn(start.text, deadline.span.start) && !findTerms(fold(start.text), collect(start.lexicons, (l) => l.urgency.urgent)).length)
+    return { ...u, urgency: 'soon' };
+  return u;
 }
 
 function verified<T>(text: string, f: Fact<T> | undefined, pool: Fact<T>[]): boolean {
@@ -284,7 +294,7 @@ export function buildCard(args: {
       scamLevel: scam.level,
     });
   }
-  understanding = calibrateUrgency(understanding, deadline, input.receivedAt);
+  understanding = calibrateUrgency(understanding, deadline, input.receivedAt, { text: input.text, lexicons });
   const amount = chooseAmount(input, facts, lexicons, deadline);
   const preMode = unreadable(input.text) || understanding.confidence < CONFIDENCE_THRESHOLD;
   const contactPhone = chooseContact(input, facts, scam, sender, lexicons, args.region, !preMode);

@@ -276,6 +276,12 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Claimed sender in the message list.** A pasted or photographed ENEO bill was listed as "Unknown sender" though
       its card says "This message says it is from ENEO". The row now reads "Says: ENEO" / "Dit : ENEO" (a claim, not
       a fact). A likely scam keeps "Unknown sender" so the list never repeats a scam's claim. Browser test.
+- [x] **Probe 15: public-service messages.** 12 genuine messages of kinds not probed before (vaccination campaign,
+      voter registration, census, court summons, tax, pension, birth certificate, school reports, internet renewal,
+      hospital appointment, school closure, operator bonus). 3 misreadings fixed: "Amenez vos enfants au centre"
+      and "Présence des parents obligatoire" were "unclear" (now go to a place; go_to_place words fr/en); a pension
+      "disponible à partir du 25 novembre" was urgent because the start date was near (a near start date no longer
+      makes a card urgent unless urgent words say so). Train/test/unseen unchanged; thresholds unchanged.
 
 ## Log
 
@@ -359,3 +365,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #81 | Message list: a likely scam shows the stop sign, no amount or date | local gate (Actions budget) |
 | 2026-11-19 | #82 | Landing home screenshot: scam row without amount | local gate (Actions budget) |
 | 2026-11-19 | #83 | Message list names the claimed sender ("Says: ENEO"), never for a likely scam | local gate (Actions budget) |
+| 2026-11-19 | #84 | Probe 15: public-service messages; "amenez", "présence des parents", near start date not urgent | local gate (Actions budget) |
