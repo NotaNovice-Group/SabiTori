@@ -241,6 +241,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       no longer call the Android-only notification channel on iOS, settings link uses `app-settings:` on iOS, an
       unsigned simulator build workflow (`.github/workflows/ios.yml`) and `docs/ios.md`. Not built or run on a Mac,
       simulator or iPhone yet (this machine is Linux); share-sheet intake is Android-only for now.
+- [x] **Card loading state.** For about 0.75 s while a card was prepared the screen showed only "Show someone" and
+      "Delete" (seen in the demo recording). It now shows the card's shape (skeleton, static with reduced motion) and
+      the footer buttons appear with the card.
 
 ## Log
 
@@ -313,3 +316,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #70 | Redesign (warm paper, brand green, saffron listen) + picture card and scam vibration for deaf/non-reading users | local gate (Actions budget) |
 | 2026-11-19 | #71 | Probe 14: 59 scam/look-alike messages; job-fee and emergency-money signals, code-theft and SIM-swap code asks caught; eval unchanged | local gate (Actions budget) |
 | 2026-11-19 | #72 | iOS project (Capacitor, SPM), iOS-safe reminders/settings, unsigned simulator CI; untested on Apple hardware | local gate (Actions budget) |
+| 2026-11-19 | #73 | Card loading skeleton instead of an empty page with Delete | local gate (Actions budget) |
