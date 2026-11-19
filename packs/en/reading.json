@@ -136,6 +136,10 @@
   "dateFillers": [
     "of"
   ],
+  "monthEndWords": [
+    "end of",
+    "the end of"
+  ],
   "dateLeadWords": [
     "on",
     "by",
@@ -205,7 +209,10 @@
     "postponed until",
     "changed to",
     "new date",
-    "now on"
+    "now on",
+    "now set for",
+    "will now be on",
+    "will now hold on"
   ],
   "annualTotalWords": [
     "annual total",
