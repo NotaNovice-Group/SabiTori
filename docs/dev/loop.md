@@ -304,6 +304,33 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       are refused. 8 messages with several dates: 7 right; "initialement le 20/11, il est fixé au 27/11" chose the old
       date. Reschedule words added (fr: fixé(e) au, désormais le/au, désormais lieu le, reprogrammé(e) au; en: now set
       for, will now be on, will now hold on). Every evaluation unchanged, OCR benchmark included.
+- [x] **Landing page numbers generated.** The landing page still quoted 51.0% on the second unseen set after the
+      owner's retrain moved it to 57.0% (and its rules-alone and p values). Its understanding and scam rows are now
+      written by `scripts/numbers.mjs` between markers, from the same result files as docs/numbers.md, and checked
+      by `numbers.mjs --check` and `pnpm reproduce`. Links in genuine official messages were also probed: every link
+      is a caution by design (labels), and allowing official sites needs confirmed domains (owner), so unchanged.
+- [x] **Pidgin pack passes the update checks; main green again.** The owner's Pidgin commit put 156 app screen strings
+      (`app.*`) in packs/wes/phrases.json. scripts/check-packs.mjs allows that, but the shared validator
+      (`packages/speech/src/validate.ts`, used by the update publisher and the pack registry) refused every `app.*`
+      key, so the connect tests (publish round trip, content validation) failed on main and the publisher refused to
+      publish. `app.*` entries are now accepted as plain texts (shape and status checked; check-packs still checks
+      the key list and slots). Unit tests (every repo pack validates) and a browser test (Pidgin home screen shows
+      the pack's own words). The pack registry runs the same validator, so before this fix the app could not load the
+      Pidgin pack and fell back to English/French silently (an engine test that expected the fallback now sees the
+      Pidgin text; it moved to a pack that really has no rules). Also: `pnpm reproduce` was not byte-identical on main (urgency threshold table from the
+      retrain); regenerated, headline numbers unchanged.
+- [x] **Pidgin cards checked end to end.** With the Pidgin pack now loading (#89), a bill card and a scam card were
+      rendered in Pidgin: every section is said in Pidgin ("This message look like wayo. No send money..."), the
+      warning comes first and a scam card has no money section. Engine regression test. The Pidgin wording is the
+      owner's draft and still needs a native speaker's review.
+- [x] **Photo cards measured and published.** `packages/understand/eval/run-photo-cards.mjs` scores the card a person
+      sees on the 30 OCR-benchmark photos (shipped OCR text, rules path) against each photo's amount due and deadline,
+      and the same photos' true text: amount 27/30 right (2 wrong, 1 not shown), date 21/25 dated pages right (0 wrong,
+      4 not shown), 0 genuine photos warned as a likely scam; true text 30/30 and 25/25. Written to
+      `results/cards.json`, quoted in docs/numbers.md, re-run and checked by `pnpm reproduce`.
+- [x] **Landing photo row generated, with the card numbers.** The landing page's photo row (fact recall and
+      precision) is now generated with the understanding and scam rows, and adds what the card shows: right amount on
+      27 of 30 photos, right date on 21 of 25, wrong and not-shown counts, no false likely-scam.
 
 ## Log
 
@@ -392,3 +419,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #86 | "5 mille" read as 5 000 FCFA (SMS amounts in thousands); evaluations unchanged | local gate (Actions budget) |
 | 2026-11-19 | #87 | "Avant fin novembre" / "end of November" read as the last day of the month | local gate (Actions budget) |
 | 2026-11-19 | #88 | Phone and multi-date probes; "fixé au" / "now set for" move an appointment | local gate (Actions budget) |
+| 2026-11-19 | #89 | Landing page numbers generated from the results (57.0% second unseen set) and checked by reproduce | local gate (Actions budget) |
+| 2026-11-19 | #89 | Pidgin app strings accepted by the shared pack validator (main tests green again); reproduce byte-identical again | local gate (Actions budget) |
+| 2026-11-19 | #90 | Pidgin cards checked end to end (warning first, no money on a scam); regression test | local gate (Actions budget) |
+| 2026-11-19 | #91 | Photo cards published: right amount 27/30, right date 21/25, no false likely-scam (reproducible) | local gate (Actions budget) |
+| 2026-11-19 | #92 | Landing photo row generated with the card numbers (27/30 amounts, 21/25 dates) | local gate (Actions budget) |

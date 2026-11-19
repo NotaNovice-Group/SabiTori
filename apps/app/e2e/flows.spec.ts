@@ -341,3 +341,16 @@ test('in the message list, a likely scam shows the stop sign and no amount or da
   await expect(scamRow.locator('.row-name')).toHaveText('Expéditeur inconnu');
   expect(errors).toEqual([]);
 });
+
+test('in Cameroonian Pidgin, the home screen uses the pack\'s own words', async ({ page }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.addInitScript(() => {
+    if (location.protocol.startsWith('http'))
+      localStorage.setItem('sabitori.settings.v1', JSON.stringify({ onboarded: true, lang: 'wes', listenFirst: false, speed: 0, retention: 30, region: 'CM' }));
+  });
+  await page.goto('#/');
+  await page.waitForSelector('h1', { state: 'attached' });
+  await expect(page.getByText('Message never dey')).toBeVisible();
+  expect(errors).toEqual([]);
+});

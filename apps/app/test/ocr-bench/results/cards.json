@@ -1,0 +1,415 @@
+{
+ "photos": 30,
+ "ocr": {
+  "amount": {
+   "right": 27,
+   "wrong": 2,
+   "missing": 1
+  },
+  "date": {
+   "right": 21,
+   "wrong": 0,
+   "missing": 4
+  },
+  "falseScam": 0
+ },
+ "truth": {
+  "amount": {
+   "right": 30,
+   "wrong": 0,
+   "missing": 0
+  },
+  "date": {
+   "right": 25,
+   "wrong": 0,
+   "missing": 0
+  },
+  "falseScam": 0
+ },
+ "dated": 25,
+ "pages": [
+  {
+   "id": "01-eneo-fr",
+   "ocr": {
+    "amount": 27639,
+    "date": "2026-11-05",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 27639,
+    "date": "2026-11-05",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "02-eneo-fr",
+   "ocr": {
+    "amount": 33143,
+    "date": "2026-11-25",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 33143,
+    "date": "2026-11-25",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "03-eneo-fr",
+   "ocr": {
+    "amount": 12444,
+    "date": "2026-12-15",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 12444,
+    "date": "2026-12-15",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "04-eneo-fr",
+   "ocr": {
+    "amount": 30474,
+    "date": "2026-12-15",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 30474,
+    "date": "2026-12-15",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "05-eneo-fr",
+   "ocr": {
+    "amount": 38198,
+    "date": "2026-11-25",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 38198,
+    "date": "2026-11-25",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "06-eneo-fr",
+   "ocr": {
+    "amount": 31458,
+    "date": "2026-12-16",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 31458,
+    "date": "2026-12-16",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "07-eneo-en",
+   "ocr": {
+    "amount": 16318,
+    "date": "2026-11-16",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 16318,
+    "date": "2026-11-16",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "08-eneo-en",
+   "ocr": {
+    "amount": 13778,
+    "date": "2026-11-06",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 13778,
+    "date": "2026-11-06",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "09-camwater-fr",
+   "ocr": {
+    "amount": 13280,
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 13250,
+    "date": "2026-11-10",
+    "scam": "caution"
+   }
+  },
+  {
+   "id": "10-camwater-fr",
+   "ocr": {
+    "amount": 14300,
+    "date": "2026-11-25",
+    "scam": "caution"
+   },
+   "truth": {
+    "amount": 14300,
+    "date": "2026-11-25",
+    "scam": "caution"
+   }
+  },
+  {
+   "id": "11-camwater-fr",
+   "ocr": {
+    "amount": 5600,
+    "date": "2026-12-15",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 5600,
+    "date": "2026-12-15",
+    "scam": "caution"
+   }
+  },
+  {
+   "id": "12-camwater-fr",
+   "ocr": {
+    "amount": 2570,
+    "date": "2026-12-23",
+    "scam": "caution"
+   },
+   "truth": {
+    "amount": 2570,
+    "date": "2026-12-23",
+    "scam": "caution"
+   }
+  },
+  {
+   "id": "13-school-fr",
+   "ocr": {
+    "amount": 25000,
+    "date": "2026-11-23",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 25000,
+    "date": "2026-11-23",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "14-school-fr",
+   "ocr": {
+    "amount": 70000,
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 25000,
+    "date": "2026-11-08",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "15-school-fr",
+   "ocr": {
+    "amount": 40000,
+    "date": "2026-11-17",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 40000,
+    "date": "2026-11-17",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "16-school-fr",
+   "ocr": {
+    "amount": 40000,
+    "date": "2026-11-27",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 40000,
+    "date": "2026-11-27",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "17-school-en",
+   "ocr": {
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 25000,
+    "date": "2026-11-16",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "18-school-en",
+   "ocr": {
+    "amount": 25000,
+    "date": "2026-11-19",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 25000,
+    "date": "2026-11-19",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "19-hospital-fr",
+   "ocr": {
+    "amount": 15000,
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 15000,
+    "date": "2026-11-27",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "20-hospital-fr",
+   "ocr": {
+    "amount": 10000,
+    "date": "2026-12-03",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 10000,
+    "date": "2026-12-03",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "21-hospital-fr",
+   "ocr": {
+    "amount": 10000,
+    "date": "2026-12-13",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 10000,
+    "date": "2026-12-13",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "22-hospital-en",
+   "ocr": {
+    "amount": 10000,
+    "date": "2026-11-20",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 10000,
+    "date": "2026-11-20",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "23-hospital-en",
+   "ocr": {
+    "amount": 3500,
+    "date": "2026-11-25",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 3500,
+    "date": "2026-11-25",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "24-momo-fr",
+   "ocr": {
+    "amount": 11200,
+    "date": "2026-11-15",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 11200,
+    "date": "2026-11-15",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "25-momo-fr",
+   "ocr": {
+    "amount": 41100,
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 41100,
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "26-momo-fr",
+   "ocr": {
+    "amount": 13600,
+    "date": "2026-11-18",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 13600,
+    "date": "2026-11-18",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "27-momo-en",
+   "ocr": {
+    "amount": 900,
+    "date": "2026-11-16",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 900,
+    "date": "2026-11-16",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "28-momo-en",
+   "ocr": {
+    "amount": 17700,
+    "date": "2026-11-13",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 17700,
+    "date": "2026-11-13",
+    "scam": "no_signs"
+   }
+  },
+  {
+   "id": "29-camwater-en",
+   "ocr": {
+    "amount": 6564,
+    "date": "2026-12-19",
+    "scam": "caution"
+   },
+   "truth": {
+    "amount": 6564,
+    "date": "2026-12-19",
+    "scam": "caution"
+   }
+  },
+  {
+   "id": "30-hospital-fr",
+   "ocr": {
+    "amount": 15000,
+    "date": "2026-11-25",
+    "scam": "no_signs"
+   },
+   "truth": {
+    "amount": 15000,
+    "date": "2026-11-25",
+    "scam": "no_signs"
+   }
+  }
+ ]
+}
