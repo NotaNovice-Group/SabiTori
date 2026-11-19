@@ -6,6 +6,13 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- "Read my next SMS" on the home screen (Android app): after one tap the app waits up to five minutes for the next
+  incoming SMS, Android asks the person to allow that one message, and it opens ready to be explained. Uses the SMS
+  User Consent API: no SMS permission, no inbox access, the text stays on the phone. Play services only offers a
+  message that holds a 4 to 10 character code with a digit, from a sender who is not a saved contact, so a message
+  already in the inbox still goes through Share. Not available on iOS or on phones without Google Play services.
+  Compiles and is unit-tested; **not yet tried on a real phone**.
+- New mark: a talking drum, in the app, the launcher icons, the site and the store graphics (`DESIGN.md`).
 - Landing page in `site/` (static), ready for Cloudflare Pages (`docs/site.md`).
 - Picture card for people who cannot read and cannot hear: the action, the deadline (calendar page, days left) and
   the amount (CFA notes and coins) as pictures; a scam card shows a stop sign only. A likely scam vibrates the phone.

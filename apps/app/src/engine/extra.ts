@@ -71,6 +71,23 @@ export const EXTRA = x({
     context: 'OCR found no text.',
   },
   'app.capture.failed': { en: 'Reading failed. Please try again.', fr: 'La lecture a échoué. Essayez encore.', context: 'Unexpected error.' },
+  'app.sms.wait': { en: 'Read my next SMS', fr: 'Lire mon prochain SMS', context: 'Quiet button on the home screen (Android app): wait for the next incoming SMS and ask to read it.' },
+  'app.sms.waiting': {
+    en: 'Waiting for your next SMS. When it comes, your phone asks you. Press Allow.',
+    fr: 'En attente de votre prochain SMS. Quand il arrive, votre téléphone vous demande. Appuyez sur Autoriser.',
+    context: 'Status on the home screen while the app waits (up to five minutes) for one incoming SMS. "Allow" is the button on Android\'s consent sheet.',
+  },
+  'app.sms.stop': { en: 'Stop waiting', fr: 'Arrêter d’attendre', context: 'Button: stop waiting for an SMS.' },
+  'app.sms.none': {
+    en: 'No SMS was read. Try again, or share the message from your SMS app.',
+    fr: 'Aucun SMS n’a été lu. Réessayez, ou partagez le message depuis votre application SMS.',
+    context: 'No SMS came within five minutes, or the person did not allow it.',
+  },
+  'app.sms.unavailable': {
+    en: 'This phone cannot do this. Share the message from your SMS app instead.',
+    fr: 'Ce téléphone ne peut pas le faire. Partagez plutôt le message depuis votre application SMS.',
+    context: 'The phone has no Google Play services, so the one-SMS reader cannot work.',
+  },
   'app.photo.choose': { en: 'Choose a photo', fr: 'Choisir une photo', context: 'Button on the home screen (Android app): pick a photo already on the phone.' },
   'app.photo.denied_title': { en: 'The camera is switched off', fr: 'La caméra est désactivée', context: 'Title shown when the person refused camera access.' },
   'app.photo.denied': {

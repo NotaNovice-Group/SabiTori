@@ -38,6 +38,7 @@ Notes on the understanding model:
 | Capacitor core, camera, local notifications, splash screen | 8.x | MIT | https://capacitorjs.com |
 | `@capacitor-community/text-to-speech` | 8.0.2 | MIT | https://github.com/capacitor-community/text-to-speech |
 | `@capgo/capacitor-share-target` | 8.0.64 | MPL-2.0 | https://github.com/Cap-go/capacitor-share-target |
+| Google Play services, `play-services-auth-api-phone` (Android only: the consent sheet for "Read my next SMS") | 18.1.0 | Android Software Development Kit License (not open source; the app works without it, minus this one button) | https://developers.google.com/identity/sms-retriever/user-consent/overview |
 | `@noble/ed25519` (update signatures) | 3.2.0 | MIT | https://github.com/paulmillr/noble-ed25519 |
 | `@sentry/browser` (only loaded if crash reports are configured and switched on) | 11.10.0 | MIT | https://github.com/getsentry/sentry-javascript |
 

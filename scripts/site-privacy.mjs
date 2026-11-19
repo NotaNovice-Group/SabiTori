@@ -12,7 +12,7 @@ const pages = [
 const slug = (t) => t.toLowerCase().replace(/<[^>]+>/g, "").replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
 const SITE = "https://sabitori.pages.dev";
 for (const [src, out, lang, title, back, other, otherName, desc] of pages) {
-  const slug = out.replace("site/", "").replace(".html", ""), otherSlug = other.replace(".html", ""), otherLang = lang === "en" ? "fr" : "en";
+  const pageSlug = out.replace("site/", "").replace(".html", ""), otherSlug = other.replace(".html", ""), otherLang = lang === "en" ? "fr" : "en";
   let body = marked.parse(readFileSync(src, "utf8"));
   body = body.replace(/<h2>(.*?)<\/h2>/g, (_, t) => `<h2 id="${slug(t)}">${t}</h2>`);
   writeFileSync(out, `<!doctype html>
@@ -22,8 +22,8 @@ for (const [src, out, lang, title, back, other, otherName, desc] of pages) {
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${title} · SabiTori</title>
 <meta name="description" content="${desc}">
-<link rel="canonical" href="${SITE}/${slug}">
-<link rel="alternate" hreflang="${lang}" href="${SITE}/${slug}">
+<link rel="canonical" href="${SITE}/${pageSlug}">
+<link rel="alternate" hreflang="${lang}" href="${SITE}/${pageSlug}">
 <link rel="alternate" hreflang="${otherLang}" href="${SITE}/${otherSlug}">
 <link rel="icon" href="img/mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Young+Serif&display=swap">

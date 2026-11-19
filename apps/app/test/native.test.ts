@@ -6,6 +6,8 @@ const env = vi.hoisted(() => ({
     openSettings: vi.fn(async (_o?: unknown) => undefined),
     forgetSharedFiles: vi.fn(async () => undefined),
     takeShareNotes: vi.fn(async () => ({ tooBig: 1, notImage: 2, more: 3 })),
+    waitForSms: vi.fn(async (): Promise<{ text?: string; reason?: string }> => ({ text: 'MTN: 5 000 FCFA' })),
+    cancelSms: vi.fn(async () => undefined),
   },
 }));
 vi.mock('@capacitor/core', () => ({
@@ -13,7 +15,7 @@ vi.mock('@capacitor/core', () => ({
   registerPlugin: () => env.plugin,
 }));
 
-import { forgetSharedFiles, IOS_SETTINGS_URL, isNative, nativePlatform, openSystemSettings, takeShareNotes } from '../src/lib/native';
+import { canWaitForSms, cancelSmsWait, forgetSharedFiles, IOS_SETTINGS_URL, isNative, nativePlatform, openSystemSettings, takeShareNotes, waitForSms } from '../src/lib/native';
 
 describe('native helpers per platform', () => {
   beforeEach(() => {
@@ -70,5 +72,31 @@ describe('native helpers per platform', () => {
     expect(open).not.toHaveBeenCalled();
     expect(env.plugin.openSettings).not.toHaveBeenCalled();
     expect(await takeShareNotes()).toEqual({ tooBig: 0, notImage: 0, more: 0 });
+  });
+
+  it('the one-SMS reader hands over the allowed message, and says plainly why there is none', async () => {
+    expect(canWaitForSms()).toBe(true);
+    expect(await waitForSms()).toEqual({ status: 'text', text: 'MTN: 5 000 FCFA' });
+    for (const [reason, status] of [['timeout', 'timeout'], ['denied', 'denied'], ['cancelled', 'cancelled'], ['replaced', 'cancelled'], ['unavailable', 'unavailable'], ['anything else', 'unavailable']] as const) {
+      env.plugin.waitForSms.mockResolvedValueOnce({ reason });
+      expect(await waitForSms()).toEqual({ status });
+    }
+    env.plugin.waitForSms.mockResolvedValueOnce({ text: '   ' });
+    expect(await waitForSms()).toEqual({ status: 'unavailable' });
+    env.plugin.waitForSms.mockRejectedValueOnce(new Error('no plugin'));
+    expect(await waitForSms()).toEqual({ status: 'unavailable' });
+    await cancelSmsWait();
+    expect(env.plugin.cancelSms).toHaveBeenCalledTimes(1);
+  });
+
+  it('the one-SMS reader does not exist on iOS or the web, and never calls the plugin there', async () => {
+    for (const platform of ['ios', 'web']) {
+      env.platform = platform;
+      expect(canWaitForSms()).toBe(false);
+      expect(await waitForSms()).toEqual({ status: 'unavailable' });
+      await cancelSmsWait();
+    }
+    expect(env.plugin.waitForSms).not.toHaveBeenCalled();
+    expect(env.plugin.cancelSms).not.toHaveBeenCalled();
   });
 });

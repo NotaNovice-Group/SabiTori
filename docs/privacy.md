@@ -47,6 +47,7 @@ Everything in this section is processed on your phone only. We do not receive it
   message text, so keep it as private as the paper itself.
 - Text or photos that you share to SabiTori from another app. SabiTori keeps a private copy only while it
   reads them, then deletes it. For a shared photo, the private copy is deleted as soon as the app has loaded the photo into its working memory, before the text is read. Shared text is not copied to a file: it stays in working memory only.
+- One SMS that you allow (Android app, "Read my next SMS"). After you press that button, Android watches for your next incoming SMS for up to five minutes and then asks you, in its own window, whether SabiTori may read that one message. SabiTori has no permission to read your SMS and never sees your inbox. If you press Allow, the text of that message is handled like text you paste: on your phone only.
 - Downloaded language packs, scam warnings and official numbers, if you turned on updates.
 - The photo itself is not kept by SabiTori. It is held in working memory while its text is read. It is not saved to your gallery and not added to your history. Only the text read from it is kept, in the history card, for the period in section 8. A photo taken with the camera first passes through a temporary file that Android's camera component writes in the app's own storage. SabiTori does not delete that temporary file itself. Other apps do not get it from SabiTori, Android may clear it, and uninstalling the app removes it.
 

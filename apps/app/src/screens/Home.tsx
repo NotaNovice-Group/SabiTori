@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Camera, CalendarClock, ClipboardPaste, FileText, Images, Info, Settings as Cog, Smartphone, Lightbulb, OctagonX } from 'lucide-react';
+import { Camera, CalendarClock, ClipboardPaste, FileText, Images, Info, MessageSquareText, Settings as Cog, Smartphone, Lightbulb, OctagonX } from 'lucide-react';
 import type { Card } from '@sabitori/core';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
@@ -7,8 +7,8 @@ import { SpeakingButton } from '../components/SpeakingButton';
 import { Wordmark } from '../components/Mark';
 import { KIND_ICON, URGENCY_ICON } from '../components/icons';
 import { navigate } from '../lib/router';
-import { session } from '../lib/session';
-import { isNative } from '../lib/native';
+import { capText, session } from '../lib/session';
+import { canWaitForSms, cancelSmsWait, isNative, waitForSms } from '../lib/native';
 import { useNativePhoto } from '../components/PhotoPicker';
 import { formatAgo, formatMoney, formatShortDate } from '../lib/format';
 import { rememberNames } from '../lib/crash';
@@ -75,6 +75,25 @@ export function HomeScreen() {
     navigate('/capture');
   };
   const native = isNative();
+  // One SMS, with the person's consent (Android): the next incoming message, shown by Android before we get it.
+  const [waitingSms, setWaitingSms] = useState(false);
+  const alive = useRef(true);
+  useEffect(() => () => { alive.current = false; void cancelSmsWait(); }, []);
+  const readNextSms = async () => {
+    if (waitingSms) return;
+    setNotice(null);
+    setWaitingSms(true);
+    const r = await waitForSms();
+    if (!alive.current) return;
+    setWaitingSms(false);
+    if (r.status === 'text') {
+      const { text, cut } = capText(r.text);
+      session.setSharedText(text);
+      session.setNotice(cut ? 'app.share.too_long' : null);
+      navigate(`/paste?s=${Date.now()}`);
+    } else if (r.status === 'unavailable') setNotice('app.sms.unavailable');
+    else if (r.status !== 'cancelled') setNotice('app.sms.none');
+  };
   const photo = useNativePhoto(open);
   const onFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -111,6 +130,15 @@ export function HomeScreen() {
           </div>
         ) : (
           <ul className="rows">{history.map((c) => <Row key={c.id} card={c} />)}</ul>
+        )}
+        {waitingSms && (
+          <div className="notice" role="status">
+            <p>{t('app.sms.waiting')}</p>
+            <SpeakingButton speakKey="app.sms.stop" variant="quiet" onAct={() => { setWaitingSms(false); void cancelSmsWait(); }} />
+          </div>
+        )}
+        {canWaitForSms() && !waitingSms && (
+          <SpeakingButton speakKey="app.sms.wait" variant="quiet" className="practice" icon={<MessageSquareText size={24} strokeWidth={2} aria-hidden />} onAct={() => void readNextSms()} />
         )}
         <SpeakingButton speakKey="app.practice" variant="quiet" className="practice" icon={<Lightbulb size={24} strokeWidth={2} aria-hidden />} onAct={() => navigate('/practice')} />
       </section>

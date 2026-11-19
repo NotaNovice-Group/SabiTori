@@ -31,6 +31,9 @@ interface SabiToriNativePlugin {
   forgetSharedFiles(): Promise<void>;
   /** What the activity left out of the last share (too big, not a picture), then forgets it. */
   takeShareNotes(): Promise<{ tooBig?: number; notImage?: number; more?: number }>;
+  /** Waits (up to five minutes) for the next incoming SMS and asks the person, in Android's own sheet, to allow it. */
+  waitForSms(): Promise<{ text?: string; reason?: string }>;
+  cancelSms(): Promise<void>;
 }
 
 const Native = registerPlugin<SabiToriNativePlugin>('SabiToriNative');
@@ -84,4 +87,37 @@ export async function fileFromNativePath(path: string, name: string, type: strin
   if (!res.ok) throw new Error(`could not read ${name}`);
   const blob = await res.blob();
   return new File([blob], name, { type: type || blob.type || 'image/jpeg' });
+}
+
+/** What waiting for one SMS ended with. Only `text` carries a message; it never leaves the phone. */
+export type SmsWait = { status: 'text'; text: string } | { status: 'timeout' | 'denied' | 'unavailable' | 'cancelled' };
+
+/** The one-SMS reader exists only in the Android app (Google Play services' SMS User Consent sheet). */
+export const canWaitForSms = (): boolean => hasNativeHelper();
+
+/**
+ * Asks Android for the next incoming SMS. No SMS permission and no inbox access: Play services shows the person
+ * that one message and hands it over only if they press Allow.
+ */
+export async function waitForSms(): Promise<SmsWait> {
+  if (!hasNativeHelper()) return { status: 'unavailable' };
+  try {
+    const r = await Native.waitForSms();
+    if (typeof r?.text === 'string' && r.text.trim()) return { status: 'text', text: r.text };
+    const reason = r?.reason;
+    if (reason === 'timeout' || reason === 'denied') return { status: reason };
+    if (reason === 'cancelled' || reason === 'replaced') return { status: 'cancelled' };
+    return { status: 'unavailable' };
+  } catch {
+    return { status: 'unavailable' };
+  }
+}
+
+export async function cancelSmsWait(): Promise<void> {
+  if (!hasNativeHelper()) return;
+  try {
+    await Native.cancelSms();
+  } catch {
+    /* nothing was waiting */
+  }
 }
