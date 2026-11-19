@@ -426,6 +426,17 @@ function extractAmounts(text: string, norm0: string, ctx: FactsContext, blocked:
     }
   }
 
+  // "envoie 10 000", "snd me 15.000": a number grouped in thousands right after a send or pay word is money, even
+  // without a currency (how people ask for money by SMS). Grouped only, so a year, a code or a reference never is.
+  const payW = collect(ctx.lexicons, (l) => l.scam.payVerbs);
+  for (const h of findTerms(norm, payW)) {
+    const E = new RegExp(`^(?:[ \\u00a0-]*(?:me|moi|nous)\\b)?[ \\u00a0]+(\\d{1,3}(?:[ \\u00a0\\u202f.]\\d{3})+)(?![\\d\\p{L}])(?![ \\u00a0\\u202f]\\d)`, 'u');
+    const e = E.exec(norm.slice(h.end, h.end + 40));
+    if (!e || !e[1]) continue;
+    const start = h.end + e[0].length - e[1].length;
+    add(start, start + e[1].length, e[1]);
+  }
+
   // Labelled amount near a currency word: "Montant: 2 500 (FCFA)"
   // The number must end there: "Frais de scolarité: 1ère tranche" is an ordinal, not an amount of 1.
   const C = new RegExp(`^[ \\u00a0]*[:=\\-]?[ \\u00a0]*(${NUM})(?![\\d\\p{L}])(?![ \\u00a0\\u202f]\\d)`, 'u');

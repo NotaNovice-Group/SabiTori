@@ -123,7 +123,7 @@ By message language (all three labels right):
 | second unseen set | en | 38 | 63.2% [47.4–79.0] | 73.7% [57.9–86.8] | +10.5 pts [0.0–23.7], 5 vs 1, p = 0.219 |
 | second unseen set | wes | 22 | 27.3% [9.1–45.5] | 36.4% [18.2–59.1] | +9.1 pts [-13.6–31.8], 4 vs 2, p = 0.688 |
 
-Scam level (`assessScam`, code, not changed by this model): test 100.0% [100.0–100.0], unseen 93.0% [88.0–98.0], second unseen 91.0% [85.0–96.0].
+Scam level (`assessScam`, code, not changed by this model): test 100.0% [100.0–100.0], unseen 95.0% [90.0–99.0], second unseen 91.0% [85.0–96.0].
 Training: 453 train messages; 5-fold CV accuracy of the encoder heads alone: kind 84.5%, action 81.7%, urgency 76.8%.
 Statistics: 95% percentile bootstrap over rows, 10000 resamples, seed 20261102; exact two-sided McNemar on discordant pairs.
 <!-- /results:card-eval -->

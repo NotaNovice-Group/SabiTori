@@ -1455,12 +1455,12 @@
    "scam": {
     "level": {
      "n": 100,
-     "k": 93,
-     "acc": 0.93,
-     "lo": 0.88,
-     "hi": 0.98
+     "k": 95,
+     "acc": 0.95,
+     "lo": 0.9,
+     "hi": 0.99
     },
-    "warned": 18,
+    "warned": 20,
     "flagged": 21,
     "falseAlarms": 2,
     "genuine": 79
@@ -8019,7 +8019,7 @@
      "urgency": "urgent"
     },
     "goldScam": "likely_scam",
-    "scam": "no_signs",
+    "scam": "likely_scam",
     "rules": {
      "kind": "other",
      "action": "pay",
@@ -8415,7 +8415,7 @@
      "urgency": "urgent"
     },
     "goldScam": "likely_scam",
-    "scam": "no_signs",
+    "scam": "likely_scam",
     "rules": {
      "kind": "legal",
      "action": "pay",

@@ -984,7 +984,14 @@
     "thisNumberWords": [
       "this number",
       "this same number",
-      "my number"
+      "my number",
+      "this num",
+      "this nbr",
+      "this numba",
+      "dis number",
+      "dis numba",
+      "dis num",
+      "dis nbr"
     ],
     "moneySent": [
       "you have sent",
@@ -1044,7 +1051,8 @@
       "wire",
       "remit",
       "forward",
-      "top up"
+      "top up",
+      "snd"
     ],
     "dialWords": [
       "dial",
