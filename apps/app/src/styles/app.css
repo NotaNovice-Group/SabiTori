@@ -17,6 +17,8 @@
   --listen: #f0a43a;
   --listen-press: #d98d22;
   --on-listen: #1f1a14;
+  --stop: #b3261e;
+  --on-stop: #ffffff;
   --money-tint: #f6e7c8;
   --money: #7a4b00;
   --line: #ddd2bf;
@@ -71,6 +73,8 @@
     --listen: #f2ad4e;
     --listen-press: #f6c27a;
     --on-listen: #1f1a14;
+    --stop: #c9302a; /* a deep, solid red in the dark too: the warning must not turn pastel */
+    --on-stop: #ffffff;
     --money-tint: #3d3220;
     --money: #f0c879;
     --line: #3a3127;
@@ -456,7 +460,7 @@ a { color: inherit; text-decoration: none; }
 .sec-urgency + .sec { padding-top: var(--s2); }
 
 .sec-scam { --tint: var(--urgent-tint); background: var(--urgent-tint); border-radius: var(--radius); box-shadow: inset 0 0 0 3px var(--urgent); }
-.sec-scam .sec-ic { width: 2.25rem; height: 2.25rem; background: var(--urgent); color: var(--on-hue); }
+.sec-scam .sec-ic { width: 2.25rem; height: 2.25rem; background: var(--stop); color: var(--on-stop); }
 .sec-scam[data-active] { background: var(--urgent-tint); box-shadow: inset 0 0 0 5px var(--urgent); }
 .signals { display: flex; flex-direction: column; gap: var(--s3); font-size: var(--fs-title); line-height: 1.25; }
 .signals li { padding-inline-start: var(--s4); position: relative; }
@@ -551,6 +555,8 @@ a { color: inherit; text-decoration: none; }
 .panel-group { display: flex; flex-direction: column; gap: var(--s3); align-self: stretch; align-items: flex-start; padding-top: var(--s3); }
 .panel-group > .seg { align-self: stretch; }
 .panel .lang { background: var(--ground); }
+.panel .lang-pick { flex-basis: 7em; } /* the play button stays beside the name in the narrower panel */
+.panel .lang-autonym { font-size: var(--fs-title); } /* settings: the name fits beside its play button, never cut mid-word */
 .panel .lang-play .round-ic { background: var(--listen); color: var(--on-listen); box-shadow: none; }
 .error { color: var(--urgent); font-weight: 700; }
 .version { color: var(--ink-2); font-size: var(--fs-small); }
@@ -606,7 +612,7 @@ a { color: inherit; text-decoration: none; }
 .pic-money .note { display: inline-grid; place-items: center; min-width: 62px; height: 34px; padding: 0 6px; border-radius: 6px; background: var(--surface); color: var(--money); font-weight: 700; font-size: var(--fs-small); box-shadow: inset 0 0 0 2px var(--money); }
 .pic-money .coin { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--surface); color: var(--money); font-weight: 700; font-size: 0.75rem; box-shadow: inset 0 0 0 2px var(--money); }
 .pic-money .more { align-self: center; font-weight: 700; color: var(--money); }
-.pics-scam .pic-stop { width: 100%; min-height: 128px; background: var(--urgent); color: var(--on-hue); }
+.pics-scam .pic-stop { width: 100%; min-height: 128px; background: var(--stop); color: var(--on-stop); }
 .pic-stop svg { width: 88px; height: 88px; }
 
 /* Card loading: the card's shape with a slow shimmer (static with reduced motion). */

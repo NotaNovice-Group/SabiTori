@@ -253,6 +253,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Browser test for the picture card.** In the built app: a bill shows the pay symbol, the date and notes; a
       scam shows only the stop sign (no pay symbol, money or date) and vibrates three long pulses; a bill does not
       vibrate. Pictures stay hidden from screen readers.
+- [x] **Dark mode pass on the redesign.** The scam stop sign and scam icon turned pastel salmon in dark mode (the dark
+      urgent text colour); they now use a solid stop red (`--stop`) with a white symbol in both themes. Settings'
+      language rows left a large gap (play button wrapped under the name); names are one size smaller there, the
+      button stays beside them, and no name is cut mid-word.
 
 ## Log
 
@@ -329,3 +333,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #74 | Landing page (site/), Cloudflare Pages config, redesigned screenshots and demo video | local gate (Actions budget) |
 | 2026-11-19 | #75 | Full accessibility audit re-run after the redesign: 163 states, 0 violations | local gate (Actions budget) |
 | 2026-11-19 | #76 | e2e: picture card on a bill; scam shows only the stop sign and vibrates | local gate (Actions budget) |
+| 2026-11-19 | #77 | Dark mode: solid stop red for scam signs; settings language rows tidy | local gate (Actions budget) |
