@@ -339,6 +339,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       phone or a distance). All 6 now likely scam; genuine shorthand stays clean. First unseen set scams warned
       18/21 -> 20/21, false alarms 2/79 unchanged; no new false alarm on any split; second unseen set unchanged;
       thresholds unchanged; OCR benchmark unchanged.
+- [x] **How it works, in pictures, on the empty home screen.** A first-time user who does not read saw only text.
+      The empty state now starts with three picture tiles: camera -> card -> speaker (the picture card's style,
+      hidden from screen readers, which hear the same steps). App-side only (the owner's open #93 touches the core).
 
 ## Log
 
@@ -433,3 +436,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #91 | Photo cards published: right amount 27/30, right date 21/25, no false likely-scam (reproducible) | local gate (Actions budget) |
 | 2026-11-19 | #92 | Landing photo row generated with the card numbers (27/30 amounts, 21/25 dates) | local gate (Actions budget) |
 | 2026-11-19 | #94 | Probe 17: SMS-shorthand scams; first unseen scams warned 18/21 -> 20/21, no new false alarm | local gate (Actions budget) |
+| 2026-11-19 | #95 | Empty home screen shows how it works in three pictures | local gate (Actions budget) |

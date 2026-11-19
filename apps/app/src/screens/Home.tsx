@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Camera, CalendarClock, ClipboardPaste, FileText, Images, Info, MessageSquareText, Settings as Cog, Smartphone, Lightbulb, OctagonX } from 'lucide-react';
+import { Camera, CalendarClock, ClipboardPaste, FileText, Images, Info, MessageSquareText, Settings as Cog, Smartphone, Lightbulb, OctagonX, ArrowRight, Volume2 } from 'lucide-react';
 import type { Card } from '@sabitori/core';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
@@ -124,6 +124,14 @@ export function HomeScreen() {
         <h2 id="hist" className="section-title">{t('ui.history')}</h2>
         {history.length === 0 ? (
           <div className="empty">
+            {/* How it works, in pictures, for a person who does not read: photo, then a card, then it is spoken. */}
+            <div className="howto" aria-hidden="true">
+              <span className="howto-step"><Camera strokeWidth={2} /></span>
+              <ArrowRight className="howto-arrow" strokeWidth={2.5} />
+              <span className="howto-step"><FileText strokeWidth={2} /></span>
+              <ArrowRight className="howto-arrow" strokeWidth={2.5} />
+              <span className="howto-step howto-listen"><Volume2 strokeWidth={2} /></span>
+            </div>
             <p className="empty-title">{t('app.home.empty')}</p>
             <p className="empty-body">{t('app.home.empty_hint')}</p>
             <p className="privacy"><Smartphone size={24} strokeWidth={2} aria-hidden /><b>{t('ui.privacy')}</b></p>
