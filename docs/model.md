@@ -31,12 +31,12 @@ text -> tokenizer.json (Unigram, pure JS) -> encoder.int8.onnx (mean pooled, 384
 Evaluate: `node packages/understand/eval/run-encoder.mjs` (test split and unseen set; writes `eval/results.json` and `eval/results-encoder.md`), then `node packages/understand/eval/model-card.mjs` (regenerates the tables below, in the README and in the model card from `results.json`).
 
 <!-- results:model-summary -->
-| | test split | unseen set |
-| --- | --- | --- |
-| messages | 96 | 100 |
-| rules alone, all three labels | 60.4% [51.0–69.8] | 36.0% [27.0–45.0] |
-| encoder + rules (default), all three labels | 77.1% [68.8–85.4] | 49.0% [39.0–58.0] |
-| paired difference | +16.7 pts [8.3–25.0], 18 vs 2, p < 0.001 | +13.0 pts [3.0–23.0], 21 vs 8, p = 0.024 |
+| | test split | unseen set | second unseen set |
+| --- | --- | --- | --- |
+| messages | 96 | 100 | 100 |
+| rules alone, all three labels | 60.4% [51.0–69.8] | 36.0% [27.0–45.0] | 44.0% [34.0–54.0] |
+| encoder + rules (default), all three labels | 75.0% [66.7–83.3] | 51.0% [41.0–61.0] | 51.0% [41.0–61.0] |
+| paired difference | +14.6 pts [6.3–22.9], 17 vs 3, p = 0.003 | +15.0 pts [6.0–24.0], 19 vs 4, p = 0.003 | +7.0 pts [-2.0–16.0], 15 vs 8, p = 0.210 |
 
 Generated from `packages/understand/eval/results.json`; full tables, per-language rows and calibration in `packages/understand/model/minilm/model-card.md`.
 <!-- /results:model-summary -->

@@ -27,6 +27,8 @@ const arg = (n, d) => { const i = process.argv.indexOf(n); return i < 0 ? d : (p
 const flag = (n) => process.argv.includes(n);
 const dataPath = resolve(arg('--data', resolve(here, 'messages.jsonl')));
 const unseenPath = resolve(arg('--unseen', resolve(here, 'unseen.jsonl')));
+// A second, later unseen set (written by an independent author after a retrain); evaluated when the file exists.
+const unseen2Path = resolve(arg('--unseen2', resolve(here, 'unseen2.jsonl')));
 const modelDir = resolve(arg('--model', resolve(here, '../model/minilm')));
 const outPath = resolve(arg('--out', resolve(here, 'results-encoder.md')));
 const jsonPath = resolve(arg('--json', resolve(here, 'results.json')));
@@ -160,6 +162,7 @@ function summarise(rs) {
 const sets = {
   test: rows(dataPath).filter((r) => r.split === 'test'),
   unseen: rows(unseenPath).filter((r) => r.split === 'unseen'),
+  ...(existsSync(unseen2Path) ? { unseen2: rows(unseen2Path).filter((r) => r.split === 'unseen') } : {}),
 };
 const evaluated = {};
 for (const [name, rs] of Object.entries(sets)) {
@@ -239,6 +242,7 @@ const md = [
   '',
   ...section('test', 'Test split of messages.jsonl (generator templates)'),
   ...section('unseen', 'Unseen set, unseen.jsonl (written to avoid the generator templates)'),
+  ...(S.unseen2 ? section('unseen2', 'Second unseen set, unseen2.jsonl (independent author, written after the retrain, evaluated once)') : []),
   '## Threshold grid (train, out-of-fold; field accuracy when the encoder is used at or above t)',
   '',
   `| Field | ${GRID.map((t) => (t > 1 ? 'never' : t.toFixed(2))).join(' | ')} | chosen |`,

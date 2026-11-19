@@ -6,18 +6,20 @@ message has been evaluated yet, and nothing here was measured on a phone.
 
 ## Understanding a message (kind, action, urgency)
 
-Built-in model minilm-l12-int8@2 plus rules, thresholds chosen on the train split only.
+Built-in model minilm-l12-int8@2 plus rules (heads trained on 453 messages), thresholds chosen on the train split only.
 
 | Set | All three right | Kind | Action | Urgency | Rules alone, all three | Model + rules vs rules |
 | --- | --- | --- | --- | --- | --- | --- |
-| Unseen (100 messages, never used for any choice): **the number to quote** | **49.0% [39.0–58.0]** | 95.0% [90.0–99.0] | 67.0% [58.0–76.0] | 73.0% [64.0–81.0] | 36.0% [27.0–45.0] | +13.0 points, p = 0.024 |
-| Test split (96 messages, same templates as training) | 77.1% [68.8–85.4] | 93.8% [88.5–97.9] | 88.5% [82.3–94.8] | 89.6% [83.3–94.8] | 60.4% [51.0–69.8] | +16.7 points, p < 0.001 |
+| Second unseen set (100 messages by an independent author, written after the retrain and evaluated once): **the number to quote** | **51.0% [41.0–61.0]** | 91.0% [85.0–96.0] | 68.0% [59.0–77.0] | 81.0% [73.0–88.0] | 44.0% [34.0–54.0] | +7.0 points, p = 0.210 |
+| First unseen set (100 messages; its per-class error counts were read once to decide what training messages to add, so it is no longer untouched) | 51.0% [41.0–61.0] | 95.0% [90.0–99.0] | 74.0% [65.0–82.0] | 71.0% [62.0–80.0] | 36.0% [27.0–45.0] | +15.0 points, p = 0.003 |
+| Test split (96 messages, same templates as training) | 75.0% [66.7–83.3] | 93.8% [88.5–97.9] | 84.4% [77.1–91.7] | 88.5% [82.3–94.8] | 60.4% [51.0–69.8] | +14.6 points, p = 0.003 |
 
 Brackets: 95% bootstrap intervals. Comparison: exact McNemar test on the same messages.
 
 ## Scam warnings (code, not the model)
 
-- Unseen set: 18 of 21 scams warned; 2 of 79 genuine messages falsely warned.
+- Second unseen set: 19 of 22 scams warned; 5 of 78 genuine messages falsely warned.
+- First unseen set: 18 of 21 scams warned; 2 of 79 genuine messages falsely warned.
 - Test split: 22 of 22 scams warned; 0 of 74 genuine messages falsely warned (small; the unseen set is the fairer number).
 
 ## Reading photos (on-device OCR)

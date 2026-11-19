@@ -11,7 +11,7 @@ Facts to keep straight when describing SabiTori:
 - No accounts, no ads, no analytics. Version 1.0.0 sends no data from the phone.
 - Languages today: French and English. Cameroonian Pidgin, Duala, Ewondo, Adamawa Fulfulde, Lamnso', Limbum and Pinyin are set up but wait for native speakers to translate and record them.
 - Status (19 November 2026): version 1.0.0, first release. No pilot has run and there are no measured users yet. All published accuracy numbers come from synthetic test messages, not real ones, and nothing has been measured on a real phone.
-- Test numbers on 100 unseen synthetic messages: 18 of 21 scams warned, 2 of 79 genuine messages falsely warned; kind, action and urgency all right on 49% of messages against 36% for rules alone. On 30 degraded synthetic photos, 84.3% of dates, amounts and phone numbers were recovered, and 97.5% of those read were right.
+- Test numbers on two sets of 100 unseen synthetic messages. Second set (independent author, evaluated once): 19 of 22 scams warned, 5 of 78 genuine messages falsely warned; kind, action and urgency all right on 51% of messages against 44% for rules alone, a difference that is not statistically significant. First set: 18 of 21 scams warned, 2 of 79 false alarms; all three right on 51% against 36% for rules alone. On 30 degraded synthetic photos, 84.3% of dates, amounts and phone numbers were recovered, and 97.5% of those read were right.
 - Code licence: MPL-2.0. Publisher: NotaNovice UG (haftungsbeschränkt), 58256 Ennepetal, Germany.
 - SabiTori explains a message. It does not replace the office that sent it, a doctor or a lawyer.
 

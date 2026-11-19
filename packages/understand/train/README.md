@@ -23,7 +23,7 @@ python export.py --out ../model/minilm \
   --heldout ../eval/messages.jsonl:test --heldout ../eval/unseen.jsonl --heldout heldout-sentences.txt
 
 # 2. heads on the TRAIN split (5-fold CV picks C and the calibration temperature)
-python train.py --model ../model/minilm --data ../eval/messages.jsonl
+python train.py --model ../model/minilm --data ../eval/messages.jsonl --extra ../eval/train-extra.jsonl
 
 # 3. confidence thresholds from the train split's out-of-fold predictions (needs `pnpm install`)
 cd ../../..

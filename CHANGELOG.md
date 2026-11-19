@@ -6,6 +6,11 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Retrain of the understanding heads on 453 messages (224 plus 229 hand-written ones in `eval/train-extra.jsonl`),
+  classifier `minilm-l12-int8@3`, and a second unseen set (`eval/unseen2.jsonl`, 100 messages by an independent author,
+  labels reviewed before evaluation, evaluated once). All three labels right: 51.0% [41.0–61.0] on the second unseen
+  set (rules alone 44.0%, not significantly different) and 51.0% on the first (was 49.0%). The retrain did not raise the
+  headline number; `eval/README.md` says what was done and why the new heads ship anyway.
 - "Read my next SMS" on the home screen (Android app): after one tap the app waits up to five minutes for the next
   incoming SMS, Android asks the person to allow that one message, and it opens ready to be explained. Uses the SMS
   User Consent API: no SMS permission, no inbox access, the text stays on the phone. Play services only offers a

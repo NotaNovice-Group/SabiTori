@@ -1,6 +1,6 @@
 """Train three logistic-regression heads (kind, action, urgency) on the int8 ONNX encoder's embeddings.
 
-  python train.py --model ../model/minilm --data ../eval/messages.jsonl
+  python train.py --model ../model/minilm --data ../eval/messages.jsonl --extra ../eval/train-extra.jsonl
 
 Only the `train` split is used (5-fold CV picks C and the temperature). The `test` split is
 scored once at the end for the model card and is never used for any choice.
@@ -61,11 +61,14 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--model", required=True)
     ap.add_argument("--data", required=True)
+    ap.add_argument("--extra", action="append", default=[], help="more TRAIN rows (JSONL, split \"train\"); may be repeated")
     args = ap.parse_args()
     mdir = Path(args.model)
     rows = [json.loads(l) for l in Path(args.data).read_text("utf8").splitlines() if l.strip()]
     train = [r for r in rows if r.get("split") == "train"]
     test = [r for r in rows if r.get("split") == "test"]
+    for extra in args.extra:  # hand-written additions; they never contribute test rows
+        train += [r for r in (json.loads(l) for l in Path(extra).read_text("utf8").splitlines() if l.strip()) if r.get("split") == "train"]
     print(f"train {len(train)}  test {len(test)}")
     enc = Encoder(mdir)
     Xtr = enc.embed([r["text"] for r in train])

@@ -36,17 +36,20 @@ original text. SabiTori never calls a message safe.
 
 <!-- results:headline -->
 On the 96 held-out test messages of our synthetic evaluation set, the on-device model plus rules gets all three
-labels right on 77.1% [68.8–85.4] of messages, against 60.4% [51.0–69.8] for keyword rules alone:
-higher (p < 0.001). On 100 further messages written to avoid the generator's templates (the unseen
-set), it is 49.0% [39.0–58.0] against 36.0% [27.0–45.0]: higher (p = 0.024).
-Brackets are 95% bootstrap intervals; p is an exact McNemar test on the same messages. Both sets are synthetic and
+labels right on 75.0% [66.7–83.3] of messages, against 60.4% [51.0–69.8] for keyword rules alone:
+higher (p = 0.003). On 100 further messages written to avoid the generator's templates (the unseen
+set), it is 51.0% [41.0–61.0] against 36.0% [27.0–45.0]: higher (p = 0.003).
+On a second unseen set of 100 messages, written by an independent author after the model was retrained and
+evaluated once, it is 51.0% [41.0–61.0] against 44.0% [34.0–54.0]: not significantly different (p = 0.210).
+Brackets are 95% bootstrap intervals; p is an exact McNemar test on the same messages. All sets are synthetic and
 small, so treat these as development numbers, not field accuracy
 ([`packages/understand/eval`](packages/understand/eval), generated from `eval/results.json`).
 <!-- /results:headline -->
 
 Scam warnings come from code, not from the model: all 22 scam or suspicious messages got a warning on the test
-set and 18 of 21 on the unseen set, while 0 of 74 and 2 of 79 genuine messages got a false alarm (the rules were
-tuned on the train split only; the unseen set, never used for tuning, is the fairer number). For photos, every
+set, 18 of 21 on the first unseen set and 19 of 22 on the second, while 0 of 74, 2 of 79 and 5 of 78 genuine
+messages got a false alarm (the rules were tuned on the train split only; the unseen sets, never used for tuning,
+are the fairer numbers). For photos, every
 fact is checked against the text the phone read, not against the paper itself: on 30 degraded synthetic photos of
 bills, letters and SMS screenshots, on-device OCR recovers about five in six of the dates, amounts and phone numbers,
 about one in forty facts it reads is wrong, and it gets every fact right on 20 of 30 pages ([`apps/app/test/ocr-bench/RESULTS.md`](apps/app/test/ocr-bench/RESULTS.md)).

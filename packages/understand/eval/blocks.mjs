@@ -11,7 +11,8 @@ import { fmtCI, fmtDiff, fmtP } from './stats.mjs';
 const FIELDS = ['kind', 'action', 'urgency', 'all'];
 const NAME = { kind: 'kind', action: 'action', urgency: 'urgency', all: 'all three' };
 const SYS = { rules: 'rules@1 (keyword rules)', encoder: 'encoder alone', combined: '**encoder + rules (default)**' };
-const SET = { test: 'test split', unseen: 'unseen set' };
+const SET = { test: 'test split', unseen: 'unseen set', unseen2: 'second unseen set' };
+const setsOf = (r) => ['test', 'unseen', ...(r.sets.unseen2 ? ['unseen2'] : [])];
 
 /** Files that carry blocks, relative to the repository root, and the blocks each must contain. */
 export const DOCS = {
@@ -26,7 +27,7 @@ const verdict = (d) => (d.significant ? `higher (${fmtP(d.p)})` : `not significa
 
 function evalTable(r) {
   const out = ['| Set | System | kind | action | urgency | all three |', '| --- | --- | --- | --- | --- | --- |'];
-  for (const set of ['test', 'unseen']) {
+  for (const set of setsOf(r)) {
     const s = r.sets[set];
     for (const sys of ['rules', 'encoder', 'combined']) out.push(`| ${SET[set]} (n=${s.n}) | ${SYS[sys]} | ${FIELDS.map((f) => fmtCI(s.accuracy[sys][f])).join(' | ')} |`);
   }
@@ -35,7 +36,7 @@ function evalTable(r) {
 
 function pairTable(r) {
   const out = ['| Set | Comparison | kind | action | urgency | all three |', '| --- | --- | --- | --- | --- | --- |'];
-  for (const set of ['test', 'unseen']) {
+  for (const set of setsOf(r)) {
     for (const sys of ['combined', 'encoder']) {
       const d = r.sets[set].vsRules[sys];
       out.push(`| ${SET[set]} | ${sys === 'combined' ? 'encoder + rules' : 'encoder alone'} vs rules | ${FIELDS.map((f) => fmtDiff(d[f]) + (d[f].significant ? ' *' : '')).join(' | ')} |`);
@@ -46,7 +47,7 @@ function pairTable(r) {
 
 function langTable(r) {
   const out = ['| Set | Lang | n | rules, all three | encoder + rules, all three | difference |', '| --- | --- | --- | --- | --- | --- |'];
-  for (const set of ['test', 'unseen']) {
+  for (const set of setsOf(r)) {
     for (const [l, v] of Object.entries(r.sets[set].byLang)) {
       out.push(`| ${SET[set]} | ${l} | ${v.n} | ${fmtCI(v.rules.all)} | ${fmtCI(v.combined.all)} | ${fmtDiff(v.combinedVsRules)}${v.combinedVsRules.significant ? ' *' : ''} |`);
     }
@@ -63,7 +64,13 @@ function headline(r) {
     `labels right on ${fmtCI(t.accuracy.combined.all)} of messages, against ${fmtCI(t.accuracy.rules.all)} for keyword rules alone:`,
     `${verdict(t.vsRules.combined.all)}. On ${u.n} further messages written to avoid the generator's templates (the unseen`,
     `set), it is ${fmtCI(u.accuracy.combined.all)} against ${fmtCI(u.accuracy.rules.all)}: ${verdict(u.vsRules.combined.all)}.`,
-    'Brackets are 95% bootstrap intervals; p is an exact McNemar test on the same messages. Both sets are synthetic and',
+    ...(r.sets.unseen2
+      ? [
+          `On a second unseen set of ${r.sets.unseen2.n} messages, written by an independent author after the model was retrained and`,
+          `evaluated once, it is ${fmtCI(r.sets.unseen2.accuracy.combined.all)} against ${fmtCI(r.sets.unseen2.accuracy.rules.all)}: ${verdict(r.sets.unseen2.vsRules.combined.all)}.`,
+        ]
+      : []),
+    'Brackets are 95% bootstrap intervals; p is an exact McNemar test on the same messages. All sets are synthetic and',
     'small, so treat these as development numbers, not field accuracy',
     '([`packages/understand/eval`](packages/understand/eval), generated from `eval/results.json`).',
   ];
@@ -72,13 +79,14 @@ function headline(r) {
 function modelSummary(r) {
   const t = r.sets.test;
   const u = r.sets.unseen;
+  const cols = [t, u, ...(r.sets.unseen2 ? [r.sets.unseen2] : [])];
   return [
-    '| | test split | unseen set |',
-    '| --- | --- | --- |',
-    `| messages | ${t.n} | ${u.n} |`,
-    `| rules alone, all three labels | ${fmtCI(t.accuracy.rules.all)} | ${fmtCI(u.accuracy.rules.all)} |`,
-    `| encoder + rules (default), all three labels | ${fmtCI(t.accuracy.combined.all)} | ${fmtCI(u.accuracy.combined.all)} |`,
-    `| paired difference | ${fmtDiff(t.vsRules.combined.all)} | ${fmtDiff(u.vsRules.combined.all)} |`,
+    `| | test split | unseen set |${r.sets.unseen2 ? ' second unseen set |' : ''}`,
+    `| --- | --- | --- |${r.sets.unseen2 ? ' --- |' : ''}`,
+    `| messages | ${cols.map((c) => c.n).join(' | ')} |`,
+    `| rules alone, all three labels | ${cols.map((c) => fmtCI(c.accuracy.rules.all)).join(' | ')} |`,
+    `| encoder + rules (default), all three labels | ${cols.map((c) => fmtCI(c.accuracy.combined.all)).join(' | ')} |`,
+    `| paired difference | ${cols.map((c) => fmtDiff(c.vsRules.combined.all)).join(' | ')} |`,
     '',
     'Generated from `packages/understand/eval/results.json`; full tables, per-language rows and calibration in `packages/understand/model/minilm/model-card.md`.',
   ];
@@ -114,7 +122,7 @@ function cardEval(r) {
     '',
     ...langTable(r),
     '',
-    `Scam level (\`assessScam\`, code, not changed by this model): test ${fmtCI(r.sets.test.scam.level)}, unseen ${fmtCI(r.sets.unseen.scam.level)}.`,
+    `Scam level (\`assessScam\`, code, not changed by this model): test ${fmtCI(r.sets.test.scam.level)}, unseen ${fmtCI(r.sets.unseen.scam.level)}${r.sets.unseen2 ? `, second unseen ${fmtCI(r.sets.unseen2.scam.level)}` : ''}.`,
     `Training: ${r.train.n} train messages; 5-fold CV accuracy of the encoder heads alone: ${['kind', 'action', 'urgency'].map((f) => `${f} ${pct1(cv[f]?.cv_accuracy ?? NaN)}`).join(', ')}.`,
     `Statistics: ${r.stats.ci}, ${r.stats.resamples} resamples, seed ${r.stats.seed}; ${r.stats.test}.`,
   ];
@@ -122,7 +130,7 @@ function cardEval(r) {
 
 function cardCalibration(r) {
   const out = ['| Set | Head | ECE | mean confidence | accuracy |', '| --- | --- | --- | --- | --- |'];
-  for (const set of ['test', 'unseen']) for (const f of ['kind', 'action', 'urgency']) {
+  for (const set of setsOf(r)) for (const f of ['kind', 'action', 'urgency']) {
     const c = r.sets[set].calibration[f];
     out.push(`| ${SET[set]} | ${f} | ${c.ece.toFixed(3)} | ${c.meanConf.toFixed(2)} | ${c.acc.toFixed(2)} |`);
   }
@@ -146,6 +154,7 @@ function evalSummary(r) {
   return [
     `Rules baseline on the test split (${t.n} messages): ${['kind', 'action', 'urgency'].map((f) => `${f} ${fmtCI(t.accuracy.rules[f])}`).join(', ')}, all three right ${fmtCI(t.accuracy.rules.all)}, scam level ${fmtCI(t.scam.level)}.`,
     `On the unseen set (${r.sets.unseen.n} messages): all three right ${fmtCI(r.sets.unseen.accuracy.rules.all)}, scam level ${fmtCI(r.sets.unseen.scam.level)}.`,
+    ...(r.sets.unseen2 ? [`On the second unseen set (${r.sets.unseen2.n} messages): all three right ${fmtCI(r.sets.unseen2.accuracy.rules.all)}, scam level ${fmtCI(r.sets.unseen2.scam.level)}.`] : []),
     'Encoder results and paired tests: `results-encoder.md`; machine-readable: `results.json` (both generated by `run-encoder.mjs`).',
   ];
 }

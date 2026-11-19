@@ -2,7 +2,7 @@ import type { Classifier, Facts, MessageInput, Understanding } from '@sabitori/c
 import { ACTION_KINDS, MESSAGE_KINDS, URGENCIES } from '@sabitori/core';
 import { applyHeads, combineWithRules, DEFAULT_ENCODER_THRESHOLD, type HeadsFile, type Thresholds } from './encoder-math.js';
 
-export const ENCODER_ID = 'minilm-l12-int8@2';
+export const ENCODER_ID = 'minilm-l12-int8@3';
 export const ENCODER_MODEL_FILE = 'encoder.int8.onnx';
 /** Files the encoder needs, relative to baseUrl. */
 export const ENCODER_FILES = [ENCODER_MODEL_FILE, 'tokenizer.json', 'heads.json'] as const;
