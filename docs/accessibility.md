@@ -11,6 +11,14 @@ machines on every change, and what has **not** been checked yet.
 - **Buttons say their name.** With "Listen first" on, the first tap speaks a button's name and the second acts, so
   the screen can be explored by ear. A tap from TalkBack (double-tap) or the keyboard acts at once: that person
   already heard the name from their screen reader (`apps/app/src/components/SpeakingButton.tsx`).
+- **Pictures for people who cannot read and cannot hear.** Each card starts with a picture card: what to do as a
+  big symbol, the deadline as a calendar page with a dot per day left, the amount as CFA notes and coins. A scam
+  card shows a red stop sign only, and the phone vibrates (three long pulses for a likely scam, one for a caution)
+  so a deaf person feels the warning before reading anything (`apps/app/src/components/PictureCard.tsx`).
+  Vibration needs a phone that supports it (Android does; iPhone web views do not).
+- **Nothing needs a voice.** Every step is a tap or a photo; no part of SabiTori asks the person to speak, so people
+  who cannot speak use it the same way.
+- **No split words.** Words are never hyphenated across lines: a person learning to read loses a word cut in two.
 - **Never colour alone.** Urgency is a colour, an icon and a spoken word; every fact on a card can show where it
   is in the message.
 - **Reading support.** The typeface is SIL's Andika, made for beginning readers, with the full character set so

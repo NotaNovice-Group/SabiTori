@@ -223,6 +223,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **One-minute demo video, reproducible.** `apps/app/bench/demo/` (record.mjs, stage.html, assemble.py) records
       the built app driven by script: pasted bill spoken in English, scam warned first, bench photo 04 read to a card.
       60 s at 1920x1080 for a voice-over; the only edit is a ~3 s cut of the OCR wait, stated in docs/video-script.md.
+- [x] **Redesign and picture card.** New visual world (DESIGN.md: warm paper, brand green, saffron listen; guided by
+      the impeccable craft floor and taste rules: no side bars, no hyphenated words, one icon system). Picture card
+      for deaf and non-reading users (action symbol, calendar page with days left, CFA notes and coins; stop sign only
+      on a scam) and vibration on scam cards. Unit tests for the picture helpers; a11y and e2e re-run in the gate.
 
 ## Log
 
@@ -292,3 +296,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #67 | "Send money to this number" from a mobile number warns; unseen scam level 92.0% -> 93.0% | local gate (Actions budget) |
 | 2026-11-19 | #68 | Investment-doubling scams warn (new signal promised_return, draft phrase) | local gate (Actions budget) |
 | 2026-11-19 | #69 | Reproducible one-minute demo video (real app, scripted; OCR wait cut ~3 s, disclosed) | local gate (Actions budget) |
+| 2026-11-19 | #70 | Redesign (warm paper, brand green, saffron listen) + picture card and scam vibration for deaf/non-reading users | local gate (Actions budget) |
