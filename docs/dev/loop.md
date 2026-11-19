@@ -282,6 +282,13 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       and "Présence des parents obligatoire" were "unclear" (now go to a place; go_to_place words fr/en); a pension
       "disponible à partir du 25 novembre" was urgent because the start date was near (a near start date no longer
       makes a card urgent unless urgent words say so). Train/test/unseen unchanged; thresholds unchanged.
+- [x] **Probe 16: English official messages.** 10 messages as written in the North-West and South-West (bills, water
+      cut, antenatal visit, school fees, nets campaign, bank debit, business tax, data bundle, university, pharmacy).
+      2 misreadings fixed: "must be paid by" was "unclear" (pay words fr/en: "must/to/should be paid", "doit/doivent
+      être payé(e)(s)", never a bare "be paid", which a pension "will be paid" would match); a late fine that is only
+      a consequence ("attracts a fine of 10,000 FCFA") was shown as the amount (when every amount is a penalty, one is
+      shown only if a pay word is in its clause). Rules alone: test 60.4% -> 61.5%, second unseen set 44% -> 45%;
+      encoder + rules unchanged on every set; thresholds unchanged (0.75 / 0.7 / 0.75 after the owner's retrain).
 
 ## Log
 
@@ -366,3 +373,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #82 | Landing home screenshot: scam row without amount | local gate (Actions budget) |
 | 2026-11-19 | #83 | Message list names the claimed sender ("Says: ENEO"), never for a likely scam | local gate (Actions budget) |
 | 2026-11-19 | #84 | Probe 15: public-service messages; "amenez", "présence des parents", near start date not urgent | local gate (Actions budget) |
+| 2026-11-19 | #85 | Probe 16: English official messages; "must be paid", consequence-only fines not shown as the amount | local gate (Actions budget) |

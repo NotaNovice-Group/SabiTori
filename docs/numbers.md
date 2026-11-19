@@ -10,9 +10,9 @@ Built-in model minilm-l12-int8@3 plus rules (heads trained on 453 messages), thr
 
 | Set | All three right | Kind | Action | Urgency | Rules alone, all three | Model + rules vs rules |
 | --- | --- | --- | --- | --- | --- | --- |
-| Second unseen set (100 messages by an independent author, written after the retrain and evaluated once): **the number to quote** | **51.0% [41.0–61.0]** | 91.0% [85.0–96.0] | 68.0% [59.0–77.0] | 81.0% [73.0–88.0] | 44.0% [34.0–54.0] | +7.0 points, p = 0.210 |
+| Second unseen set (100 messages by an independent author, written after the retrain and evaluated once): **the number to quote** | **51.0% [41.0–61.0]** | 91.0% [85.0–96.0] | 68.0% [59.0–77.0] | 81.0% [73.0–88.0] | 45.0% [35.0–55.0] | +6.0 points, p = 0.286 |
 | First unseen set (100 messages; its per-class error counts were read once to decide what training messages to add, so it is no longer untouched) | 51.0% [41.0–61.0] | 95.0% [90.0–99.0] | 74.0% [65.0–82.0] | 71.0% [62.0–80.0] | 36.0% [27.0–45.0] | +15.0 points, p = 0.003 |
-| Test split (96 messages, same templates as training) | 75.0% [66.7–83.3] | 93.8% [88.5–97.9] | 84.4% [77.1–91.7] | 88.5% [82.3–94.8] | 60.4% [51.0–69.8] | +14.6 points, p = 0.003 |
+| Test split (96 messages, same templates as training) | 75.0% [66.7–83.3] | 93.8% [88.5–97.9] | 84.4% [77.1–91.7] | 88.5% [82.3–94.8] | 61.5% [52.1–70.8] | +13.5 points, p = 0.004 |
 
 Brackets: 95% bootstrap intervals. Comparison: exact McNemar test on the same messages.
 

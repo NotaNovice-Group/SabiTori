@@ -521,7 +521,10 @@
       "loan instalment",
       "bill {n}",
       "invoice {n}",
-      "bill of {n}"
+      "bill of {n}",
+      "must be paid",
+      "to be paid",
+      "should be paid"
     ],
     "collect": [
       "collect",
