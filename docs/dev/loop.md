@@ -328,6 +328,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       and the same photos' true text: amount 27/30 right (2 wrong, 1 not shown), date 21/25 dated pages right (0 wrong,
       4 not shown), 0 genuine photos warned as a likely scam; true text 30/30 and 25/25. Written to
       `results/cards.json`, quoted in docs/numbers.md, re-run and checked by `pnpm reproduce`.
+- [x] **Landing photo row generated, with the card numbers.** The landing page's photo row (fact recall and
+      precision) is now generated with the understanding and scam rows, and adds what the card shows: right amount on
+      27 of 30 photos, right date on 21 of 25, wrong and not-shown counts, no false likely-scam.
 
 ## Log
 
@@ -420,3 +423,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #89 | Pidgin app strings accepted by the shared pack validator (main tests green again); reproduce byte-identical again | local gate (Actions budget) |
 | 2026-11-19 | #90 | Pidgin cards checked end to end (warning first, no money on a scam); regression test | local gate (Actions budget) |
 | 2026-11-19 | #91 | Photo cards published: right amount 27/30, right date 21/25, no false likely-scam (reproducible) | local gate (Actions budget) |
+| 2026-11-19 | #92 | Landing photo row generated with the card numbers (27/30 amounts, 21/25 dates) | local gate (Actions budget) |
