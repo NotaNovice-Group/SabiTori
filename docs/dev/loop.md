@@ -201,6 +201,13 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       for 7+ letters, 1 for 6, "rn"/"ri" read as "m"; never for short names or when two months are as close). Photo
       fact recall 83.6% -> 84.3%, precision 97.5% unchanged; understanding results byte-identical. The other 4 are
       text OCR never returned (day missing, year read as 6026).
+- [x] **"You sent money" receipts are not a call trap.** Run over the 30 genuine benchmark photos, 4 mobile-money
+      "Vous avez envoyé ... à SAMUEL FOTSO (677465100)" receipts got a caution: the person paid was read as a number
+      the message asks you to call. A number close after the "sent" words (`scam.moneySent`, fr + en), in the same
+      sentence with no call or pay word between, is now excused like a "reçu de" sender. False cautions on the photos
+      7 -> 3 (OCR) and 9 -> 5 (true text); the 5 left are CAMWATER bills with a mobile "service clientèle" number,
+      kept on purpose until the official helplines in regions/CM/region.json are confirmed. Scam results on the test
+      and unseen sets unchanged; tests keep "call this number" and "sent by mistake" scams warning.
 
 ## Log
 
@@ -266,3 +273,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #63 | Test: right amount, date and time on the 30 benchmark documents | local gate (Actions budget) |
 | 2026-11-18 | #64 | Annual total is not the amount due on photo cards (wrong amounts 4 -> 2 of 30) | local gate (Actions budget) |
 | 2026-11-19 | #65 | OCR-garbled month names read between a day and a year; photo fact recall 83.6% -> 84.3% | local gate (Actions budget) |
+| 2026-11-19 | #66 | Mobile-money "you sent" receipts no longer cautioned (photo false cautions 7 -> 3) | local gate (Actions budget) |

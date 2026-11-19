@@ -210,7 +210,22 @@ export function assessScam(
     const h = helpline ? digitsOf(helpline).slice(-9) : undefined;
     const recvHits = findTerms(n, S((s) => s.moneyReceived));
     // A number that merely names who sent money ("reçu de JEAN (677123456)") is not a number to call.
-    const named = (p: { span: { start: number } }) => recvHits.some((w) => w.end <= p.span.start && p.span.start - w.end <= 30);
+    // Nor does the number of the person the user sent money to ("Vous avez envoyé 41 100 FCFA à SAMUEL FOTSO
+    // (677465100)"): same sentence, close after the "sent" words, with no call or pay word in between.
+    const sentHits = findTerms(n, S((s) => s.moneySent ?? []));
+    const payHits = findTerms(n, S((s) => s.payVerbs));
+    const sens = splitSentences(n);
+    const sameSentence = (a: number, b: number) => sens.some((x) => a >= x.start && a < x.end && b >= x.start && b < x.end);
+    const paidTo = (p: { span: { start: number } }) =>
+      sentHits.some(
+        (w) =>
+          w.end <= p.span.start &&
+          p.span.start - w.end <= 60 &&
+          sameSentence(w.start, p.span.start) &&
+          ![...callHits, ...payHits].some((c) => c.start >= w.end && c.end <= p.span.start),
+      );
+    const named = (p: { span: { start: number } }) =>
+      recvHits.some((w) => w.end <= p.span.start && p.span.start - w.end <= 30) || paidTo(p);
     // A fixed line in a message whose sender the phone showed as a name is how a utility or a hospital gives its
     // switchboard. The trap is a personal mobile number; a message from a mobile number is caught by sender_mismatch,
     // and a pasted text with no sender keeps the caution (nothing says who wrote it).

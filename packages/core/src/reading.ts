@@ -82,6 +82,8 @@ export interface ReadingLexicon {
     timePressure: string[];
     /** "Vous avez reçu", "Transfert de". */
     moneyReceived: string[];
+    /** "Vous avez envoyé", "You have sent": the number right after names who the user paid, not one to call. */
+    moneySent?: string[];
     /** "appelez", "call". */
     callWords: string[];
     /** Words meaning "using": a company named right after them is a payment channel, not the sender. */

@@ -990,6 +990,14 @@
       "envoie vite",
       "envoyez vite"
     ],
+    "moneySent": [
+      "vous avez envoyé",
+      "vous avez envoye",
+      "vous avez transféré",
+      "vous avez transfere",
+      "transfert effectué vers",
+      "transfert effectue vers"
+    ],
     "moneyReceived": [
       "vous avez reçu",
       "vous avez recu",
