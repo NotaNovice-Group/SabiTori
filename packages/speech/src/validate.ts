@@ -52,6 +52,14 @@ export function validatePhrases(ph: unknown, tag?: string): PackPhrases {
   const p: string[] = [];
   if (!isObj(ph)) throw new PackLoadError(`phrases.json for "${tag}" must be a JSON object`, tag);
   for (const [key, e] of Object.entries(ph)) {
+    // App screen strings ("app.next", "app.mode.title"): a pack may translate them, and the app reads them from the
+    // pack first. They are not spoken phrases, so they carry only text and a status; scripts/check-packs.mjs checks
+    // each key against the app's own list (apps/app/src/engine/extra.ts) and its slots.
+    if (/^app\.[a-z0-9_.]+$/.test(key)) {
+      if (!isObj(e) || typeof e.text !== 'string') p.push(`${key}: text must be a string`);
+      else if (e.status !== undefined && e.status !== 'draft' && e.status !== 'reviewed') p.push(`${key}: status must be "draft" or "reviewed"`);
+      continue;
+    }
     if (!has(CATALOG, key)) {
       p.push(`unknown phrase key "${key}"`);
       continue;

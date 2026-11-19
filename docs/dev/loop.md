@@ -309,6 +309,14 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       written by `scripts/numbers.mjs` between markers, from the same result files as docs/numbers.md, and checked
       by `numbers.mjs --check` and `pnpm reproduce`. Links in genuine official messages were also probed: every link
       is a caution by design (labels), and allowing official sites needs confirmed domains (owner), so unchanged.
+- [x] **Pidgin pack passes the update checks; main green again.** The owner's Pidgin commit put 156 app screen strings
+      (`app.*`) in packs/wes/phrases.json. scripts/check-packs.mjs allows that, but the shared validator
+      (`packages/speech/src/validate.ts`, used by the update publisher and the pack registry) refused every `app.*`
+      key, so the connect tests (publish round trip, content validation) failed on main and the publisher refused to
+      publish. `app.*` entries are now accepted as plain texts (shape and status checked; check-packs still checks
+      the key list and slots). Unit tests (every repo pack validates) and a browser test (Pidgin home screen shows
+      the pack's own words). Also: `pnpm reproduce` was not byte-identical on main (urgency threshold table from the
+      retrain); regenerated, headline numbers unchanged.
 
 ## Log
 
@@ -398,3 +406,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #87 | "Avant fin novembre" / "end of November" read as the last day of the month | local gate (Actions budget) |
 | 2026-11-19 | #88 | Phone and multi-date probes; "fixé au" / "now set for" move an appointment | local gate (Actions budget) |
 | 2026-11-19 | #89 | Landing page numbers generated from the results (57.0% second unseen set) and checked by reproduce | local gate (Actions budget) |
+| 2026-11-19 | #89 | Pidgin app strings accepted by the shared pack validator (main tests green again); reproduce byte-identical again | local gate (Actions budget) |
