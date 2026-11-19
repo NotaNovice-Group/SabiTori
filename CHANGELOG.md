@@ -50,6 +50,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- A moved appointment written "initialement le 20/11, il est fixé au 27/11" or "now set for 4 December" shows the new date.
 - "Avant fin novembre" / "by the end of November" is read as a deadline on the last day of that month.
 - "5 mille", "30 mille FCFA" are read as amounts (5 000, 30 000 FCFA), the way people write them in an SMS.
 - "Must be paid by" / "doit être payée avant" are read as a payment; a fine that is only a consequence ("late
