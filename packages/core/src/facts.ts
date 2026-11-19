@@ -397,6 +397,21 @@ function extractAmounts(text: string, norm0: string, ctx: FactsContext, blocked:
     add(m.index, m.index + m[0].length, n, m[0].slice(0, m[0].length - n.length));
   }
 
+  // "5 mille", "2,5 mille FCFA": an amount in thousands, the way people write it in an SMS. Only 1-3 digits before
+  // the word (and one decimal at most), so a year or a reference never becomes money.
+  const thousands = collect(ctx.lexicons, (l) => l.thousandWords ?? []).map((w) => escapeRe(fold(w)));
+  if (thousands.length) {
+    const D = new RegExp(
+      `${lead}(\\d{1,3}(?:[.,]\\d)?)[ \\u00a0\\u202f]*(?:${thousands.join('|')})(?:[ \\u00a0\\u202f]*(?:${alias}))?(?![\\p{L}\\p{N}])`,
+      'gu',
+    );
+    while ((m = D.exec(norm))) {
+      const n = Number((m[1] ?? '').replace(',', '.'));
+      const amount = Math.round(n * 1000);
+      if (n > 0 && Number.isFinite(amount)) cands.push({ start: m.index, end: m.index + m[0].length, amount });
+    }
+  }
+
   // Labelled amount near a currency word: "Montant: 2 500 (FCFA)"
   // The number must end there: "Frais de scolarité: 1ère tranche" is an ordinal, not an amount of 1.
   const C = new RegExp(`^[ \\u00a0]*[:=\\-]?[ \\u00a0]*(${NUM})(?![\\d\\p{L}])(?![ \\u00a0\\u202f]\\d)`, 'u');
