@@ -133,13 +133,14 @@ requires that setting to be enabled before the error-report feature is offered.
 
 ## 6. Permissions
 
-The app declares these five Android permissions. Camera and Notifications are asked for only when you use the feature. The other three are granted by Android when the app is installed, and are not shown as a question.
+The app declares these six Android permissions. Camera and Notifications are asked for only when you use the feature. The other four are granted by Android when the app is installed, and are not shown as a question.
 
 - **Internet.** Used only for the two optional features in section 5.
 - **Camera.** Asked only when you tap the camera button. The photo is taken for SabiTori and read on your phone. Choosing a photo from your gallery uses the phone's own photo picker, which needs no permission from SabiTori.
 - **Notifications.** Asked only when you tap "Remind me" on a card with a deadline. Used only for the reminders in section 3.
 - **Receive boot completed.** Lets the reminders you set survive a restart of your phone: Android tells the app that the phone has started, so it can schedule them again. It comes with the notification component of the app. It is not used for anything else.
 - **Wake lock.** Lets the phone wake briefly to show a reminder at its time. It comes with the same notification component. It is not used for anything else.
+- **Vibrate.** Makes the phone vibrate when a card warns about a likely scam (three long pulses) or asks for caution (one), so a person who cannot hear feels the warning. It is not used for anything else.
 
 SabiTori does not ask for your location, contacts or microphone.
 
