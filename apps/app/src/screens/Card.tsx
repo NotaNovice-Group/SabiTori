@@ -8,6 +8,8 @@ import { Screen } from '../components/Screen';
 import { Sheet } from '../components/Sheet';
 import { SpeakingButton } from '../components/SpeakingButton';
 import { SECTION_ICON, URGENCY_ICON } from '../components/icons';
+import { PictureCard } from '../components/PictureCard';
+import { scamVibration } from '../lib/pictures';
 import { navigate } from '../lib/router';
 import { getCard, deleteCard, putCard, type StoredCard } from '../lib/db';
 import { session } from '../lib/session';
@@ -104,6 +106,14 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
 
   const facts = card.mode === 'facts_only';
   const scamLevel = card.scam.level;
+
+  // A deaf person feels the warning before reading anything: three long pulses for a likely scam, one for a caution.
+  useEffect(() => {
+    const pattern = scamVibration(scamLevel);
+    if (pattern && typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      try { navigator.vibrate(pattern); } catch { /* not allowed before a tap on some browsers */ }
+    }
+  }, [card.id, scamLevel]);
 
   const play = useCallback(
     (from = 0, withRate = rate) => {
@@ -406,6 +416,16 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
         )}
         {views && L && (
           <>
+            <PictureCard
+              scam={scamLevel}
+              action={card.understanding.action}
+              deadline={card.deadline?.value}
+              time={card.deadlineTime?.value}
+              amount={card.amount?.value.amount}
+              today={todayIso(engine.region.timezone)}
+              locale={locale}
+              numberLocale={locale}
+            />
             {L.scam >= 0 && scamLevel !== 'no_signs' && renderScam(L.scam)}
             {L.head.length > 0 && <div className={`group group-head${facts ? ' group-notice' : ''}`}>{L.head.map(renderSection)}</div>}
             {(L.urgency >= 0 || L.lead.length > 0) && (

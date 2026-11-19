@@ -6,6 +6,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Picture card for people who cannot read and cannot hear: the action, the deadline (calendar page, days left) and
+  the amount (CFA notes and coins) as pictures; a scam card shows a stop sign only. A likely scam vibrates the phone.
 - A one-minute demo video can be re-recorded from the code (`apps/app/bench/demo/record.mjs`): the real app, scripted,
   with captions and spoken words as subtitles.
 - Scam signal `promised_return`: "Investissez 50 000 FCFA et recevez 200 000 FCFA dans 7 jours", "double your
@@ -27,6 +29,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- New look: warm paper and ink, a deep green for what to do, saffron for listening, a picture tile for every kind of
+  card section, softer shapes. Words are no longer split with hyphens.
 - "Send 20,000 FCFA to this number" / "Envoie-moi 15 000 sur ce numéro" from a mobile number now warns (likely scam):
   the number to pay is the sender's own even when it is not written out.
 - A mobile-money "you sent" receipt no longer gets a "call this number" caution because of the number of the person

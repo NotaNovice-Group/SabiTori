@@ -24,25 +24,32 @@ Everything else stays quiet so that this moment carries the screen.
 
 ## Colour
 
-Colour carries meaning (urgency, scam) and almost nothing else. Chrome is ink on stone.
+Warm paper and ink, one brand green for what to do, saffron for listening. Red, amber and green still mean
+only urgency or a scam; the brand green is a different, deeper hue and never marks urgency. (Redesign 2026-11-19:
+the earlier grey "ink on stone" read as unfinished and gave nothing to find a button by.)
 
 | Token | Light | Dark | Use |
 | --- | --- | --- | --- |
-| `--ground` | `#EEF0EC` | `#111614` | App background, a low-chroma stone |
-| `--surface` | `#FFFFFF` | `#1A211E` | Card body, one tone step from ground |
-| `--surface-2` | `#E3E6E1` | `#232B27` | Pressed states, quiet fills |
-| `--ink` | `#121A16` | `#EEF2EF` | Text, primary buttons (filled ink) |
-| `--ink-2` | `#46524C` | `#A9B5AF` | Secondary text (≥ 4.5:1 on surface) |
+| `--ground` | `#F4EEE3` | `#15120E` | App background, warm paper (bright sun: no glare of pure white) |
+| `--surface` | `#FFFCF6` | `#211C16` | Cards and rows, with a soft two-layer shadow |
+| `--surface-2` | `#EBE2D2` | `#2D261E` | Quiet fills, icon tiles |
+| `--line` | `#DDD2BF` | `#3A3127` | 2px borders of secondary buttons and fields |
+| `--ink` / `--ink-2` | `#1F1A14` / `#574D42` | `#F4EEE3` / `#C2B6A5` | Text (ink-2 is at least 4.5:1 on surface) |
+| `--brand` | `#0D5C4C` | `#6FD0B2` | Primary and hero buttons, chosen options, the action tile, the mark |
+| `--brand-tint` | `#D9EBE3` | `#1F3A32` | Date and help tiles, chosen language, empty state |
+| `--listen` | `#F0A43A` | `#F2AD4E` | Play buttons and the ring on the section being spoken (ink on it) |
+| `--money` / `--money-tint` | `#7A4B00` / `#F6E7C8` | `#F0C879` / `#3D3220` | Money tile and the notes of the picture card |
 | `--focus` | `#1D5FD1` | `#7FA8F5` | Focus ring only |
-| `--info` | `#1E6B48` | `#5CC293` | Green: only information |
-| `--soon` | `#8A5300` | `#E3A94A` | Amber: act soon |
-| `--urgent` | `#B3261E` | `#FF8A80` | Red: urgent, and scam warnings |
-| `--info-tint` / `--soon-tint` / `--urgent-tint` | 10% of the hue on surface | 18% on surface | Section background when lit |
+| `--info` / `--soon` / `--urgent` | `#1E6B48` / `#8A5300` / `#B3261E` | `#5CC293` / `#E3A94A` / `#FF8A80` | Urgency, and red for scam warnings |
 
-- Urgency is never colour alone: each level has its own symbol and spoken sentence.
-- Status notes (for example a voice not yet recorded) are `--ink-2`, never a hue: hues carry urgency and scam meaning only.
-- Light theme is the default (sunlight). Dark theme is a full scheme, not an invert.
-- No gradients, no glass, no glows, no drop shadows. Separation is a tone step or space.
+## Picture card
+
+For people who cannot read the words and cannot hear them (deaf, or no sound around): above the sections, the
+card's facts as pictures in a fixed order, numerals only. The action as a big drawn symbol (paying hand, walking
+feet, phone, pill), the deadline as a calendar page (month, big day, a dot per day left up to 14, the time when
+given, crossed out in red once passed), the amount as CFA notes and coins. A scam card shows only a red stop sign:
+never a paying hand or the money. A likely scam also vibrates three long pulses when the card opens, a caution one.
+Hidden from screen readers (the same facts are in the sections and the speech).
 
 ## Shape and space
 

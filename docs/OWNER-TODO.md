@@ -9,9 +9,9 @@ Total: 101 placeholders in 13 files.
 
 ## `CHANGELOG.md` (3)
 
-- [ ] `CHANGELOG.md:107` release date, once released.
-- [ ] `CHANGELOG.md:138` French review status; resolve before release.
-- [ ] `CHANGELOG.md:139` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
+- [ ] `CHANGELOG.md:111` release date, once released.
+- [ ] `CHANGELOG.md:142` French review status; resolve before release.
+- [ ] `CHANGELOG.md:143` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
 
 ## `CODE_OF_CONDUCT.md` (1)
 
@@ -25,7 +25,7 @@ Total: 101 placeholders in 13 files.
 
 ## `docs/accessibility.md` (1)
 
-- [ ] `docs/accessibility.md:37` name the disability organisation that will run or review these sessions, once one has agreed.
+- [ ] `docs/accessibility.md:45` name the disability organisation that will run or review these sessions, once one has agreed.
 
 ## `docs/impact.md` (1)
 
