@@ -38,6 +38,8 @@ export interface ReadingLexicon {
 
   /** Spelled-out currency words ("francs cfa"), added to the region's currency aliases. */
   currencyWords: string[];
+  /** "mille": "5 mille" is said and written for 5 000 FCFA. A number of 1-3 digits right before it is an amount in thousands. */
+  thousandWords?: string[];
   /** Words that label the amount to pay ("montant", "total"). */
   amountWords: string[];
   /** Words that label a balance (never the amount to pay). */
