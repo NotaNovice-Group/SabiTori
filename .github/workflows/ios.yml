@@ -1,0 +1,64 @@
+name: iOS
+
+# Unsigned iOS simulator build: proves the Xcode project compiles with the current web app and plugins.
+# No signing, no secrets, nothing is uploaded to Apple. See docs/ios.md.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ios-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  ios-simulator:
+    name: iOS simulator build (unsigned)
+    runs-on: macos-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: pnpm/action-setup@v4.1.0
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: 22
+          cache: pnpm
+      # Capacitor 8 needs Xcode 26 or newer. Use the newest Xcode 26.x on the runner, if the default is older.
+      - name: Select Xcode
+        run: |
+          x="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1 || true)"
+          if [ -n "$x" ]; then sudo xcode-select -s "$x/Contents/Developer"; fi
+          xcodebuild -version
+      - run: pnpm install --frozen-lockfile
+      - name: Build the web app
+        run: pnpm --filter @sabitori/app build
+      - name: Sync Capacitor
+        working-directory: apps/app
+        run: npx cap sync ios
+      - name: Build for the iOS simulator (no signing)
+        working-directory: apps/app/ios/App
+        run: |
+          xcodebuild \
+            -project App.xcodeproj \
+            -scheme App \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            build
+      - name: Zip the simulator app
+        run: |
+          app="$(find apps/app/ios/App/build/DerivedData/Build/Products -maxdepth 2 -name 'App.app' -type d | head -1)"
+          test -n "$app"
+          ditto -c -k --keepParent "$app" sabitori-ios-simulator.zip
+      - uses: actions/upload-artifact@v4.6.2
+        with:
+          name: sabitori-ios-simulator-app
+          path: sabitori-ios-simulator.zip
+          if-no-files-found: error
+          retention-days: 14

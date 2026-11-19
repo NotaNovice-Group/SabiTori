@@ -1,5 +1,6 @@
 import type { IsoDate } from '@sabitori/core';
 import { LocalNotifications, type LocalNotificationSchema } from '@capacitor/local-notifications';
+import { nativePlatform } from './native';
 
 export const REMINDER_CHANNEL = 'reminders';
 
@@ -70,7 +71,7 @@ export interface ReminderRequest {
 
 export type ReminderResult = { status: 'set'; count: number } | { status: 'past' | 'denied' | 'failed' };
 
-/** Asks for the notification permission (Android 13+) — only ever called after the person taps "Remind me". */
+/** Asks for the notification permission (Android 13+, iOS) — only ever called after the person taps "Remind me". */
 async function ensurePermission(): Promise<boolean> {
   let state = (await LocalNotifications.checkPermissions()).display;
   if (state === 'prompt' || state === 'prompt-with-rationale') state = (await LocalNotifications.requestPermissions()).display;
@@ -82,7 +83,8 @@ export async function scheduleReminders(req: ReminderRequest): Promise<ReminderR
     const slots = planReminders(req.cardId, req.deadline, req.now, req.time);
     if (slots.length === 0) return { status: 'past' };
     if (!(await ensurePermission())) return { status: 'denied' };
-    await LocalNotifications.createChannel({ id: REMINDER_CHANNEL, name: req.channelName ?? 'SabiTori', importance: 4, visibility: 0 });
+    // Channels are Android-only: on iOS the plugin rejects createChannel as unimplemented.
+    if (nativePlatform() === 'android') await LocalNotifications.createChannel({ id: REMINDER_CHANNEL, name: req.channelName ?? 'SabiTori', importance: 4, visibility: 0 });
     // Replace any earlier reminder of this card.
     await LocalNotifications.cancel({ notifications: reminderIds(req.cardId).map((id) => ({ id })) });
     const notifications: LocalNotificationSchema[] = slots.map((s) => ({

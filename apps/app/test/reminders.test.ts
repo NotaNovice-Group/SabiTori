@@ -10,6 +10,11 @@ const ln = vi.hoisted(() => ({
   addListener: vi.fn(),
 }));
 vi.mock('@capacitor/local-notifications', () => ({ LocalNotifications: ln }));
+const platform = vi.hoisted(() => ({ name: 'android' }));
+vi.mock('@capacitor/core', () => ({
+  Capacitor: { getPlatform: () => platform.name, isNativePlatform: () => platform.name !== 'web', convertFileSrc: (p: string) => p },
+  registerPlugin: () => ({}),
+}));
 
 import { cancelReminders, hasReminders, listenReminderTaps, planReminders, reminderIds, routeFromExtra, scheduleReminders } from '../src/lib/reminders';
 
@@ -67,6 +72,7 @@ describe('scheduleReminders', () => {
   const req = { cardId: 'c1', deadline: '2026-11-05' as const, title: 'ENEO', body: 'Pay the bill. Before 5 November.', now };
   beforeEach(() => {
     vi.clearAllMocks();
+    platform.name = 'android';
     ln.checkPermissions.mockResolvedValue({ display: 'granted' });
     ln.requestPermissions.mockResolvedValue({ display: 'granted' });
   });
@@ -104,6 +110,20 @@ describe('scheduleReminders', () => {
 
   it('schedules only the future one', async () => {
     expect(await scheduleReminders({ ...req, now: new Date(2026, 10, 4, 10, 0) })).toEqual({ status: 'set', count: 1 });
+  });
+
+  it('creates the Android notification channel on Android', async () => {
+    expect(await scheduleReminders(req)).toEqual({ status: 'set', count: 2 });
+    expect(ln.createChannel).toHaveBeenCalledTimes(1);
+  });
+
+  it('on iOS skips the channel (unimplemented there, it would reject) and still schedules', async () => {
+    platform.name = 'ios';
+    ln.createChannel.mockRejectedValue(new Error('createChannel not implemented on ios'));
+    expect(await scheduleReminders(req)).toEqual({ status: 'set', count: 2 });
+    expect(ln.createChannel).not.toHaveBeenCalled();
+    expect(ln.schedule).toHaveBeenCalledTimes(1);
+    ln.createChannel.mockReset();
   });
 
   it('reports a plugin failure instead of throwing', async () => {

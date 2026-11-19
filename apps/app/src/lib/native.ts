@@ -1,6 +1,6 @@
 import { Capacitor, registerPlugin } from '@capacitor/core';
 
-/** True inside the Android app (Capacitor shell). In a browser every feature keeps its web path. */
+/** True inside the Android or iOS app (Capacitor shell). In a browser every feature keeps its web path. */
 export const isNative = (): boolean => {
   try {
     return Capacitor.isNativePlatform();
@@ -8,6 +8,21 @@ export const isNative = (): boolean => {
     return false;
   }
 };
+
+export type NativePlatform = 'android' | 'ios' | 'web';
+
+/** Which shell the page runs in. Anything unknown counts as the web. */
+export const nativePlatform = (): NativePlatform => {
+  try {
+    const p = Capacitor.getPlatform();
+    return p === 'android' || p === 'ios' ? p : 'web';
+  } catch {
+    return 'web';
+  }
+};
+
+/** The SabiToriNative plugin exists only in the Android project (no Swift port yet, see docs/ios.md). */
+const hasNativeHelper = (): boolean => nativePlatform() === 'android';
 
 /** Small project-owned Android plugin (MainActivity side): system settings and private-cache clean-up. */
 interface SabiToriNativePlugin {
@@ -20,8 +35,22 @@ interface SabiToriNativePlugin {
 
 const Native = registerPlugin<SabiToriNativePlugin>('SabiToriNative');
 
-export async function openSystemSettings(target: 'app' | 'notifications' = 'app'): Promise<void> {
-  if (!isNative()) return;
+/** iOS opens this app's page in the Settings app for this URL (UIApplication.openSettingsURLString). */
+export const IOS_SETTINGS_URL = 'app-settings:';
+
+export async function openSystemSettings(target: 'app' | 'notifications' = 'app', open: (url: string) => unknown = (u) => window.open(u, '_blank')): Promise<void> {
+  const platform = nativePlatform();
+  if (platform === 'ios') {
+    // No Swift plugin: Capacitor's iOS web view hands a URL it does not serve to the system, which opens
+    // SabiTori's page in Settings (camera, photos and notifications are all switched there).
+    try {
+      open(IOS_SETTINGS_URL);
+    } catch {
+      /* nothing more can be done */
+    }
+    return;
+  }
+  if (!hasNativeHelper()) return;
   try {
     await Native.openSettings({ target });
   } catch {
@@ -30,7 +59,7 @@ export async function openSystemSettings(target: 'app' | 'notifications' = 'app'
 }
 
 export async function forgetSharedFiles(): Promise<void> {
-  if (!isNative()) return;
+  if (!hasNativeHelper()) return;
   try {
     await Native.forgetSharedFiles();
   } catch {
@@ -40,7 +69,7 @@ export async function forgetSharedFiles(): Promise<void> {
 
 export async function takeShareNotes(): Promise<{ tooBig: number; notImage: number; more: number }> {
   const none = { tooBig: 0, notImage: 0, more: 0 };
-  if (!isNative()) return none;
+  if (!hasNativeHelper()) return none;
   try {
     const r = await Native.takeShareNotes();
     return { tooBig: Number(r?.tooBig) || 0, notImage: Number(r?.notImage) || 0, more: Number(r?.more) || 0 };

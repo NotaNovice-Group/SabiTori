@@ -13,6 +13,9 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
   Contactez le 655..., prévoir 150 000 FCFA pour garantir votre place"); `distress_money` (a caution on its own) for an
   accident, arrest or stranded-abroad story that asks for money from a mobile number. A code "sent by mistake" and asked
   back in the next sentence, and "the code you will receive", now count as asking for the secret code.
+- iOS project (`apps/app/ios`, Capacitor 8, Swift Package Manager) and a CI workflow that does an unsigned iOS
+  simulator build. Not yet run on an iPhone or a simulator; the share sheet and the project's own Android plugin have
+  no iOS version (see `docs/ios.md`). Reminders skip the Android-only notification channel on iOS.
 - A one-minute demo video can be re-recorded from the code (`apps/app/bench/demo/record.mjs`): the real app, scripted,
   with captions and spoken words as subtitles.
 - Scam signal `promised_return`: "Investissez 50 000 FCFA et recevez 200 000 FCFA dans 7 jours", "double your
