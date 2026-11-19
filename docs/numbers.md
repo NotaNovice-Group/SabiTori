@@ -6,7 +6,7 @@ message has been evaluated yet, and nothing here was measured on a phone.
 
 ## Understanding a message (kind, action, urgency)
 
-Built-in model minilm-l12-int8@2 plus rules (heads trained on 453 messages), thresholds chosen on the train split only.
+Built-in model minilm-l12-int8@3 plus rules (heads trained on 453 messages), thresholds chosen on the train split only.
 
 | Set | All three right | Kind | Action | Urgency | Rules alone, all three | Model + rules vs rules |
 | --- | --- | --- | --- | --- | --- | --- |

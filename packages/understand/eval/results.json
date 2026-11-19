@@ -1,6 +1,6 @@
 {
  "generatedBy": "packages/understand/eval/run-encoder.mjs",
- "classifier": "minilm-l12-int8@2",
+ "classifier": "minilm-l12-int8@3",
  "model": "packages/understand/model/minilm",
  "thresholds": {
   "kind": 0.75,
