@@ -68,6 +68,20 @@ describe('engine adapter over the real packages', () => {
     expect(soon.text).toContain('Français');
   });
 
+  it('a Pidgin card is said in Pidgin, and a Pidgin scam card warns first without the money', async () => {
+    const { e } = engine();
+    const bill = await e.renderCard(await e.analyze(BILL), 'wes');
+    expect(bill.every((v) => v.lang === 'wes')).toBe(true);
+    expect(bill.map((v) => v.section)).toContain('money');
+    const scam = await e.renderCard(
+      await e.analyze({ ...BILL, text: 'Félicitations! Votre numéro a gagné 500 000 FCFA. Envoyez 5 000 FCFA de frais au 677 12 34 56.', sender: { kind: 'number', value: '+237690112233' } }),
+      'wes',
+    );
+    expect(scam[0]!.section).toBe('scam');
+    expect(scam[0]!.lang).toBe('wes');
+    expect(scam.map((v) => v.section)).not.toContain('money');
+  });
+
   it('the Pidgin pack (rules and app strings) loads and is used, not silently replaced by its fallback', async () => {
     const { e } = engine();
     const empty = await e.phrase('app.home.empty', 'wes');

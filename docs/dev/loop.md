@@ -319,6 +319,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       Pidgin pack and fell back to English/French silently (an engine test that expected the fallback now sees the
       Pidgin text; it moved to a pack that really has no rules). Also: `pnpm reproduce` was not byte-identical on main (urgency threshold table from the
       retrain); regenerated, headline numbers unchanged.
+- [x] **Pidgin cards checked end to end.** With the Pidgin pack now loading (#89), a bill card and a scam card were
+      rendered in Pidgin: every section is said in Pidgin ("This message look like wayo. No send money..."), the
+      warning comes first and a scam card has no money section. Engine regression test. The Pidgin wording is the
+      owner's draft and still needs a native speaker's review.
 
 ## Log
 
@@ -409,3 +413,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #88 | Phone and multi-date probes; "fixé au" / "now set for" move an appointment | local gate (Actions budget) |
 | 2026-11-19 | #89 | Landing page numbers generated from the results (57.0% second unseen set) and checked by reproduce | local gate (Actions budget) |
 | 2026-11-19 | #89 | Pidgin app strings accepted by the shared pack validator (main tests green again); reproduce byte-identical again | local gate (Actions budget) |
+| 2026-11-19 | #90 | Pidgin cards checked end to end (warning first, no money on a scam); regression test | local gate (Actions budget) |
