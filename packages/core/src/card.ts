@@ -102,7 +102,15 @@ function chooseAmount(
   };
   const due = facts.amounts.filter((a) => !isAnnual(a) || inDeadlineClause(a));
   const unpenalised = due.filter((a) => !isBalance(a) && !isPenalty(a));
-  const pool = unpenalised.length ? unpenalised : due.filter((a) => !isBalance(a));
+  // When every amount is a penalty, one is shown only if the message asks for it to be paid ("Pénalité de retard :
+  // 2 500 FCFA à payer avant le 30/11"). A fine that is only a consequence ("late registration attracts a fine of
+  // 10,000 FCFA") is not an amount to pay: no amount.
+  const pays = findTerms(n, collect(lexicons, (l) => l.actions.pay));
+  const asked = (a: Fact<Money>) => {
+    const c = clauseAround(n, a.span.start, a.span.end);
+    return pays.some((w) => w.start >= c.start && w.end <= c.end);
+  };
+  const pool = unpenalised.length ? unpenalised : due.filter((a) => !isBalance(a) && asked(a));
   if (!pool.length) return undefined;
   const score = (a: Fact<Money>) => (labels.some((w) => w.end <= a.span.start && a.span.start - w.end <= NEAR_AMOUNT) ? 3 : 0);
 

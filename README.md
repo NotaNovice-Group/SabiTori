@@ -36,11 +36,11 @@ original text. SabiTori never calls a message safe.
 
 <!-- results:headline -->
 On the 96 held-out test messages of our synthetic evaluation set, the on-device model plus rules gets all three
-labels right on 75.0% [66.7–83.3] of messages, against 60.4% [51.0–69.8] for keyword rules alone:
-higher (p = 0.003). On 100 further messages written to avoid the generator's templates (the unseen
+labels right on 75.0% [66.7–83.3] of messages, against 61.5% [52.1–70.8] for keyword rules alone:
+higher (p = 0.004). On 100 further messages written to avoid the generator's templates (the unseen
 set), it is 51.0% [41.0–61.0] against 36.0% [27.0–45.0]: higher (p = 0.003).
 On a second unseen set of 100 messages, written by an independent author after the model was retrained and
-evaluated once, it is 51.0% [41.0–61.0] against 44.0% [34.0–54.0]: not significantly different (p = 0.210).
+evaluated once, it is 51.0% [41.0–61.0] against 45.0% [35.0–55.0]: not significantly different (p = 0.286).
 Brackets are 95% bootstrap intervals; p is an exact McNemar test on the same messages. All sets are synthetic and
 small, so treat these as development numbers, not field accuracy
 ([`packages/understand/eval`](packages/understand/eval), generated from `eval/results.json`).

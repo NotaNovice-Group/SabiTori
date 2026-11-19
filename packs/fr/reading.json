@@ -578,7 +578,11 @@
       "envoyer ça",
       "échéance de crédit",
       "facture {n}",
-      "facture de {n}"
+      "facture de {n}",
+      "doit être payé",
+      "doit être payée",
+      "doivent être payés",
+      "doivent être payées"
     ],
     "collect": [
       "retirer",

@@ -50,6 +50,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- "Must be paid by" / "doit être payée avant" are read as a payment; a fine that is only a consequence ("late
+  registration attracts a fine of 10,000 FCFA") is no longer shown as the amount to pay.
 - "Amenez vos enfants au centre de santé" and "Présence des parents obligatoire" are read as "go there"; a near start
   date ("disponible à partir du 25 novembre") no longer makes a card urgent.
 - In the message list a likely scam shows a stop sign and no amount or date, so it never reads like a bill to pay.
