@@ -84,6 +84,12 @@ export interface ReadingLexicon {
     moneyReceived: string[];
     /** "Vous avez envoyé", "You have sent": the number right after names who the user paid, not one to call. */
     moneySent?: string[];
+    /** "investissez", "invest": putting money in to get more back. */
+    investWords?: string[];
+    /** "recevez", "gagnez", "receive", "earn": what the money will bring back. */
+    gainWords?: string[];
+    /** "doublez votre argent", "guaranteed profit": a promise of quick gain on its own. */
+    returnPromises?: string[];
     /** "ce numéro", "this number": money asked "on this number" goes to the number the message came from. */
     thisNumberWords?: string[];
     /** "appelez", "call". */

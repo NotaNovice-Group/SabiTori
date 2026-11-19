@@ -911,6 +911,28 @@
       "as soon as possible",
       "send it quickly"
     ],
+    "investWords": [
+      "invest",
+      "investing",
+      "put in"
+    ],
+    "gainWords": [
+      "receive",
+      "earn",
+      "get back",
+      "get",
+      "collect",
+      "make"
+    ],
+    "returnPromises": [
+      "double your money",
+      "triple your money",
+      "guaranteed profit",
+      "guaranteed returns",
+      "guaranteed return",
+      "risk-free profit",
+      "money doubling"
+    ],
     "thisNumberWords": [
       "this number",
       "this same number",
