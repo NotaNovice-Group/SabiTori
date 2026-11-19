@@ -39,6 +39,7 @@ the earlier grey "ink on stone" read as unfinished and gave nothing to find a bu
 | `--brand-tint` | `#D9EBE3` | `#1F3A32` | Date and help tiles, chosen language, empty state |
 | `--listen` | `#F0A43A` | `#F2AD4E` | Play buttons and the ring on the section being spoken (ink on it) |
 | `--money` / `--money-tint` | `#7A4B00` / `#F6E7C8` | `#F0C879` / `#3D3220` | Money tile and the notes of the picture card |
+| `--stop` | `#B3261E` | `#C9302A` | Solid red behind the scam stop sign and scam icon, white symbol, both themes |
 | `--focus` | `#1D5FD1` | `#7FA8F5` | Focus ring only |
 | `--info` / `--soon` / `--urgent` | `#1E6B48` / `#8A5300` / `#B3261E` | `#5CC293` / `#E3A94A` / `#FF8A80` | Urgency, and red for scam warnings |
 
