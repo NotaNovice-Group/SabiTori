@@ -19,7 +19,7 @@ Brackets: 95% bootstrap intervals. Comparison: exact McNemar test on the same me
 ## Scam warnings (code, not the model)
 
 - Second unseen set: 19 of 22 scams warned; 5 of 78 genuine messages falsely warned.
-- First unseen set: 18 of 21 scams warned; 2 of 79 genuine messages falsely warned.
+- First unseen set: 20 of 21 scams warned; 2 of 79 genuine messages falsely warned.
 - Test split: 22 of 22 scams warned; 0 of 74 genuine messages falsely warned (small; the unseen set is the fairer number).
 
 ## Reading photos (on-device OCR)

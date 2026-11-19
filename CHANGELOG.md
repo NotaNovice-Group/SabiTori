@@ -50,6 +50,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Scams written in SMS shorthand ("stp envoi 15 000f sur ce num", "snd me 10 000 for dis numba") now warn; a number
+  grouped in thousands right after "send/envoie" is read as money even without "FCFA".
 - A moved appointment written "initialement le 20/11, il est fixé au 27/11" or "now set for 4 December" shows the new date.
 - "Avant fin novembre" / "by the end of November" is read as a deadline on the last day of that month.
 - "5 mille", "30 mille FCFA" are read as amounts (5 000, 30 000 FCFA), the way people write them in an SMS.
