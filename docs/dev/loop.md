@@ -432,4 +432,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #90 | Pidgin cards checked end to end (warning first, no money on a scam); regression test | local gate (Actions budget) |
 | 2026-11-19 | #91 | Photo cards published: right amount 27/30, right date 21/25, no false likely-scam (reproducible) | local gate (Actions budget) |
 | 2026-11-19 | #92 | Landing photo row generated with the card numbers (27/30 amounts, 21/25 dates) | local gate (Actions budget) |
-| 2026-11-19 | #93 | Probe 17: SMS-shorthand scams; first unseen scams warned 18/21 -> 20/21, no new false alarm | local gate (Actions budget) |
+| 2026-11-19 | #94 | Probe 17: SMS-shorthand scams; first unseen scams warned 18/21 -> 20/21, no new false alarm | local gate (Actions budget) |
