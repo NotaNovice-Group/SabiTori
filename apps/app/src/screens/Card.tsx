@@ -457,10 +457,20 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
             {L.scam >= 0 && scamLevel === 'no_signs' && renderScam(L.scam)}
           </>
         )}
-        <SpeakingButton speakKey="ui.show_helper" variant="secondary" className="show-helper" icon={<Eye size={24} strokeWidth={2} aria-hidden />} onAct={() => { engine.stop(); setHelper(true); }} />
-        <p className="footer-note">{t('ui.not_advice')}</p>
-        {!example && (
-          <SpeakingButton speakKey="ui.delete" variant="quiet" className="danger-quiet" icon={<Trash2 size={24} strokeWidth={2} aria-hidden />} onAct={remove} />
+        {/* While the card is being prepared: its shape, not an empty page with only "Delete" on it. */}
+        {!views && (
+          <div className="skeleton" aria-hidden="true">
+            <span className="sk-pics" /><span className="sk-group" /><span className="sk-group sk-tall" />
+          </div>
+        )}
+        {views && (
+          <>
+            <SpeakingButton speakKey="ui.show_helper" variant="secondary" className="show-helper" icon={<Eye size={24} strokeWidth={2} aria-hidden />} onAct={() => { engine.stop(); setHelper(true); }} />
+            <p className="footer-note">{t('ui.not_advice')}</p>
+            {!example && (
+              <SpeakingButton speakKey="ui.delete" variant="quiet" className="danger-quiet" icon={<Trash2 size={24} strokeWidth={2} aria-hidden />} onAct={remove} />
+            )}
+          </>
         )}
       </article>
       {source && (
