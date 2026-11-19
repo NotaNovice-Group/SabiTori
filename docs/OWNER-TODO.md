@@ -5,13 +5,13 @@ they are decisions, facts about the publisher, or results of steps outside the c
 reads "unfinished", so fill or remove them before the repository is public. `packages/understand/test/model-card.test.ts`
 checks that this list matches the files (regenerate it with `node scripts/owner-todo.mjs` after editing a document).
 
-Total: 101 placeholders in 13 files.
+Total: 103 placeholders in 14 files.
 
 ## `CHANGELOG.md` (3)
 
-- [ ] `CHANGELOG.md:118` release date, once released.
-- [ ] `CHANGELOG.md:149` French review status; resolve before release.
-- [ ] `CHANGELOG.md:150` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
+- [ ] `CHANGELOG.md:121` release date, once released.
+- [ ] `CHANGELOG.md:152` French review status; resolve before release.
+- [ ] `CHANGELOG.md:153` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
 
 ## `CODE_OF_CONDUCT.md` (1)
 
@@ -30,6 +30,11 @@ Total: 101 placeholders in 13 files.
 ## `docs/impact.md` (1)
 
 - [ ] `docs/impact.md:54` pilot partner, place and dates, once agreed
+
+## `docs/ios.md` (2)
+
+- [ ] `docs/ios.md:20` iOS app icon (1024 px) and launch screen
+- [ ] `docs/ios.md:76` Apple developer account
 
 ## `docs/privacy.fr.md` (16)
 

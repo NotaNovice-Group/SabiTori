@@ -83,7 +83,7 @@ and when we train our own voices: [`docs/languages.md`](docs/languages.md).
 | `packages/speech` | Language-pack rules, rendering, audio player |
 | `packages/understand` | On-device understanding: MiniLM encoder (the only model in store builds), evaluation set and training code; an experimental LLM path (Qwen2.5-1.5B via wllama) exists only in research builds (`VITE_LLM=1`) |
 | `packages/connect` | Optional signed-update client and overlay (no message content, ever) |
-| `apps/app` | The SabiTori app (React PWA, wrapped for Android with Capacitor) |
+| `apps/app` | The SabiTori app (React PWA, wrapped for Android with Capacitor; an iOS project exists but is untested, see `docs/ios.md`) |
 | `apps/recorder` | Tool for communities to translate and record a language |
 | `packs/`, `regions/` | Language and country data |
 | `docs/` | Architecture, pack rules, model notes, privacy policy, sustainability and impact plans |
@@ -109,6 +109,12 @@ Android APK (needs the Android SDK, platform 36):
 
 ```bash
 pnpm --filter @sabitori/app build && cd apps/app && npx cap sync android && cd android && ./gradlew assembleDebug
+```
+
+iOS (needs a Mac with Xcode 26; not yet tested on any iPhone or simulator, see [docs/ios.md](docs/ios.md)):
+
+```bash
+pnpm --filter @sabitori/app build && cd apps/app && npx cap sync ios && npx cap open ios
 ```
 
 ## Accessibility

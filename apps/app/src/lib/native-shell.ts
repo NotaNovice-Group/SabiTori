@@ -6,8 +6,9 @@ import { session } from './session';
 import { navigate } from './router';
 
 /**
- * Android-only wiring, started once when the app opens: share-sheet intake and taps on reminders.
- * Does nothing in a browser.
+ * Native wiring, started once when the app opens: share-sheet intake and taps on reminders.
+ * Does nothing in a browser. On iOS the share listener is registered but never fires (no Share Extension yet,
+ * see docs/ios.md); reminder taps work the same as on Android.
  */
 export function startNativeShell(): () => void {
   if (!isNative()) return () => undefined;

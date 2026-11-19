@@ -237,6 +237,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       the tontine "send to this number" (same words as the probe-13 scam) and the link caution (labelling rule). Rules
       eval unchanged: train warned 64/67, false alarms 0/157; test 22/22, 0/74; unseen 18/21, 2/79 (scam level 93.0%).
       Thresholds unchanged (kind 0.85, action 0.65, urgency 0.85); `pnpm reproduce` byte-identical.
+- [x] **iOS project.** `apps/app/ios` (Capacitor 8, Swift Package Manager), Info.plist camera/photo texts, reminders
+      no longer call the Android-only notification channel on iOS, settings link uses `app-settings:` on iOS, an
+      unsigned simulator build workflow (`.github/workflows/ios.yml`) and `docs/ios.md`. Not built or run on a Mac,
+      simulator or iPhone yet (this machine is Linux); share-sheet intake is Android-only for now.
 
 ## Log
 
@@ -308,3 +312,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #69 | Reproducible one-minute demo video (real app, scripted; OCR wait cut ~3 s, disclosed) | local gate (Actions budget) |
 | 2026-11-19 | #70 | Redesign (warm paper, brand green, saffron listen) + picture card and scam vibration for deaf/non-reading users | local gate (Actions budget) |
 | 2026-11-19 | #71 | Probe 14: 59 scam/look-alike messages; job-fee and emergency-money signals, code-theft and SIM-swap code asks caught; eval unchanged | local gate (Actions budget) |
+| 2026-11-19 | #72 | iOS project (Capacitor, SPM), iOS-safe reminders/settings, unsigned simulator CI; untested on Apple hardware | local gate (Actions budget) |
