@@ -911,6 +911,11 @@
       "as soon as possible",
       "send it quickly"
     ],
+    "thisNumberWords": [
+      "this number",
+      "this same number",
+      "my number"
+    ],
     "moneySent": [
       "you have sent",
       "you sent",

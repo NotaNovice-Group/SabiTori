@@ -23,6 +23,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- "Send 20,000 FCFA to this number" / "Envoie-moi 15 000 sur ce numéro" from a mobile number now warns (likely scam):
+  the number to pay is the sender's own even when it is not written out.
 - A mobile-money "you sent" receipt no longer gets a "call this number" caution because of the number of the person
   paid ("Vous avez envoyé 41 100 FCFA à SAMUEL FOTSO (677465100)").
 - Photos: a month name the OCR garbled ("27 noveribwe 2026", "18 Decernber 2026") is read when it sits between a day

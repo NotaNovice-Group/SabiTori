@@ -173,6 +173,20 @@ export function assessScam(
     }
   }
 
+  // "Send 20,000 FCFA to this number" from an ordinary mobile number: the number is the sender's own, unwritten.
+  if (!found.has('pay_to_personal_number') && facts.amounts.length > 0 && !sender.verified && isOrdinaryNumber(input)) {
+    const here = findTerms(n, S((s) => s.thisNumberWords ?? []));
+    const pays = findTerms(n, S((s) => s.payVerbs));
+    const sens = splitSentences(n);
+    const together = sens.some(
+      (x) =>
+        here.some((h) => h.start >= x.start && h.end <= x.end) &&
+        pays.some((v) => v.start >= x.start && v.end <= x.end) &&
+        facts.amounts.some((a) => a.span.start >= x.start && a.span.end <= x.end),
+    );
+    if (together) found.add('pay_to_personal_number');
+  }
+
   // ussd_instruction: a *...# code, or a dial instruction, from a sender that is not verified.
   // Not an instruction by itself: an official sender's own balance code, and a bare *NNN# / #NNN# (a menu or
   // balance shortcut: renew, check the balance) with no money-purpose word and no amount/phone inside.

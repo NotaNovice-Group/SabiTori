@@ -1454,10 +1454,10 @@
    "scam": {
     "level": {
      "n": 100,
-     "k": 92,
-     "acc": 0.92,
-     "lo": 0.86,
-     "hi": 0.97
+     "k": 93,
+     "acc": 0.93,
+     "lo": 0.88,
+     "hi": 0.98
     },
     "warned": 18,
     "flagged": 21,
@@ -5742,7 +5742,7 @@
      "urgency": "info"
     },
     "goldScam": "likely_scam",
-    "scam": "caution",
+    "scam": "likely_scam",
     "rules": {
      "kind": "other",
      "action": "unclear",

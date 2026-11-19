@@ -990,6 +990,14 @@
       "envoie vite",
       "envoyez vite"
     ],
+    "thisNumberWords": [
+      "ce numéro",
+      "ce numero",
+      "ce même numéro",
+      "ce meme numero",
+      "mon numéro",
+      "mon numero"
+    ],
     "moneySent": [
       "vous avez envoyé",
       "vous avez envoye",
