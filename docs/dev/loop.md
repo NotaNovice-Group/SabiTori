@@ -208,6 +208,14 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       7 -> 3 (OCR) and 9 -> 5 (true text); the 5 left are CAMWATER bills with a mobile "service clientèle" number,
       kept on purpose until the official helplines in regions/CM/region.json are confirmed. Scam results on the test
       and unseen sets unchanged; tests keep "call this number" and "sent by mistake" scams warning.
+- [x] **Probe 13: "send money to this number".** 14 new messages (9 scams, 5 genuine). Missed: "I am stranded ...
+      send 20,000 FCFA to this number" from a mobile number (no number written, so `pay_to_personal_number` never
+      fired), a "invest 50 000, receive 200 000 in 7 days" scheme, and a marabout advert (no money asked; left).
+      Money + a send word + "this number"/"ce numéro" (`scam.thisNumberWords`) in one sentence, from an unverified
+      mobile number, is now `pay_to_personal_number`. Unseen scam level 92.0% -> 93.0% (warned 18/21 and false alarms
+      2/79 unchanged; train and test no new false alarm). All 5 genuine probes stay clean.
+- [ ] **Investment-doubling scams.** "Investissez 50 000 FCFA et recevez 200 000 FCFA dans 7 jours" is not caught;
+      needs its own signal and a phrase a speaker reviews (prize_fee's "you won something" does not fit).
 
 ## Log
 
@@ -274,3 +282,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-18 | #64 | Annual total is not the amount due on photo cards (wrong amounts 4 -> 2 of 30) | local gate (Actions budget) |
 | 2026-11-19 | #65 | OCR-garbled month names read between a day and a year; photo fact recall 83.6% -> 84.3% | local gate (Actions budget) |
 | 2026-11-19 | #66 | Mobile-money "you sent" receipts no longer cautioned (photo false cautions 7 -> 3) | local gate (Actions budget) |
+| 2026-11-19 | #67 | "Send money to this number" from a mobile number warns; unseen scam level 92.0% -> 93.0% | local gate (Actions budget) |
