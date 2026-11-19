@@ -22,14 +22,14 @@
  "cosine_vs_original": {
   "heldout_only": true,
   "n": 80,
-  "cosine_mean": 0.989,
-  "cosine_min": 0.945,
+  "cosine_mean": 0.9885,
+  "cosine_min": 0.9589,
   "sets": {
    "heldout-sentences.txt": {
     "n": 80,
-    "cosine_mean": 0.989,
-    "cosine_min": 0.945,
-    "below_0.95": 1,
+    "cosine_mean": 0.9885,
+    "cosine_min": 0.9589,
+    "below_0.95": 0,
     "same_tokenisation": 78
    }
   }
