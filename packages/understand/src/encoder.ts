@@ -162,7 +162,8 @@ export async function createEncoderClassifier(opts: EncoderClassifierOptions): P
       // Head-only reading: when the text was cut at the token budget the encoder's action and urgency are
       // ignored (the cut-off part may hold the request or the deadline); the rules read all of it.
       const truncated = labels ? enc.isTruncated(input.text) : false;
-      return labels ? combineWithRules(labels, rules, threshold, id, { facts, receivedAt: input.receivedAt, truncated }) : rules;
+      const cues = opts.fallback.urgencyCues?.(input, facts);
+      return labels ? combineWithRules(labels, rules, threshold, id, { facts, receivedAt: input.receivedAt, truncated, ...(cues ? { cues } : {}) }) : rules;
     },
   };
 }

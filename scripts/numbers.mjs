@@ -29,6 +29,7 @@ const scam = (name) => {
   return `${s.warned} of ${s.flagged} scams warned; ${s.falseAlarms} of ${s.genuine} genuine messages falsely warned`;
 };
 const u2 = Boolean(r.sets.unseen2);
+const u3 = Boolean(r.sets.unseen3);
 const shipped = ocr.find((v) => v.name.startsWith('shipped')) ?? ocr[ocr.length - 1];
 
 const md = `# Numbers to quote
@@ -43,7 +44,8 @@ Built-in model ${r.classifier} plus rules (heads trained on ${r.train.n} message
 
 | Set | All three right | Kind | Action | Urgency | Rules alone, all three | Model + rules vs rules |
 | --- | --- | --- | --- | --- | --- | --- |
-${u2 ? `| Second unseen set (${set('unseen2').n} messages by an independent author, written after the retrain and evaluated once): **the number to quote** | **${comb('unseen2', 'all')}** | ${comb('unseen2', 'kind')} | ${comb('unseen2', 'action')} | ${comb('unseen2', 'urgency')} | ${rules('unseen2', 'all')} | ${vs('unseen2')} |
+${u3 ? `| Third unseen set (${set('unseen3').n} messages by an independent author, labels checked by a second reviewer, never read while training the fine-tuned model, evaluated once): **the number to quote** | **${comb('unseen3', 'all')}** | ${comb('unseen3', 'kind')} | ${comb('unseen3', 'action')} | ${comb('unseen3', 'urgency')} | ${rules('unseen3', 'all')} | ${vs('unseen3')} |
+` : ''}${u2 ? `| Second unseen set (${set('unseen2').n} messages by an independent author${u3 ? '; its overall score was seen before the fine-tune)' : ', written after the retrain and evaluated once): **the number to quote**'} | ${u3 ? '' : '**'}${comb('unseen2', 'all')}${u3 ? '' : '**'} | ${comb('unseen2', 'kind')} | ${comb('unseen2', 'action')} | ${comb('unseen2', 'urgency')} | ${rules('unseen2', 'all')} | ${vs('unseen2')} |
 | First unseen set (${set('unseen').n} messages; its per-class error counts were read once to decide what training messages to add, so it is no longer untouched) | ${comb('unseen', 'all')} | ${comb('unseen', 'kind')} | ${comb('unseen', 'action')} | ${comb('unseen', 'urgency')} | ${rules('unseen', 'all')} | ${vs('unseen')} |` : `| Unseen (${set('unseen').n} messages, never used for any choice): **the number to quote** | **${comb('unseen', 'all')}** | ${comb('unseen', 'kind')} | ${comb('unseen', 'action')} | ${comb('unseen', 'urgency')} | ${rules('unseen', 'all')} | ${vs('unseen')} |`}
 | Test split (${set('test').n} messages, same templates as training) | ${comb('test', 'all')} | ${comb('test', 'kind')} | ${comb('test', 'action')} | ${comb('test', 'urgency')} | ${rules('test', 'all')} | ${vs('test')} |
 
@@ -51,7 +53,7 @@ Brackets: 95% bootstrap intervals. Comparison: exact McNemar test on the same me
 
 ## Scam warnings (code, not the model)
 
-${u2 ? `- Second unseen set: ${scam('unseen2')}.\n` : ''}- ${u2 ? 'First unseen' : 'Unseen'} set: ${scam('unseen')}.
+${u3 ? `- Third unseen set: ${scam('unseen3')}.\n` : ''}${u2 ? `- Second unseen set: ${scam('unseen2')}.\n` : ''}- ${u2 ? 'First unseen' : 'Unseen'} set: ${scam('unseen')}.
 - Test split: ${scam('test')} (small; the unseen set is the fairer number).
 
 ## Reading photos (on-device OCR)

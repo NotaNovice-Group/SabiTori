@@ -12,8 +12,10 @@ export function piperVoiceFromManifest(m: Pick<PackManifest, 'tag' | 'voice'> & 
   const v = m.voice;
   if (v.kind !== 'tts' || v.engine !== 'piper') return null;
   const id = v.voiceHint && /^[A-Za-z0-9._-]+$/.test(v.voiceHint) ? v.voiceHint : m.tag;
-  const base = `${packsBase.replace(/\/+$/, '')}/${m.tag}/voice/${id}`;
-  return { id: `${m.tag}:${id}`, modelUrl: `${base}.onnx`, configUrl: `${base}.onnx.json`, ...(typeof m.version === 'string' && m.version ? { version: m.version } : {}) };
+  // voicePack: the files live in another pack's voice folder (validated as a bare language tag, so no path escapes).
+  const folder = v.voicePack && /^[a-z]{2,3}$/.test(v.voicePack) ? v.voicePack : m.tag;
+  const base = `${packsBase.replace(/\/+$/, '')}/${folder}/voice/${id}`;
+  return { id: `${folder}:${id}`, modelUrl: `${base}.onnx`, configUrl: `${base}.onnx.json`, ...(typeof m.version === 'string' && m.version ? { version: m.version } : {}) };
 }
 
 const norm = (s: string): string => s.toLowerCase().replace(/_/g, '-');

@@ -42,6 +42,7 @@ export function validateManifest(m: unknown, tag?: string): PackManifest {
     if (typeof m.voice.bcp47 !== 'string' || !m.voice.bcp47) p.push('voice.bcp47 is required when voice.kind is "tts"');
     if (m.voice.engine !== undefined && m.voice.engine !== 'system' && m.voice.engine !== 'piper') p.push('voice.engine must be "system" or "piper"');
     if (m.voice.voiceHint !== undefined && typeof m.voice.voiceHint !== 'string') p.push('voice.voiceHint must be a string');
+    if (m.voice.voicePack !== undefined && (typeof m.voice.voicePack !== 'string' || !/^[a-z]{2,3}$/.test(m.voice.voicePack))) p.push('voice.voicePack must be a language tag such as "en"');
   } else if (m.voice.kind !== 'recorded') p.push('voice.kind must be "tts" or "recorded"');
   if (p.length) throw new PackLoadError(`Invalid manifest.json for "${tag ?? (isObj(m) ? String(m.tag) : '?')}": ${p.join('; ')}`, tag);
   return m as unknown as PackManifest;

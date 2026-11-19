@@ -8,7 +8,7 @@ export { extractFacts } from './facts.js';
 export type { FactsContext } from './facts.js';
 export { matchSender } from './sender.js';
 export { assessScam } from './scam.js';
-export { createRulesClassifier } from './classifier.js';
+export { createRulesClassifier, decideUrgency, extraDays, withinDays } from './classifier.js';
 export { buildCard, CONFIDENCE_THRESHOLD } from './card.js';
 export { guardUnderstanding, nearestFutureDays } from './guard.js';
 export type { GuardContext } from './guard.js';

@@ -1,1 +1,958 @@
-{}
+{
+  "scam.likely": {
+    "text": "This message look like wayo. No send money. No give your PIN to anybody.",
+    "status": "draft"
+  },
+  "scam.caution": {
+    "text": "Take care. Check first before you do anything.",
+    "status": "draft"
+  },
+  "scam.no_signs": {
+    "text": "We no see any warning sign. Never give your PIN to anybody.",
+    "status": "draft"
+  },
+  "scam.check_balance": {
+    "text": "Check your balance with the code wey your operator get, no be with number wey dey inside this message.",
+    "status": "draft"
+  },
+  "scam.signal.asks_pin": {
+    "text": "This message ask for your secret code.",
+    "status": "draft"
+  },
+  "scam.signal.wrong_transfer": {
+    "text": "This message talk say them send you money by mistake.",
+    "status": "draft"
+  },
+  "scam.signal.prize_fee": {
+    "text": "This message talk say you win something, but e say make you pay first.",
+    "status": "draft"
+  },
+  "scam.signal.account_block_threat": {
+    "text": "This message threaten say them go block your account or your SIM card.",
+    "status": "draft"
+  },
+  "scam.signal.link": {
+    "text": "This message get link. No open am.",
+    "status": "draft"
+  },
+  "scam.signal.time_pressure": {
+    "text": "This message want rush you make you do something quick quick.",
+    "status": "draft"
+  },
+  "scam.signal.sender_mismatch": {
+    "text": "E say e come from {sender}, but e no come from the real number of {sender}.",
+    "status": "draft"
+  },
+  "scam.signal.fake_balance": {
+    "text": "This balance message no come from your operator.",
+    "status": "draft"
+  },
+  "scam.signal.asks_to_call_number": {
+    "text": "This message tell you make you call one number. Use the official number instead.",
+    "status": "draft"
+  },
+  "scam.signal.ussd_instruction": {
+    "text": "This message tell you make you dial one code. Code like this fit send your money go.",
+    "status": "draft"
+  },
+  "scam.signal.pay_to_personal_number": {
+    "text": "This message ask you make you send money to somebody personal phone number.",
+    "status": "draft"
+  },
+  "scam.signal.promised_return": {
+    "text": "This message promise say your money go grow quick quick. This kind thing na common wayo.",
+    "status": "draft"
+  },
+  "scam.signal.offer_fee": {
+    "text": "This message offer you work, place, loan or scholarship, but e say make you pay first.",
+    "status": "draft"
+  },
+  "scam.signal.distress_money": {
+    "text": "This message talk say trouble don happen, for ask you money. Call the person back for the number wey you already sabi.",
+    "status": "draft"
+  },
+  "sender.known": {
+    "text": "This message come from {sender}.",
+    "status": "draft"
+  },
+  "sender.claimed": {
+    "text": "This message say e come from {sender}.",
+    "status": "draft"
+  },
+  "sender.unknown": {
+    "text": "We no know who send this message.",
+    "status": "draft"
+  },
+  "about.electricity_bill": {
+    "text": "E concern your light bill.",
+    "status": "draft"
+  },
+  "about.water_bill": {
+    "text": "E concern your water bill.",
+    "status": "draft"
+  },
+  "about.mobile_money": {
+    "text": "E concern mobile money.",
+    "status": "draft"
+  },
+  "about.telecom": {
+    "text": "E concern your phone line or your credit.",
+    "status": "draft"
+  },
+  "about.bank": {
+    "text": "E concern your bank account.",
+    "status": "draft"
+  },
+  "about.health": {
+    "text": "E concern your health or when you go hospital.",
+    "status": "draft"
+  },
+  "about.school": {
+    "text": "E concern school.",
+    "status": "draft"
+  },
+  "about.administrative": {
+    "text": "E concern one official paper.",
+    "status": "draft"
+  },
+  "about.legal": {
+    "text": "E concern law matter, like court or police.",
+    "status": "draft"
+  },
+  "about.other": {
+    "text": "We no fit know which thing this message concern.",
+    "status": "draft"
+  },
+  "action.pay": {
+    "text": "You get for pay.",
+    "status": "draft"
+  },
+  "action.bring_document": {
+    "text": "You get for bring or send one paper.",
+    "status": "draft"
+  },
+  "action.go_to_place": {
+    "text": "You get for go for one office or one place.",
+    "status": "draft"
+  },
+  "action.call": {
+    "text": "You get for call them.",
+    "status": "draft"
+  },
+  "action.reply": {
+    "text": "You get for answer this message.",
+    "status": "draft"
+  },
+  "action.collect": {
+    "text": "You fit go collect something.",
+    "status": "draft"
+  },
+  "action.take_medicine": {
+    "text": "Take your medicine the way the paper talk.",
+    "status": "draft"
+  },
+  "action.nothing": {
+    "text": "You no need do anything.",
+    "status": "draft"
+  },
+  "action.unclear": {
+    "text": "We no sure what you get for do. Ask somebody wey you trust.",
+    "status": "draft"
+  },
+  "deadline.by": {
+    "text": "Do am latest {date}.",
+    "status": "draft"
+  },
+  "deadline.on": {
+    "text": "Make you dey there for {date}.",
+    "status": "draft"
+  },
+  "deadline.on_at": {
+    "text": "Make you dey there for {date}, for {hour} {minutes} for morning.",
+    "status": "draft"
+  },
+  "deadline.on_at_hour": {
+    "text": "Make you dey there for {date}, for {hour} o'clock for morning.",
+    "status": "draft"
+  },
+  "deadline.on_at_pm": {
+    "text": "Make you dey there for {date}, for {hour} {minutes} for afternoon.",
+    "status": "draft"
+  },
+  "deadline.on_at_hour_pm": {
+    "text": "Make you dey there for {date}, for {hour} o'clock for afternoon.",
+    "status": "draft"
+  },
+  "deadline.on_at_eve": {
+    "text": "Make you dey there for {date}, for {hour} {minutes} for evening.",
+    "status": "draft"
+  },
+  "deadline.on_at_hour_eve": {
+    "text": "Make you dey there for {date}, for {hour} o'clock for evening.",
+    "status": "draft"
+  },
+  "deadline.date": {
+    "text": "Na for {date}.",
+    "status": "draft"
+  },
+  "deadline.from": {
+    "text": "Start from {date}.",
+    "status": "draft"
+  },
+  "deadline.passed": {
+    "text": "The date {date} don already pass.",
+    "status": "draft"
+  },
+  "deadline.none": {
+    "text": "This message no get any date.",
+    "status": "draft"
+  },
+  "money.amount": {
+    "text": "The money na {amount}.",
+    "status": "draft"
+  },
+  "money.none": {
+    "text": "This message no talk how much money.",
+    "status": "draft"
+  },
+  "help.call": {
+    "text": "If you get question, call {phone}.",
+    "status": "draft"
+  },
+  "help.none": {
+    "text": "If you no sure, ask somebody wey you trust.",
+    "status": "draft"
+  },
+  "urgency.info": {
+    "text": "This na only information.",
+    "status": "draft"
+  },
+  "urgency.soon": {
+    "text": "Make you do am soon.",
+    "status": "draft"
+  },
+  "urgency.urgent": {
+    "text": "This thing urgent.",
+    "status": "draft"
+  },
+  "facts_only.intro": {
+    "text": "We no fit understand all this message. Na these things we find.",
+    "status": "draft"
+  },
+  "ui.welcome": {
+    "text": "Choose your language.",
+    "status": "draft"
+  },
+  "ui.take_photo": {
+    "text": "Snap one message",
+    "status": "draft"
+  },
+  "ui.paste": {
+    "text": "Paste one message",
+    "status": "draft"
+  },
+  "ui.reading": {
+    "text": "We the read your message.",
+    "status": "draft"
+  },
+  "ui.camera_closer": {
+    "text": "Come near small.",
+    "status": "draft"
+  },
+  "ui.camera_hold": {
+    "text": "Hold am, no shake.",
+    "status": "draft"
+  },
+  "ui.camera_ok": {
+    "text": "We don get am.",
+    "status": "draft"
+  },
+  "ui.retake": {
+    "text": "The photo no clear. Abeg snap am again.",
+    "status": "draft"
+  },
+  "ui.listen": {
+    "text": "Listen",
+    "status": "draft"
+  },
+  "ui.again": {
+    "text": "Again",
+    "status": "draft"
+  },
+  "ui.slower": {
+    "text": "Talk slow",
+    "status": "draft"
+  },
+  "ui.stop": {
+    "text": "Stop",
+    "status": "draft"
+  },
+  "ui.call": {
+    "text": "Call",
+    "status": "draft"
+  },
+  "ui.remind": {
+    "text": "Remind me",
+    "status": "draft"
+  },
+  "ui.show_helper": {
+    "text": "Show somebody",
+    "status": "draft"
+  },
+  "ui.show_source": {
+    "text": "Where e dey for the message?",
+    "status": "draft"
+  },
+  "ui.history": {
+    "text": "My messages",
+    "status": "draft"
+  },
+  "ui.settings": {
+    "text": "Settings",
+    "status": "draft"
+  },
+  "ui.language": {
+    "text": "Language",
+    "status": "draft"
+  },
+  "ui.delete": {
+    "text": "Delete",
+    "status": "draft"
+  },
+  "ui.back": {
+    "text": "Go back",
+    "status": "draft"
+  },
+  "ui.privacy": {
+    "text": "Your messages no go ever comot from this phone.",
+    "status": "draft"
+  },
+  "ui.not_advice": {
+    "text": "SabiTori the explain messages. E no the give advice.",
+    "status": "draft"
+  },
+  "app.next": {
+    "text": "Next",
+    "status": "draft"
+  },
+  "app.mode.title": {
+    "text": "How you the use messages?",
+    "status": "draft"
+  },
+  "app.mode.listen": {
+    "text": "I want listen",
+    "status": "draft"
+  },
+  "app.mode.listen_hint": {
+    "text": "The phone go talk the message and every button.",
+    "status": "draft"
+  },
+  "app.mode.read": {
+    "text": "I want read",
+    "status": "draft"
+  },
+  "app.mode.read_hint": {
+    "text": "We go show the message. Press Listen for hear am.",
+    "status": "draft"
+  },
+  "app.lang.soon": {
+    "text": "Voice go come soon. For now e go talk for {name}.",
+    "status": "draft"
+  },
+  "app.lang.soon_plain": {
+    "text": "Voice go come soon.",
+    "status": "draft"
+  },
+  "app.tap_again": {
+    "text": "Touch am again for do am",
+    "status": "draft"
+  },
+  "app.home.empty": {
+    "text": "Message never dey",
+    "status": "draft"
+  },
+  "app.home.empty_hint": {
+    "text": "Message wey you read with SabiTori go stay here, for this phone only.",
+    "status": "draft"
+  },
+  "app.practice": {
+    "text": "Practice with one example",
+    "status": "draft"
+  },
+  "app.practice.title": {
+    "text": "Practice messages",
+    "status": "draft"
+  },
+  "app.practice.hint": {
+    "text": "These messages na lie-lie one.",
+    "status": "draft"
+  },
+  "app.practice.badge": {
+    "text": "Practice message",
+    "status": "draft"
+  },
+  "app.example.eneo": {
+    "text": "Light bill",
+    "status": "draft"
+  },
+  "app.example.camwater": {
+    "text": "Notice for water cut",
+    "status": "draft"
+  },
+  "app.example.momo": {
+    "text": "Money wey them send by mistake",
+    "status": "draft"
+  },
+  "app.example.prize": {
+    "text": "Prize and secret code",
+    "status": "draft"
+  },
+  "app.example.hospital": {
+    "text": "Hospital appointment",
+    "status": "draft"
+  },
+  "app.example.school": {
+    "text": "School fees",
+    "status": "draft"
+  },
+  "app.paste.label": {
+    "text": "The message",
+    "status": "draft"
+  },
+  "app.paste.placeholder": {
+    "text": "Paste or write the message here",
+    "status": "draft"
+  },
+  "app.paste.sender": {
+    "text": "Who send am?",
+    "status": "draft"
+  },
+  "app.paste.sender.name": {
+    "text": "One name",
+    "status": "draft"
+  },
+  "app.paste.sender.number": {
+    "text": "One number",
+    "status": "draft"
+  },
+  "app.paste.sender.unknown": {
+    "text": "I no know",
+    "status": "draft"
+  },
+  "app.paste.sender.name_label": {
+    "text": "Name of the person wey send am",
+    "status": "draft"
+  },
+  "app.paste.sender.number_label": {
+    "text": "Number of the person wey send am",
+    "status": "draft"
+  },
+  "app.paste.go": {
+    "text": "Explain this message",
+    "status": "draft"
+  },
+  "app.capture.checking": {
+    "text": "We the check the photo",
+    "status": "draft"
+  },
+  "app.capture.again": {
+    "text": "Snap the photo again",
+    "status": "draft"
+  },
+  "app.capture.use": {
+    "text": "Use this photo like that",
+    "status": "draft"
+  },
+  "app.capture.empty": {
+    "text": "We no fit read any word for this photo.",
+    "status": "draft"
+  },
+  "app.capture.failed": {
+    "text": "The reading no work. Abeg try again.",
+    "status": "draft"
+  },
+  "app.sms.wait": {
+    "text": "Read my next SMS",
+    "status": "draft"
+  },
+  "app.sms.waiting": {
+    "text": "We the wait your next SMS. When e come, your phone go ask you. Press Allow.",
+    "status": "draft"
+  },
+  "app.sms.stop": {
+    "text": "No wait again",
+    "status": "draft"
+  },
+  "app.sms.none": {
+    "text": "We no read any SMS. Try again, or share the message from your SMS app.",
+    "status": "draft"
+  },
+  "app.sms.unavailable": {
+    "text": "This phone no fit do this one. Share the message from your SMS app instead.",
+    "status": "draft"
+  },
+  "app.photo.choose": {
+    "text": "Choose one photo",
+    "status": "draft"
+  },
+  "app.photo.denied_title": {
+    "text": "The camera dey off",
+    "status": "draft"
+  },
+  "app.photo.denied": {
+    "text": "SabiTori need the camera for read paper. You fit on am for the phone settings. You fit also choose photo wey you don already get.",
+    "status": "draft"
+  },
+  "app.settings.open": {
+    "text": "Open settings",
+    "status": "draft"
+  },
+  "app.remind.set": {
+    "text": "We don set reminder",
+    "status": "draft"
+  },
+  "app.remind.cancel": {
+    "text": "Remove the reminder",
+    "status": "draft"
+  },
+  "app.remind.past": {
+    "text": "This date too near for reminder.",
+    "status": "draft"
+  },
+  "app.remind.denied": {
+    "text": "Notifications dey off, so SabiTori no fit remind you. You fit on them for the phone settings.",
+    "status": "draft"
+  },
+  "app.remind.failed": {
+    "text": "We no fit set the reminder. Abeg try again.",
+    "status": "draft"
+  },
+  "app.remind.channel": {
+    "text": "Reminders",
+    "status": "draft"
+  },
+  "app.card.not_found": {
+    "text": "This message no dey here again.",
+    "status": "draft"
+  },
+  "app.card.fallback_note": {
+    "text": "E talk for {name}",
+    "status": "draft"
+  },
+  "app.urgency.info": {
+    "text": "Information",
+    "status": "draft"
+  },
+  "app.urgency.soon": {
+    "text": "Soon",
+    "status": "draft"
+  },
+  "app.urgency.urgent": {
+    "text": "Urgent",
+    "status": "draft"
+  },
+  "app.scam.title": {
+    "text": "Take care",
+    "status": "draft"
+  },
+  "app.fact.reference": {
+    "text": "Reference",
+    "status": "draft"
+  },
+  "app.sender.unknown": {
+    "text": "We no know the sender",
+    "status": "draft"
+  },
+  "app.sender.says": {
+    "text": "E say na {name}",
+    "status": "draft"
+  },
+  "app.close": {
+    "text": "Close",
+    "status": "draft"
+  },
+  "app.original": {
+    "text": "The message the way them write am",
+    "status": "draft"
+  },
+  "app.settings.listen_first": {
+    "text": "Listen first",
+    "status": "draft"
+  },
+  "app.settings.listen_first_hint": {
+    "text": "When you touch button the first time, e go talk e name. The second time, e go do e work.",
+    "status": "draft"
+  },
+  "app.settings.on": {
+    "text": "On",
+    "status": "draft"
+  },
+  "app.settings.off": {
+    "text": "Off",
+    "status": "draft"
+  },
+  "app.settings.speed": {
+    "text": "How fast the voice talk",
+    "status": "draft"
+  },
+  "app.settings.speed.normal": {
+    "text": "Normal",
+    "status": "draft"
+  },
+  "app.settings.speed.slow": {
+    "text": "Slow",
+    "status": "draft"
+  },
+  "app.settings.speed.slower": {
+    "text": "Slow slow",
+    "status": "draft"
+  },
+  "app.settings.history": {
+    "text": "Keep my messages",
+    "status": "draft"
+  },
+  "app.settings.history.30": {
+    "text": "30 days",
+    "status": "draft"
+  },
+  "app.settings.history.7": {
+    "text": "7 days",
+    "status": "draft"
+  },
+  "app.settings.history.0": {
+    "text": "No keep them",
+    "status": "draft"
+  },
+  "app.settings.model": {
+    "text": "Model for understand",
+    "status": "draft"
+  },
+  "app.settings.model.none": {
+    "text": "We never add am. The phone the use simple rules.",
+    "status": "draft"
+  },
+  "app.settings.model.ready": {
+    "text": "E don add, {size}",
+    "status": "draft"
+  },
+  "app.settings.model.loading": {
+    "text": "We the prepare the model",
+    "status": "draft"
+  },
+  "app.settings.model.active": {
+    "text": "E ready for use",
+    "status": "draft"
+  },
+  "app.settings.model.failed": {
+    "text": "E no fit start. Na simple rules we the use.",
+    "status": "draft"
+  },
+  "app.settings.model.add": {
+    "text": "Add model file",
+    "status": "draft"
+  },
+  "app.settings.model.remove": {
+    "text": "Remove the model file",
+    "status": "draft"
+  },
+  "app.settings.model.saving": {
+    "text": "We the save the file",
+    "status": "draft"
+  },
+  "app.settings.model.err.not_gguf": {
+    "text": "This file no be model file.",
+    "status": "draft"
+  },
+  "app.settings.model.err.unavailable": {
+    "text": "This phone no fit keep model file.",
+    "status": "draft"
+  },
+  "app.settings.model.err.write_failed": {
+    "text": "The file no save. Maybe the phone don full.",
+    "status": "draft"
+  },
+  "app.settings.model.builtin": {
+    "text": "Model for understand: e dey inside the app already (MiniLM, 33M)",
+    "status": "draft"
+  },
+  "app.settings.model.builtin_loading": {
+    "text": "We the prepare the model wey dey inside the app. Until e ready, na simple rules we the use.",
+    "status": "draft"
+  },
+  "app.settings.model.builtin_ready": {
+    "text": "E ready. E the read every message for this phone, without internet.",
+    "status": "draft"
+  },
+  "app.settings.model.builtin_failed": {
+    "text": "E no fit start. Na simple rules we the use.",
+    "status": "draft"
+  },
+  "app.settings.model.note": {
+    "text": "This extra model, na if you want. E fit slow for some phones. Without am, SabiTori still the read messages with simple rules.",
+    "status": "draft"
+  },
+  "app.card.checking": {
+    "text": "We the check am well well",
+    "status": "draft"
+  },
+  "app.card.improved": {
+    "text": "We don understand this message pass before. You fit listen again.",
+    "status": "draft"
+  },
+  "app.settings.privacy": {
+    "text": "Privacy",
+    "status": "draft"
+  },
+  "app.settings.privacy_body": {
+    "text": "Photos, texts and voices the stay for this phone. SabiTori no the use internet for read message. You fit delete your history any time.",
+    "status": "draft"
+  },
+  "app.settings.connected": {
+    "text": "Things wey use internet",
+    "status": "draft"
+  },
+  "app.settings.connected_hint": {
+    "text": "These things dey off until you on them. Your messages no go ever comot from this phone, with them or without them.",
+    "status": "draft"
+  },
+  "app.settings.updates": {
+    "text": "Get new languages and wayo warnings",
+    "status": "draft"
+  },
+  "app.settings.updates_hint": {
+    "text": "The phone go download language voices, new wayo warnings and official numbers wey them don confirm. We no go ever send your messages.",
+    "status": "draft"
+  },
+  "app.settings.updates.never": {
+    "text": "We never check yet",
+    "status": "draft"
+  },
+  "app.settings.updates.last": {
+    "text": "Last check: {date}",
+    "status": "draft"
+  },
+  "app.settings.updates.check": {
+    "text": "Check now",
+    "status": "draft"
+  },
+  "app.settings.updates.checking": {
+    "text": "We the check",
+    "status": "draft"
+  },
+  "app.settings.updates.up_to_date": {
+    "text": "You don already get the newest one.",
+    "status": "draft"
+  },
+  "app.settings.updates.updated": {
+    "text": "E don finish. The new things go ready next time wey you open SabiTori.",
+    "status": "draft"
+  },
+  "app.settings.updates.network": {
+    "text": "We no fit connect. Try again later.",
+    "status": "draft"
+  },
+  "app.settings.updates.unsafe": {
+    "text": "We no fit trust this update, so we no use am. Nothing no change.",
+    "status": "draft"
+  },
+  "app.settings.updates.store": {
+    "text": "The phone no fit save the update. Maybe e don full. Nothing no change.",
+    "status": "draft"
+  },
+  "app.settings.updates.delete": {
+    "text": "Delete the updates wey you download",
+    "status": "draft"
+  },
+  "app.settings.updates.delete_hint": {
+    "text": "This one go delete the languages, wayo warnings and official numbers wey you download. SabiTori go go back to the ones wey e come with, next time wey you open am. We no go touch your messages.",
+    "status": "draft"
+  },
+  "app.settings.updates.delete_confirm": {
+    "text": "Yes, delete the updates wey you download",
+    "status": "draft"
+  },
+  "app.settings.updates.keep": {
+    "text": "Keep them",
+    "status": "draft"
+  },
+  "app.settings.updates.deleted": {
+    "text": "E don delete. From next time wey e start, SabiTori go use the languages and warnings wey e come with.",
+    "status": "draft"
+  },
+  "app.settings.reports": {
+    "text": "Send problem reports",
+    "status": "draft"
+  },
+  "app.settings.reports_hint": {
+    "text": "When the app spoil, report wey no get your messages the help for repair am. E no ever get your messages, photos, names, numbers or how much money.",
+    "status": "draft"
+  },
+  "app.settings.privacy_connected": {
+    "text": "Your messages no go ever comot from this phone. If you on them, SabiTori fit download updates and send problem reports, but never your messages.",
+    "status": "draft"
+  },
+  "app.settings.version": {
+    "text": "Version",
+    "status": "draft"
+  },
+  "app.pilot.title": {
+    "text": "Numbers for the pilot",
+    "status": "draft"
+  },
+  "app.pilot.body": {
+    "text": "This phone the count how many times you use SabiTori. E no ever keep what your messages talk. Nothing no go anywhere: na you go choose if you want share these numbers.",
+    "status": "draft"
+  },
+  "app.pilot.explained": {
+    "text": "Messages wey we explain: {n}",
+    "status": "draft"
+  },
+  "app.pilot.warnings": {
+    "text": "Wayo warnings: {n}",
+    "status": "draft"
+  },
+  "app.pilot.listened": {
+    "text": "Times wey you listen: {n}",
+    "status": "draft"
+  },
+  "app.pilot.since": {
+    "text": "We start count for {date}",
+    "status": "draft"
+  },
+  "app.pilot.share": {
+    "text": "Share the numbers",
+    "status": "draft"
+  },
+  "app.pilot.copied": {
+    "text": "Numbers don copy. Paste them for message to the pilot team.",
+    "status": "draft"
+  },
+  "app.pilot.reset": {
+    "text": "Start the count again",
+    "status": "draft"
+  },
+  "app.settings.clear": {
+    "text": "Delete all my messages",
+    "status": "draft"
+  },
+  "app.settings.cleared": {
+    "text": "E don delete",
+    "status": "draft"
+  },
+  "app.nav.home": {
+    "text": "Home",
+    "status": "draft"
+  },
+  "app.settings.restart": {
+    "text": "Start again from the beginning",
+    "status": "draft"
+  },
+  "app.settings.restart_hint": {
+    "text": "This one go delete every message wey dey for this phone, and their reminders, and carry you back for choose your language. SabiTori no get account, so nothing else no dey for sign out. You no fit bring them back.",
+    "status": "draft"
+  },
+  "app.settings.restart_confirm": {
+    "text": "Delete and start again",
+    "status": "draft"
+  },
+  "app.settings.clear_hint": {
+    "text": "This one go delete every message wey dey for this phone, and their reminders. You no fit bring them back.",
+    "status": "draft"
+  },
+  "app.settings.clear_confirm": {
+    "text": "Yes, delete all my messages",
+    "status": "draft"
+  },
+  "app.settings.clear_keep": {
+    "text": "Keep my messages",
+    "status": "draft"
+  },
+  "app.settings.history.0_hint": {
+    "text": "We no go keep messages. Message wey get reminder go stay until the reminder, then e go delete.",
+    "status": "draft"
+  },
+  "app.remind.kept": {
+    "text": "This message go stay for this phone until the reminder, then e go delete.",
+    "status": "draft"
+  },
+  "app.remind.passed": {
+    "text": "This date don already pass.",
+    "status": "draft"
+  },
+  "app.card.not_saved": {
+    "text": "We no fit keep this message for this phone. You fit still read am now.",
+    "status": "draft"
+  },
+  "app.share.first_only": {
+    "text": "Na only the first photo we go read.",
+    "status": "draft"
+  },
+  "app.share.too_long": {
+    "text": "This text long too much. Na only the beginning we go read.",
+    "status": "draft"
+  },
+  "app.share.too_big": {
+    "text": "This file too big for read.",
+    "status": "draft"
+  },
+  "app.share.unsupported": {
+    "text": "SabiTori the read photos and texts. This file no be any one of them, so we no open am.",
+    "status": "draft"
+  },
+  "app.capture.no_ocr": {
+    "text": "This phone no fit read photos. You fit paste or write the message instead.",
+    "status": "draft"
+  },
+  "app.fatal.title": {
+    "text": "Something don spoil",
+    "status": "draft"
+  },
+  "app.fatal.body": {
+    "text": "SabiTori no fit continue. Your messages still dey for this phone.",
+    "status": "draft"
+  },
+  "app.fatal.restart": {
+    "text": "Start again",
+    "status": "draft"
+  },
+  "app.fatal.remove_updates": {
+    "text": "Remove the updates wey you download",
+    "status": "draft"
+  },
+  "app.fatal.listen": {
+    "text": "Listen",
+    "status": "draft"
+  },
+  "app.settings.updates.bad_file": {
+    "text": "The file wey we refuse: {file}",
+    "status": "draft"
+  },
+  "app.settings.updates.quarantined": {
+    "text": "One update wey you download no fit work, so SabiTori go back to the languages and warnings wey e come with.",
+    "status": "draft"
+  },
+  "app.settings.model.testing": {
+    "text": "We the check the model file",
+    "status": "draft"
+  },
+  "app.settings.model.err.not_usable": {
+    "text": "This model file no fit start, so we no keep am. Nothing else no change.",
+    "status": "draft"
+  },
+  "app.settings.about": {
+    "text": "About SabiTori and open licences",
+    "status": "draft"
+  },
+  "app.about.intro": {
+    "text": "SabiTori na free software. Na plenty people their work make am. Their names and licences dey below.",
+    "status": "draft"
+  },
+  "app.about.voices": {
+    "text": "Voices",
+    "status": "draft"
+  },
+  "app.about.notices": {
+    "text": "Open licences",
+    "status": "draft"
+  }
+}

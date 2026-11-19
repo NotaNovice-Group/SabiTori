@@ -25,6 +25,10 @@ import { importTs, root } from './lib/ts.mjs';
 
 // The validators are the speech package's own (TypeScript): the same code the app runs when it loads a pack.
 const { validateRules, rulesWarnings, parseAudioIndex, CLIP_EXTENSIONS } = await importTs('packages/speech/src/contract.ts');
+// App screen strings that are not in the shared catalog yet (apps/app/src/engine/extra.ts). A pack may translate
+// them: the app reads them from the pack first. Their slots are the {names} in the English source.
+const { EXTRA } = await importTs('apps/app/src/engine/extra.ts');
+const slotsOfEnglish = (t) => [...String(t).matchAll(/\{([a-zA-Z0-9_]+)\}/g)].map((m) => m[1]);
 const { requiredClips } = await importTs('packages/speech/src/required.ts');
 // `--packs <dir>` checks another directory (tests, a pack under review) instead of packs/.
 const argIdx = process.argv.indexOf('--packs');
@@ -108,7 +112,7 @@ function checkManifest(tag, m, listedTags) {
 function checkPhrases(tag, phrases, declaredClips, status) {
   if (!isObj(phrases)) return err(tag, 'phrases.json is not an object');
   for (const [key, entry] of Object.entries(phrases)) {
-    if (!(key in CATALOG)) {
+    if (!(key in CATALOG) && !(key in EXTRA)) {
       err(tag, `phrase key "${key}" is not in the catalog`);
       continue;
     }
@@ -116,7 +120,7 @@ function checkPhrases(tag, phrases, declaredClips, status) {
     if (!isStr(entry.text)) err(tag, `${key}: text must be a non-empty string`);
     if (!PHRASE_STATUS.includes(entry.status)) err(tag, `${key}: status must be draft or reviewed`);
 
-    const want = new Set(CATALOG[key].slots ?? []);
+    const want = new Set(key in CATALOG ? CATALOG[key].slots ?? [] : slotsOfEnglish(EXTRA[key].en));
     if (isStr(entry.text)) {
       const got = slotsIn(entry.text);
       const missing = [...want].filter((s) => !got.has(s));

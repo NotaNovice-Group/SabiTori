@@ -144,9 +144,23 @@ export interface Understanding {
 }
 
 /** Pluggable understanding step. Implementations: rule-based (always available), on-device LLM. */
+/** What the text says about time, for urgency (see decideUrgency in classifier.ts). */
+export interface UrgencyCues {
+  /** Days from receivedAt to each deadline-like date (negative = past). */
+  days: number[];
+  /** An alarm word ("today", "coupure", "within 2 hours"). */
+  urgentWord: boolean;
+  /** "within N days/hours": the shortest delay in days. */
+  withinDays?: number;
+  /** An operator promotion: never urgent. */
+  promo: boolean;
+}
+
 export interface Classifier {
   readonly id: string;
   classify(input: MessageInput, facts: Facts): Promise<Understanding>;
+  /** The time evidence in the text, so another classifier's action can be given the right urgency. */
+  urgencyCues?(input: MessageInput, facts: Facts): UrgencyCues;
 }
 
 export interface Sender {

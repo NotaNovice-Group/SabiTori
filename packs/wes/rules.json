@@ -1,0 +1,239 @@
+{
+  "formatVersion": 1,
+  "numbers": {
+    "atoms": {
+      "0": "zero",
+      "1": "one",
+      "2": "two",
+      "3": "three",
+      "4": "four",
+      "5": "five",
+      "6": "six",
+      "7": "seven",
+      "8": "eight",
+      "9": "nine",
+      "10": "ten",
+      "11": "eleven",
+      "12": "twelve",
+      "13": "thirteen",
+      "14": "fourteen",
+      "15": "fifteen",
+      "16": "sixteen",
+      "17": "seventeen",
+      "18": "eighteen",
+      "19": "nineteen",
+      "20": "twenty",
+      "30": "thirty",
+      "40": "forty",
+      "50": "fifty",
+      "60": "sixty",
+      "70": "seventy",
+      "80": "eighty",
+      "90": "ninety"
+    },
+    "joiners": {
+      "and": {
+        "text": "and"
+      },
+      "hyphen": {
+        "text": "-",
+        "silent": true
+      }
+    },
+    "join": [
+      {
+        "token": "hyphen"
+      }
+    ],
+    "scales": [
+      {
+        "value": 100,
+        "word": "hundred",
+        "join": [
+          {
+            "token": "and",
+            "when": {
+              "remainderLt": 100
+            }
+          }
+        ]
+      },
+      {
+        "value": 1000,
+        "word": "thousand",
+        "join": [
+          {
+            "token": "and",
+            "when": {
+              "remainderLt": 100
+            }
+          }
+        ]
+      },
+      {
+        "value": 1000000,
+        "word": "million",
+        "join": [
+          {
+            "token": "and",
+            "when": {
+              "remainderLt": 100
+            }
+          }
+        ]
+      },
+      {
+        "value": 1000000000,
+        "word": "billion",
+        "join": [
+          {
+            "token": "and",
+            "when": {
+              "remainderLt": 100
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "money": {
+    "template": "{amount} {currency}",
+    "singularFor": [
+      1
+    ],
+    "currencies": {
+      "XAF": {
+        "text": "CFA franc",
+        "plural": "CFA francs"
+      },
+      "XOF": {
+        "text": "CFA franc",
+        "plural": "CFA francs"
+      },
+      "EUR": {
+        "text": "euro",
+        "plural": "euros"
+      },
+      "USD": {
+        "text": "US dollar",
+        "plural": "US dollars"
+      }
+    }
+  },
+  "dates": {
+    "months": [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
+    ],
+    "weekdays": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ],
+    "templates": {
+      "full": "{w:the} {day} {w:of} {month} {year}",
+      "noYear": "{w:the} {day} {w:of} {month}",
+      "fullWeekday": "{weekday} {w:the} {day} {w:of} {month} {year}",
+      "noYearWeekday": "{weekday} {w:the} {day} {w:of} {month}"
+    },
+    "omitCurrentYear": true,
+    "includeWeekday": false,
+    "yearStyle": "century_pairs",
+    "relative": {
+      "today": "today",
+      "tomorrow": "tomorrow",
+      "yesterday": "yesterday"
+    },
+    "days": {
+      "1": "first",
+      "2": "second",
+      "3": "third",
+      "4": "fourth",
+      "5": "fifth",
+      "6": "sixth",
+      "7": "seventh",
+      "8": "eighth",
+      "9": "ninth",
+      "10": "tenth",
+      "11": "eleventh",
+      "12": "twelfth",
+      "13": "thirteenth",
+      "14": "fourteenth",
+      "15": "fifteenth",
+      "16": "sixteenth",
+      "17": "seventeenth",
+      "18": "eighteenth",
+      "19": "nineteenth",
+      "20": "twentieth",
+      "21": "twenty-first",
+      "22": "twenty-second",
+      "23": "twenty-third",
+      "24": "twenty-fourth",
+      "25": "twenty-fifth",
+      "26": "twenty-sixth",
+      "27": "twenty-seventh",
+      "28": "twenty-eighth",
+      "29": "twenty-ninth",
+      "30": "thirtieth",
+      "31": "thirty-first"
+    }
+  },
+  "phones": {
+    "countryCode": "omit",
+    "groups": [
+      1,
+      2,
+      2,
+      2,
+      2
+    ],
+    "groupsByLength": {
+      "3": [
+        3
+      ],
+      "4": [
+        2,
+        2
+      ],
+      "5": [
+        1,
+        2,
+        2
+      ],
+      "6": [
+        2,
+        2,
+        2
+      ],
+      "8": [
+        2,
+        2,
+        2,
+        2
+      ]
+    },
+    "defaultGroupSize": 2,
+    "read": "number",
+    "pause": {
+      "text": ","
+    }
+  },
+  "words": {
+    "the": "the",
+    "of": "of"
+  }
+}

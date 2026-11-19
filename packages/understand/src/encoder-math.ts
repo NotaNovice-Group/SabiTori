@@ -3,8 +3,11 @@
  * normalise, apply the three linear heads, soften with a temperature and combine with the rules.
  * No I/O, no model: unit-testable.
  */
-import type { ActionKind, Facts, IsoDate, MessageKind, Understanding, Urgency } from '@sabitori/core';
-import { guardUnderstanding } from '@sabitori/core';
+import type { ActionKind, Facts, IsoDate, MessageKind, Understanding, Urgency, UrgencyCues } from '@sabitori/core';
+import { decideUrgency, guardUnderstanding } from '@sabitori/core';
+
+/** Actions that carry a time (the rest are never urgent). */
+const TASK_ACTIONS: ReadonlySet<ActionKind> = new Set(['pay', 'collect', 'go_to_place', 'bring_document', 'call', 'reply', 'take_medicine', 'unclear']);
 
 export const ENCODER_FIELDS = ['kind', 'action', 'urgency'] as const;
 export type EncoderField = (typeof ENCODER_FIELDS)[number];
@@ -89,6 +92,8 @@ export interface CombineContext {
   receivedAt: IsoDate;
   /** The text was longer than the encoder's token budget: it read only the head, so its action and urgency are not trusted. */
   truncated?: boolean;
+  /** The time evidence in the text (rules classifier): urgency then follows the chosen action and these cues. */
+  cues?: UrgencyCues;
 }
 
 /**
@@ -126,7 +131,15 @@ export function combineWithRules(
   };
   const kind = pick<MessageKind>(useKind, enc.kind, rules.kind);
   const action = pick<ActionKind>(useAction, enc.action, rules.action);
-  const urgency = pick<Urgency>(useUrgency, enc.urgency, rules.urgency);
+  let urgency = pick<Urgency>(useUrgency, enc.urgency, rules.urgency);
+  if (ctx?.cues) {
+    // Urgency is arithmetic on the deadline (README labelling rules), so code decides it from the chosen action and
+    // the text's dates and time words. The encoder's urgency only fills in when the text gives no time at all.
+    const c = ctx.cues;
+    const fromCues = decideUrgency({ ...c, action });
+    const noTime = c.days.length === 0 && c.withinDays === undefined && !c.urgentWord;
+    urgency = noTime && fromCues === 'info' && useUrgency && TASK_ACTIONS.has(action) ? (enc.urgency.label as Urgency) : fromCues;
+  }
   const combined: Understanding = { kind, action, urgency, confidence: round2(Math.min(...confs)), producedBy: id };
   return ctx
     ? guardUnderstanding(combined, rules, { facts: ctx.facts, receivedAt: ctx.receivedAt, amountNearPay: ctx.facts.amounts.length > 0 })

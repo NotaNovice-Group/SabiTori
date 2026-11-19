@@ -11,7 +11,7 @@ Brackets: 95% percentile bootstrap interval over messages (10000 resamples, seed
 | kind | 86.5% [79.2–92.7] |
 | action | 77.1% [68.8–85.4] |
 | urgency | 88.5% [81.3–94.8] |
-| all three right | 61.5% [52.1–70.8] |
+| all three right | 63.5% [54.2–72.9] |
 | scam level (assessScam) | 100.0% [100.0–100.0] |
 
 Mean rules confidence: 0.68. Classifier errors: 0.
@@ -20,9 +20,9 @@ Mean rules confidence: 0.68. Classifier errors: 0.
 
 | Lang | n | kind | action | urgency | all three [95% CI] | scam level |
 |---|---|---|---|---|---|---|
-| fr | 38 | 84.2% | 76.3% | 89.5% | 60.5% [44.7–76.3] | 100.0% |
-| en | 43 | 93.0% | 88.4% | 93.0% | 76.7% [62.8–88.4] | 100.0% |
-| wes | 15 | 73.3% | 46.7% | 73.3% | 20.0% [0.0–40.0] | 100.0% |
+| fr | 38 | 84.2% | 76.3% | 89.5% | 63.2% [47.4–79.0] | 100.0% |
+| en | 43 | 93.0% | 88.4% | 95.3% | 79.1% [65.1–90.7] | 100.0% |
+| wes | 15 | 73.3% | 46.7% | 66.7% | 20.0% [0.0–40.0] | 100.0% |
 
 ## Scam level confusion (rows = expected, columns = predicted)
 
@@ -60,8 +60,7 @@ Any warning on scam/caution messages: 22/22 (100.0%). Warning on no-signs messag
 
 ### urgency
 
-- info -> soon: 5
-- info -> urgent: 4
+- info -> urgent: 9
 - urgent -> info: 2
 
 ### scam level
@@ -114,4 +113,4 @@ Any warning on scam/caution messages: 22/22 (100.0%). Warning on no-signs messag
 
 ## For reference: all 320 messages
 
-kind 86.9%, action 81.3%, urgency 92.2%, all three 65.6% (rules need no training, so train and test are comparable).
+kind 86.9%, action 81.3%, urgency 92.5%, all three 67.5% (rules need no training, so train and test are comparable).

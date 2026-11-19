@@ -15,7 +15,17 @@ import type { PackRules } from './pack-rules.js';
 
 export type VoiceSource =
   /** Synthetic voice: the OS text-to-speech (offline Android voices) or Piper. */
-  | { kind: 'tts'; engine: 'system' | 'piper'; bcp47: string; voiceHint?: string }
+  | {
+      kind: 'tts';
+      engine: 'system' | 'piper';
+      bcp47: string;
+      voiceHint?: string;
+      /**
+       * Speak with the Piper voice files of another pack (its tag), for a language written so that voice reads it
+       * well (Cameroonian Pidgin with the English voice). The voice stays this pack's own for every other rule.
+       */
+      voicePack?: string;
+    }
   /** Every sentence is a human recording; slots are stitched from recorded atoms. */
   | { kind: 'recorded' };
 

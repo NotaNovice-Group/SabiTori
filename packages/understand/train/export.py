@@ -32,6 +32,7 @@ from sentence_transformers import SentenceTransformer
 from tokenizers import Tokenizer
 
 MODEL = "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"
+TOKENIZER_SOURCE = MODEL  # the vocabulary always comes from the original model (a fine-tune keeps it)
 # Characters that French/English text uses; a vocabulary piece made only of these is a candidate.
 LATIN = re.compile(r"^[▁A-Za-z0-9À-ÖØ-öø-ÿŒœŸ'’“”«»‘’.,;:!?%/\\()\[\]{}<>@#*&+=_|~^$€£°…–—-]+$")
 
@@ -127,6 +128,7 @@ def choose_vocab(tok: Tokenizer, texts: list[str], budget: int, fill: str = "fre
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
+    ap.add_argument("--base", default=None, help="a fine-tuned copy of the encoder (sentence-transformers folder from finetune.py); default: the original")
     ap.add_argument("--corpus", action="append", default=[])
     ap.add_argument("--vocab", type=int, default=30000, help="vocabulary pieces to keep")
     ap.add_argument("--fill", choices=["freq", "score"], default="freq", help="how to fill the budget after the corpus pieces")
@@ -135,11 +137,11 @@ def main() -> None:
     out = Path(args.out)
     out.mkdir(parents=True, exist_ok=True)
 
-    st = SentenceTransformer(MODEL, device="cpu")
+    st = SentenceTransformer(args.base or MODEL, device="cpu")
     st.eval()
     n_params = sum(p.numel() for p in st.parameters())  # before the vocabulary is pruned
     hf = st[0].auto_model
-    full_tok = Tokenizer.from_file(hf_hub_download(MODEL, "tokenizer.json"))
+    full_tok = Tokenizer.from_file(hf_hub_download(TOKENIZER_SOURCE, "tokenizer.json"))
     texts = corpus_texts(args.corpus)
     keep = choose_vocab(full_tok, texts, args.vocab, args.fill)
     remap = {old: new for new, old in enumerate(keep)}
@@ -217,7 +219,7 @@ def main() -> None:
     sess = ort.InferenceSession(str(final), providers=["CPUExecutionProvider"])
     ptok = Tokenizer.from_file(str(out / "tokenizer.json"))
     ptok.enable_truncation(128)
-    otok = Tokenizer.from_file(hf_hub_download(MODEL, "tokenizer.json"))
+    otok = Tokenizer.from_file(hf_hub_download(TOKENIZER_SOURCE, "tokenizer.json"))
     otok.enable_truncation(128)
     cos, same_tokens = [], []
     for i, t in enumerate(sample):
@@ -234,7 +236,7 @@ def main() -> None:
     stats = {"heldout_only": True, "n": len(sample), "cosine_mean": round(float(np.mean(cos)), 4), "cosine_min": round(float(np.min(cos)), 4), "sets": per_set}
     print("exported vs original (held-out):", json.dumps(stats, indent=1))
     (out / "export-info.json").write_text(json.dumps({
-        "source": MODEL, "source_params": n_params, "exported_params": int(sum(int(np.prod(i.dims)) if i.dims else 1 for i in __import__("onnx").load(str(final)).graph.initializer)), "kept_vocab": len(keep), "fill": args.fill,
+        "source": MODEL, "fine_tuned": bool(args.base), "source_params": n_params, "exported_params": int(sum(int(np.prod(i.dims)) if i.dims else 1 for i in __import__("onnx").load(str(final)).graph.initializer)), "kept_vocab": len(keep), "fill": args.fill,
         "freq_lists": {"repo": "hermitdave/FrequencyWords", "commit": FREQ_COMMIT, "files": {k: v[0] for k, v in FREQ_LISTS.items()}, "sha256": {k: v[1] for k, v in FREQ_LISTS.items()}} if args.fill == "freq" else None,
         "dim": int(w.shape[1]),
         "onnx_bytes": final.stat().st_size, "cosine_vs_original": stats, "max_len": 128,

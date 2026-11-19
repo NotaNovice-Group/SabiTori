@@ -88,39 +88,39 @@ Two synthetic sets, both labelled by the rules in `eval/README.md`:
 <!-- results:card-eval -->
 | Set | System | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- | --- |
-| test split (n=96) | rules@1 (keyword rules) | 86.5% [79.2–92.7] | 77.1% [68.8–85.4] | 88.5% [81.3–94.8] | 61.5% [52.1–70.8] |
+| test split (n=96) | rules@1 (keyword rules) | 86.5% [79.2–92.7] | 77.1% [68.8–85.4] | 88.5% [81.3–94.8] | 63.5% [54.2–72.9] |
 | test split (n=96) | encoder alone | 89.6% [83.3–94.8] | 86.5% [79.2–92.7] | 80.2% [71.9–87.5] | 65.6% [56.3–75.0] |
-| test split (n=96) | **encoder + rules (default)** | 93.8% [88.5–97.9] | 84.4% [77.1–91.7] | 88.5% [82.3–94.8] | 75.0% [66.7–83.3] |
-| unseen set (n=100) | rules@1 (keyword rules) | 90.0% [84.0–95.0] | 56.0% [46.0–66.0] | 73.0% [64.0–81.0] | 36.0% [27.0–45.0] |
+| test split (n=96) | **encoder + rules (default)** | 93.8% [88.5–97.9] | 84.4% [77.1–91.7] | 89.6% [83.3–94.8] | 75.0% [66.7–83.3] |
+| unseen set (n=100) | rules@1 (keyword rules) | 90.0% [84.0–95.0] | 56.0% [46.0–66.0] | 88.0% [81.0–94.0] | 47.0% [37.0–57.0] |
 | unseen set (n=100) | encoder alone | 87.0% [80.0–93.0] | 72.0% [63.0–81.0] | 66.0% [57.0–75.0] | 42.0% [33.0–52.0] |
-| unseen set (n=100) | **encoder + rules (default)** | 95.0% [90.0–99.0] | 74.0% [65.0–82.0] | 71.0% [62.0–80.0] | 51.0% [41.0–61.0] |
-| second unseen set (n=100) | rules@1 (keyword rules) | 84.0% [76.0–91.0] | 64.0% [54.0–73.0] | 86.0% [79.0–92.0] | 45.0% [35.0–55.0] |
+| unseen set (n=100) | **encoder + rules (default)** | 95.0% [90.0–99.0] | 74.0% [65.0–82.0] | 88.0% [81.0–94.0] | 66.0% [56.0–75.0] |
+| second unseen set (n=100) | rules@1 (keyword rules) | 84.0% [76.0–91.0] | 64.0% [54.0–73.0] | 85.0% [78.0–92.0] | 48.0% [38.0–58.0] |
 | second unseen set (n=100) | encoder alone | 91.0% [85.0–96.0] | 68.0% [59.0–77.0] | 71.0% [62.0–80.0] | 48.0% [38.0–58.0] |
-| second unseen set (n=100) | **encoder + rules (default)** | 91.0% [85.0–96.0] | 68.0% [59.0–77.0] | 81.0% [73.0–88.0] | 51.0% [41.0–61.0] |
+| second unseen set (n=100) | **encoder + rules (default)** | 91.0% [85.0–96.0] | 68.0% [59.0–77.0] | 87.0% [80.0–93.0] | 57.0% [47.0–67.0] |
 
 Paired differences against rules on the same messages (points, 95% bootstrap interval, messages only that system gets right vs only rules gets right, exact McNemar p; `*` = p < 0.05):
 
 | Set | Comparison | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- | --- |
-| test split | encoder + rules vs rules | +7.3 pts [2.1–13.5], 8 vs 1, p = 0.039 * | +7.3 pts [0.0–14.6], 11 vs 4, p = 0.118 | +0.0 pts [-5.2–5.2], 3 vs 3, p = 1.000 | +13.5 pts [5.2–21.9], 16 vs 3, p = 0.004 * |
-| test split | encoder alone vs rules | +3.1 pts [-4.2–11.5], 9 vs 6, p = 0.607 | +9.4 pts [0.0–19.8], 17 vs 8, p = 0.108 | -8.3 pts [-18.8–2.1], 9 vs 17, p = 0.169 | +4.2 pts [-8.3–17.7], 23 vs 19, p = 0.644 |
-| unseen set | encoder + rules vs rules | +5.0 pts [-1.0–12.0], 8 vs 3, p = 0.227 | +18.0 pts [9.0–27.0], 21 vs 3, p < 0.001 * | -2.0 pts [-8.0–4.0], 4 vs 6, p = 0.754 | +15.0 pts [6.0–24.0], 19 vs 4, p = 0.003 * |
-| unseen set | encoder alone vs rules | -3.0 pts [-12.0–6.0], 9 vs 12, p = 0.664 | +16.0 pts [3.0–29.0], 32 vs 16, p = 0.029 * | -7.0 pts [-19.0–5.0], 15 vs 22, p = 0.324 | +6.0 pts [-7.0–19.0], 26 vs 20, p = 0.461 |
-| second unseen set | encoder + rules vs rules | +7.0 pts [2.0–13.0], 8 vs 1, p = 0.039 * | +4.0 pts [-4.0–12.0], 10 vs 6, p = 0.455 | -5.0 pts [-10.0–0.0], 1 vs 6, p = 0.125 | +6.0 pts [-3.0–15.0], 14 vs 8, p = 0.286 |
-| second unseen set | encoder alone vs rules | +7.0 pts [0.0–15.0], 11 vs 4, p = 0.118 | +4.0 pts [-8.0–16.0], 21 vs 17, p = 0.627 | -15.0 pts [-26.0–-4.0], 9 vs 24, p = 0.013 * | +3.0 pts [-10.0–16.0], 25 vs 22, p = 0.771 |
+| test split | encoder + rules vs rules | +7.3 pts [2.1–13.5], 8 vs 1, p = 0.039 * | +7.3 pts [0.0–14.6], 11 vs 4, p = 0.118 | +1.0 pts [0.0–3.1], 1 vs 0, p = 1.000 | +11.5 pts [4.2–19.8], 13 vs 2, p = 0.007 * |
+| test split | encoder alone vs rules | +3.1 pts [-4.2–11.5], 9 vs 6, p = 0.607 | +9.4 pts [0.0–19.8], 17 vs 8, p = 0.108 | -8.3 pts [-18.8–2.1], 9 vs 17, p = 0.169 | +2.1 pts [-10.4–14.6], 21 vs 19, p = 0.875 |
+| unseen set | encoder + rules vs rules | +5.0 pts [-1.0–12.0], 8 vs 3, p = 0.227 | +18.0 pts [9.0–27.0], 21 vs 3, p < 0.001 * | +0.0 pts [-3.0–3.0], 1 vs 1, p = 1.000 | +19.0 pts [11.0–28.0], 21 vs 2, p < 0.001 * |
+| unseen set | encoder alone vs rules | -3.0 pts [-12.0–6.0], 9 vs 12, p = 0.664 | +16.0 pts [3.0–29.0], 32 vs 16, p = 0.029 * | -22.0 pts [-34.0–-10.0], 9 vs 31, p < 0.001 * | -5.0 pts [-19.0–9.0], 23 vs 28, p = 0.576 |
+| second unseen set | encoder + rules vs rules | +7.0 pts [2.0–13.0], 8 vs 1, p = 0.039 * | +4.0 pts [-4.0–12.0], 10 vs 6, p = 0.455 | +2.0 pts [-2.0–6.0], 3 vs 1, p = 0.625 | +9.0 pts [1.0–17.0], 14 vs 5, p = 0.064 |
+| second unseen set | encoder alone vs rules | +7.0 pts [0.0–15.0], 11 vs 4, p = 0.118 | +4.0 pts [-8.0–16.0], 21 vs 17, p = 0.627 | -14.0 pts [-26.0–-2.0], 12 vs 26, p = 0.034 * | +0.0 pts [-13.0–13.0], 23 vs 23, p = 1.000 |
 
 By message language (all three labels right):
 
 | Set | Lang | n | rules, all three | encoder + rules, all three | difference |
 | --- | --- | --- | --- | --- | --- |
-| test split | fr | 38 | 60.5% [44.7–76.3] | 79.0% [65.8–92.1] | +18.4 pts [7.9–31.6], 7 vs 0, p = 0.016 * |
-| test split | en | 43 | 76.7% [62.8–88.4] | 76.7% [62.8–88.4] | +0.0 pts [-11.6–11.6], 3 vs 3, p = 1.000 |
-| test split | wes | 15 | 20.0% [0.0–40.0] | 60.0% [33.3–86.7] | +40.0 pts [13.3–66.7], 6 vs 0, p = 0.031 * |
-| unseen set | fr | 40 | 32.5% [17.5–47.5] | 57.5% [42.5–72.5] | +25.0 pts [7.5–42.5], 12 vs 2, p = 0.013 * |
-| unseen set | en | 38 | 39.5% [23.7–55.3] | 50.0% [34.2–65.8] | +10.5 pts [0.0–23.7], 5 vs 1, p = 0.219 |
-| unseen set | wes | 22 | 36.4% [18.2–54.5] | 40.9% [22.7–63.6] | +4.5 pts [-9.1–22.7], 2 vs 1, p = 1.000 |
-| second unseen set | fr | 40 | 45.0% [30.0–60.0] | 47.5% [32.5–62.5] | +2.5 pts [-10.0–15.0], 4 vs 3, p = 1.000 |
-| second unseen set | en | 38 | 55.3% [39.5–71.0] | 63.2% [47.4–79.0] | +7.9 pts [-7.9–23.7], 6 vs 3, p = 0.508 |
+| test split | fr | 38 | 63.2% [47.4–79.0] | 76.3% [63.2–89.5] | +13.2 pts [2.6–23.7], 5 vs 0, p = 0.063 |
+| test split | en | 43 | 79.1% [65.1–90.7] | 81.4% [69.8–93.0] | +2.3 pts [-7.0–11.6], 3 vs 2, p = 1.000 |
+| test split | wes | 15 | 20.0% [0.0–40.0] | 53.3% [26.7–80.0] | +33.3 pts [13.3–60.0], 5 vs 0, p = 0.063 |
+| unseen set | fr | 40 | 42.5% [27.5–57.5] | 70.0% [55.0–82.5] | +27.5 pts [12.5–42.5], 12 vs 1, p = 0.003 * |
+| unseen set | en | 38 | 47.4% [31.6–63.2] | 65.8% [50.0–81.6] | +18.4 pts [7.9–31.6], 7 vs 0, p = 0.016 * |
+| unseen set | wes | 22 | 54.5% [31.8–72.7] | 59.1% [36.4–77.3] | +4.5 pts [-9.1–18.2], 2 vs 1, p = 1.000 |
+| second unseen set | fr | 40 | 45.0% [30.0–60.0] | 52.5% [37.5–67.5] | +7.5 pts [-5.0–20.0], 5 vs 2, p = 0.453 |
+| second unseen set | en | 38 | 63.2% [47.4–79.0] | 73.7% [57.9–86.8] | +10.5 pts [0.0–23.7], 5 vs 1, p = 0.219 |
 | second unseen set | wes | 22 | 27.3% [9.1–45.5] | 36.4% [18.2–59.1] | +9.1 pts [-13.6–31.8], 4 vs 2, p = 0.688 |
 
 Scam level (`assessScam`, code, not changed by this model): test 100.0% [100.0–100.0], unseen 93.0% [88.0–98.0], second unseen 91.0% [85.0–96.0].
@@ -152,9 +152,9 @@ Threshold grid (train split, out-of-fold, n=453): accuracy of each field when th
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | kind | 84.3 | 84.8 | 85.2 | 86.8 | 87.0 | 89.2 | 89.8 | 90.7 | 91.0 | 91.4 | 91.8 | 91.2 | 90.7 | 89.6 | 84.1 | 0.75 |
 | action | 78.6 | 79.0 | 80.1 | 80.6 | 81.0 | 81.2 | 81.9 | 82.8 | 83.7 | 83.0 | 81.5 | 80.8 | 79.3 | 77.7 | 72.0 | 0.7 |
-| urgency | 83.2 | 83.2 | 83.2 | 83.9 | 84.5 | 86.8 | 86.8 | 86.8 | 86.5 | 86.8 | 86.5 | 86.3 | 87.2 | 86.8 | 86.8 | 0.75 |
+| urgency | 88.3 | 88.3 | 88.5 | 88.5 | 89.2 | 91.4 | 91.6 | 91.8 | 92.0 | 92.0 | 92.3 | 92.9 | 93.2 | 93.4 | 93.4 | 0.9 |
 
-Thresholds shipped in `heads.json`: kind 0.75, action 0.7, urgency 0.75.
+Thresholds shipped in `heads.json`: kind 0.75, action 0.7, urgency 0.9.
 <!-- /results:card-calibration -->
 
 ## Limits

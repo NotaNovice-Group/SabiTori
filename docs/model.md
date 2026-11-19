@@ -34,9 +34,9 @@ Evaluate: `node packages/understand/eval/run-encoder.mjs` (test split and unseen
 | | test split | unseen set | second unseen set |
 | --- | --- | --- | --- |
 | messages | 96 | 100 | 100 |
-| rules alone, all three labels | 61.5% [52.1–70.8] | 36.0% [27.0–45.0] | 45.0% [35.0–55.0] |
-| encoder + rules (default), all three labels | 75.0% [66.7–83.3] | 51.0% [41.0–61.0] | 51.0% [41.0–61.0] |
-| paired difference | +13.5 pts [5.2–21.9], 16 vs 3, p = 0.004 | +15.0 pts [6.0–24.0], 19 vs 4, p = 0.003 | +6.0 pts [-3.0–15.0], 14 vs 8, p = 0.286 |
+| rules alone, all three labels | 63.5% [54.2–72.9] | 47.0% [37.0–57.0] | 48.0% [38.0–58.0] |
+| encoder + rules (default), all three labels | 75.0% [66.7–83.3] | 66.0% [56.0–75.0] | 57.0% [47.0–67.0] |
+| paired difference | +11.5 pts [4.2–19.8], 13 vs 2, p = 0.007 | +19.0 pts [11.0–28.0], 21 vs 2, p < 0.001 | +9.0 pts [1.0–17.0], 14 vs 5, p = 0.064 |
 
 Generated from `packages/understand/eval/results.json`; full tables, per-language rows and calibration in `packages/understand/model/minilm/model-card.md`.
 <!-- /results:model-summary -->

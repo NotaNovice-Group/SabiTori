@@ -29,6 +29,7 @@ const dataPath = resolve(arg('--data', resolve(here, 'messages.jsonl')));
 const unseenPath = resolve(arg('--unseen', resolve(here, 'unseen.jsonl')));
 // A second, later unseen set (written by an independent author after a retrain); evaluated when the file exists.
 const unseen2Path = resolve(arg('--unseen2', resolve(here, 'unseen2.jsonl')));
+const unseen3Path = resolve(arg('--unseen3', resolve(here, 'unseen3.jsonl')));
 const modelDir = resolve(arg('--model', resolve(here, '../model/minilm')));
 const outPath = resolve(arg('--out', resolve(here, 'results-encoder.md')));
 const jsonPath = resolve(arg('--json', resolve(here, 'results.json')));
@@ -73,7 +74,7 @@ async function thresholdGrid() {
   for (const m of oof.rows) {
     const { input, facts, u } = await rulesFor(m);
     rr.push(u);
-    ctx.push({ facts, receivedAt: input.receivedAt, truncated: enc0.isTruncated?.(m.text) ?? false });
+    ctx.push({ facts, receivedAt: input.receivedAt, truncated: enc0.isTruncated?.(m.text) ?? false, cues: rules.urgencyCues(input, facts) });
   }
   const head = (f, i) => ({ label: oof.fields[f].pred[i], p: oof.fields[f].conf[i], probs: oof.fields[f].probs?.[i] ?? [] });
   const table = {};
@@ -83,7 +84,8 @@ async function thresholdGrid() {
       let ok = 0;
       for (let i = 0; i < rr.length; i++) {
         const enc = Object.fromEntries(FIELDS.map((g) => [g, head(g, i)]));
-        const c = und.combineWithRules(enc, rr[i], { ...NEVER, [f]: t }, 'oof', ctx[i]); // same guard as the app
+        // Fields in order (kind, action, urgency), each with the thresholds already chosen: urgency follows the chosen action.
+        const c = und.combineWithRules(enc, rr[i], { ...NEVER, ...Object.fromEntries(Object.entries(best).map(([g, b]) => [g, b.t])), [f]: t }, 'oof', ctx[i]); // same guard as the app
         ok += c[f] === oof.fields[f].gold[i] ? 1 : 0;
       }
       return { t, acc: +(ok / rr.length).toFixed(4) };
@@ -92,14 +94,22 @@ async function thresholdGrid() {
     const plateau = table[f].filter((r) => r.acc >= top - 0.005);
     best[f] = plateau[Math.floor((plateau.length - 1) / 2)];
   }
-  return { n: rr.length, best, table };
+  const chosen = Object.fromEntries(FIELDS.map((f) => [f, best[f].t]));
+  let all = 0;
+  for (let i = 0; i < rr.length; i++) {
+    const enc = Object.fromEntries(FIELDS.map((g) => [g, head(g, i)]));
+    const c = und.combineWithRules(enc, rr[i], chosen, 'oof', ctx[i]);
+    all += FIELDS.every((f) => c[f] === oof.fields[f].gold[i]) ? 1 : 0;
+  }
+  return { n: rr.length, best, table, allThree: all / rr.length };
 }
 
 if (flag('--select-threshold')) {
-  const { best, table } = await thresholdGrid();
+  const { best, table, allThree } = await thresholdGrid();
   for (const f of FIELDS) console.log(`${f.padEnd(8)} ${table[f].map((r) => `${r.t}:${(100 * r.acc).toFixed(1)}`).join('  ')}`);
   const thresholds = Object.fromEntries(FIELDS.map((f) => [f, best[f].t]));
   console.log('BEST thresholds (train, out-of-fold):', JSON.stringify(thresholds), FIELDS.map((f) => `${f} ${pct(best[f].acc)}`).join(', '));
+  console.log(`all three right (train, out-of-fold, combined): ${pct(allThree)}`);
   if (flag('--write')) {
     const hp = resolve(modelDir, 'heads.json');
     const h = readJson(hp);
@@ -163,6 +173,7 @@ const sets = {
   test: rows(dataPath).filter((r) => r.split === 'test'),
   unseen: rows(unseenPath).filter((r) => r.split === 'unseen'),
   ...(existsSync(unseen2Path) ? { unseen2: rows(unseen2Path).filter((r) => r.split === 'unseen') } : {}),
+  ...(existsSync(unseen3Path) ? { unseen3: rows(unseen3Path).filter((r) => r.split === 'unseen') } : {}),
 };
 const evaluated = {};
 for (const [name, rs] of Object.entries(sets)) {
@@ -243,6 +254,7 @@ const md = [
   ...section('test', 'Test split of messages.jsonl (generator templates)'),
   ...section('unseen', 'Unseen set, unseen.jsonl (written to avoid the generator templates)'),
   ...(S.unseen2 ? section('unseen2', 'Second unseen set, unseen2.jsonl (independent author, written after the retrain, evaluated once)') : []),
+  ...(S.unseen3 ? section('unseen3', 'Third unseen set, unseen3.jsonl (independent author and label reviewer, written before the fine-tuned model was trained, never read during training, evaluated once)') : []),
   '## Threshold grid (train, out-of-fold; field accuracy when the encoder is used at or above t)',
   '',
   `| Field | ${GRID.map((t) => (t > 1 ? 'never' : t.toFixed(2))).join(' | ')} | chosen |`,
