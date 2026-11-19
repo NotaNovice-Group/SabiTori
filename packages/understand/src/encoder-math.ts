@@ -142,6 +142,6 @@ export function combineWithRules(
   }
   const combined: Understanding = { kind, action, urgency, confidence: round2(Math.min(...confs)), producedBy: id };
   return ctx
-    ? guardUnderstanding(combined, rules, { facts: ctx.facts, receivedAt: ctx.receivedAt, amountNearPay: ctx.facts.amounts.length > 0 })
+    ? guardUnderstanding(combined, rules, { facts: ctx.facts, receivedAt: ctx.receivedAt, amountNearPay: ctx.cues?.amountNearPay ?? ctx.facts.amounts.length > 0 })
     : combined;
 }

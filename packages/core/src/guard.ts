@@ -5,7 +5,8 @@
  * Pure: facts and the rules' understanding in, understanding out.
  */
 import type { ActionKind, Facts, IsoDate, Understanding, Urgency } from './types.js';
-import { daysBetween, isValidYmd, parseIso } from './text.js';
+import type { ReadingLexicon } from './reading.js';
+import { collect, daysBetween, findTerms, isValidYmd, parseIso } from './text.js';
 
 const RANK: Record<Urgency, number> = { info: 0, soon: 1, urgent: 2 };
 const higher = (a: Urgency, b: Urgency): Urgency => (RANK[a] >= RANK[b] ? a : b);
@@ -13,6 +14,15 @@ const higher = (a: Urgency, b: Urgency): Urgency => (RANK[a] >= RANK[b] ? a : b)
 const WITHIN_DAYS = 7;
 const URGENT_DAYS = 2;
 const TASKS: ActionKind[] = ['pay', 'bring_document', 'go_to_place'];
+
+/** Characters between a pay/send verb and an amount for the amount to count as "to pay". */
+export const NEAR_PAY = 40;
+
+/** An amount in the text sits within NEAR_PAY characters of a pay/send verb (`n`: the folded text). */
+export function amountNearPayIn(n: string, facts: Facts, lexicons: ReadingLexicon[]): boolean {
+  const pay = findTerms(n, collect(lexicons, (l) => l.scam.payVerbs));
+  return facts.amounts.some((a) => pay.some((w) => (w.end <= a.span.start ? a.span.start - w.end : w.start - a.span.end) <= NEAR_PAY));
+}
 
 /** Days from the received date to the nearest date in the text that is not in the past. */
 export function nearestFutureDays(facts: Facts, receivedAt: IsoDate): number | undefined {

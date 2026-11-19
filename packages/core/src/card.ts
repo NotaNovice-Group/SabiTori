@@ -12,7 +12,7 @@ import type {
 import type { ReadingLexicon } from './reading.js';
 import type { RegionConfig } from './region.js';
 import { collect, findTerms, fold } from './text.js';
-import { guardUnderstanding } from './guard.js';
+import { amountNearPayIn, guardUnderstanding, NEAR_PAY } from './guard.js';
 
 /** Below this confidence the card falls back to facts only. */
 export const CONFIDENCE_THRESHOLD = 0.55;
@@ -142,7 +142,6 @@ function clauseAround(n: string, start: number, end: number): { start: number; e
   return { start: from, end: n.length };
 }
 
-const NEAR_PAY = 40;
 
 /**
  * The number spoken as "call for help". Only when it is trustworthy:
@@ -290,11 +289,7 @@ export function buildCard(args: {
   const deadline = chooseDeadline(input, facts, lexicons);
   let understanding = args.understanding;
   if (args.rules) {
-    const n = fold(input.text);
-    const pay = findTerms(n, collect(lexicons, (l) => l.scam.payVerbs));
-    const amountNearPay = facts.amounts.some((a) =>
-      pay.some((w) => (w.end <= a.span.start ? a.span.start - w.end : w.start - a.span.end) <= NEAR_PAY),
-    );
+    const amountNearPay = amountNearPayIn(fold(input.text), facts, lexicons);
     understanding = guardUnderstanding(understanding, args.rules, {
       facts,
       receivedAt: input.receivedAt,
