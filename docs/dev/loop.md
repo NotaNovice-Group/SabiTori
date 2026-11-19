@@ -257,6 +257,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       urgent text colour); they now use a solid stop red (`--stop`) with a white symbol in both themes. Settings'
       language rows left a large gap (play button wrapped under the name); names are one size smaller there, the
       button stays beside them, and no name is cut mid-word.
+- [x] **Scam screenshots through the photo path.** Scams are often forwarded as WhatsApp screenshots. A browser test
+      renders a prize-fee SMS as a phone screenshot, reads it with on-device OCR, and checks the card: likely scam,
+      warning first, no money section, no paying or money picture, no request to another host.
 
 ## Log
 
@@ -334,3 +337,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #75 | Full accessibility audit re-run after the redesign: 163 states, 0 violations | local gate (Actions budget) |
 | 2026-11-19 | #76 | e2e: picture card on a bill; scam shows only the stop sign and vibrates | local gate (Actions budget) |
 | 2026-11-19 | #77 | Dark mode: solid stop red for scam signs; settings language rows tidy | local gate (Actions budget) |
+| 2026-11-19 | #78 | e2e: a scam SMS screenshot read by OCR warns first and shows no paying | local gate (Actions budget) |
