@@ -117,6 +117,6 @@ modelStore: { has(): Promise<boolean>; save(file: Blob): Promise<void>; load(): 
   (apps/app/.env.example): signed updates (`packages/connect`, docs/updates.md: GET of files named in a
   signed index, nothing else) and scrubbed crash reports (apps/app/src/lib/scrub.ts). The Android app
   uses the INTERNET permission only for these, HTTPS only, and a CSP limits `connect-src`. Other Android
-  permissions: CAMERA (photos of papers), POST_NOTIFICATIONS (reminders), and RECEIVE_BOOT_COMPLETED +
+  permissions: CAMERA (photos of papers), POST_NOTIFICATIONS (reminders), VIBRATE (scam warning vibration), and RECEIVE_BOOT_COMPLETED +
   WAKE_LOCK from the local-notifications plugin so reminders survive a restart.
 - Tests: vitest, next to each package in `test/`.

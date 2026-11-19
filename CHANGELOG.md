@@ -38,6 +38,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Android: the VIBRATE permission is declared so the scam warning vibration works in the app (privacy policy updated).
 - While a card is being prepared, its shape is shown instead of an empty page with only "Delete".
 - New look: warm paper and ink, a deep green for what to do, saffron for listening, a picture tile for every kind of
   card section, softer shapes. Words are no longer split with hyphens.

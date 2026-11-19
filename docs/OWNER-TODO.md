@@ -9,9 +9,9 @@ Total: 104 placeholders in 15 files.
 
 ## `CHANGELOG.md` (3)
 
-- [ ] `CHANGELOG.md:123` release date, once released.
-- [ ] `CHANGELOG.md:154` French review status; resolve before release.
-- [ ] `CHANGELOG.md:155` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
+- [ ] `CHANGELOG.md:124` release date, once released.
+- [ ] `CHANGELOG.md:155` French review status; resolve before release.
+- [ ] `CHANGELOG.md:156` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
 
 ## `CODE_OF_CONDUCT.md` (1)
 
@@ -64,17 +64,17 @@ Total: 104 placeholders in 15 files.
 - [ ] `docs/privacy.md:18` data protection officer, if one is required or appointed: name and contact
 - [ ] `docs/privacy.md:82` name, country and operator of the server that hosts the updates
 - [ ] `docs/privacy.md:85` update-server log retention
-- [ ] `docs/privacy.md:152` data processing agreement with Sentry: signed, and date.
-- [ ] `docs/privacy.md:178` retention period set in the Sentry project
-- [ ] `docs/privacy.md:179` our own retention period
-- [ ] `docs/privacy.md:181` update-server log retention, or "none kept by us"
-- [ ] `docs/privacy.md:207` target audience and minimum age policy, and the app's position under the Google Play Families policy.
-- [ ] `docs/privacy.md:219` name and contact of the authority
-- [ ] `docs/privacy.md:221` contact email
-- [ ] `docs/privacy.md:233` how changes are announced outside the app, for example in the store listing.
-- [ ] `docs/privacy.md:237` legal name
-- [ ] `docs/privacy.md:238` postal address
-- [ ] `docs/privacy.md:239` contact email
+- [ ] `docs/privacy.md:153` data processing agreement with Sentry: signed, and date.
+- [ ] `docs/privacy.md:179` retention period set in the Sentry project
+- [ ] `docs/privacy.md:180` our own retention period
+- [ ] `docs/privacy.md:182` update-server log retention, or "none kept by us"
+- [ ] `docs/privacy.md:208` target audience and minimum age policy, and the app's position under the Google Play Families policy.
+- [ ] `docs/privacy.md:220` name and contact of the authority
+- [ ] `docs/privacy.md:222` contact email
+- [ ] `docs/privacy.md:234` how changes are announced outside the app, for example in the store listing.
+- [ ] `docs/privacy.md:238` legal name
+- [ ] `docs/privacy.md:239` postal address
+- [ ] `docs/privacy.md:240` contact email
 
 ## `docs/release.md` (16)
 

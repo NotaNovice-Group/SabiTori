@@ -260,6 +260,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Scam screenshots through the photo path.** Scams are often forwarded as WhatsApp screenshots. A browser test
       renders a prize-fee SMS as a phone screenshot, reads it with on-device OCR, and checks the card: likely scam,
       warning first, no money section, no paying or money picture, no request to another host.
+- [x] **Vibration works in the Android app.** The scam vibration (#70) called `navigator.vibrate`, which the Android
+      web view ignores without the VIBRATE permission; the manifest had none. Added (normal permission, no prompt);
+      privacy policy section 6, Data safety notes, release checklist and ARCHITECTURE updated. Not yet felt on a
+      phone (no device here).
 
 ## Log
 
@@ -338,3 +342,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #76 | e2e: picture card on a bill; scam shows only the stop sign and vibrates | local gate (Actions budget) |
 | 2026-11-19 | #77 | Dark mode: solid stop red for scam signs; settings language rows tidy | local gate (Actions budget) |
 | 2026-11-19 | #78 | e2e: a scam SMS screenshot read by OCR warns first and shows no paying | local gate (Actions budget) |
+| 2026-11-19 | #79 | Android VIBRATE permission so the scam vibration works in the app; privacy and store docs updated | local gate (Actions budget) |

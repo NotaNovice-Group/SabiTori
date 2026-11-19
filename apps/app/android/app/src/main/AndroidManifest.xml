@@ -79,4 +79,7 @@
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" tools:node="remove" />
     <!-- Lets scheduled reminders survive a restart of the phone. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- The scam warning vibration (three long pulses) for deaf users. The web view ignores navigator.vibrate
+         without it. Granted at install, asks nothing. -->
+    <uses-permission android:name="android.permission.VIBRATE" />
 </manifest>
