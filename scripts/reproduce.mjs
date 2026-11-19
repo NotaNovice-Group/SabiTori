@@ -44,6 +44,7 @@ const FILES = [
   'packages/understand/eval/README.md',
   'docs/numbers.md',
   'site/index.html',
+  'apps/app/test/ocr-bench/results/cards.json',
 ];
 const dirty = () => execFileSync('git', ['status', '--porcelain', '--', ...FILES], { cwd: root, encoding: 'utf8' }).trim();
 if (dirty()) {
@@ -54,6 +55,7 @@ if (dirty()) {
 run('Rules and scam checks, test split', [viteNode, 'packages/understand/eval/run-rules.mjs']);
 const unseen = run('Rules and scam checks, unseen set', [viteNode, 'packages/understand/eval/run-rules.mjs', '--split=unseen', '--no-write']);
 run('Built-in model (MiniLM) + rules, test and unseen', ['packages/understand/eval/run-encoder.mjs']);
+run('Photo cards: amount and date shown from the 30 OCR texts', [viteNode, 'packages/understand/eval/run-photo-cards.mjs']);
 run('Model card and README tables', ['packages/understand/eval/model-card.mjs']);
 run('Numbers page (docs/numbers.md)', ['scripts/numbers.mjs']);
 
