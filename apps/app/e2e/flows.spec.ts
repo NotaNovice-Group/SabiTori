@@ -336,5 +336,8 @@ test('in the message list, a likely scam shows the stop sign and no amount or da
   // the bill keeps its amount and date
   const bill = rows.filter({ hasNot: page.locator('.row-ic-stop') });
   await expect(bill.locator('.row-fact')).toHaveCount(2);
+  // a pasted ENEO bill names its claimed sender as a claim; the scam row never repeats its "MTN" claim
+  await expect(bill.locator('.row-name')).toHaveText('Dit : ENEO');
+  await expect(scamRow.locator('.row-name')).toHaveText('Expéditeur inconnu');
   expect(errors).toEqual([]);
 });
