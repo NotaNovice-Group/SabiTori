@@ -4,7 +4,7 @@ SabiTori has two on-device understanding models. Both only **choose labels** fro
 
 | | Built-in small model (default, every message) | Optional "deeper" LLM |
 | --- | --- | --- |
-| Model | paraphrase-multilingual-MiniLM-L12-v2 encoder (Apache-2.0), int8 ONNX, plus 3 linear heads | Qwen2.5-1.5B-Instruct Q4_K_M GGUF |
+| Model | paraphrase-multilingual-MiniLM-L12-v2 encoder (Apache-2.0), fine-tuned on the train messages, int8 ONNX, plus 3 linear heads | Qwen2.5-1.5B-Instruct Q4_K_M GGUF |
 | Size | about 35.6 MB, shipped inside the app | about 1 GB, side-loaded |
 | Parameters | 33.0M as shipped (the base model has 117.7M, 96M of them in its 250k-piece vocabulary; pruned to 30k pieces) | 1.5B |
 | Speed | 235 ms median, 367 ms p95 per message in headless Chromium, 4× CPU throttle, main thread, one wasm thread (Intel Xeon 2.1 GHz desktop CPU; `packages/understand/harness/encoder-bench.mjs`). Not yet measured on a phone | 20–24 s per message on a desktop (wasm); not for every message |
@@ -35,8 +35,8 @@ Evaluate: `node packages/understand/eval/run-encoder.mjs` (test split and unseen
 | --- | --- | --- | --- |
 | messages | 96 | 100 | 100 |
 | rules alone, all three labels | 63.5% [54.2–72.9] | 47.0% [37.0–57.0] | 48.0% [38.0–58.0] |
-| encoder + rules (default), all three labels | 75.0% [66.7–83.3] | 66.0% [56.0–75.0] | 57.0% [47.0–67.0] |
-| paired difference | +11.5 pts [4.2–19.8], 13 vs 2, p = 0.007 | +19.0 pts [11.0–28.0], 21 vs 2, p < 0.001 | +9.0 pts [1.0–17.0], 14 vs 5, p = 0.064 |
+| encoder + rules (default), all three labels | 88.5% [82.3–94.8] | 77.0% [69.0–85.0] | 79.0% [71.0–87.0] |
+| paired difference | +25.0 pts [16.7–34.4], 24 vs 0, p < 0.001 | +30.0 pts [19.0–41.0], 34 vs 4, p < 0.001 | +31.0 pts [21.0–41.0], 33 vs 2, p < 0.001 |
 
 Generated from `packages/understand/eval/results.json`; full tables, per-language rows and calibration in `packages/understand/model/minilm/model-card.md`.
 <!-- /results:model-summary -->

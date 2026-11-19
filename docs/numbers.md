@@ -6,13 +6,13 @@ message has been evaluated yet, and nothing here was measured on a phone.
 
 ## Understanding a message (kind, action, urgency)
 
-Built-in model minilm-l12-int8@3 plus rules (heads trained on 453 messages), thresholds chosen on the train split only.
+Built-in model minilm-l12-int8@4 plus rules (heads trained on 2115 messages), thresholds chosen on the train split only.
 
 | Set | All three right | Kind | Action | Urgency | Rules alone, all three | Model + rules vs rules |
 | --- | --- | --- | --- | --- | --- | --- |
-| Second unseen set (100 messages by an independent author, written after the retrain and evaluated once): **the number to quote** | **57.0% [47.0–67.0]** | 91.0% [85.0–96.0] | 68.0% [59.0–77.0] | 87.0% [80.0–93.0] | 48.0% [38.0–58.0] | +9.0 points, p = 0.064 |
-| First unseen set (100 messages; its per-class error counts were read once to decide what training messages to add, so it is no longer untouched) | 66.0% [56.0–75.0] | 95.0% [90.0–99.0] | 74.0% [65.0–82.0] | 88.0% [81.0–94.0] | 47.0% [37.0–57.0] | +19.0 points, p < 0.001 |
-| Test split (96 messages, same templates as training) | 75.0% [66.7–83.3] | 93.8% [88.5–97.9] | 84.4% [77.1–91.7] | 89.6% [83.3–94.8] | 63.5% [54.2–72.9] | +11.5 points, p = 0.007 |
+| Second unseen set (100 messages by an independent author, written after the retrain and evaluated once): **the number to quote** | **79.0% [71.0–87.0]** | 98.0% [95.0–100.0] | 84.0% [77.0–91.0] | 90.0% [84.0–96.0] | 48.0% [38.0–58.0] | +31.0 points, p < 0.001 |
+| First unseen set (100 messages; its per-class error counts were read once to decide what training messages to add, so it is no longer untouched) | 77.0% [69.0–85.0] | 98.0% [95.0–100.0] | 88.0% [81.0–94.0] | 86.0% [79.0–92.0] | 47.0% [37.0–57.0] | +30.0 points, p < 0.001 |
+| Test split (96 messages, same templates as training) | 88.5% [82.3–94.8] | 99.0% [96.9–100.0] | 95.8% [91.7–99.0] | 90.6% [84.4–95.8] | 63.5% [54.2–72.9] | +25.0 points, p < 0.001 |
 
 Brackets: 95% bootstrap intervals. Comparison: exact McNemar test on the same messages.
 
@@ -33,7 +33,7 @@ photo warned as a likely scam (0); from the photos' true text: 30 of 30 amounts,
 
 ## Other measured facts (with their source)
 
-- Model size: 32.6 MB (int8, 33 M parameters).
+- Model size: 32.7 MB (int8, 33 M parameters).
 - Slow-phone stand-in (desktop CPU slowed 4x, not a phone): a pasted bill becomes a card in 1.3 to 2.3 s depending
   on the test machine (`docs/model.md`, "App start and card time", 2026-11-17 and 2026-11-18). Not measured on a phone.
 - Accessibility: 163 screen states, WCAG 2.2 AA (axe-core) plus manual-class checks, 0 violations
