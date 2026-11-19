@@ -911,6 +911,12 @@
       "as soon as possible",
       "send it quickly"
     ],
+    "moneySent": [
+      "you have sent",
+      "you sent",
+      "you have transferred",
+      "you transferred"
+    ],
     "moneyReceived": [
       "you have received",
       "you received",
