@@ -280,3 +280,31 @@ test('picture card: a bill shows what to do, the date and the money; a scam show
   await expect.poll(() => page.evaluate(() => (window as unknown as { __vibrations: unknown[] }).__vibrations)).toEqual([[400, 200, 400, 200, 400]]);
   expect(errors).toEqual([]);
 });
+
+test('a screenshot of a scam SMS, read from a photo, warns first and never shows paying', async ({ page, browser }) => {
+  test.slow(); // OCR in a headless browser
+  const { errors, external } = await setup(page);
+  // A forwarded scam SMS as people receive it on WhatsApp: a phone screenshot, grey bubble, small type.
+  const shooter = await browser.newPage({ viewport: { width: 720, height: 900 } });
+  await shooter.setContent(
+    '<body style="margin:0;background:#e9e6df;font:30px/1.45 Roboto,Arial,sans-serif;color:#111;padding:40px">' +
+      '<div style="font-size:24px;color:#555;margin-bottom:24px">+237 6 90 11 22 33</div>' +
+      '<div style="background:#fff;border-radius:24px;padding:28px 32px;max-width:600px">' +
+      'Félicitations! Votre numéro a gagné 500 000 FCFA à la promo MTN. Pour recevoir votre gain, envoyez 5 000 FCFA de frais au 677 12 34 56 avant ce soir.' +
+      '</div></body>',
+  );
+  const photo = await shooter.screenshot({ type: 'png' });
+  await shooter.close();
+  await page.goto('#/');
+  await page.waitForSelector('h1', { state: 'attached' });
+  await page.locator('input[type=file]').first().setInputFiles({ name: 'sms.png', mimeType: 'image/png', buffer: photo });
+  await page.waitForURL(/#\/card\//, { timeout: 120_000 });
+  await page.waitForSelector('.card .sec');
+  await expect(page.locator('.card')).toHaveAttribute('data-scam', 'likely_scam');
+  const order = await sectionClasses(page);
+  expect(order[0]).toBe('sec-scam');
+  expect(order).not.toContain('sec-money');
+  await expect(page.locator('.card .pic-act, .card .pic-money')).toHaveCount(0);
+  expect(errors).toEqual([]);
+  expect(external).toEqual([]);
+});
