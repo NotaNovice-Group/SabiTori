@@ -152,6 +152,10 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 - Documentation: publisher placeholder instead of a company name, non-commercial sustainability plan
   (`docs/sustainability.md`), pilot metrics (`docs/impact.md`), owner checklist (`docs/OWNER-TODO.md`).
 
+### Fixed
+
+- A scam report or teaching sent while an earlier one was still sending was lost and shown as sent.
+
 ## [1.0.0] - [YYYY-MM-DD]
 
 Planned first public release on Google Play. Not released yet: there is no published build, no store listing

@@ -120,6 +120,7 @@ async function post(path: string, body: unknown): Promise<Sent> {
 async function enqueue(item: Outgoing): Promise<'sent' | 'queued'> {
   item = { ...item, key: item.key ?? newDeleteKey() };
   write(OUTBOX, [...read<Outgoing[]>(OUTBOX, []), item]);
+  await flushing; // a send already running read the outbox before this item was added
   await flushOutbox();
   return read<Outgoing[]>(OUTBOX, []).some((x) => x.id === item.id) ? 'queued' : 'sent';
 }
@@ -136,7 +137,9 @@ export function flushOutbox(): Promise<void> {
       if (r.ok === 'retry') left.push({ ...item, key });
       else if (r.ok === 'sent' && r.id) write(SENT, [...read<SentItem[]>(SENT, []), { kind: item.kind, id: r.id, key, at: new Date().toISOString() }]);
     }
-    write(OUTBOX, left);
+    // Keep what was added while this pass was sending (it was not in `box`), or it would be lost unsent.
+    const tried = new Set(box.map((x) => x.id));
+    write(OUTBOX, [...left, ...read<Outgoing[]>(OUTBOX, []).filter((x) => !tried.has(x.id))]);
   })().finally(() => {
     flushing = null;
   });

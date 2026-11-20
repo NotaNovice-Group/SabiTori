@@ -122,3 +122,26 @@ describe('delete on request (no account: a secret key per item)', () => {
     expect(sentItems(new Date('2026-11-20T00:00:00Z')).map((s) => s.id)).toEqual(['new']);
   });
 });
+
+describe('outbox under concurrency', () => {
+  it('an item added while a send is running is neither lost nor reported as sent before it is', async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((r) => { release = r; });
+    let n = 0;
+    const f = vi.spyOn(globalThis, 'fetch').mockImplementation(async () => {
+      if (++n === 1) await gate; // the first send hangs on a slow network
+      return new Response(JSON.stringify({ id: `0000000${n}-aaaa-bbbb` }), { status: 201 });
+    });
+    const first = sendScamReport('slow', REPORT);
+    await Promise.resolve();
+    const second = sendTeaching({ lang: 'dua', meaning: 'Hello', meaningLang: 'en' });
+    await new Promise((r) => setTimeout(r, 0));
+    release();
+    expect(await first).toBe('sent');
+    expect(await second).toBe('sent');
+    expect(f).toHaveBeenCalledTimes(2);
+    expect(f.mock.calls.map((c) => c[0])).toEqual(['https://c.example/v1/scams', 'https://c.example/v1/teach']);
+    expect(outboxSize()).toBe(0);
+    expect(sentItems()).toHaveLength(2);
+  });
+});
