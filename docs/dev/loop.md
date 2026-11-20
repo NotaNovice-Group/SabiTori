@@ -31,6 +31,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 
 ## Backlog (top first)
 
+- [x] **Delete route unbounded.** `POST /v1/delete` read any body size and had no limit; now 1 KB at most and
+      10 times the daily post limit per address (a separate counter, so deleting never blocks posting).
 - [x] **Rate counters kept longer than the policy said, and the D1 SQL was untested.** Hashed-IP rate rows were
       deleted only on the next post (never, on a quiet service); now also by the daily cron, three days at most, and the
       policy says so. `services/community/test/d1-store.test.ts` runs the real SQL and migration on SQLite.
@@ -545,3 +547,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #118 | Storage full: a report or recording is never lost while shown as sent | local gate (Actions budget) |
 | 2026-11-20 | #119 | After deletion, cards no longer say reported and teachings leave the list | local gate (Actions budget) |
 | 2026-11-20 | #120 | Community: rate counters deleted daily (3 days max, policy matches); D1 store SQL tested on SQLite | local gate (Actions budget) |
+| 2026-11-20 | #121 | Community: delete requests capped at 1 KB and rate-limited per address | local gate (Actions budget) |

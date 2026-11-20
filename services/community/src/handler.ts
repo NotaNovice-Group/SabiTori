@@ -59,6 +59,14 @@ function takeDeleteKey(body: unknown): { body: unknown; key?: string } {
   return typeof deleteKey === 'string' && DELETE_KEY.test(deleteKey) ? { body: rest, key: deleteKey } : { body: rest };
 }
 
+function parseOrNull(raw: string): unknown {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
 /** Max request body: a teaching with 1.5 MB of audio in base64, plus the text fields. */
 const MAX_BODY = 2_200_000;
 
@@ -102,7 +110,14 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
 
   // Delete one report or teaching sent from this phone: needs the secret the phone attached when it sent it.
   if (req.method === 'POST' && path === '/v1/delete') {
-    const b = (await req.json().catch(() => null)) as { kind?: unknown; id?: unknown; key?: unknown } | null;
+    // A delete request is tiny; a phone deletes at most what it sent (30 a day by default), so allow 10 times that.
+    if (Number(req.headers.get('content-length') ?? 0) > 1024) return json({ error: 'too_large' }, 413, h);
+    const raw = await req.text();
+    if (raw.length > 1024) return json({ error: 'too_large' }, 413, h);
+    const day = now.toISOString().slice(0, 10);
+    const bucket = await sha256Hex(`del|${env.rateSalt ?? ''}|${day}|${req.headers.get('cf-connecting-ip') ?? 'unknown'}`);
+    if ((await store.bump(bucket, day)) > env.maxPostsPerDay * 10) return json({ error: 'rate_limited' }, 429, h);
+    const b = parseOrNull(raw) as { kind?: unknown; id?: unknown; key?: unknown } | null;
     if (!b || (b.kind !== 'scam' && b.kind !== 'teach') || typeof b.id !== 'string' || !/^[0-9a-f-]{8,40}$/.test(b.id) || typeof b.key !== 'string' || !DELETE_KEY.test(b.key)) {
       return json({ error: 'bad_request' }, 400, h);
     }
