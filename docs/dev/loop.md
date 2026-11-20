@@ -378,6 +378,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Speed re-measured after the fine-tuned encoder.** `apps/app/bench/perf.mjs 4 5` on today's main: card tapped
       at once 2,454 ms and 2,098 ms (two runs of 5), 1,773 ms once the model has loaded. The quoted range was "1.3 to
       2.3 s": now "1.3 to 2.5 s", in docs/numbers.md (generated), the landing page and docs/model.md. Not a phone.
+- [x] **iOS privacy manifest.** The App Store requires `PrivacyInfo.xcprivacy`; the iOS project had none. Added and
+      bundled (project.pbxproj resources): no tracking, no tracking domains; optional error reports declared as crash
+      data, not linked, not tracking; UserDefaults with reason CA92.1. docs/ios.md App Store steps point to it. Not
+      built in Xcode here (Linux): the iOS workflow or a Mac build will be the first check.
 
 ## Log
 
@@ -482,3 +486,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #102 | Video shot list: Pidgin draft, picture card, stop sign and vibration | local gate (Actions budget) |
 | 2026-11-20 | #103 | Probe 18: genuine shorthand money talk stays clean (regression test); main reproduces after #93 | local gate (Actions budget) |
 | 2026-11-20 | #104 | Speed re-measured after the fine-tuned encoder: range now 1.3 to 2.5 s (stand-in, not a phone) | local gate (Actions budget) |
+| 2026-11-20 | #105 | iOS privacy manifest (App Store requirement), bundled; untested on a Mac | local gate (Actions budget) |

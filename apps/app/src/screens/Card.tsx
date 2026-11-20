@@ -10,6 +10,7 @@ import { SpeakingButton } from '../components/SpeakingButton';
 import { SECTION_ICON, URGENCY_ICON } from '../components/icons';
 import { PictureCard } from '../components/PictureCard';
 import { scamVibration } from '../lib/pictures';
+import { ReportScam } from '../components/ReportScam';
 import { navigate } from '../lib/router';
 import { getCard, deleteCard, putCard, type StoredCard } from '../lib/db';
 import { session } from '../lib/session';
@@ -432,6 +433,7 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
               numberLocale={locale}
             />
             {L.scam >= 0 && scamLevel !== 'no_signs' && renderScam(L.scam)}
+            {L.scam >= 0 && scamLevel !== 'no_signs' && !example && <ReportScam card={card} />}
             {L.head.length > 0 && <div className={`group group-head${facts ? ' group-notice' : ''}`}>{L.head.map(renderSection)}</div>}
             {(L.urgency >= 0 || L.lead.length > 0) && (
               <div className="group group-lead">
@@ -460,6 +462,7 @@ export function CardScreen({ card: first, example }: { card: StoredCard; example
             )}
             {L.help >= 0 && <div className="group group-help">{renderSection(L.help)}</div>}
             {L.scam >= 0 && scamLevel === 'no_signs' && renderScam(L.scam)}
+            {scamLevel === 'no_signs' && !example && <ReportScam card={card} />}
           </>
         )}
         {/* While the card is being prepared: its shape, not an empty page with only "Delete" on it. */}

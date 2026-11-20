@@ -41,12 +41,19 @@ export function parseDsn(raw: string | undefined): ParsedDsn | null {
 }
 
 /** The CSP meta of the web build. connect-src names only 'self' and the configured origins. */
-export function buildCsp(env: { VITE_UPDATE_URL?: string; VITE_SENTRY_DSN?: string }): string {
+export function buildCsp(env: { VITE_UPDATE_URL?: string; VITE_SENTRY_DSN?: string; VITE_COMMUNITY_URL?: string }): string {
   const connect = ["'self'", 'blob:', 'data:'];
   const update = cleanUpdateUrl(env.VITE_UPDATE_URL);
   if (update) connect.push(new URL(update).origin);
   const dsn = parseDsn(env.VITE_SENTRY_DSN);
   if (dsn) connect.push(dsn.origin);
+  // The opt-in community service (scam reports, teachings): https only, origin only.
+  try {
+    const c = new URL((env.VITE_COMMUNITY_URL ?? '').trim());
+    if (c.protocol === 'https:') connect.push(c.origin);
+  } catch {
+    /* not configured */
+  }
   return [
     "default-src 'self'",
     "script-src 'self' 'wasm-unsafe-eval' blob:",

@@ -11,6 +11,8 @@ import { navigate } from '../lib/router';
 import { capText, session } from '../lib/session';
 import { buildInput, uniqueCard } from '../lib/open';
 import { todayIso } from '../lib/format';
+import { PhoneField, senderNumber } from '../components/PhoneField';
+import type { CountryCode } from 'libphonenumber-js/min';
 
 type Kind = 'name' | 'number' | 'unknown';
 
@@ -22,6 +24,7 @@ export function PasteScreen() {
   useEffect(() => rememberMessage(text), []); // eslint-disable-line react-hooks/exhaustive-deps
   const [kind, setKind] = useState<Kind>('unknown');
   const [who, setWho] = useState('');
+  const [country, setCountry] = useState<CountryCode>(() => (engine.region.code as CountryCode) || 'CM');
   const [busy, setBusy] = useState(false);
 
   const go = async () => {
@@ -30,7 +33,8 @@ export function PasteScreen() {
     setFailed(false);
     const started = performance.now();
     try {
-      const sender: MessageInput['sender'] = kind === 'unknown' || !who.trim() ? { kind: 'unknown' } : { kind, value: who.trim() };
+      const value = kind === 'number' ? senderNumber(who, country) : who.trim();
+      const sender: MessageInput['sender'] = kind === 'unknown' || !value ? { kind: 'unknown' } : { kind, value };
       rememberNames(who);
       const card = uniqueCard(await engine.analyze(buildInput(capText(text.trim()).text, 'paste', engine.region.code, sender, todayIso(engine.region.timezone))));
       recordExplained(pilot, card, false, performance.now() - started);
@@ -67,11 +71,14 @@ export function PasteScreen() {
             { value: 'unknown', key: 'app.paste.sender.unknown', label: t('app.paste.sender.unknown'), icon: <CircleHelp size={24} strokeWidth={2} aria-hidden /> },
           ]}
         />
-        {kind !== 'unknown' && (
+        {kind === 'name' && (
           <>
-            <label htmlFor="who" className="field-sublabel">{t(kind === 'name' ? 'app.paste.sender.name_label' : 'app.paste.sender.number_label')}</label>
-            <input id="who" className="input" value={who} onChange={(e) => { rememberNames(e.target.value); setWho(e.target.value); }} inputMode={kind === 'number' ? 'tel' : 'text'} autoComplete="off" />
+            <label htmlFor="who" className="field-sublabel">{t('app.paste.sender.name_label')}</label>
+            <input id="who" className="input" value={who} onChange={(e) => { rememberNames(e.target.value); setWho(e.target.value); }} autoComplete="off" />
           </>
+        )}
+        {kind === 'number' && (
+          <PhoneField id="who" label={t('app.paste.sender.number_label')} country={country} onCountry={setCountry} value={who} onValue={(v) => { rememberNames(v); setWho(v); }} />
         )}
       </div>
       {failed && <p className="error" role="alert">{t('app.capture.failed')}</p>}

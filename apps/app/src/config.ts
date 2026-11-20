@@ -9,6 +9,18 @@ export interface Config {
   /** Both an https update URL and a valid pinned public key are needed. */
   updates: { url: string; publicKey: string } | null;
   crashReports: { dsn: string; environment: string } | null;
+  /** Opt-in scam reports and teachings (services/community). https only. */
+  community: { url: string } | null;
+}
+
+function cleanServiceUrl(v: string | undefined): string | null {
+  const s = (v ?? '').trim().replace(/\/+$/, '');
+  try {
+    const u = new URL(s);
+    return u.protocol === 'https:' && !u.search && !u.hash ? u.href.replace(/\/+$/, '') : null;
+  } catch {
+    return null;
+  }
 }
 
 export function readConfig(env: Record<string, string | undefined>): Config {
@@ -18,6 +30,7 @@ export function readConfig(env: Record<string, string | undefined>): Config {
   return {
     updates: url && publicKey ? { url, publicKey } : null,
     crashReports: dsn ? { dsn: dsn.dsn, environment: (env.VITE_SENTRY_ENVIRONMENT ?? '').trim() || 'production' } : null,
+    community: cleanServiceUrl(env.VITE_COMMUNITY_URL) ? { url: cleanServiceUrl(env.VITE_COMMUNITY_URL)! } : null,
   };
 }
 

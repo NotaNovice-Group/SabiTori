@@ -27,6 +27,8 @@ exists, how to build it on a Mac, and, plainly, what has not been tested.
 | Used for | Plugin | iOS |
 | --- | --- | --- |
 | Take or choose a photo | `@capacitor/camera` | Yes |
+| Read the text of a photo | `SabiToriVision` (project's own Swift plugin, `ios/App/App/SabiToriVisionPlugin.swift`, registered by `MainViewController.swift`) | Yes. Apple's Vision framework (`VNRecognizeTextRequest`, accurate, fr-FR and en-US), on the device. Replaced tesseract.js on iOS on 2026-11-20 after "Reading failed" on a real iPhone for both camera and gallery photos; tesseract stays the reader on Android and the web and is the fallback on iOS if Vision fails. |
+| Record a phrase (Teach) | Web `MediaRecorder` in WKWebView | Yes (iOS 14.3+). `NSMicrophoneUsageDescription` in `Info.plist`; asked only when the person taps Record. |
 | Reminders | `@capacitor/local-notifications` | Yes. Notification channels are Android-only, so the app skips `createChannel` on iOS (it would reject there and the reminder would fail). |
 | Splash screen | `@capacitor/splash-screen` | Yes |
 | System voice under Piper | `@capacitor-community/text-to-speech` | Yes (AVSpeechSynthesizer). Which languages it offers is the phone's choice. |
@@ -63,7 +65,7 @@ cd apps/app/ios/App && xcodebuild -project App.xcodeproj -scheme App -sdk iphone
   fixes on its first run.
 - Piper voices (Web Worker, WebAssembly, Web Audio) in iOS WebKit: unverified. iOS may need a tap before audio plays;
   if Piper cannot start, the system voice (`text-to-speech`) is the fallback.
-- OCR (tesseract.js worker with WebAssembly SIMD, needs iOS 16.4 or newer) and the MiniLM encoder (onnxruntime-web
+- OCR on iOS is now Apple Vision (see the table); the MiniLM encoder (onnxruntime-web
   WebAssembly) in iOS WebKit: unverified, including memory limits on older iPhones. On iOS 15 to 16.3 the app should
   say photos cannot be read and keep the paste-text path.
 - Camera and photo picker permissions, the "denied" path and opening Settings by `app-settings:`.
@@ -77,7 +79,9 @@ cd apps/app/ios/App && xcodebuild -project App.xcodeproj -scheme App -sdk iphone
 2. Register the bundle id `cm.sabitori.app` and create the app in App Store Connect (name SabiTori).
 3. Signing: set the team in Xcode (automatic signing) or in CI with a distribution certificate and provisioning
    profile kept as GitHub secrets. Nothing in this repository signs iOS builds today.
-4. Real icon and launch screen, iPhone screenshots, privacy details ("Data Not Collected" if that holds for the store
-   build, matching `docs/privacy.md`), age rating and export compliance (no non-exempt encryption).
+4. Real icon and launch screen, iPhone screenshots, privacy details matching `docs/privacy.md` and the app's privacy
+   manifest `apps/app/ios/App/App/PrivacyInfo.xcprivacy` (no tracking; crash data, not linked and not tracking, only
+   if error reports are on; UserDefaults reason CA92.1). For a store build with no error-report address, App Store
+   Connect can say "Data Not Collected". Age rating and export compliance (no non-exempt encryption).
 5. Test on real iPhones (TestFlight), above all the items under "Not tested".
 6. Optional: a Share Extension for `@capgo/capacitor-share-target`, so SabiTori appears in the iOS share sheet.
