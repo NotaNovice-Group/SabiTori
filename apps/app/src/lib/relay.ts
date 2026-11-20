@@ -3,6 +3,7 @@
  * to it: the card is made here, offline, and sent back by SMS. Message texts are never stored or logged: only counts.
  */
 import { registerPlugin, type PluginListenerHandle } from '@capacitor/core';
+import { LocalNotifications } from '@capacitor/local-notifications';
 import { chooseLang, composeReply } from '@sabitori/gateway/compose';
 import type { Engine } from '../engine';
 import { buildInput } from './open';
@@ -60,4 +61,54 @@ export async function relayReply(engine: Engine, text: string, today: string): P
   const views = await engine.renderCard(card, lang);
   const r = composeReply(views.map((v) => v.text), lang);
   return { ...r, scam: card.scam.level };
+}
+
+/** Relay status notifications, on the relay phone itself (local, no server). */
+const RELAY_CHANNEL = 'relay';
+export const RELAY_NOTE_ID = 2_100_000_101;
+export const RELAY_LIMIT_ID = 2_100_000_102;
+
+async function canNotify(ask: boolean): Promise<boolean> {
+  try {
+    let s = (await LocalNotifications.checkPermissions()).display;
+    if (ask && (s === 'prompt' || s === 'prompt-with-rationale')) s = (await LocalNotifications.requestPermissions()).display;
+    if (s !== 'granted') return false;
+    await LocalNotifications.createChannel({ id: RELAY_CHANNEL, name: 'SMS relay', importance: 2, visibility: 1 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/** While relaying: a quiet, ongoing notification, so the owner sees at a glance that this phone is answering. */
+export async function showRelayRunning(title: string, body: string): Promise<void> {
+  if (!(await canNotify(true))) return;
+  try {
+    await LocalNotifications.schedule({ notifications: [{ id: RELAY_NOTE_ID, title, body, channelId: RELAY_CHANNEL, ongoing: true, autoCancel: false }] });
+  } catch {
+    /* the screen shows the status anyway */
+  }
+}
+
+export async function clearRelayNotes(): Promise<void> {
+  try {
+    await LocalNotifications.cancel({ notifications: [{ id: RELAY_NOTE_ID }, { id: RELAY_LIMIT_ID }] });
+  } catch {
+    /* nothing shown */
+  }
+}
+
+/** The hourly limit was reached: tell the owner once per hour (messages get no answer until the hour passes). */
+export function limitNotice(state: { lastLimitNote?: number }, now: number): boolean {
+  if (state.lastLimitNote !== undefined && now - state.lastLimitNote < 3_600_000) return false;
+  state.lastLimitNote = now;
+  return true;
+}
+export async function showRelayLimit(title: string, body: string): Promise<void> {
+  if (!(await canNotify(false))) return;
+  try {
+    await LocalNotifications.schedule({ notifications: [{ id: RELAY_LIMIT_ID, title, body, channelId: RELAY_CHANNEL }] });
+  } catch {
+    /* counted on the screen anyway */
+  }
 }

@@ -95,6 +95,11 @@ export function runUpdateCheck(now: () => number = Date.now): Promise<UpdateResu
     .check({ signal: abort.signal })
     .then((r) => {
       if (!abort.signal.aborted) saveMemo({ lastCheckAt: new Date(now()).toISOString(), lastStatus: r.status, lastReason: r.reason ?? null });
+      // New scam alerts came with this update: show them now, not at the next start.
+      if (r.changed.some((p) => /^regions\/[A-Z]{2}\/alerts\.json$/.test(p))) {
+        const s = loadSettings();
+        void import('./alerts').then((m) => m.notifyNewAlerts(s.region, s.lang, new Date(now()).toISOString().slice(0, 10))).catch(() => undefined);
+      }
       return r;
     })
     .finally(() => {

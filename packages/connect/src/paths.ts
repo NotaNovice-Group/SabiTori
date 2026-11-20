@@ -33,6 +33,8 @@ const WHITELIST: RegExp[] = [
   new RegExp(`^packs/${TAG}/voice/[A-Za-z0-9][A-Za-z0-9_.\\-]{0,63}\\.onnx(\\.json)?$`),
   // Region codes are upper case (regions/CM/region.json), as the app already reads them.
   /^regions\/[A-Z]{2}\/region\.json$/,
+  // Scam alerts for a region (docs/updates.md, "Scam alerts"): short texts the app shows, never links.
+  /^regions\/[A-Z]{2}\/alerts\.json$/,
 ];
 
 /** The pack tag of a `packs/<tag>/...` path, or null. */

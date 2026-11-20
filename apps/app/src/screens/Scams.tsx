@@ -4,6 +4,8 @@ import { isNative } from '../lib/native';
 import { useNativePhoto } from '../components/PhotoPicker';
 import { ClipboardPaste, Camera, OctagonX, TriangleAlert, Search, Users, ShieldAlert, RefreshCw, Megaphone } from 'lucide-react';
 import type { CountryCode } from 'libphonenumber-js/min';
+import type { ScamAlert } from '@sabitori/connect';
+import { currentAlerts, loadAlerts } from '../lib/alerts';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
 import { SpeakingButton } from '../components/SpeakingButton';
@@ -15,7 +17,9 @@ import { senderName } from './Home';
 import { communityConfigured, loadScamList, reportsFor, wasReported, type PublishedScam } from '../lib/community';
 
 export function ScamsScreen() {
-  const { t, history, engine, locale } = useApp();
+  const { t, history, engine, locale, settings } = useApp();
+  const [alerts, setAlerts] = useState<ScamAlert[]>([]);
+  useEffect(() => { void loadAlerts(engine.region.code).then((a) => setAlerts(currentAlerts(a, new Date().toISOString().slice(0, 10)))); }, [engine.region.code]);
   const mine = history.filter((c) => c.scam.level === 'likely_scam' || c.scam.level === 'caution');
   const [list, setList] = useState<{ items: PublishedScam[]; fetchedAt: string | null; online: boolean } | null>(null);
   const [loading, setLoading] = useState(false);
@@ -39,6 +43,19 @@ export function ScamsScreen() {
 
   return (
     <Screen title={t('app.nav.scams')} className="scams">
+      {alerts.length > 0 && (
+        <section className="panel alerts" aria-labelledby="sc-alerts">
+          <h2 id="sc-alerts" className="panel-title"><TriangleAlert size={24} strokeWidth={2} aria-hidden /> {t('app.alerts.title')}</h2>
+          <ul className="alert-list">
+            {alerts.map((a) => (
+              <li key={a.id} className="alert-item">
+                <b>{a.title[settings.lang === 'en' ? 'en' : 'fr']}</b>
+                <span>{a.body[settings.lang === 'en' ? 'en' : 'fr']}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <section className="panel scam-check" aria-labelledby="sc-num">
         <h2 id="sc-num" className="panel-title"><Search size={24} strokeWidth={2} aria-hidden /> {t('app.scams.check_number')}</h2>
         <PhoneField id="sc-phone" label={t('app.scams.number_label')} country={country} onCountry={setCountry} value={number} onValue={setNumber} />

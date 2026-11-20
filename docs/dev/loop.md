@@ -397,6 +397,12 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       screen with counts only, and `lib/relay.ts` (only Cameroonian mobile senders, 5 per number and 60 per hour,
       reply = the app's card through the shared `@sabitori/gateway/compose`). Built here: the relay APK lists the
       two SMS permissions, the store APK none (aapt). Tests: rules, replies, manifests. Not yet on a real phone.
+- [x] **Notifications: scam alerts, relay status.** Scam alerts ride the signed update channel
+      (`regions/<CC>/alerts.json`, new allowed path; `parseAlerts`: at most 20, fr + en, short, dated, and no link,
+      phone number or USSD code so a stolen key cannot send people to a scam). Shown as a local notification (only if
+      notifications are already allowed) and on the Scams screen; no account, token or tracking. Relay phone: an
+      ongoing "answering SMS" notification and a once-an-hour notice when the hourly limit is hit. Instant push
+      (Firebase) documented as a later opt-in for the owner to decide. Tests: validator, freshness, limit notice.
 
 ## Log
 
@@ -505,3 +511,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #108 | Robustness test: odd and huge inputs never throw or hang | local gate (Actions budget) |
 | 2026-11-20 | #109 | SMS and USSD for phones with no internet: design (sourced numbers), prototype gateway | local gate (Actions budget) |
 | 2026-11-20 | #110 | Relay build: an Android phone with a local SIM answers forwarded SMS with the card, offline | local gate (Actions budget) |
+| 2026-11-20 | #111 | Scam alerts over the signed update channel (notification + Scams screen); relay status notifications | local gate (Actions budget) |

@@ -54,6 +54,8 @@ function Routes() {
   // Optional network features: each does nothing unless configured at build time AND switched on.
   useEffect(() => {
     if (config.updates && settings.updatesOn) maybeBackgroundCheck({ enabled: true });
+    // Scam alerts that arrived with an earlier update and were not shown yet (lib/alerts.ts).
+    if (config.updates && settings.updatesOn) void import('./lib/alerts').then((m) => m.notifyNewAlerts(settings.region, settings.lang, new Date().toISOString().slice(0, 10))).catch(() => undefined);
   }, [settings.updatesOn]);
 
   const packVersions = useRef<Record<string, string>>({});

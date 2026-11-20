@@ -83,6 +83,7 @@ export const EXTRA = x({
   'app.report.thanks': { en: 'Thank you. Your report was sent. It will be checked, then other people will be warned.', fr: 'Merci. Votre signalement est envoyé. Il sera vérifié, puis d’autres personnes seront prévenues.', context: 'Shown on the card after a report was sent.' },
   'app.report.queued': { en: 'Thank you. Your report will be sent when your phone is online.', fr: 'Merci. Votre signalement sera envoyé quand votre téléphone sera en ligne.', context: 'After Send while offline.' },
   'app.report.saved': { en: 'Thank you. Your report is kept on this phone. It will be sent when sharing is switched on in a future version.', fr: 'Merci. Votre signalement est gardé sur ce téléphone. Il sera envoyé quand le partage sera activé dans une prochaine version.', context: 'After Send when this build has no community service configured.' },
+  'app.alerts.title': { en: 'Scam alerts', fr: 'Alertes arnaques', context: 'Scams screen: alerts published by SabiTori over updates.' },
   'app.scams.check_number': { en: 'Check a phone number', fr: 'Vérifier un numéro', context: 'Scams screen: title of the number check.' },
   'app.scams.number_label': { en: 'Number that sent you a message', fr: 'Numéro qui vous a écrit', context: 'Scams screen: label of the number field.' },
   'app.scams.number_reported': { en: 'Reported as a scam {n} times.', fr: 'Signalé comme arnaque {n} fois.', context: 'Scams screen: the number is on the published list.' },
@@ -155,6 +156,7 @@ export const EXTRA = x({
   'app.relay.stopped': { en: 'Not answering SMS.', fr: 'Ne répond pas aux SMS.', context: 'Status.' },
   'app.relay.denied': { en: 'SMS permission refused. Allow it in the phone settings.', fr: 'Permission SMS refusée. Autorisez-la dans les réglages du téléphone.', context: 'Status.' },
   'app.relay.unavailable': { en: 'This build cannot send SMS.', fr: 'Cette version ne peut pas envoyer de SMS.', context: 'Status.' },
+  'app.relay.limit': { en: 'Hourly limit reached: messages get no answer until the hour has passed.', fr: 'Limite par heure atteinte : les messages restent sans réponse jusqu’à la fin de l’heure.', context: 'Relay notification.' },
   'app.relay.counts': { en: 'Answered: {replied}. Not answered: {refused}.', fr: 'Répondus : {replied}. Sans réponse : {refused}.', context: 'Counts only, never content.' },
   'app.sms.waiting': {
     en: 'Waiting for your next SMS. When it comes, your phone asks you. Press Allow.',

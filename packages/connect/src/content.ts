@@ -137,9 +137,60 @@ export function validateUpdateFile(path: string, bytes: Uint8Array): void {
   } else if (/\/voice\/[^/]+\.onnx\.json$/.test(path)) {
     const j = parseJson(path, bytes);
     wrap(() => void parsePiperConfig(j));
+  } else if (/^regions\/[A-Z]{2}\/alerts\.json$/.test(path)) {
+    const j = parseJson(path, bytes);
+    wrap(() => void parseAlerts(j));
   } else if (/^regions\/[A-Z]{2}\/region\.json$/.test(path)) {
     const j = parseJson(path, bytes);
     wrap(() => regionShape(j, path.split('/')[1]!));
   }
   // Anything else (audio clips, .onnx models) is binary: only "not empty" can be said without decoding it.
+}
+
+/** One scam alert as the app shows it: a short title and text in French and English, a date and an end date. */
+export interface ScamAlert {
+  id: string;
+  date: string;
+  expires: string;
+  title: { fr: string; en: string };
+  body: { fr: string; en: string };
+}
+
+const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
+/** A link or a phone number in an alert could send people to a scam if the channel's key were ever stolen: refused. */
+const LINK_OR_PHONE = /(https?:|www\.|\.[a-z]{2,4}\/|[+]?\d[\d .-]{7,}\d|\*\d+[*#])/i;
+
+/**
+ * `regions/<CC>/alerts.json`: {"alerts": [...]}, at most 20, each with an id ([a-z0-9-], at most 40), a date and an
+ * end date (yyyy-mm-dd), a title (at most 60 characters) and a text (at most 240) in French and English, and no link,
+ * phone number or USSD code. Throws an Error naming the problem.
+ */
+export function parseAlerts(j: unknown): ScamAlert[] {
+  if (!isObj(j) || !Array.isArray(j.alerts)) throw new Error('must look like {"alerts": [...]}');
+  if (j.alerts.length > 20) throw new Error('at most 20 alerts');
+  const ids = new Set<string>();
+  return j.alerts.map((a: unknown, i: number) => {
+    const where = `alerts[${i}]`;
+    if (!isObj(a)) throw new Error(`${where} must be an object`);
+    const id = a.id;
+    if (typeof id !== 'string' || !/^[a-z0-9-]{1,40}$/.test(id)) throw new Error(`${where}.id must be [a-z0-9-], at most 40`);
+    if (ids.has(id)) throw new Error(`${where}.id is used twice`);
+    ids.add(id);
+    for (const k of ['date', 'expires'] as const) {
+      const v = a[k];
+      if (typeof v !== 'string' || !ISO_DAY.test(v) || Number.isNaN(Date.parse(v))) throw new Error(`${where}.${k} must be yyyy-mm-dd`);
+    }
+    if ((a.expires as string) < (a.date as string)) throw new Error(`${where}.expires is before its date`);
+    const text = (k: 'title' | 'body', max: number) => {
+      const v = a[k];
+      if (!isObj(v)) throw new Error(`${where}.${k} must have fr and en`);
+      for (const l of ['fr', 'en'] as const) {
+        const s = v[l];
+        if (typeof s !== 'string' || !s.trim() || s.length > max) throw new Error(`${where}.${k}.${l} must be 1 to ${max} characters`);
+        if (LINK_OR_PHONE.test(s)) throw new Error(`${where}.${k}.${l} must not contain a link, a phone number or a code`);
+      }
+      return { fr: v.fr as string, en: v.en as string };
+    };
+    return { id, date: a.date as string, expires: a.expires as string, title: text('title', 60), body: text('body', 240) };
+  });
 }
