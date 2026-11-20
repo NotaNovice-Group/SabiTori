@@ -77,7 +77,9 @@ cd apps/app/ios/App && xcodebuild -project App.xcodeproj -scheme App -sdk iphone
 2. Register the bundle id `cm.sabitori.app` and create the app in App Store Connect (name SabiTori).
 3. Signing: set the team in Xcode (automatic signing) or in CI with a distribution certificate and provisioning
    profile kept as GitHub secrets. Nothing in this repository signs iOS builds today.
-4. Real icon and launch screen, iPhone screenshots, privacy details ("Data Not Collected" if that holds for the store
-   build, matching `docs/privacy.md`), age rating and export compliance (no non-exempt encryption).
+4. Real icon and launch screen, iPhone screenshots, privacy details matching `docs/privacy.md` and the app's privacy
+   manifest `apps/app/ios/App/App/PrivacyInfo.xcprivacy` (no tracking; crash data, not linked and not tracking, only
+   if error reports are on; UserDefaults reason CA92.1). For a store build with no error-report address, App Store
+   Connect can say "Data Not Collected". Age rating and export compliance (no non-exempt encryption).
 5. Test on real iPhones (TestFlight), above all the items under "Not tested".
 6. Optional: a Share Extension for `@capgo/capacitor-share-target`, so SabiTori appears in the iOS share sheet.
