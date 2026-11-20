@@ -345,6 +345,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **"Who sent it?" in pictures.** The Paste screen's sender choices were words only. Each now has a picture
       (building = a name, phone = a number, question mark = I do not know); the chosen one keeps its check beside the
       picture, never colour alone. `SegOption.icon` is optional, so the Settings choices are unchanged.
+- [x] **Settings choices in pictures.** On/off (switch on, switch off), voice speed (rabbit, turtle, snail) and how
+      long messages are kept (calendar of a month, of a week, crossed calendar) now carry pictures, as the Paste
+      sender choices do (#96); the chosen one keeps its check.
 
 ## Log
 
@@ -441,3 +444,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #94 | Probe 17: SMS-shorthand scams; first unseen scams warned 18/21 -> 20/21, no new false alarm | local gate (Actions budget) |
 | 2026-11-19 | #95 | Empty home screen shows how it works in three pictures | local gate (Actions budget) |
 | 2026-11-20 | #96 | Paste: "Who sent it?" choices carry pictures | local gate (Actions budget) |
+| 2026-11-20 | #97 | Settings choices carry pictures (on/off, voice speed, keep messages) | local gate (Actions budget) |
