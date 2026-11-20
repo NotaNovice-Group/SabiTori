@@ -32,7 +32,7 @@ export function TeachScreen() {
   const [playUrl, setPlayUrl] = useState<string>();
   const audio = useRef<HTMLAudioElement>(null);
   const [busy, setBusy] = useState(false);
-  const [result, setResult] = useState<'sent' | 'queued' | null>(null);
+  const [result, setResult] = useState<'sent' | 'queued' | 'failed' | null>(null);
   const [items, setItems] = useState<TaughtItem[]>(() => taughtItems());
   const streak = useMemo(() => teachStreak(items), [items]);
 
@@ -84,6 +84,7 @@ export function TeachScreen() {
     });
     setBusy(false);
     setResult(r);
+    if (r === 'failed') return; // keep the phrase and the recording for another try
     setItems(taughtItems());
     setPhrase('');
     setRec(null);
@@ -165,7 +166,8 @@ export function TeachScreen() {
         <input id="teach-meaning" className="input" value={meaning} onChange={(e) => setMeaning(e.target.value)} autoComplete="off" />
       </div>
 
-      {result && (
+      {result === 'failed' && <p className="error" role="alert">{t('app.share.failed')}</p>}
+      {result && result !== 'failed' && (
         <p className="report-done" role="status">
           {result === 'sent' ? <CircleCheck size={24} strokeWidth={2} aria-hidden /> : <Clock size={24} strokeWidth={2} aria-hidden />}
           <span>{t(result === 'sent' ? 'app.teach.thanks' : communityConfigured() ? 'app.teach.queued' : 'app.teach.saved')}</span>

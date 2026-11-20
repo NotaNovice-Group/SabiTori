@@ -31,6 +31,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 
 ## Backlog (top first)
 
+- [x] **Storage full: a report or recording was lost but shown as sent.** When the outbox could not be saved
+      (a teaching with a recording can be over a megabyte) and the phone was offline, the item vanished and the
+      screen said "sent". Now sent directly when online, else an error and the form is kept for another try.
 - [x] **Public privacy page lagged the policy.** `site/privacy.html` and `privacy-fr.html` (linked from the stores)
       missed community reports, push alerts and the 90-day rule. Regenerated; `scripts/site-privacy.mjs --check` in CI and the local gate.
 - [x] **Outbox race.** A report or teaching sent while an earlier send was still running was dropped from the
@@ -534,3 +537,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #114 | Community service: 90-day retention, delete from the app (per-item key) or by email; privacy placeholders filled | local gate (Actions budget) |
 | 2026-11-20 | #115 | Outbox: an item added during a running send is no longer lost or shown as sent | local gate (Actions budget) |
 | 2026-11-20 | #117 | Public privacy pages regenerated from the policy; CI check keeps them in sync | local gate (Actions budget) |
+| 2026-11-20 | #118 | Storage full: a report or recording is never lost while shown as sent | local gate (Actions budget) |

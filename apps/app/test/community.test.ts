@@ -145,3 +145,31 @@ describe('outbox under concurrency', () => {
     expect(sentItems()).toHaveLength(2);
   });
 });
+
+describe('when the phone cannot keep an item (storage full)', () => {
+  const full = () => {
+    const real = Storage.prototype.setItem;
+    return vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, k: string, v: string) {
+      if (k === 'sabitori.outbox' && v.length > 2) throw new DOMException('quota', 'QuotaExceededError');
+      return real.call(this, k, v);
+    });
+  };
+
+  it('offline: says it failed, and does not mark the card reported or list the teaching', async () => {
+    full();
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('offline'));
+    expect(await sendScamReport('card-full', REPORT)).toBe('failed');
+    expect(wasReported('card-full')).toBe(false);
+    expect(await sendTeaching({ lang: 'dua', meaning: 'Hello', meaningLang: 'en', audio: { base64: 'AAAA', type: 'audio/webm' } })).toBe('failed');
+    expect(taughtItems()).toEqual([]);
+  });
+
+  it('online: sends it directly, without the outbox, and it can still be deleted later', async () => {
+    full();
+    const f = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('{"id":"00000009-aaaa-bbbb"}', { status: 201 }));
+    expect(await sendScamReport('card-full2', REPORT)).toBe('sent');
+    expect(JSON.parse((f.mock.calls[0]![1] as RequestInit).body as string).deleteKey).toMatch(/^[A-Za-z0-9_-]{28}$/);
+    expect(wasReported('card-full2')).toBe(true);
+    expect(sentItems().map((s) => s.id)).toEqual(['00000009-aaaa-bbbb']);
+  });
+});
