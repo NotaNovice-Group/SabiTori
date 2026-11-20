@@ -334,6 +334,24 @@ export const EXTRA = x({
   'app.pilot.reset': { en: 'Start counting again', fr: 'Recommencer à compter', context: 'Button.' },
   'app.settings.clear': { en: 'Delete all my messages', fr: 'Effacer tous mes messages', context: 'Button.' },
   'app.settings.cleared': { en: 'Deleted', fr: 'Effacé', context: 'Confirmation.' },
+  'app.settings.sent': { en: 'What you shared', fr: 'Ce que vous avez partagé', context: 'Settings section: scam reports and teachings the person chose to send to the SabiTori community service.' },
+  'app.settings.sent_hint': {
+    en: 'Scam reports and words you taught are kept by SabiTori for 90 days, then deleted. You can delete them sooner here, or by writing to legal@usesabitori.com.',
+    fr: 'Les signalements d’arnaque et les mots que vous avez appris à SabiTori sont gardés 90 jours, puis effacés. Vous pouvez les effacer plus tôt ici, ou en écrivant à legal@usesabitori.com.',
+    context: 'Retention and deletion of what the person sent. Keep "90 days" and the email address exactly.',
+  },
+  'app.settings.sent_delete': { en: 'Delete everything I sent', fr: 'Effacer tout ce que j’ai envoyé', context: 'Button: asks the service to delete every report and teaching this phone sent.' },
+  'app.settings.sent_confirm_hint': {
+    en: 'SabiTori will delete every scam report and every word or recording this phone sent. A report already shown to others is removed from the list too. It cannot be undone.',
+    fr: 'SabiTori va effacer chaque signalement d’arnaque et chaque mot ou enregistrement envoyé par ce téléphone. Un signalement déjà montré aux autres est aussi retiré de la liste. Impossible d’annuler.',
+    context: 'Confirmation before deleting what was sent.',
+  },
+  'app.settings.sent_deleted': { en: 'Deleted from SabiTori', fr: 'Effacé de SabiTori', context: 'Status after deletion succeeded.' },
+  'app.settings.sent_left': {
+    en: 'No internet: {n} still to delete. Try again when you are connected.',
+    fr: 'Pas d’internet : encore {n} à effacer. Réessayez quand vous êtes connecté.',
+    context: 'Status when some items could not be deleted yet.',
+  },
   'app.nav.home': { en: 'Home', fr: 'Accueil', context: 'Button in the top bar of every inner screen: go to the first screen of the app.' },
   'app.settings.restart': { en: 'Start again from the beginning', fr: 'Recommencer depuis le début', context: 'Button in Settings. SabiTori has no account, so this is its "sign out": it deletes the kept messages and shows the language choice again.' },
   'app.settings.restart_hint': {

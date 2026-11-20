@@ -159,8 +159,18 @@ choose to record it, your voice saying it. It helps add languages to SabiTori. R
 only when you tap Record.
 
 **To whom.** The SabiTori community service run by NotaNovice. It sees your IP address, as for any request.
-How long it keeps reports and teachings: [OWNER: retention of the community service]. If you are offline, the item
-waits on your phone and is sent later; you can delete it before it is sent.
+It does not keep your IP address (the daily sending limit counts a scrambled form of it, deleted after two days).
+
+**How long, and how to delete.** The service keeps reports, teachings and recordings for **90 days**, then deletes
+them automatically. You can have them deleted sooner at any time:
+
+- **In the app:** Settings, "What you shared", "Delete everything I sent". With each item your phone sends a random
+  secret that only your phone keeps; the service stores only a scrambled form (hash) of it, so only your phone can
+  delete what it sent, with no account. Anything still waiting in the outbox is deleted too.
+- **By email:** write to legal@usesabitori.com. Say roughly when you sent it and what it said (for example the
+  scam message or the word you taught), so we can find it, since nothing in it names you.
+
+If you are offline, the item waits on your phone and is sent later; "Delete everything I sent" also removes it.
 
 ## 6. Permissions
 

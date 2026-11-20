@@ -6,6 +6,9 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Community service retention and deletion: reports, teachings and recordings are deleted after 90 days (daily
+  cron); "Delete everything I sent" in Settings deletes them sooner with a per-item secret only the phone keeps (the
+  service stores its hash); or by email to legal@usesabitori.com. Migration `0002_retention_and_deletion.sql`.
 - Instant scam alerts (opt-in, push builds): Firebase Cloud Messaging by region and language topic; no token until
   switched on, deleted when switched off. `scripts/push-alert.mjs` sends an alert.
 - Scam alerts: short warnings published with a signed update reach phones that turned updates on, as a notification

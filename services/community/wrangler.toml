@@ -12,6 +12,10 @@ database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
 binding = "AUDIO"
 bucket_name = "sabitori-teach-audio"
 
+# Once a day: delete reports, teachings and recordings older than 90 days (docs/privacy.md, 5.4).
+[triggers]
+crons = ["17 3 * * *"]
+
 [vars]
 # Origins allowed to call the service: the Android app (https://localhost), the iOS app (capacitor://localhost)
 # and the web app. Comma-separated.

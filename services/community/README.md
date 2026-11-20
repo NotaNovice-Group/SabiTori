@@ -11,6 +11,24 @@ Opt-in, owner-run service behind two app features:
 No IP address, device id or account is stored. A daily, salted hash of the address only counts posts for the rate
 limit (30 per day by default). Everything else is in `schema.sql`.
 
+## Retention and deletion
+
+- **90 days.** A daily cron (`[triggers]` in `wrangler.toml`) deletes reports, teachings and their recordings older
+  than 90 days (`purgeOld` in `src/handler.ts`).
+- **From the app.** With each item the app sends a random `deleteKey` that only the phone keeps; the service stores
+  its SHA-256 (`delete_hash`). Settings, "Delete everything I sent" calls `POST /v1/delete {kind, id, key}` for each
+  item: 200 deleted (with its recording), 404 already gone or a wrong key.
+- **By email** (legal@usesabitori.com): find the item with the admin list (`GET /v1/admin/scams`,
+  `GET /v1/admin/teachings`) and delete it in D1:
+  `npx wrangler d1 execute sabitori-community --remote --command "DELETE FROM scam_reports WHERE id = '<id>'"`
+  (for a teaching, also `npx wrangler r2 object delete sabitori-teach-audio/<audio_key>`).
+
+A database created before this change needs the migration once:
+
+```bash
+npx wrangler d1 execute sabitori-community --remote --file=services/community/migrations/0002_retention_and_deletion.sql
+```
+
 ## Deploy (Cloudflare, free tier is enough)
 
 You need a Cloudflare account and Node 22. From the repository root:

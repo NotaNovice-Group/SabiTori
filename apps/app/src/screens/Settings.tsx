@@ -8,6 +8,7 @@ import { LanguageList } from '../components/LanguageList';
 import { Sheet } from '../components/Sheet';
 import { navigate } from '../lib/router';
 import { clearCards } from '../lib/db';
+import { communityConfigured, deleteAllSent, sentItems } from '../lib/community';
 import { formatSize } from '../lib/format';
 import { config, anyConnected } from '../config';
 import { clearUpdates, forgetQuarantine, loadMemo, loadQuarantine, runUpdateCheck, type UpdateMemo } from '../lib/updates';
@@ -274,6 +275,8 @@ export function SettingsScreen() {
         </section>
       )}
 
+      {(communityConfigured() || sentItems().length > 0) && <SentPanel />}
+
       <section className="panel" aria-labelledby="s-priv">
         <h2 id="s-priv" className="panel-title">{t('app.settings.privacy')}</h2>
         <p className="panel-strong">{t('ui.privacy')}</p>
@@ -381,6 +384,42 @@ function PushPanel() {
         ]}
       />
       {note && <p className="panel-hint" role="status">{t(`app.push.${note}`)}</p>}
+    </section>
+  );
+}
+
+/** Reports and teachings this phone shared: kept 90 days by the service, deletable from here at any time. */
+function SentPanel() {
+  const { t } = useApp();
+  const [confirm, setConfirm] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [done, setDone] = useState<{ left: number } | null>(null);
+  return (
+    <section className="panel" aria-labelledby="s-sent">
+      <h2 id="s-sent" className="panel-title">{t('app.settings.sent')}</h2>
+      <p className="panel-hint">{t('app.settings.sent_hint')}</p>
+      <SpeakingButton speakKey="app.settings.sent_delete" variant="secondary" icon={<Trash2 size={24} strokeWidth={2} aria-hidden />} disabled={busy} onAct={() => { setDone(null); setConfirm(true); }} />
+      <p className="panel-hint" role="status">{done ? (done.left ? t('app.settings.sent_left', { n: String(done.left) }) : t('app.settings.sent_deleted')) : ''}</p>
+      {confirm && (
+        <Sheet title={t('app.settings.sent_delete')} onClose={() => !busy && setConfirm(false)}>
+          <div className="confirm">
+            <p>{t('app.settings.sent_confirm_hint')}</p>
+            <SpeakingButton speakKey="app.settings.clear_keep" variant="secondary" disabled={busy} onAct={() => setConfirm(false)} />
+            <SpeakingButton
+              speakKey="app.settings.sent_delete"
+              variant="danger"
+              icon={<Trash2 size={24} strokeWidth={2} aria-hidden />}
+              disabled={busy}
+              onAct={async () => {
+                setBusy(true);
+                setDone(await deleteAllSent());
+                setBusy(false);
+                setConfirm(false);
+              }}
+            />
+          </div>
+        </Sheet>
+      )}
     </section>
   );
 }

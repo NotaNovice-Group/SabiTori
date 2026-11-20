@@ -1,4 +1,4 @@
-import { handle } from './handler';
+import { handle, purgeOld } from './handler';
 import { d1Store, r2Blobs, type D1Like, type R2Like } from './d1-store';
 
 interface Bindings {
@@ -11,6 +11,10 @@ interface Bindings {
 }
 
 export default {
+  // Daily (wrangler.toml [triggers]): delete reports, teachings and recordings older than 90 days.
+  async scheduled(_event: unknown, b: Bindings): Promise<void> {
+    await purgeOld(d1Store(b.DB), r2Blobs(b.AUDIO), new Date());
+  },
   fetch(req: Request, b: Bindings): Promise<Response> {
     return handle(req, {
       store: d1Store(b.DB),

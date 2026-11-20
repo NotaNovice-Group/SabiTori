@@ -21,7 +21,9 @@ answers below need these additions in the Play Console:
 The merged manifest now also lists RECORD_AUDIO and MODIFY_AUDIO_SETTINGS (Teach, asked only on Record),
 ACCESS_NETWORK_STATE and com.google.android.c2dm.permission.RECEIVE (instant alerts). Re-check with
 `aapt dump permissions` on the release APK. Encryption in transit: yes (https). Deletion: alerts switched off delete the
-token; [OWNER: how a person asks the community service to delete a report or a teaching].
+token; reports and teachings are deleted automatically after 90 days, and earlier on request, in the app (Settings,
+"Delete everything I sent") or by email to legal@usesabitori.com. Answer "Yes" to "Do you provide a way for users to
+request that their data is deleted?".
 
 ## 1. Data collection and security (overview)
 
