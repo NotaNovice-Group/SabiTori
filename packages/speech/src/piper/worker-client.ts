@@ -1,4 +1,4 @@
-import { voiceKey, type PiperAudio, type PiperEngine, type PiperEngineFactory, type PiperVoiceSpec } from './engine.js';
+import { voiceKey, type PiperAudio, type PiperEngine, type PiperVoiceSpec } from './engine.js';
 import type { WorkerRequest, WorkerResponse } from './worker-protocol.js';
 
 export interface WorkerLike {
@@ -15,7 +15,15 @@ export interface WorkerLike {
  * `assetBase` is an absolute URL ending in "/" where the espeak-ng wasm and data are served; `ortBase` is where the
  * onnxruntime-web files are (the app shares one copy with the encoder; defaults to `assetBase`).
  */
-export function createWorkerEngines(opts: { createWorker: () => WorkerLike; assetBase: string; ortBase?: string }): PiperEngineFactory & { terminate(): void } {
+export function createWorkerEngines<V extends PiperVoiceSpec = PiperVoiceSpec>(opts: {
+  createWorker: () => WorkerLike;
+  assetBase: string;
+  ortBase?: string;
+  /** Names the worker in error messages. Default "Piper". */
+  name?: string;
+  /** onnxruntime-web threads inside the worker. Default 1 (more needs a cross-origin isolated page). */
+  threads?: number;
+}): ((voice: V) => PiperEngine) & { terminate(): void } {
   let worker: WorkerLike | null = null;
   let seq = 0;
   const pending = new Map<number, { resolve: (r: WorkerResponse) => void; reject: (e: Error) => void }>();
@@ -29,7 +37,7 @@ export function createWorkerEngines(opts: { createWorker: () => WorkerLike; asse
     worker?.terminate();
     worker = null;
     live.clear();
-    failAll('Piper worker stopped');
+    failAll(`${opts.name ?? 'Piper'} worker stopped`);
   };
   const get = (): WorkerLike => {
     if (worker) return worker;
@@ -59,11 +67,11 @@ export function createWorkerEngines(opts: { createWorker: () => WorkerLike; asse
       }
     });
 
-  const factory = ((voice: PiperVoiceSpec): PiperEngine => {
+  const factory = ((voice: V): PiperEngine => {
     const key = voiceKey(voice);
     return {
     async load() {
-      const r = await call((id) => ({ id, type: 'load', voice, assetBase: opts.assetBase, ortBase: opts.ortBase }));
+      const r = await call((id) => ({ id, type: 'load', voice, assetBase: opts.assetBase, ortBase: opts.ortBase, ...(opts.threads && opts.threads > 1 ? { threads: opts.threads } : {}) }));
       if (!r.ok) throw new Error(r.error);
       live.add(key);
     },
@@ -80,7 +88,7 @@ export function createWorkerEngines(opts: { createWorker: () => WorkerLike; asse
       if (live.size === 0) setTimeout(() => live.size === 0 && terminate(), 0);
     },
     };
-  }) as PiperEngineFactory & { terminate(): void };
+  }) as ((voice: V) => PiperEngine) & { terminate(): void };
   factory.terminate = terminate;
   return factory;
 }
