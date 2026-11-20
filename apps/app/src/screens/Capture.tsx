@@ -8,7 +8,7 @@ import { navigate } from '../lib/router';
 import { session } from '../lib/session';
 import { buildInput, uniqueCard } from '../lib/open';
 import { isSharp, measureSharpness } from '../lib/sharpness';
-import { ocrSupported, recognise, OcrUnsupportedError } from '../lib/ocr';
+import { ocrSupported, recognise, OcrUnsupportedError, lastOcrError } from '../lib/ocr';
 import { todayIso } from '../lib/format';
 import { rememberMessage } from '../lib/crash';
 import { isNative } from '../lib/native';
@@ -23,6 +23,7 @@ export function CaptureScreen() {
   const [phase, setPhase] = useState<Phase>('checking');
   const [progress, setProgress] = useState(0);
   const [forced, setForced] = useState(0);
+  const [detail, setDetail] = useState('');
   const [notice] = useState(() => session.takeNotice());
   const input = useRef<HTMLInputElement>(null);
   const native = isNative();
@@ -75,7 +76,12 @@ export function CaptureScreen() {
         if (e instanceof OcrUnsupportedError) {
           setPhase('unsupported');
           say('app.capture.no_ocr');
-        } else setPhase('error');
+        } else {
+          // Name what broke (never the message itself), so a report from a phone can be acted on.
+          const what = `${(e as Error)?.name ?? 'Error'}: ${String((e as Error)?.message ?? e).slice(0, 120)}`;
+          setDetail(lastOcrError && !what.includes(lastOcrError) ? `${lastOcrError} · ${what}` : what);
+          setPhase('error');
+        }
       }
     })();
     // Leaving the screen, or a new photo, cancels this reading (and frees the OCR worker for the next).
@@ -119,6 +125,7 @@ export function CaptureScreen() {
     >
       {url && <img className="preview" src={url} alt="" data-busy={busy || undefined} />}
       <p className="status" role="status" aria-live="polite" data-failed={failed || undefined}>{status}</p>
+      {phase === 'error' && detail && <p className="note error-detail">{detail}</p>}
       {notice && <p className="note" role="note">{t(notice)}</p>}
       {phase === 'reading' && (
         <div className="bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)} aria-label={t('ui.reading')}>

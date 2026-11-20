@@ -11,6 +11,10 @@ import { CaptureScreen } from './screens/Capture';
 import { CardRoute } from './screens/Card';
 import { ExampleRoute } from './screens/Example';
 import { SettingsScreen } from './screens/Settings';
+import { ScamsScreen } from './screens/Scams';
+import { TeachScreen } from './screens/Teach';
+import { TabBar, tabOf } from './components/TabBar';
+import { communityConfigured, flushOutbox } from './lib/community';
 import { navigate } from './lib/router';
 import { config } from './config';
 import { maybeBackgroundCheck } from './lib/updates';
@@ -34,6 +38,15 @@ function Routes() {
     return () => window.clearTimeout(id);
   }, [engine]);
 
+  // Scam reports and teachings the person chose to send while offline: sent when the network is back.
+  useEffect(() => {
+    if (!communityConfigured()) return;
+    void flushOutbox();
+    const on = () => void flushOutbox();
+    window.addEventListener('online', on);
+    return () => window.removeEventListener('online', on);
+  }, []);
+
   // Optional network features: each does nothing unless configured at build time AND switched on.
   useEffect(() => {
     if (config.updates && settings.updatesOn) maybeBackgroundCheck({ enabled: true });
@@ -55,6 +68,17 @@ function Routes() {
   }, [firstRun]);
   // Not set up yet: the language screen is rendered at once, whatever the address says.
   if (firstRun) return <LanguageScreen />;
+  const onboarding = head === 'welcome' || head === 'mode';
+  return (
+    <>
+      <Screens head={head} arg={arg} query={route.query} />
+      {!onboarding && <TabBar active={tabOf(head)} />}
+    </>
+  );
+}
+
+function Screens({ head, arg, query }: { head: string; arg: string; query: URLSearchParams }) {
+  const route = { query };
   switch (head) {
     case 'welcome': return <LanguageScreen />;
     case 'mode': return <ModeScreen />;
@@ -65,6 +89,8 @@ function Routes() {
     case 'example': return <ExampleRoute key={arg} id={arg} />;
     case 'card': return <CardRoute key={arg} id={arg} />;
     case 'settings': return <SettingsScreen />;
+    case 'scams': return <ScamsScreen />;
+    case 'teach': return <TeachScreen />;
     case 'about': return <Suspense fallback={null}><AboutScreen /></Suspense>;
     default: return <HomeScreen key={route.query.get('s') ?? ''} />;
   }

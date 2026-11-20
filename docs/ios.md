@@ -27,6 +27,8 @@ exists, how to build it on a Mac, and, plainly, what has not been tested.
 | Used for | Plugin | iOS |
 | --- | --- | --- |
 | Take or choose a photo | `@capacitor/camera` | Yes |
+| Read the text of a photo | `SabiToriVision` (project's own Swift plugin, `ios/App/App/SabiToriVisionPlugin.swift`, registered by `MainViewController.swift`) | Yes. Apple's Vision framework (`VNRecognizeTextRequest`, accurate, fr-FR and en-US), on the device. Replaced tesseract.js on iOS on 2026-11-20 after "Reading failed" on a real iPhone for both camera and gallery photos; tesseract stays the reader on Android and the web and is the fallback on iOS if Vision fails. |
+| Record a phrase (Teach) | Web `MediaRecorder` in WKWebView | Yes (iOS 14.3+). `NSMicrophoneUsageDescription` in `Info.plist`; asked only when the person taps Record. |
 | Reminders | `@capacitor/local-notifications` | Yes. Notification channels are Android-only, so the app skips `createChannel` on iOS (it would reject there and the reminder would fail). |
 | Splash screen | `@capacitor/splash-screen` | Yes |
 | System voice under Piper | `@capacitor-community/text-to-speech` | Yes (AVSpeechSynthesizer). Which languages it offers is the phone's choice. |
@@ -63,7 +65,7 @@ cd apps/app/ios/App && xcodebuild -project App.xcodeproj -scheme App -sdk iphone
   fixes on its first run.
 - Piper voices (Web Worker, WebAssembly, Web Audio) in iOS WebKit: unverified. iOS may need a tap before audio plays;
   if Piper cannot start, the system voice (`text-to-speech`) is the fallback.
-- OCR (tesseract.js worker with WebAssembly SIMD, needs iOS 16.4 or newer) and the MiniLM encoder (onnxruntime-web
+- OCR on iOS is now Apple Vision (see the table); the MiniLM encoder (onnxruntime-web
   WebAssembly) in iOS WebKit: unverified, including memory limits on older iPhones. On iOS 15 to 16.3 the app should
   say photos cannot be read and keep the paste-text path.
 - Camera and photo picker permissions, the "denied" path and opening Settings by `app-settings:`.

@@ -57,7 +57,7 @@ offline. See `docs/model.md`, section "Voices".
 | piper-phonemize (the layer that calls espeak-ng and maps phonemes) | compiled into `piper_phonemize.wasm` | as built in `@diffusionstudio/piper-wasm` 1.0.0 | MIT | https://github.com/rhasspy/piper-phonemize |
 | `@diffusionstudio/piper-wasm` (the WebAssembly build of the two above) | build input; files copied by `scripts/piper-assets.mjs` | 1.0.0 | MIT | https://github.com/diffusion-studio/piper-wasm |
 | onnxruntime-web (runs the voice model; CPU/WebAssembly, single thread) | `public/piper/ort.wasm.min.mjs`, `ort-wasm-simd-threaded.{mjs,wasm}` | 1.22.0 | MIT | https://github.com/microsoft/onnxruntime , third-party notices of ONNX Runtime: https://github.com/microsoft/onnxruntime/blob/main/ThirdPartyNotices.txt |
-| Piper voice model `fr_FR-siwis-low` | `packs/fr/voice/` | rhasspy/piper-voices at the revision pinned in `scripts/fetch-voices.mjs` | **CC BY 4.0** | https://huggingface.co/rhasspy/piper-voices/tree/main/fr/fr_FR/siwis/low |
+| Piper voice model `fr_FR-siwis-medium` | `packs/fr/voice/` | rhasspy/piper-voices at the revision pinned in `scripts/fetch-voices.mjs` | **CC BY 4.0** | https://huggingface.co/rhasspy/piper-voices/tree/main/fr/fr_FR/siwis/low |
 | Piper voice model `en_GB-alba-medium` | `packs/en/voice/` | same revision | **CC BY 4.0** | https://huggingface.co/rhasspy/piper-voices/tree/main/en/en_GB/alba/medium |
 
 Piper (https://github.com/rhasspy/piper) is the project that defined the voice model format and trained
@@ -68,11 +68,11 @@ these two voices; it is MIT-licensed. SabiTori does not include Piper's own C++ 
 Each voice has its own record in `packs/<tag>/voice/VOICE.md` (source URL, training data, licence, size,
 sha256). Summary:
 
-- **French**: `fr_FR-siwis-low`, trained on the SIWIS French Speech Synthesis Database
+- **French**: `fr_FR-siwis-medium`, trained on the SIWIS French Speech Synthesis Database
   (https://datashare.is.ed.ac.uk/handle/10283/2353), licence CC BY 4.0
   (https://creativecommons.org/licenses/by/4.0/legalcode). Model card: `packs/fr/voice/MODEL_CARD`.
   sha256 of the model `a7b7dcaf87229b32af8275cb1a719371234ea677bc0313d2289d5c50ab0ac53d`.
-  Attribution: *French voice: Piper `fr_FR-siwis-low`, trained on the SIWIS French Speech Synthesis Database (University of Edinburgh), CC BY 4.0.*
+  Attribution: *French voice: Piper `fr_FR-siwis-medium`, trained on the SIWIS French Speech Synthesis Database (University of Edinburgh), CC BY 4.0.*
 - **English**: `en_GB-alba-medium`, trained on a University of Edinburgh speech dataset
   (https://datashare.ed.ac.uk/handle/10283/3270), licence CC BY 4.0
   (https://creativecommons.org/licenses/by/4.0/legalcode). Model card: `packs/en/voice/MODEL_CARD`.

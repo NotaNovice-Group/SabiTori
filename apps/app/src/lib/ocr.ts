@@ -1,5 +1,6 @@
 import type { Worker as TessWorker } from 'tesseract.js';
 import { loadBitmap } from './sharpness';
+import { hasNativeOcr, recogniseNative } from './native-ocr';
 import { greyToRgba, preprocess, rotate90, PREP_DEFAULT, type GreyImage, type PrepOptions, type PrepReport } from './ocr-prep';
 
 /** Fully offline OCR: worker, core and traineddata are served from /ocr (copied at build, precached). */
@@ -39,8 +40,21 @@ export const OCR_CORE_FILE = 'tesseract-core-simd-lstm.wasm.js';
 /** Smallest module that uses a 128-bit SIMD instruction: WebAssembly.validate() is true only when the WebView supports it (Chrome / WebView 91+). */
 const SIMD_PROBE = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 96, 0, 1, 123, 3, 2, 1, 0, 10, 10, 1, 8, 0, 65, 0, 253, 15, 253, 98, 11]);
 
+/** The last reading failure, short and without message content, so the failure sheet can name what broke. */
+export let lastOcrError = '';
+
+/** True when tesseract (WebAssembly SIMD) can run here, whatever the native reader. */
+function webOcrSupported(): boolean {
+  try {
+    return typeof WebAssembly === 'object' && WebAssembly.validate(SIMD_PROBE);
+  } catch {
+    return false;
+  }
+}
+
 /** False when this phone's web engine cannot run the OCR core. */
 export function ocrSupported(): boolean {
+  if (hasNativeOcr()) return true; // iOS: Apple's Vision reads the photo (native-ocr.ts)
   try {
     return typeof WebAssembly === 'object' && WebAssembly.validate(SIMD_PROBE);
   } catch {
@@ -61,7 +75,7 @@ function ocrBase(): string {
 
 async function getWorker(): Promise<TessWorker> {
   worker ??= (async () => {
-    if (!ocrSupported()) throw new OcrUnsupportedError();
+    if (!webOcrSupported()) throw new OcrUnsupportedError();
     const { createWorker } = await import('tesseract.js');
     const base = ocrBase();
     return createWorker(OCR_LANGS, 1, {
@@ -161,6 +175,20 @@ export async function recognise(file: Blob, progress: (f: number) => void, opts:
   const job = { progress };
   const { signal } = opts;
   if (signal?.aborted) throw new OcrAbortedError();
+  if (hasNativeOcr()) {
+    try {
+      progress(0.1);
+      const r = await recogniseNative(file);
+      if (signal?.aborted) throw new OcrAbortedError();
+      progress(1);
+      return tidy(r.text);
+    } catch (e) {
+      if (e instanceof OcrAbortedError) throw e;
+      // Vision failed (very old iOS, plugin missing): fall through to the web reader if this phone can run it.
+      lastOcrError = `vision: ${String((e as Error)?.message ?? e).slice(0, 120)}`;
+      if (!webOcrSupported()) throw e;
+    }
+  }
   let onAbort: (() => void) | undefined;
   const aborted = new Promise<never>((_, reject) => {
     onAbort = () => {

@@ -9,8 +9,8 @@ const DSN = 'https://abc123@o42.ingest.sentry.io/7';
 
 describe('configuration', () => {
   it('everything is absent when nothing is set', () => {
-    expect(readConfig({})).toEqual({ updates: null, crashReports: null });
-    expect(readConfig({ VITE_UPDATE_URL: '', VITE_UPDATE_PUBLIC_KEY: '', VITE_SENTRY_DSN: '' })).toEqual({ updates: null, crashReports: null });
+    expect(readConfig({})).toEqual({ updates: null, crashReports: null, community: null });
+    expect(readConfig({ VITE_UPDATE_URL: '', VITE_UPDATE_PUBLIC_KEY: '', VITE_SENTRY_DSN: '' })).toEqual({ updates: null, crashReports: null, community: null });
   });
   it('updates need an https url AND a valid key', () => {
     expect(readConfig({ VITE_UPDATE_URL: 'https://u.example/sabi/' }).updates).toBeNull();
@@ -20,6 +20,8 @@ describe('configuration', () => {
     expect(readConfig({ VITE_UPDATE_URL: 'https://u.example/sabi/', VITE_UPDATE_PUBLIC_KEY: KEY }).updates).toEqual({ url: 'https://u.example/sabi', publicKey: KEY });
   });
   it('crash reports need a DSN; environment defaults to production', () => {
+    expect(readConfig({ VITE_COMMUNITY_URL: 'https://c.example/' }).community).toEqual({ url: 'https://c.example' });
+    expect(readConfig({ VITE_COMMUNITY_URL: 'http://c.example' }).community).toBeNull();
     expect(readConfig({ VITE_SENTRY_DSN: 'nonsense' }).crashReports).toBeNull();
     expect(readConfig({ VITE_SENTRY_DSN: 'http://k@x.io/1' }).crashReports).toBeNull();
     expect(readConfig({ VITE_SENTRY_DSN: DSN }).crashReports).toEqual({ dsn: DSN, environment: 'production' });
@@ -41,6 +43,10 @@ describe('CSP', () => {
     const c = connect({ VITE_UPDATE_URL: 'https://u.example/sabi/', VITE_SENTRY_DSN: DSN });
     expect(c).toEqual(["'self'", 'blob:', 'data:', 'https://u.example', 'https://o42.ingest.sentry.io']);
     expect(buildCsp({})).not.toMatch(/\*|http:/);
+  });
+  it('adds the community service origin, https only', () => {
+    expect(connect({ VITE_COMMUNITY_URL: 'https://c.example/x' })).toEqual(["'self'", 'blob:', 'data:', 'https://c.example']);
+    expect(connect({ VITE_COMMUNITY_URL: 'http://c.example' })).toEqual(["'self'", 'blob:', 'data:']);
   });
   it('ignores invalid values', () => {
     expect(connect({ VITE_UPDATE_URL: 'http://evil.example', VITE_SENTRY_DSN: 'junk' })).toEqual(["'self'", 'blob:', 'data:']);

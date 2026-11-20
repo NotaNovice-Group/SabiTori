@@ -50,11 +50,17 @@ export function Screen({ title, back, right, children, dock, className, quietTit
   useLayoutEffect(() => {
     const d = dockEl.current;
     const r = root.current;
-    if (!d || !r) return;
+    const html = document.documentElement;
+    if (!d || !r) {
+      html.style.setProperty('--dock-h', '0px');
+      return;
+    }
     const set = () => {
       r.style.setProperty('--dock-pad', `${d.offsetHeight + 16}px`);
       // at a large text size the dock can fill most of the screen: then it scrolls with the page instead of sticking
       d.toggleAttribute('data-tall', d.offsetHeight > window.innerHeight * 0.4);
+      // The page's scroll padding (app.css) keeps focused or scrolled-to content above the dock and the tab bar.
+      html.style.setProperty('--dock-h', d.hasAttribute('data-tall') ? '0px' : `${d.offsetHeight}px`);
     };
     set();
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(set) : null;

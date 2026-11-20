@@ -20,6 +20,8 @@ interface Props {
   pressed?: boolean;
   /** Part of a radio group: exposes role=radio and aria-checked instead of aria-pressed. */
   radio?: boolean;
+  /** The page this navigation button leads to is the one on screen (aria-current="page"). */
+  current?: boolean;
   /** Never arm (e.g. Stop must act at once). */
   immediate?: boolean;
   id?: string;
@@ -30,7 +32,7 @@ interface Props {
  * Every button says its own name. Long-press speaks it. In listen-first mode the
  * first tap speaks it and arms the button; a second tap within 3 s acts.
  */
-export function SpeakingButton({ speakKey, slots, label, icon, variant = 'secondary', onAct, disabled, className, pressed, radio, immediate, id, type = 'button' }: Props) {
+export function SpeakingButton({ speakKey, slots, label, icon, variant = 'secondary', onAct, disabled, className, pressed, radio, current, immediate, id, type = 'button' }: Props) {
   const { t, say, settings } = useApp();
   const [armed, setArmed] = useState(false);
   const timer = useRef<number | undefined>(undefined);
@@ -87,6 +89,8 @@ export function SpeakingButton({ speakKey, slots, label, icon, variant = 'second
       data-armed={armed || undefined}
       role={radio ? 'radio' : undefined}
       aria-pressed={radio ? undefined : pressed}
+      aria-current={current ? 'page' : undefined}
+      data-current={current || undefined}
       aria-checked={radio ? pressed : undefined}
       disabled={disabled}
       onClick={click}

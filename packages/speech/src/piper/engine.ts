@@ -1,7 +1,7 @@
 /** What the Piper TTS backend needs from an inference engine. The real one runs in a Web Worker; tests use fakes. */
 
 export interface PiperVoiceSpec {
-  /** Model id, e.g. "fr_FR-siwis-low". Also the cache key. */
+  /** Model id, e.g. "fr_FR-siwis-medium". Also the cache key. */
   id: string;
   modelUrl: string;
   configUrl: string;

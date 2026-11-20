@@ -1,0 +1,16 @@
+{
+  "name": "@sabitori/community",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MPL-2.0",
+  "type": "module",
+  "description": "Opt-in community service: scam reports (published after review) and phrases people teach SabiTori. Cloudflare Worker + D1 + R2.",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
+  }
+}

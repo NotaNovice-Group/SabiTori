@@ -154,7 +154,7 @@ Runtime files (staged into `public/piper/` by `scripts/piper-assets.mjs`): ORT w
 
 | Pack | Voice | Licence | Size |
 | --- | --- | --- | --- |
-| fr | `fr_FR-siwis-low` (16 kHz) | CC BY 4.0 | 28.1 MB |
+| fr | `fr_FR-siwis-medium` (22.05 kHz) | CC BY 4.0 | 63.2 MB |
 | en | `en_GB-alba-medium` (22.05 kHz) | CC BY 4.0 | 63.2 MB |
 
 Together over 80 MB, so the `.onnx` files are git-ignored: `node scripts/fetch-voices.mjs` restores them from a pinned Hugging Face revision and verifies sha256, and the app build runs it when a model is missing (offline build: it warns and the app uses the phone voice). No English voice at or below about 30 MB with a redistributable licence exists in rhasspy/piper-voices (no `x_low`; all `low` English voices are 63 MB). Records: `packs/<tag>/voice/VOICE.md`, `THIRD_PARTY_NOTICES.md`.
