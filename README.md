@@ -1,6 +1,6 @@
 # SabiTori
 
-SabiTori ("understand the story" in Cameroonian Pidgin) explains official messages out loud.
+SabiTori ("Know how to Communicate" in Cameroonian Pidgin) explains official messages out loud.
 A person photographs or shares a bill, a mobile money SMS, a hospital or school paper, and
 SabiTori tells them, in French or English today, in Cameroonian Pidgin as a draft (other languages as their communities
 record them):
