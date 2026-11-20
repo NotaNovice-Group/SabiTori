@@ -60,7 +60,7 @@ describe('voice recipe: can the app use the voice', () => {
   });
 
   it('refuses an espeak voice and a broken config', () => {
-    const fr = JSON.parse(readFileSync(resolve(__dirname, '../../../packs/fr/voice/fr_FR-siwis-low.onnx.json'), 'utf8'));
+    const fr = JSON.parse(readFileSync(resolve(__dirname, '../../../packs/fr/voice/fr_FR-siwis-medium.onnx.json'), 'utf8'));
     expect(checkVoice(fr, ['Bonjour.']).problems[0]).toMatch(/phoneme_type is "espeak"/);
     expect(checkVoice({}, ['x']).ok).toBe(false);
   });

@@ -126,6 +126,11 @@ export const EXTRA = x({
   'app.settings.on': { en: 'On', fr: 'Oui', context: 'Switch state.' },
   'app.settings.off': { en: 'Off', fr: 'Non', context: 'Switch state.' },
   'app.settings.speed': { en: 'Speaking speed', fr: 'Vitesse de la voix', context: 'Setting name.' },
+  'app.settings.voice_tip': {
+    en: 'For a smoother voice, download a better one on this iPhone: Settings, Accessibility, Spoken Content, Voices. Choose your language and download a voice marked Enhanced or Premium. SabiTori uses it at once.',
+    fr: 'Pour une voix plus douce, téléchargez-en une meilleure sur cet iPhone : Réglages, Accessibilité, Contenu énoncé, Voix. Choisissez votre langue et téléchargez une voix « améliorée » ou « premium ». SabiTori l’utilise aussitôt.',
+    context: 'Settings, under speaking speed, only on an iPhone that has no Enhanced/Premium voice for the language. Names the iOS menu path as shown on the phone.',
+  },
   'app.settings.speed.normal': { en: 'Normal', fr: 'Normale', context: 'Speed step.' },
   'app.settings.speed.slow': { en: 'Slow', fr: 'Lente', context: 'Speed step.' },
   'app.settings.speed.slower': { en: 'Very slow', fr: 'Très lente', context: 'Speed step.' },

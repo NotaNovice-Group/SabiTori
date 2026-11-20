@@ -28,12 +28,12 @@ const BASE = `https://huggingface.co/rhasspy/piper-voices/resolve/${REVISION}`;
 export const VOICES = [
   {
     tag: 'fr',
-    id: 'fr_FR-siwis-low',
-    path: 'fr/fr_FR/siwis/low',
+    id: 'fr_FR-siwis-medium',
+    path: 'fr/fr_FR/siwis/medium',
     files: {
-      'fr_FR-siwis-low.onnx': 'a7b7dcaf87229b32af8275cb1a719371234ea677bc0313d2289d5c50ab0ac53d',
-      'fr_FR-siwis-low.onnx.json': '9722527d748c284f6dd7639c4b4e661853d4f7d4514079571f67d6a97a652b69',
-      MODEL_CARD: 'ba5175f04dadf9ce2d0e19b9ae2164320f1ada740377166620259e321470d488',
+      'fr_FR-siwis-medium.onnx': '641d1ab097da2b81128c076810edb052b385decc8be3381814802a64a73baf99',
+      'fr_FR-siwis-medium.onnx.json': '39479916c2db192b5ac9764daddd0c744d83e023ad890c6976c0633ae4df8959',
+      MODEL_CARD: 'bd8b8d079d4d3d2c4cc20345889bbcd586d72f021a132f93357a763eb5232cce',
     },
   },
   {

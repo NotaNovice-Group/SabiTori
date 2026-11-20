@@ -13,6 +13,8 @@ import { config, anyConnected } from '../config';
 import { clearUpdates, forgetQuarantine, loadMemo, loadQuarantine, runUpdateCheck, type UpdateMemo } from '../lib/updates';
 import { session } from '../lib/session';
 import { pilot, pilotEnabled, pilotSummary, pilotTotals } from '../lib/pilot';
+import { nativePlatform } from '../lib/native';
+import { hasSmoothPhoneVoice } from '../engine/native-player';
 import type { UpdateResult } from '@sabitori/connect';
 import type { ModelState } from '../engine';
 import type { Retention, SpeedStep } from '../lib/settings';
@@ -20,7 +22,17 @@ import type { Retention, SpeedStep } from '../lib/settings';
 declare const __APP_VERSION__: string;
 
 export function SettingsScreen() {
-  const { t, settings, setSettings, engine, refreshHistory, locale } = useApp();
+  const { t, settings, setSettings, engine, refreshHistory, locale, manifest } = useApp();
+  // iPhone only: when it has no Enhanced/Premium voice for this language, say how to download one.
+  const [voiceTip, setVoiceTip] = useState(false);
+  useEffect(() => {
+    if (nativePlatform() !== 'ios') return;
+    const voice = manifest(settings.lang)?.voice;
+    const bcp47 = voice && 'bcp47' in voice && voice.bcp47 ? voice.bcp47 : settings.lang;
+    let live = true;
+    void hasSmoothPhoneVoice(bcp47).then((ok) => live && setVoiceTip(!ok));
+    return () => { live = false; };
+  }, [settings.lang, manifest]);
   const [model, setModel] = useState<ModelState>(engine.model.state());
   const [builtin, setBuiltin] = useState(engine.understanding.state());
   const [available, setAvailable] = useState(false);
@@ -162,6 +174,7 @@ export function SettingsScreen() {
             { value: 2, key: 'app.settings.speed.slower', label: t('app.settings.speed.slower'), icon: <Snail size={24} strokeWidth={2} aria-hidden /> },
           ]}
         />
+        {voiceTip && <p className="note">{t('app.settings.voice_tip')}</p>}
       </section>
 
       <section className="panel" aria-labelledby="s-keep">

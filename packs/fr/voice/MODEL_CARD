@@ -1,9 +1,9 @@
-# Model card for siwis (low)
+# Model card for siwis (medium)
 
 * Language: fr_FR (French, France)
 * Speakers: 1
-* Quality: low
-* Samplerate: 16,000Hz
+* Quality: medium
+* Samplerate: 22,050Hz
 
 ## Dataset
 
@@ -12,4 +12,4 @@
 
 ## Training
 
-Finetuned from U.S. English Ryan voice (low quality).
+Finetuned from U.S. English lessac voice (medium quality)

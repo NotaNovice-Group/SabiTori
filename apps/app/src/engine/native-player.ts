@@ -8,6 +8,7 @@
  * through <audio>.
  */
 import { Capacitor } from '@capacitor/core';
+import { pickVoice, SMOOTH_RANK, type PhoneVoice } from './voice-pick';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import {
   createBrowserClips,
@@ -41,12 +42,47 @@ function createNativeTts(): TtsBackend {
     async speak({ text, bcp47, rate, onProgress }) {
       if (!(await can(bcp47))) throw new TtsVoiceUnavailableError(bcp47);
       onProgress?.(0);
+      // Name the best installed voice: the phone's default for a language is often its robotic "compact" one.
+      const best = pickVoice(await phoneVoices(), bcp47);
       // The plugin resolves when the utterance finishes and rejects on engine errors.
-      await TextToSpeech.speak({ text, lang: bcp47, rate, pitch: 1, volume: 1, category: 'playback' });
+      await TextToSpeech.speak({ text, lang: bcp47, rate, pitch: 1, volume: 1, category: 'playback', ...(best ? { voice: best.index } : {}) });
       onProgress?.(1);
     },
     cancel() {
       void TextToSpeech.stop().catch(() => undefined);
+    },
+  };
+}
+
+let voiceList: Promise<PhoneVoice[]> | null = null;
+/** The phone's installed voices, read once (index order is what `speak({ voice })` expects). */
+export function phoneVoices(): Promise<PhoneVoice[]> {
+  voiceList ??= TextToSpeech.getSupportedVoices().then(
+    (r) => (r.voices ?? []).map((v) => ({ voiceURI: v.voiceURI ?? '', name: v.name ?? '', lang: v.lang ?? '' })),
+    () => [],
+  );
+  return voiceList;
+}
+
+/** True when this phone has a smooth (Enhanced, Premium or Siri) voice for the language. */
+export async function hasSmoothPhoneVoice(bcp47: string): Promise<boolean> {
+  return (pickVoice(await phoneVoices(), bcp47)?.rank ?? -1) >= SMOOTH_RANK;
+}
+
+/**
+ * iPhone: its Enhanced, Premium and Siri voices are smoother than the bundled Piper voices, so they speak
+ * whenever the phone has one for the language; Piper (and then the compact system voice) otherwise.
+ */
+function preferSmoothPhoneVoice(system: TtsBackend, piper: TtsBackend): TtsBackend {
+  let active: TtsBackend = piper;
+  return {
+    async speak(req) {
+      active = (await hasSmoothPhoneVoice(req.bcp47)) ? system : piper;
+      return active.speak(req);
+    },
+    cancel() {
+      system.cancel();
+      piper.cancel();
     },
   };
 }
@@ -98,10 +134,12 @@ export function createAppPlayer(
 ): Player {
   const native = Capacitor.isNativePlatform();
   const clips = resolveClip ? withOverlay(createBrowserClips(), resolveClip) : createBrowserClips();
-  const tts = createAppTts(native ? createNativeTts() : createBrowserTts(), {
+  const system = native ? createNativeTts() : createBrowserTts();
+  const piper = createAppTts(system, {
     ...(resolveClip ? { resolveUrl: resolveClip } : {}),
     ...(fetchJson ? { fetchJson } : {}),
     ...(list ? { list } : {}),
   });
+  const tts = native && Capacitor.getPlatform() === 'ios' ? preferSmoothPhoneVoice(system, piper) : piper;
   return createPlayer({ tts, clips });
 }
