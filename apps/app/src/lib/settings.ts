@@ -11,6 +11,8 @@ export interface Settings {
   updatesOn: boolean;
   /** Optional: send error reports without messages (only offered when configured). */
   crashOn: boolean;
+  /** Instant scam alerts by Firebase Cloud Messaging (push builds only, lib/push.ts). Off by default. */
+  pushOn: boolean;
 }
 
 export const SPEEDS: readonly number[] = [1, 0.8, 0.6];
@@ -24,6 +26,7 @@ export const DEFAULTS: Settings = {
   region: 'CM',
   updatesOn: false,
   crashOn: false,
+  pushOn: false,
 };
 
 const KEY = 'sabitori.settings.v1';
@@ -49,6 +52,7 @@ export function sanitize(v: unknown): Settings {
     region: typeof o.region === 'string' && o.region ? o.region : DEFAULTS.region,
     updatesOn: o.updatesOn === true,
     crashOn: o.crashOn === true,
+    pushOn: o.pushOn === true,
   };
 }
 

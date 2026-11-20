@@ -160,6 +160,11 @@ const ISO_DAY = /^\d{4}-\d{2}-\d{2}$/;
 /** A link or a phone number in an alert could send people to a scam if the channel's key were ever stolen: refused. */
 const LINK_OR_PHONE = /(https?:|www\.|\.[a-z]{2,4}\/|[+]?\d[\d .-]{7,}\d|\*\d+[*#])/i;
 
+/** An alert's title or text: 1 to `max` characters, no link, phone number or USSD code. */
+export function isSafeAlertText(s: unknown, max: number): s is string {
+  return typeof s === 'string' && s.trim().length > 0 && s.length <= max && !LINK_OR_PHONE.test(s);
+}
+
 /**
  * `regions/<CC>/alerts.json`: {"alerts": [...]}, at most 20, each with an id ([a-z0-9-], at most 40), a date and an
  * end date (yyyy-mm-dd), a title (at most 60 characters) and a text (at most 240) in French and English, and no link,

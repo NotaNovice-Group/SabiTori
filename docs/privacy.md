@@ -65,11 +65,12 @@ We do not collect or receive:
 
 SabiTori does not use tracking cookies or advertising identifiers.
 
-## 5. The two optional features
+## 5. The optional features
 
-Both features are off by default. A version of the app has them only if it was prepared with an
-update address or an error-report address. You switch each one on in Settings, after a short
-explanation. When a feature is off, the app sends nothing for it.
+Each feature below is off by default. A version of the app has it only if it was prepared with the matching
+address (update, error-report, alerts or community service). You switch each one on yourself, after a short
+explanation; scam reports and teachings are sent one at a time, only when you press Send. When a feature is off,
+the app sends nothing for it.
 
 ### 5.1 Updates ("Get new languages and scam warnings")
 
@@ -131,18 +132,52 @@ requires that setting to be enabled before the error-report feature is offered.
 
 **Switching off.** Turning the feature off closes the reporting at once. Nothing more is sent.
 
+### 5.3 Instant scam alerts ("Instant scam alerts")
+
+**What it does.** A warning reaches your phone the moment SabiTori publishes it ("A fake ENEO SMS asks for 2,000
+FCFA"). It uses Google's Firebase Cloud Messaging.
+
+**What is sent.** When you switch it on, Firebase gives this phone an anonymous token and subscribes it to one topic:
+your region and language (for example "alerts-CM-fr"). Google receives the token, the topic and your IP address, as
+for any internet request. **We never receive the token** and keep no list of phones. Your messages, cards and
+numbers are never sent. No token exists before you switch the feature on, and Firebase Analytics is not used.
+
+**To whom.** Google (Firebase Cloud Messaging), under Google's privacy policy, as our processor for delivery.
+
+**How to stop.** Switch it off in Settings: the phone leaves the topic and its token is deleted.
+
+### 5.4 Scam reports and teachings (community)
+
+**Scam report.** On a card that warns about a scam you can choose "Report this scam". The screen shows what will be
+sent: the message text (at most 1,500 characters), the sender's number or name if you gave one, the warning signs
+SabiTori found, your region, language and the app version. Nothing about you is added: no name, no number of yours.
+Reports are put together into a public list of scams, so that every SabiTori user can see that a message or a number
+was reported. **Do not report a message that contains your own private details.**
+
+**Teaching.** On the Teach screen you can send a word or phrase in your language with its meaning, and, if you
+choose to record it, your voice saying it. It helps add languages to SabiTori. Recording asks for the microphone, and
+only when you tap Record.
+
+**To whom.** The SabiTori community service run by NotaNovice. It sees your IP address, as for any request.
+How long it keeps reports and teachings: [OWNER: retention of the community service]. If you are offline, the item
+waits on your phone and is sent later; you can delete it before it is sent.
+
 ## 6. Permissions
 
-The app declares these six Android permissions. Camera and Notifications are asked for only when you use the feature. The other four are granted by Android when the app is installed, and are not shown as a question.
+The app declares these Android permissions. Camera, Microphone and Notifications are asked for only when you use the feature. The others are granted by Android when the app is installed, and are not shown as a question.
 
-- **Internet.** Used only for the two optional features in section 5.
+- **Internet.** Used only for the optional features in section 5.
 - **Camera.** Asked only when you tap the camera button. The photo is taken for SabiTori and read on your phone. Choosing a photo from your gallery uses the phone's own photo picker, which needs no permission from SabiTori.
 - **Notifications.** Asked only when you tap "Remind me" on a card with a deadline. Used only for the reminders in section 3.
 - **Receive boot completed.** Lets the reminders you set survive a restart of your phone: Android tells the app that the phone has started, so it can schedule them again. It comes with the notification component of the app. It is not used for anything else.
 - **Wake lock.** Lets the phone wake briefly to show a reminder at its time. It comes with the same notification component. It is not used for anything else.
+- **Microphone and audio settings.** Asked only when you tap Record on the Teach screen (section 5.4). The recording
+  stays on your phone unless you send it.
+- **Network state, and receiving Firebase messages.** Let instant scam alerts (section 5.3) arrive; they come with the
+  Firebase component and are not used for anything else. They do nothing while the feature is off.
 - **Vibrate.** Makes the phone vibrate when a card warns about a likely scam (three long pulses) or asks for caution (one), so a person who cannot hear feels the warning. It is not used for anything else.
 
-SabiTori does not ask for your location, contacts or microphone.
+SabiTori does not ask for your location or your contacts.
 
 ## 6a. SabiTori by SMS (relay phones)
 
@@ -151,7 +186,7 @@ SabiTori **relay phone**: a phone you can send an SMS to, which answers with the
 a relay phone, it is read on that phone to write the answer, then not kept; the relay keeps only a count of answers
 and, for one hour, the times it answered your number (to limit how many answers one number gets). Your operator
 carries the SMS, as for any SMS. The relay phone uses a separate SabiTori build, the only one with the SMS
-permissions; it is not in any app store. [OWNER: legal review of this section before a relay goes live]
+permissions; it is not in any app store.
 
 ## 7. Legal basis (GDPR)
 
@@ -194,8 +229,10 @@ On our side:
 
 - We do not sell data.
 - We do not share data for advertising. There are no ads and no analytics.
-- Service providers, only when the feature is on: Sentry, Inc. (crash reports, section 5.2), and the
-  operator of the update server (update requests, section 5.1).
+- Service providers, only when the feature is on: Sentry, Inc. (crash reports, section 5.2), the operator of the
+  update server (update requests, section 5.1), and Google (Firebase Cloud Messaging, instant alerts, section 5.3).
+- The SabiTori community service receives the scam reports and teachings you choose to send (section 5.4); scam
+  reports become part of the public list of scams.
 - Google Play handles the download and update of the app itself, under Google's own privacy policy.
 - We give data to an authority only when the law requires it. We hold no data beyond what section 5
   describes.

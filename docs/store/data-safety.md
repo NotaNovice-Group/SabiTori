@@ -9,6 +9,20 @@ Facts behind every answer (from the code and docs, not from policy wishes):
 - Android permissions, read from the merged manifest of the built release APK (`aapt dump permissions app-release-unsigned.apk`): INTERNET (only for those two features), CAMERA (only when the person taps the camera button), POST_NOTIFICATIONS (only when the person taps "Remind me"), VIBRATE (the scam warning vibration, so a deaf person feels it), RECEIVE_BOOT_COMPLETED and WAKE_LOCK. The last two come from the Capacitor local-notifications plugin, so that reminders survive a restart of the phone and can wake the phone to show a reminder. They are granted at install, ask nothing, and the app uses them for nothing else. No location, contacts, microphone or storage permission, and no billing permission. Cleartext traffic is off.
 - No accounts, no ads, no analytics, no data sale.
 
+**Update 2026-11-20 (owner approved the privacy policy changes).** Three more optional features now send data; the
+answers below need these additions in the Play Console:
+
+| Feature (privacy policy) | Data type in the form | Collected / shared | Optional | Purpose |
+| --- | --- | --- | --- | --- |
+| Instant scam alerts (5.3), Firebase Cloud Messaging | Device or other IDs (the Firebase token) | Collected (processed by Google as a service provider), not shared | Yes, off by default | App functionality |
+| Scam reports (5.4) | Messages ("Other in-app messages": the reported scam text and sender) | Collected; published in the public scam list | Yes, per report | App functionality, fraud prevention |
+| Teachings (5.4) | Audio ("Voice or sound recordings"); "Other user-generated content" (the phrase and meaning) | Collected | Yes, per teaching | App functionality (adding languages) |
+
+The merged manifest now also lists RECORD_AUDIO and MODIFY_AUDIO_SETTINGS (Teach, asked only on Record),
+ACCESS_NETWORK_STATE and com.google.android.c2dm.permission.RECEIVE (instant alerts). Re-check with
+`aapt dump permissions` on the release APK. Encryption in transit: yes (https). Deletion: alerts switched off delete the
+token; [OWNER: how a person asks the community service to delete a report or a teaching].
+
 ## 1. Data collection and security (overview)
 
 **Does your app collect or share any of the required user data types?**

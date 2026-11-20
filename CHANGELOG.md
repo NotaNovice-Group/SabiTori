@@ -6,6 +6,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Instant scam alerts (opt-in, push builds): Firebase Cloud Messaging by region and language topic; no token until
+  switched on, deleted when switched off. `scripts/push-alert.mjs` sends an alert.
 - Scam alerts: short warnings published with a signed update reach phones that turned updates on, as a notification
   and on the Scams screen; no link, number or code allowed in an alert. The relay phone shows its status as a notification.
 - Relay build (`scripts/build-relay.sh`): an Android phone with a local SIM answers SMS forwarded to it with the
@@ -56,6 +58,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Changed
 
+- Privacy policy (en, fr): instant alerts, scam reports and teachings, the microphone (Teach) and the full permission list.
 - Scams written in SMS shorthand ("stp envoi 15 000f sur ce num", "snd me 10 000 for dis numba") now warn; a number
   grouped in thousands right after "send/envoie" is read as money even without "FCFA".
 - A moved appointment written "initialement le 20/11, il est fixé au 27/11" or "now set for 4 December" shows the new date.

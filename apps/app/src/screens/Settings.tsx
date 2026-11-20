@@ -14,6 +14,8 @@ import { clearUpdates, forgetQuarantine, loadMemo, loadQuarantine, runUpdateChec
 import { session } from '../lib/session';
 import { pilot, pilotEnabled, pilotSummary, pilotTotals } from '../lib/pilot';
 import { relayEnabled } from '../lib/relay';
+import { isNative } from '../lib/native';
+import { pushEnabled, pushOff, pushOn } from '../lib/push';
 import { nativePlatform } from '../lib/native';
 import { hasSmoothPhoneVoice } from '../engine/native-player';
 import type { UpdateResult } from '@sabitori/connect';
@@ -264,6 +266,7 @@ export function SettingsScreen() {
       )}
 
       {PILOT && <PilotPanel />}
+      {PUSH && isNative() && <PushPanel />}
       {RELAY && (
         <section className="panel" aria-labelledby="s-relay">
           <h2 id="s-relay" className="panel-title">{t('app.relay.title')}</h2>
@@ -347,6 +350,40 @@ export function SettingsScreen() {
 
 const PILOT = pilotEnabled(import.meta.env as unknown as Record<string, string | undefined>);
 const RELAY = relayEnabled(import.meta.env as unknown as Record<string, string | undefined>);
+const PUSH = pushEnabled(import.meta.env as unknown as Record<string, string | undefined>);
+
+/** Instant scam alerts (push builds only): off by default; on subscribes this phone to its region's topic. */
+function PushPanel() {
+  const { t, settings, setSettings } = useApp();
+  const [note, setNote] = useState<'denied' | 'failed' | null>(null);
+  const change = async (on: boolean) => {
+    setNote(null);
+    if (!on) {
+      setSettings({ pushOn: false });
+      await pushOff(settings.region, settings.lang);
+      return;
+    }
+    const r = await pushOn(settings.region, settings.lang);
+    if (r === 'on') setSettings({ pushOn: true });
+    else setNote(r);
+  };
+  return (
+    <section className="panel" aria-labelledby="s-push">
+      <h2 id="s-push" className="panel-title">{t('app.push.title')}</h2>
+      <p className="panel-hint">{t('app.push.hint')}</p>
+      <Segmented<string>
+        label={t('app.push.title')}
+        value={settings.pushOn ? 'on' : 'off'}
+        onChange={(v) => void change(v === 'on')}
+        options={[
+          { value: 'on', key: 'app.settings.on', label: t('app.settings.on'), icon: <ToggleRight size={24} strokeWidth={2} aria-hidden /> },
+          { value: 'off', key: 'app.settings.off', label: t('app.settings.off'), icon: <ToggleLeft size={24} strokeWidth={2} aria-hidden /> },
+        ]}
+      />
+      {note && <p className="panel-hint" role="status">{t(`app.push.${note}`)}</p>}
+    </section>
+  );
+}
 
 /** Pilot builds only: the counts this phone keeps (never message content), shared only by the participant. */
 function PilotPanel() {
