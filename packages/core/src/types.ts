@@ -154,6 +154,8 @@ export interface UrgencyCues {
   withinDays?: number;
   /** An operator promotion: never urgent. */
   promo: boolean;
+  /** An amount sits next to a pay/send verb (what the guard's "nothing next to an amount to pay" checks). */
+  amountNearPay?: boolean;
 }
 
 export interface Classifier {

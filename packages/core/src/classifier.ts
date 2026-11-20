@@ -13,6 +13,7 @@ import type { RegionConfig } from './region.js';
 import type { ReadingLexicon } from './reading.js';
 import { collect, countTerms, daysBetween, fold, hasTerm } from './text.js';
 import { channelSpans, matchSender } from './sender.js';
+import { amountNearPayIn } from './guard.js';
 
 /** A dated task within this many days is urgent (day 7 counts): the card's calibration and the eval labels. */
 const URGENT_WITHIN_DAYS = 7;
@@ -135,6 +136,7 @@ export function createRulesClassifier(region: RegionConfig, lexicons: ReadingLex
       urgentWord: hasTerm(n, collect(lexicons, (l) => l.urgency.urgent)),
       ...(within !== undefined ? { withinDays: within } : {}),
       promo,
+      amountNearPay: amountNearPayIn(n, facts, lexicons),
     };
   };
   return {

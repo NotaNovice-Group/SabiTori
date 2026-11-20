@@ -70,6 +70,13 @@ function headline(r) {
           `evaluated once, it is ${fmtCI(r.sets.unseen2.accuracy.combined.all)} against ${fmtCI(r.sets.unseen2.accuracy.rules.all)}: ${verdict(r.sets.unseen2.vsRules.combined.all)}.`,
         ]
       : []),
+    ...(r.sets.unseen3
+      ? [
+          `On a third unseen set of ${r.sets.unseen3.n} messages, written by an independent author, labels checked by a second reviewer,`,
+          `never read while training the fine-tuned model and evaluated once (the number to quote), it is`,
+          `${fmtCI(r.sets.unseen3.accuracy.combined.all)} against ${fmtCI(r.sets.unseen3.accuracy.rules.all)}: ${verdict(r.sets.unseen3.vsRules.combined.all)}.`,
+        ]
+      : []),
     'Brackets are 95% bootstrap intervals; p is an exact McNemar test on the same messages. All sets are synthetic and',
     'small, so treat these as development numbers, not field accuracy',
     '([`packages/understand/eval`](packages/understand/eval), generated from `eval/results.json`).',
