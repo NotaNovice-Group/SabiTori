@@ -55,8 +55,17 @@ function Routes() {
   useEffect(() => {
     if (config.updates && settings.updatesOn) maybeBackgroundCheck({ enabled: true });
     // Scam alerts that arrived with an earlier update and were not shown yet (lib/alerts.ts).
+    if (settings.pushOn) void import('./lib/push').then((m) => m.listenForeground()).catch(() => undefined);
     if (config.updates && settings.updatesOn) void import('./lib/alerts').then((m) => m.notifyNewAlerts(settings.region, settings.lang, new Date().toISOString().slice(0, 10))).catch(() => undefined);
   }, [settings.updatesOn]);
+
+  // Instant alerts follow the language: a change moves this phone to the other language's topic.
+  const pushLang = useRef(settings.lang);
+  useEffect(() => {
+    const from = pushLang.current;
+    pushLang.current = settings.lang;
+    if (settings.pushOn && from !== settings.lang) void import('./lib/push').then((m) => m.pushMove(settings.region, from, settings.lang)).catch(() => undefined);
+  }, [settings.lang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const packVersions = useRef<Record<string, string>>({});
   packVersions.current = Object.fromEntries(languages.map((m) => [m.tag, m.version ?? '']).filter(([, v]) => v));

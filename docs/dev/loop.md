@@ -405,6 +405,15 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       (Firebase) documented as a later opt-in for the owner to decide. Tests: validator, freshness, limit notice.
 - [x] **French privacy policy in line.** `docs/privacy.fr.md` lacked the Vibrate permission (#79; it said five
       permissions), the scam alerts line (#111) and the relay section 6a (#110): added, same content as English.
+- [x] **Instant scam alerts (push), and the privacy policy brought up to date.** Firebase Cloud Messaging by topic
+      (`alerts-<CC>-<lang>`), opt-in in Settings in push builds (`VITE_PUSH=1` + the owner's google-services.json); no
+      token before opting in (auto-init off), Analytics off, token deleted when switched off; alerts shown in the app
+      only if they pass the alert rules; `scripts/push-alert.mjs` sends an alert from alerts.json and refuses one with a
+      link, number or code. Building it showed the store app also asks for the microphone (Teach recordings, added
+      with the community features) and that scam reports and teachings were missing from the privacy policy: both
+      policies (en, fr) now describe instant alerts (5.3), scam reports and teachings (5.4), the full permission list
+      and recipients; the owner approved them (relay section marker removed). Tests: topics, foreground rule,
+      publisher messages.
 
 ## Log
 
@@ -515,3 +524,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #110 | Relay build: an Android phone with a local SIM answers forwarded SMS with the card, offline | local gate (Actions budget) |
 | 2026-11-20 | #111 | Scam alerts over the signed update channel (notification + Scams screen); relay status notifications | local gate (Actions budget) |
 | 2026-11-20 | #112 | French privacy policy in line (vibration, scam alerts, relay section) | local gate (Actions budget) |
+| 2026-11-20 | #113 | Instant scam alerts by Firebase topic (opt-in); privacy policy: microphone, community reports, push | local gate (Actions budget) |

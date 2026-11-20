@@ -146,10 +146,26 @@ at most 20 alerts; a title of at most 60 and a text of at most 240 characters, i
 end date; **no link, phone number or USSD code**, so that even a stolen signing key could not send people to a scam.
 To publish: edit `regions/CM/alerts.json`, then publish an update as above.
 
-Why not instant push (Firebase Cloud Messaging) today: it needs a Firebase project, gives every phone a device token
-that Google and the publisher hold, and requires Google services on the phone; the privacy policy would change. The
-signed daily check gives the same alert within a day, with no account, token or tracking. Instant push can be added
-later as a separate opt-in. [OWNER: decide whether instant push is worth that change]
+### Instant scam alerts (push)
+
+The same alert can also arrive **at once**, by Firebase Cloud Messaging, on phones whose owner switched on "Instant
+scam alerts" in Settings (off by default; privacy policy section 5.3). The phone subscribes to one topic, its region
+and language (`alerts-CM-fr`, `alerts-CM-en`): no list of phones exists, and SabiTori never receives a device token.
+No token is created before the person switches it on (`firebase_messaging_auto_init_enabled` is false) and Firebase
+Analytics is off. While the app is open, it shows the alert itself only if it passes the alert rules (`acceptForeground`).
+
+Setting it up (owner):
+
+1. Create a Firebase project; add the Android app `cm.sabitori.app`; put its `google-services.json` in
+   `apps/app/android/app/` (not committed; the build applies Google services only when the file is there).
+2. Build with `VITE_PUSH=1` so Settings shows the switch.
+3. Create a service account with the Firebase Cloud Messaging role; keep its JSON outside the repository.
+4. Send an alert already in `regions/CM/alerts.json`:
+   `FCM_SERVICE_ACCOUNT=/path/sa.json node <vite-node.mjs> scripts/push-alert.mjs <alert-id>` (add `--dry-run` to
+   see the two messages first). The script refuses an alert that breaks the rules above.
+
+iPhone: Firebase needs an Apple Push Notifications key in the Firebase project and the iOS app set up for push;
+not done. [OWNER: Firebase project, google-services.json, service account; APNs key for iPhone]
 
 ## 2. Error reports
 
