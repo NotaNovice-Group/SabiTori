@@ -50,7 +50,8 @@ out-of-fold logits. Settings were compared only on out-of-fold "all three right"
 | 8 epochs, lr 5e-5, action loss x2, smoothing 0.1, 1,953 rows | 94.9 / 95.0 / 85.6 | 95.9 / 89.7 / 92.1 | 84.4 |
 | 8 epochs, lr 5e-5, + `g6.jsonl`, 2,115 rows | 96.0 / 95.0 / 83.1 | 97.1 / 89.5 / 92.6 | 85.3 (84.0 on the original 1,953) |
 | same, with the dated-notice guard (below) | 96.0 / 95.0 / 83.1 | 97.1 / 93.0 / 95.9 | 88.8 |
-| **shipped**: 12 epochs, lr 5e-5, + `g6.jsonl`, dated-notice guard | 96.3 / 95.8 / 83.7 | 97.0 / 93.9 / 95.8 | 89.6 |
+| 12 epochs, lr 5e-5, + `g6.jsonl`, dated-notice guard | 96.3 / 95.8 / 83.7 | 97.0 / 93.9 / 95.8 | 89.6 |
+| **shipped**: same model + promotion phrases in the packs (below) | 96.3 / 95.8 / 83.7 | 97.0 / 94.5 / 96.5 | **90.2** |
 
 12 against 8 epochs (same guard, same rows): 30 rows right only with 12, 15 only with 8, exact McNemar p = 0.036.
 The last two rows also include the rules change merged from `main` (probe 17).
@@ -77,7 +78,13 @@ faites une recharge" ("recharge" is not a pay verb in the lexicon). A looser ver
 reached 89.7% but also said "nothing" to "Tuition balance of 25,000 FCFA must be cleared before ..." and "Recharge today
 to avoid a blackout tonight", so it was not kept. Tests: `core/test/guard-dated-notice.test.ts`.
 
-What still caps the number (perfect encoder, 81 rows): urgency treats any date as a deadline ("to dispute the transaction
+**Promotion phrases.** The rules' `promoWords` (packs/fr, packs/en) lacked the wording of the README's own example of a
+genuine offer, "double your recharge today only": added "today only", "aujourd'hui seulement", "100% de bonus",
+"get double", "double bonus", "bonus x2" and close variants. A named task (pay, collect...) still overrides the promotion
+reading, so a fake prize that asks for a fee stays `pay` (`core/test/promo-today-only.test.ts`). Train out-of-fold:
+13 rows fixed, none broken, wrong "nothing" unchanged (9).
+
+What still caps the number (perfect encoder, about 80 rows): urgency treats any date as a deadline ("to dispute the transaction
 of 29 October, call ..." becomes urgent), a receipt dated today has an amount next to a date, labels disagree on
 `bring_document` against `go_to_place` ("Passez en agence avec votre CNI" is labelled both ways in the train files), and
 "Prenez vos dispositions" reads as `take_medicine` in the rules.
