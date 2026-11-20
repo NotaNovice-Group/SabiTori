@@ -180,8 +180,11 @@ a { color: inherit; text-decoration: none; }
 .topbar-back { margin-inline-start: calc(var(--s2) * -1); } /* outline stays on screen */
 /* A title that does not fit beside the back button takes the next line, full width. */
 .screen-title { font-size: var(--fs-title); line-height: 1.2; font-weight: 700; flex: 1 0 auto; max-width: 100%; min-width: 0; overflow-wrap: break-word; }
+/* A title never breaks inside a word to stay beside the buttons: it is as wide as its longest word, and when that
+   does not fit beside them it takes its own line. Never wider than the screen, so very large text never overflows. */
+.screen-title { overflow-wrap: break-word; flex: 1 1 min-content; min-width: 0; max-width: 100%; }
 .topbar-right { margin-inline-start: auto; }
-.screen-title { flex: 1 1 0; } /* shares the row with Back and Home; wraps inside its own space */
+/* (merged into the rule above: shares the row with Back and Home, and keeps its words whole) */
 .topbar-home { min-width: 56px; justify-content: center; }
 .topbar .btn-quiet { padding-inline: var(--s3); text-decoration: none; }
 .topbar-right .btn-quiet { background: var(--surface); }
@@ -318,7 +321,7 @@ a { color: inherit; text-decoration: none; }
 .row-ic-stop { background: var(--stop); color: var(--on-stop); }
 .row-plain { display: flex; flex-wrap: nowrap; align-items: center; justify-content: space-between; gap: var(--s3); }
 .row-plain > svg { flex: none; }
-.row-plain .row-name { font-size: var(--fs-title); font-weight: 700; }
+.row-plain .row-name { font-size: var(--fs-title); font-weight: 700; flex: 1 1 auto; }
 .row-ic { margin-top: 2px; flex: none; width: 1.75rem; height: 1.75rem; }
 .row-main { display: flex; flex-direction: column; gap: var(--s2); min-width: 0; flex: 1 1 10em; }
 .row-top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s3); flex-wrap: wrap; }
