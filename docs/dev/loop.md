@@ -382,6 +382,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       bundled (project.pbxproj resources): no tracking, no tracking domains; optional error reports declared as crash
       data, not linked, not tracking; UserDefaults with reason CA92.1. docs/ios.md App Store steps point to it. Not
       built in Xcode here (Linux): the iOS workflow or a Mac build will be the first check.
+- [x] **Robustness: any input gives a card, quickly.** Empty text, spaces, emoji, a 5,600-character bill, 5,000
+      digits, OCR junk, punctuation, 800 amounts, 400 dates, 400 phone numbers: no throw, every one under 60 ms here.
+      Permanent test with a 2 s bound. (Also checked: the live landing page at sabitori.pages.dev follows main.)
 
 ## Log
 
@@ -487,3 +490,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #103 | Probe 18: genuine shorthand money talk stays clean (regression test); main reproduces after #93 | local gate (Actions budget) |
 | 2026-11-20 | #104 | Speed re-measured after the fine-tuned encoder: range now 1.3 to 2.5 s (stand-in, not a phone) | local gate (Actions budget) |
 | 2026-11-20 | #105 | iOS privacy manifest (App Store requirement), bundled; untested on a Mac | local gate (Actions budget) |
+| 2026-11-20 | #108 | Robustness test: odd and huge inputs never throw or hang | local gate (Actions budget) |
