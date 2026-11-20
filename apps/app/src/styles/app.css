@@ -701,6 +701,11 @@ a { color: inherit; text-decoration: none; }
 .has-tabbar .screen { padding-bottom: var(--tabbar-h, 0px); }
 .has-tabbar .dock { bottom: var(--tabbar-h, 0px); padding-bottom: var(--s3); }
 .has-tabbar .topbar-home { display: none; }
+/* Short screens (a phone on its side): one slim row, so the page keeps room for the buttons. */
+@media (max-height: 520px) {
+  .tab.btn-quiet { min-height: 48px; flex-direction: row; gap: var(--s2); padding-block: 4px; }
+  .tab-ic { width: 44px; height: 28px; }
+}
 
 /* ---------- Report a scam ---------- */
 .report-flagged { margin-top: calc(var(--s3) * -1); }

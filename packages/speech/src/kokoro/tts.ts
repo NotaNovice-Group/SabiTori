@@ -20,6 +20,8 @@ export interface KokoroTtsOptions {
   resolveVoice: (bcp47: string, ref?: VoiceRef) => KokoroVoiceSpec | null | Promise<KokoroVoiceSpec | null>;
   /** Speaks whatever Kokoro cannot: the Piper backend (which falls back to the phone's voice in turn). */
   fallback: TtsBackend;
+  /** Run the model once, untimed, before the speed test, so its one-time start-up cost is not judged as slowness. */
+  warmUp?: boolean;
   output?: AudioOutput;
   /** How long an utterance waits for the model (177 MB) still loading before the fallback speaks it. Default 6000. */
   loadGraceMs?: number;
@@ -55,5 +57,6 @@ export function createKokoroTts(opts: KokoroTtsOptions): PiperTts {
     split: (text) => splitForFirstAudio(splitSentences(text)),
     // warm() runs this speed test in the background, so a slow phone is found out before the first tap.
     probe: (voice) => KOKORO_PROBE[voice.lang] ?? null,
+    ...(opts.warmUp ? { warmUp: () => 'Hello.' } : {}),
   });
 }

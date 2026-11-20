@@ -120,7 +120,8 @@ export interface KokoroMemory {
   set(v: SlowVerdict): void;
 }
 
-const KOKORO_MEMORY_KEY = 'sabitori.kokoro.slow';
+// v2: verdicts made before the warm-up run (speed-test cold starts judged a fast iPhone slow) are ignored.
+const KOKORO_MEMORY_KEY = 'sabitori.kokoro.slow.v2';
 
 /** The Kokoro verdict in local storage; storage that is blocked or full just means Kokoro is tested again. */
 function localKokoroMemory(): KokoroMemory {
@@ -216,6 +217,7 @@ export function createAppTts(
     // The packs decide: a part spoken with the "en" or "fr" Piper voice files gets the Kokoro voice of that language.
     resolveVoice: createKokoroVoiceResolver(packVoice, `${base}kokoro/`),
     fallback: below,
+    warmUp: true,
     output,
     onEvent: (e) => {
       if (e.type !== 'fallback') return;
