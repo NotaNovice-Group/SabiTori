@@ -159,7 +159,7 @@ choose to record it, your voice saying it. It helps add languages to SabiTori. R
 only when you tap Record.
 
 **To whom.** The SabiTori community service run by NotaNovice. It sees your IP address, as for any request.
-It does not keep your IP address (the daily sending limit counts a scrambled form of it, deleted after two days).
+It does not keep your IP address (the daily sending limit counts a scrambled form of it, deleted within three days).
 
 **How long, and how to delete.** The service keeps reports, teachings and recordings for **90 days**, then deletes
 them automatically. You can have them deleted sooner at any time:

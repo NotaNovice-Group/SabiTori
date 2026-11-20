@@ -9,6 +9,9 @@ export interface R2Like {
   delete(key: string): Promise<unknown>;
 }
 
+/** The UTC day before `day` (YYYY-MM-DD). Rate rows from before it are deleted. */
+const yesterday = (day: string): string => new Date(Date.parse(day) - 86_400_000).toISOString().slice(0, 10);
+
 export function d1Store(db: D1Like): Store {
   return {
     async addScam(id, at, r, deleteHash) {
@@ -69,10 +72,12 @@ export function d1Store(db: D1Like): Store {
       const { results } = await db.prepare('SELECT audio_key FROM teachings WHERE created_at < ? AND audio_key IS NOT NULL').bind(before).all<{ audio_key: string }>();
       await db.prepare('DELETE FROM teachings WHERE created_at < ?').bind(before).run();
       await db.prepare('DELETE FROM scam_reports WHERE created_at < ?').bind(before).run();
+      // Rate counters too, even on a day with no post: only today's count matters.
+      await db.prepare('DELETE FROM rate WHERE day < ?').bind(yesterday(new Date().toISOString().slice(0, 10))).run();
       return results.map((r) => r.audio_key);
     },
     async bump(bucket, day) {
-      await db.prepare('DELETE FROM rate WHERE day < ?').bind(new Date(Date.parse(day) - 2 * 86_400_000).toISOString().slice(0, 10)).run();
+      await db.prepare('DELETE FROM rate WHERE day < ?').bind(yesterday(day)).run();
       const row = await db
         .prepare('INSERT INTO rate (bucket, day, n) VALUES (?, ?, 1) ON CONFLICT(bucket) DO UPDATE SET n = n + 1 RETURNING n')
         .bind(bucket, day)

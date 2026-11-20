@@ -162,8 +162,8 @@ si vous choisissez de l'enregistrer, votre voix qui le dit. Cela aide à ajouter
 L'enregistrement demande le microphone, et seulement quand vous touchez Enregistrer.
 
 **À qui.** Le service communautaire SabiTori, géré par NotaNovice. Il voit votre adresse IP, comme pour toute requête.
-Il ne garde pas votre adresse IP (la limite d'envois par jour compte une forme brouillée de celle-ci, effacée après
-deux jours).
+Il ne garde pas votre adresse IP (la limite d'envois par jour compte une forme brouillée de celle-ci, effacée en trois
+jours au plus).
 
 **Combien de temps, et comment effacer.** Le service garde les signalements, enseignements et enregistrements
 **90 jours**, puis les efface automatiquement. Vous pouvez les faire effacer plus tôt, à tout moment :

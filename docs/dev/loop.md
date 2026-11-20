@@ -31,6 +31,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 
 ## Backlog (top first)
 
+- [x] **Rate counters kept longer than the policy said, and the D1 SQL was untested.** Hashed-IP rate rows were
+      deleted only on the next post (never, on a quiet service); now also by the daily cron, three days at most, and the
+      policy says so. `services/community/test/d1-store.test.ts` runs the real SQL and migration on SQLite.
 - [x] **Deleted items still looked sent.** After "Delete everything I sent", a card still said "reported" (and could
       not be reported again) and the teaching stayed in "What you taught". Marks now cleared per deleted item.
 - [x] **Storage full: a report or recording was lost but shown as sent.** When the outbox could not be saved
@@ -541,3 +544,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #117 | Public privacy pages regenerated from the policy; CI check keeps them in sync | local gate (Actions budget) |
 | 2026-11-20 | #118 | Storage full: a report or recording is never lost while shown as sent | local gate (Actions budget) |
 | 2026-11-20 | #119 | After deletion, cards no longer say reported and teachings leave the list | local gate (Actions budget) |
+| 2026-11-20 | #120 | Community: rate counters deleted daily (3 days max, policy matches); D1 store SQL tested on SQLite | local gate (Actions budget) |
