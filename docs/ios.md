@@ -28,7 +28,7 @@ exists, how to build it on a Mac, and, plainly, what has not been tested.
 | --- | --- | --- |
 | Take or choose a photo | `@capacitor/camera` | Yes |
 | Read the text of a photo | `SabiToriVision` (project's own Swift plugin, `ios/App/App/SabiToriVisionPlugin.swift`, registered by `MainViewController.swift`) | Yes. Apple's Vision framework (`VNRecognizeTextRequest`, accurate, fr-FR and en-US), on the device. Replaced tesseract.js on iOS on 2026-11-20 after "Reading failed" on a real iPhone for both camera and gallery photos; tesseract stays the reader on Android and the web and is the fallback on iOS if Vision fails. |
-| Smooth voice (Kokoro-82M, English and French) | `SabiToriKokoro` (project's own Swift plugin, `ios/App/App/SabiToriKokoroPlugin.swift`, registered by `MainViewController.swift`) | Yes, CI-compiled only. Runs the bundled `public/kokoro/model_uint8.onnx` with Microsoft's onnxruntime (Swift package `onnxruntime-swift-package-manager`, exact version 1.28.0, added to the App target in `project.pbxproj`, not to `CapApp-SPM`), up to 4 threads (capped to the active cores). The page does the text work and sends ids + a style row; the plugin returns 24 kHz Int16 PCM. The speed guard in `packages/speech/src/kokoro/` falls back to Piper (or a smooth iPhone voice) when it is too slow. Not yet run on an iPhone. |
+| Smooth voice (Kokoro-82M, English and French) | `SabiToriKokoro` (project's own Swift plugin, `ios/App/App/SabiToriKokoroPlugin.swift`, registered by `MainViewController.swift`) | Yes, CI-compiled only. Runs the bundled `public/kokoro/model_uint8.onnx` with Microsoft's onnxruntime 1.28.0 (the official iOS build, `pod-archive-onnxruntime-c-1.28.0.zip` from download.onnxruntime.ai, pinned by checksum) through the local Swift package `ios/App/KokoroORT` (a C shim over onnxruntime's C API; added to the App target in `project.pbxproj`, not to `CapApp-SPM`, so `cap sync` leaves it alone), up to 4 threads (capped to the active cores). The page does the text work and sends ids + a style row; the plugin returns 24 kHz Int16 PCM. The speed guard in `packages/speech/src/kokoro/` falls back to Piper (or a smooth iPhone voice) when it is too slow. Not yet run on an iPhone. |
 | Record a phrase (Teach) | Web `MediaRecorder` in WKWebView | Yes (iOS 14.3+). `NSMicrophoneUsageDescription` in `Info.plist`; asked only when the person taps Record. |
 | Reminders | `@capacitor/local-notifications` | Yes. Notification channels are Android-only, so the app skips `createChannel` on iOS (it would reject there and the reminder would fail). |
 | Splash screen | `@capacitor/splash-screen` | Yes |
@@ -64,6 +64,9 @@ cd apps/app/ios/App && xcodebuild -project App.xcodeproj -scheme App -sdk iphone
 
 - Nothing was built or run on an iPhone, an iPad or a simulator when this was added. The CI workflow may still need
   fixes on its first run.
+- Why not Microsoft's `onnxruntime-swift-package-manager` package: on 2026-11-20 GitHub answered "repository not found"
+  for it (and for `microsoft/onnxruntime`) from the CI runner, so Xcode could not resolve it. KokoroORT uses the same
+  Microsoft binary directly.
 - Kokoro through `SabiToriKokoro` on a real iPhone: speed (real-time factor), memory with a 177 MB model, and how it
   sounds next to the Enhanced/Premium voices. Only compiled in CI.
 - Piper voices (Web Worker, WebAssembly, Web Audio) in iOS WebKit: unverified. iOS may need a tap before audio plays;

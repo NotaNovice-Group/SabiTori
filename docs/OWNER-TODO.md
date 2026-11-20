@@ -34,7 +34,7 @@ Total: 40 placeholders in 12 files.
 ## `docs/ios.md` (2)
 
 - [ ] `docs/ios.md:20` iOS app icon (1024 px) and launch screen
-- [ ] `docs/ios.md:81` Apple developer account
+- [ ] `docs/ios.md:84` Apple developer account
 
 ## `docs/release.md` (16)
 

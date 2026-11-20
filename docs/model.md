@@ -194,7 +194,7 @@ platform and lives in `packages/speech/src/kokoro/`; only the model run differs:
 
 | Where | Model run | When Kokoro is tried |
 | --- | --- | --- |
-| Android and iOS app | Native onnxruntime 1.28.0 (Microsoft, MIT) in the project's own Capacitor plugin `SabiToriKokoro` (`apps/app/android/.../SabiToriKokoroPlugin.java`, `apps/app/ios/App/App/SabiToriKokoroPlugin.swift`), up to 4 threads, on its own thread | Always (then the speed guard decides) |
+| Android and iOS app | Native onnxruntime 1.28.0 (Microsoft, MIT) in the project's own Capacitor plugin `SabiToriKokoro` (`apps/app/android/.../SabiToriKokoroPlugin.java`, `apps/app/ios/App/App/SabiToriKokoroPlugin.swift` with the C shim package `apps/app/ios/App/KokoroORT`), up to 4 threads, on its own thread | Always (then the speed guard decides) |
 | Web | onnxruntime-web 1.22 (WebAssembly) in its own module Web Worker | Only when the page is cross-origin isolated, so it can use several threads: with one thread it is far slower than real time (measurements below) and the 177 MB download would be wasted |
 
 - Text: split into sentences (a long first sentence is cut at a comma so the first audio comes sooner); espeak-ng

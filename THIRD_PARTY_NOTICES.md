@@ -151,7 +151,7 @@ Piper speaks. No transformers.js or kokoro-js code is included. Record: `voices/
 | Voice `af_heart` (English) | `voices/kokoro/voices/af_heart.bin` | same revision | **Apache-2.0** | same |
 | Voice `ff_siwis` (French) | `voices/kokoro/voices/ff_siwis.bin` | same revision | **Apache-2.0**; trained on the SIWIS database, CC BY 4.0 (attribution below) | same; data https://datashare.ed.ac.uk/handle/10283/2353 |
 | onnxruntime for Android (`com.microsoft.onnxruntime:onnxruntime-android`, native libraries + Java API) | Android app, runs the Kokoro model (`SabiToriKokoroPlugin.java`) | 1.28.0 | MIT | https://github.com/microsoft/onnxruntime , https://github.com/microsoft/onnxruntime/blob/main/ThirdPartyNotices.txt |
-| onnxruntime for iOS (Swift package `onnxruntime-swift-package-manager`: the `onnxruntime.xcframework` binary + Objective-C bindings) | iOS app, runs the Kokoro model (`SabiToriKokoroPlugin.swift`) | 1.28.0 | MIT | https://github.com/microsoft/onnxruntime-swift-package-manager , https://github.com/microsoft/onnxruntime |
+| onnxruntime for iOS (`onnxruntime.xcframework`, static, from Microsoft's `pod-archive-onnxruntime-c-1.28.0.zip`, sha256 `b503cf5949ab718a1dff17d1643237ecc0fecf50ad86264572dcafddb140a327`; linked through `ios/App/KokoroORT`) | iOS app, runs the Kokoro model (`SabiToriKokoroPlugin.swift`) | 1.28.0 | MIT | https://download.onnxruntime.ai , https://github.com/microsoft/onnxruntime |
 | Kokoro vocabulary (115 phoneme symbols, copied into `packages/speech/src/kokoro/text.ts`) | source code | from `tokenizer.json` of the same revision | Apache-2.0 | same |
 
 sha256: model `6607a397d77b8514065420b7c1e7320117f7aabfdb45ce15f0050c5b0fe75aea`, `af_heart.bin`
