@@ -23,15 +23,16 @@ is still the stronger proof (airplane mode visible, real voice).
 | --- | --- | --- |
 | 0:00–0:15 | Your face, or the phone on a table | [OWNER: one or two sentences: who you are, the person you saw struggle with an official message, why it matters to you] |
 | 0:15–0:25 | Status bar with airplane mode, open SabiTori | "No internet. Everything you will see runs on this cheap phone." |
-| 0:25–0:50 | "Practice with an example" → the mobile money "money sent by mistake" example (`#/example/momo`); tap Listen | "A message says someone sent money by mistake. SabiTori speaks its scam warning first, before anything else." Let the warning play. |
-| 0:50–1:15 | Home → camera → photograph the printed bill; the card appears; tap Listen | "A bill on paper. The phone reads it and speaks the card: who sent it, how much, by when, who to call." |
+| 0:25–0:50 | "Practice with an example" → the mobile money "money sent by mistake" example (`#/example/momo`); tap Listen | "A message says someone sent money by mistake. SabiTori speaks its scam warning first, before anything else." Let the warning play; the red stop sign is at the top, and the phone vibrates when the card opens (show it on the table if you can). |
+| 0:50–1:15 | Home → camera → photograph the printed bill; the card appears; tap Listen | "A bill on paper. The phone reads it and speaks the card: who sent it, how much, by when, who to call." Hold on the picture card at the top (paying hand, calendar page, the notes): "And for someone who can neither read nor hear it, the card starts with pictures." |
 | 1:15–1:30 | Tap the amount on the card: the sheet shows it highlighted in the message | "Every number comes from the message itself. Tap it and you see exactly where." |
 | 1:30–1:40 | "Remind me" on the bill card | "A reminder before the deadline." |
 | 1:40–1:50 | Tap a button once (it says its name), tap again (it acts) | "Each button says its name first, so you can use it without reading." |
 | 1:50–2:00 | Back to you, or the About screen | "Open source, offline, and built so communities can add their own languages. [OWNER: what you ask for: the pilot, the partner, the first Cameroonian language.]" |
 
 **Do not say:** that it has users, partners or a pilot unless that is true on the day; that a message is "safe"
-(the app never says so); that it speaks Pidgin, Duala or any local language yet (French and English only today);
+(the app never says so); that it speaks Duala or another local language yet; that its Cameroonian Pidgin is ready (it is a draft written
+without a native speaker and needs review);
 accuracy numbers other than those in the README, with their conditions.
 
 **After recording:** upload unlisted, put the link in the application form and in `README.md`, and keep the raw
