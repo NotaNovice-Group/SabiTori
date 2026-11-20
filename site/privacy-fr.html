@@ -52,7 +52,9 @@ des locuteurs natifs pour les traduire et les enregistrer. En attendant, ils par
 <li>Rappels d&#39;échéance. Si vous touchez « Me rappeler » sur une fiche avec une échéance, l&#39;application programme jusqu&#39;à deux notifications sur votre téléphone : à 9 h la veille de l&#39;échéance, et à 8 h le jour même. Elles affichent l&#39;expéditeur, l&#39;action et la date. Elles ne sont envoyées nulle part. Dans la version web de l&#39;application, « Me rappeler » enregistre à la place un fichier de calendrier (.ics) à l&#39;endroit de votre choix. Ce fichier contient l&#39;échéance et une copie du texte du message : gardez-le aussi privé que le document lui-même.</li>
 <li>Textes ou photos que vous partagez avec SabiTori depuis une autre application. SabiTori garde une copie privée seulement le temps de les lire, puis la supprime. Pour une photo partagée, la copie privée est supprimée dès que l&#39;application a chargé la photo dans sa mémoire de travail, avant la lecture du texte. Un texte partagé n&#39;est pas copié dans un fichier : il reste uniquement en mémoire de travail.</li>
 <li>Un SMS que vous autorisez (application Android, « Lire mon prochain SMS »). Après avoir appuyé sur ce bouton, Android surveille votre prochain SMS reçu pendant cinq minutes au plus, puis vous demande, dans sa propre fenêtre, si SabiTori peut lire ce seul message. SabiTori n&#39;a aucune autorisation de lire vos SMS et ne voit jamais votre boîte de réception. Si vous appuyez sur Autoriser, le texte de ce message est traité comme un texte collé : sur votre téléphone uniquement.</li>
-<li>Les packs de langues, alertes arnaque et numéros officiels téléchargés, si vous avez activé les mises à jour.</li>
+<li>Les packs de langues, alertes arnaque et numéros officiels téléchargés, si vous avez activé les mises à jour. Les
+alertes arnaque arrivent avec la mise à jour ; l&#39;application n&#39;envoie rien pour les recevoir et garde seulement
+la liste des alertes déjà affichées.</li>
 <li>La photo elle-même n&#39;est pas conservée par SabiTori. Elle reste en mémoire de travail pendant la lecture de son texte. Elle n&#39;est pas enregistrée dans votre galerie ni ajoutée à votre historique. Seul le texte lu est conservé, dans la fiche de l&#39;historique, pendant la durée de la section 8. Une photo prise avec l&#39;appareil photo passe d&#39;abord par un fichier temporaire que le composant appareil photo d&#39;Android écrit dans l&#39;espace de stockage propre à l&#39;application. SabiTori ne supprime pas lui-même ce fichier temporaire. SabiTori ne le transmet à aucune autre application, Android peut le nettoyer, et la désinstallation de l&#39;application le supprime.</li>
 </ul>
 <h2 id="4-ce-que-nous-ne-collectons-jamais">4. Ce que nous ne collectons jamais</h2>
@@ -66,11 +68,12 @@ des locuteurs natifs pour les traduire et les enregistrer. En attendant, ils par
 <li>la marque ou le modèle de votre téléphone.</li>
 </ul>
 <p>SabiTori n&#39;utilise ni cookies de suivi ni identifiants publicitaires.</p>
-<h2 id="5-les-deux-fonctions-facultatives">5. Les deux fonctions facultatives</h2>
-<p>Les deux fonctions sont désactivées par défaut. Une version de l&#39;application ne les contient que si elle
-a été préparée avec une adresse de mises à jour ou une adresse de rapports d&#39;erreur. Vous activez chacune
-d&#39;elles dans les Paramètres, après une courte explication. Lorsqu&#39;une fonction est désactivée, l&#39;application
-n&#39;envoie rien pour elle.</p>
+<h2 id="5-les-fonctions-facultatives">5. Les fonctions facultatives</h2>
+<p>Chaque fonction ci-dessous est désactivée par défaut. Une version de l&#39;application ne la contient que si elle a été
+préparée avec l&#39;adresse correspondante (mises à jour, rapports d&#39;erreur, alertes ou service communautaire). Vous
+activez chacune vous-même, après une courte explication ; les signalements d&#39;arnaque et les enseignements sont envoyés
+un par un, seulement quand vous appuyez sur Envoyer. Lorsqu&#39;une fonction est désactivée, l&#39;application n&#39;envoie rien
+pour elle.</p>
 <h3>5.1 Mises à jour (« Recevoir de nouvelles langues et alertes arnaque »)</h3>
 <p><strong>Ce que cela fait.</strong> Elle télécharge des fichiers signés : packs de langues, alertes arnaque et numéros
 officiels. Elle vérifie au plus une fois par jour, au démarrage de l&#39;application, en arrière-plan. Elle ne
@@ -120,16 +123,65 @@ l&#39;adresse IP de l&#39;expéditeur, sauf si le réglage du projet « Prevent 
 adresses IP) est activé. Notre liste de contrôle de publication exige que ce réglage soit activé avant de proposer la
 fonction de rapports d&#39;erreur.</p>
 <p><strong>Désactivation.</strong> Désactiver la fonction arrête immédiatement l&#39;envoi des rapports. Plus rien n&#39;est envoyé.</p>
-<h2 id="6-autorisations">6. Autorisations</h2>
-<p>L&#39;application déclare ces cinq autorisations Android. L&#39;appareil photo et les notifications ne sont demandés que lorsque vous utilisez la fonction concernée. Les trois autres sont accordées par Android à l&#39;installation de l&#39;application et ne font pas l&#39;objet d&#39;une question.</p>
+<h3>5.3 Alertes arnaques instantanées (« Alertes arnaques instantanées »)</h3>
+<p><strong>Ce que fait la fonction.</strong> Un avertissement arrive sur votre téléphone dès que SabiTori le publie (« Un faux SMS
+ENEO demande 2 000 FCFA »). Elle utilise Firebase Cloud Messaging de Google.</p>
+<p><strong>Ce qui est envoyé.</strong> Quand vous l&#39;activez, Firebase donne à ce téléphone un jeton anonyme et l&#39;inscrit à un seul
+sujet : votre région et votre langue (par exemple « alerts-CM-fr »). Google reçoit le jeton, le sujet et votre adresse
+IP, comme pour toute requête internet. <strong>Nous ne recevons jamais le jeton</strong> et ne gardons aucune liste de téléphones.
+Vos messages, fiches et numéros ne sont jamais envoyés. Aucun jeton n&#39;existe avant que vous activiez la fonction, et
+Firebase Analytics n&#39;est pas utilisé.</p>
+<p><strong>À qui.</strong> Google (Firebase Cloud Messaging), selon la politique de confidentialité de Google, comme sous-traitant
+pour la livraison.</p>
+<p><strong>Comment arrêter.</strong> Désactivez-la dans les Paramètres : le téléphone quitte le sujet et son jeton est supprimé.</p>
+<h3>5.4 Signalements d&#39;arnaque et enseignements (communauté)</h3>
+<p><strong>Signalement.</strong> Sur une fiche qui signale une arnaque, vous pouvez choisir « Signaler cette arnaque ». L&#39;écran montre
+ce qui sera envoyé : le texte du message (1 500 caractères au plus), le numéro ou le nom de l&#39;expéditeur si vous l&#39;avez
+donné, les signes d&#39;alerte trouvés par SabiTori, votre région, votre langue et la version de l&#39;application. Rien sur
+vous n&#39;est ajouté : ni votre nom, ni votre numéro. Les signalements forment une liste publique d&#39;arnaques, pour que
+chaque utilisateur de SabiTori voie qu&#39;un message ou un numéro a été signalé. <strong>Ne signalez pas un message qui contient
+vos propres informations privées.</strong></p>
+<p><strong>Enseignement.</strong> Sur l&#39;écran Apprendre, vous pouvez envoyer un mot ou une phrase dans votre langue avec son sens et,
+si vous choisissez de l&#39;enregistrer, votre voix qui le dit. Cela aide à ajouter des langues à SabiTori.
+L&#39;enregistrement demande le microphone, et seulement quand vous touchez Enregistrer.</p>
+<p><strong>À qui.</strong> Le service communautaire SabiTori, géré par NotaNovice. Il voit votre adresse IP, comme pour toute requête.
+Il ne garde pas votre adresse IP (la limite d&#39;envois par jour compte une forme brouillée de celle-ci, effacée après
+deux jours).</p>
+<p><strong>Combien de temps, et comment effacer.</strong> Le service garde les signalements, enseignements et enregistrements
+<strong>90 jours</strong>, puis les efface automatiquement. Vous pouvez les faire effacer plus tôt, à tout moment :</p>
 <ul>
-<li><strong>Internet.</strong> Utilisée uniquement pour les deux fonctions facultatives de la section 5.</li>
+<li><strong>Dans l&#39;application :</strong> Réglages, « Ce que vous avez partagé », « Effacer tout ce que j&#39;ai envoyé ». Avec chaque
+élément, votre téléphone envoie un secret au hasard que lui seul garde ; le service ne garde qu&#39;une forme brouillée
+(hachage) de ce secret : seul votre téléphone peut donc effacer ce qu&#39;il a envoyé, sans compte. Ce qui attend encore
+dans la boîte d&#39;envoi est aussi effacé.</li>
+<li><strong>Par e-mail :</strong> écrivez à <a href="mailto:legal@usesabitori.com">legal@usesabitori.com</a>. Dites à peu près quand vous l&#39;avez envoyé et ce qu&#39;il disait (par
+exemple le message d&#39;arnaque ou le mot appris), pour que nous le retrouvions, car rien dedans ne vous nomme.</li>
+</ul>
+<p>Si vous êtes hors ligne, l&#39;élément attend sur votre téléphone et est envoyé plus tard ; « Effacer tout ce que j&#39;ai
+envoyé » le retire aussi.</p>
+<h2 id="6-autorisations">6. Autorisations</h2>
+<p>L&#39;application déclare ces autorisations Android. L&#39;appareil photo, le microphone et les notifications ne sont demandés que lorsque vous utilisez la fonction concernée. Les autres sont accordées par Android à l&#39;installation de l&#39;application et ne font pas l&#39;objet d&#39;une question.</p>
+<ul>
+<li><strong>Internet.</strong> Utilisée uniquement pour les fonctions facultatives de la section 5.</li>
 <li><strong>Appareil photo.</strong> Demandée uniquement lorsque vous touchez le bouton appareil photo. La photo est prise pour SabiTori et lue sur votre téléphone. Choisir une photo dans votre galerie utilise le sélecteur de photos du téléphone, qui ne demande aucune autorisation à SabiTori.</li>
 <li><strong>Notifications.</strong> Demandées uniquement lorsque vous touchez « Me rappeler » sur une fiche avec une échéance. Utilisées uniquement pour les rappels de la section 3.</li>
 <li><strong>Réception de la fin du démarrage (boot completed).</strong> Permet aux rappels que vous avez programmés de survivre au redémarrage de votre téléphone : Android prévient l&#39;application que le téléphone a démarré, et elle peut les reprogrammer. Elle vient du composant de notifications de l&#39;application. Elle ne sert à rien d&#39;autre.</li>
 <li><strong>Maintien de l&#39;éveil (wake lock).</strong> Permet au téléphone de se réveiller brièvement pour afficher un rappel à son heure. Elle vient du même composant de notifications. Elle ne sert à rien d&#39;autre.</li>
+<li><strong>Microphone et réglages audio.</strong> Demandés uniquement quand vous touchez Enregistrer sur l&#39;écran Apprendre (section
+5.4). L&#39;enregistrement reste sur votre téléphone sauf si vous l&#39;envoyez.</li>
+<li><strong>État du réseau et réception des messages Firebase.</strong> Permettent aux alertes instantanées (section 5.3) d&#39;arriver ;
+elles viennent du composant Firebase et ne servent à rien d&#39;autre. Elles ne font rien tant que la fonction est désactivée.</li>
+<li><strong>Vibration.</strong> Fait vibrer le téléphone quand une fiche signale une arnaque probable (trois longues vibrations) ou appelle à la prudence (une), pour qu&#39;une personne qui n&#39;entend pas sente l&#39;avertissement. Elle ne sert à rien d&#39;autre.</li>
 </ul>
-<p>SabiTori ne demande ni votre position, ni vos contacts, ni votre microphone.</p>
+<p>SabiTori ne demande ni votre position, ni vos contacts.</p>
+<h2 id="6a-sabitori-par-sms-téléphones-relais">6a. SabiTori par SMS (téléphones relais)</h2>
+<p>L&#39;application sur votre téléphone n&#39;envoie jamais vos messages nulle part et n&#39;a besoin d&#39;aucune autorisation SMS.
+Par ailleurs, un partenaire peut faire fonctionner un <strong>téléphone relais</strong> SabiTori : un téléphone auquel vous pouvez
+envoyer un SMS et qui répond par SMS avec la fiche. Si vous envoyez un message à un téléphone relais, il est lu sur
+ce téléphone pour écrire la réponse, puis n&#39;est pas gardé ; le relais garde seulement le nombre de réponses et,
+pendant une heure, les heures auxquelles il a répondu à votre numéro (pour limiter le nombre de réponses par numéro).
+Votre opérateur transporte le SMS, comme pour tout SMS. Le téléphone relais utilise une version séparée de SabiTori,
+la seule qui a les autorisations SMS ; elle n&#39;est dans aucune boutique d&#39;applications.</p>
 <h2 id="7-base-juridique-rgpd">7. Base juridique (RGPD)</h2>
 <ul>
 <li><strong>Fonctions facultatives (section 5) :</strong> consentement, article 6, paragraphe 1, point a) du RGPD. Vous donnez
@@ -170,8 +222,11 @@ section 5.1). Durée : aucun journal conservé par nous ; la version 1.0.0 n&#39
 <ul>
 <li>Nous ne vendons pas de données.</li>
 <li>Nous ne partageons pas de données à des fins publicitaires. Il n&#39;y a ni publicité ni outil d&#39;analyse.</li>
-<li>Sous-traitants, uniquement lorsque la fonction est active : Sentry, Inc. (rapports d&#39;erreur, section 5.2) et
-l&#39;exploitant du serveur de mises à jour (requêtes de mise à jour, section 5.1).</li>
+<li>Sous-traitants, uniquement lorsque la fonction est active : Sentry, Inc. (rapports d&#39;erreur, section 5.2),
+l&#39;exploitant du serveur de mises à jour (requêtes de mise à jour, section 5.1) et Google (Firebase Cloud Messaging,
+alertes instantanées, section 5.3).</li>
+<li>Le service communautaire SabiTori reçoit les signalements et enseignements que vous choisissez d&#39;envoyer (section
+5.4) ; les signalements font partie de la liste publique des arnaques.</li>
 <li>Google Play gère le téléchargement et les mises à jour de l&#39;application elle-même, selon la politique de
 confidentialité de Google.</li>
 <li>Nous ne transmettons des données à une autorité que lorsque la loi l&#39;exige. Nous ne détenons aucune donnée au-delà

@@ -11,6 +11,7 @@ step "install" pnpm install --frozen-lockfile
 step "test" pnpm -r test
 step "typecheck" pnpm -r typecheck
 step "packs" node scripts/check-packs.mjs
+step "site privacy" node scripts/site-privacy.mjs --check
 step "web build" pnpm --filter @sabitori/app build
 if [ -x /opt/pw-browsers/chromium ] || [ -n "${CHROMIUM:-}" ]; then
   step "e2e" bash -c 'cd apps/app && CHROMIUM="${CHROMIUM:-/opt/pw-browsers/chromium}" pnpm e2e'

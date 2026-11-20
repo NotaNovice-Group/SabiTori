@@ -154,6 +154,7 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Fixed
 
+- The privacy policy on the website lagged the one in `docs/` (community reports, push alerts, 90-day retention); now regenerated and checked in CI.
 - A scam report or teaching sent while an earlier one was still sending was lost and shown as sent.
 
 ## [1.0.0] - [YYYY-MM-DD]
