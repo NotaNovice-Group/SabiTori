@@ -348,6 +348,11 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Settings choices in pictures.** On/off (switch on, switch off), voice speed (rabbit, turtle, snail) and how
       long messages are kept (calendar of a month, of a week, crossed calendar) now carry pictures, as the Paste
       sender choices do (#96); the chosen one keeps its check.
+- [x] **Practice examples in pictures; screen titles keep their words whole.** The practice list now shows each
+      example's kind picture (lightning = electricity bill, drop = water, phone = mobile money, gift = prize, heart =
+      hospital, cap = school; the prize stays neutral, it is the lesson). Screen titles were split mid-word
+      ("d'entraînem / ent") beside the Back and Home buttons: the title is now as wide as its longest word and takes
+      its own line when that does not fit; never wider than the screen (200 % text on 320 px: no overflow).
 
 ## Log
 
@@ -445,3 +450,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-19 | #95 | Empty home screen shows how it works in three pictures | local gate (Actions budget) |
 | 2026-11-20 | #96 | Paste: "Who sent it?" choices carry pictures | local gate (Actions budget) |
 | 2026-11-20 | #97 | Settings choices carry pictures (on/off, voice speed, keep messages) | local gate (Actions budget) |
+| 2026-11-20 | #98 | Practice examples carry pictures; screen titles never split mid-word | local gate (Actions budget) |
