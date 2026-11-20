@@ -385,6 +385,12 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Robustness: any input gives a card, quickly.** Empty text, spaces, emoji, a 5,600-character bill, 5,000
       digits, OCR junk, punctuation, 800 amounts, 400 dates, 400 phone numbers: no throw, every one under 60 ms here.
       Permanent test with a 2 s bound. (Also checked: the live landing page at sabitori.pages.dev follows main.)
+- [x] **SMS and USSD for phones with no internet (design + prototype).** `docs/sms-ussd.md`: why (Cameroon 17.1 M
+      people offline in 2025, Africa ~1 B not using mobile internet, scam losses per INTERPOL, all sourced), how
+      (forward an SMS, get the card back; a USSD menu), three network routes (relay phone first: the card is made on a
+      local Android phone, offline; short code; USSD code), privacy and owner tasks. `packages/gateway`: `smsReply`
+      (the app's card as at most 3 GSM-7 SMS, scam first, no amount on a scam), `ussd` (stateless menu, screens of at
+      most 182 characters), a provider-neutral HTTP service that stores and logs no message. 9 tests. Not deployed.
 
 ## Log
 
@@ -491,3 +497,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #104 | Speed re-measured after the fine-tuned encoder: range now 1.3 to 2.5 s (stand-in, not a phone) | local gate (Actions budget) |
 | 2026-11-20 | #105 | iOS privacy manifest (App Store requirement), bundled; untested on a Mac | local gate (Actions budget) |
 | 2026-11-20 | #108 | Robustness test: odd and huge inputs never throw or hang | local gate (Actions budget) |
+| 2026-11-20 | #109 | SMS and USSD for phones with no internet: design (sourced numbers), prototype gateway | local gate (Actions budget) |
