@@ -360,6 +360,9 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       measured height: WCAG 2.2 focus not obscured). The audit now treats content scrolling under the sticky bar like
       under the dock (by design). Practice names at 200 % drop below their picture instead of breaking mid-word.
       Re-run: 163 states, 0 axe violations, 0 manual failures.
+- [x] **Landing screenshots follow the app again.** Retaken from the current build (English, 2x): talking-drum mark,
+      Home button, "Says: ENEO", stop sign on the scam row, Pidgin in the language list. The owner's demo video is
+      unchanged.
 
 ## Log
 
@@ -459,3 +462,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #97 | Settings choices carry pictures (on/off, voice speed, keep messages) | local gate (Actions budget) |
 | 2026-11-20 | #98 | Practice examples carry pictures; screen titles never split mid-word | local gate (Actions budget) |
 | 2026-11-20 | #99 | Accessibility audit back to 0 failures after the sticky top bar (tall bar scrolls away, scroll padding) | local gate (Actions budget) |
+| 2026-11-20 | #100 | Landing screenshots retaken from the current app | local gate (Actions budget) |
