@@ -391,6 +391,12 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       local Android phone, offline; short code; USSD code), privacy and owner tasks. `packages/gateway`: `smsReply`
       (the app's card as at most 3 GSM-7 SMS, scam first, no amount on a scam), `ussd` (stateless menu, screens of at
       most 182 characters), a provider-neutral HTTP service that stores and logs no message. 9 tests. Not deployed.
+- [x] **Relay build: a phone that answers forwarded SMS, offline.** `SmsRelayPlugin` (receive while relaying, send
+      multi-part, screen kept on), a `relay` build type that alone adds RECEIVE_SMS and SEND_SMS (own app id
+      `cm.sabitori.app.relay`), `scripts/build-relay.sh`. In the app (relay build only, `VITE_RELAY=1`): a Relay SMS
+      screen with counts only, and `lib/relay.ts` (only Cameroonian mobile senders, 5 per number and 60 per hour,
+      reply = the app's card through the shared `@sabitori/gateway/compose`). Built here: the relay APK lists the
+      two SMS permissions, the store APK none (aapt). Tests: rules, replies, manifests. Not yet on a real phone.
 
 ## Log
 
@@ -498,3 +504,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #105 | iOS privacy manifest (App Store requirement), bundled; untested on a Mac | local gate (Actions budget) |
 | 2026-11-20 | #108 | Robustness test: odd and huge inputs never throw or hang | local gate (Actions budget) |
 | 2026-11-20 | #109 | SMS and USSD for phones with no internet: design (sourced numbers), prototype gateway | local gate (Actions budget) |
+| 2026-11-20 | #110 | Relay build: an Android phone with a local SIM answers forwarded SMS with the card, offline | local gate (Actions budget) |

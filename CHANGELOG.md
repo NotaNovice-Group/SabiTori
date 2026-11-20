@@ -6,6 +6,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Relay build (`scripts/build-relay.sh`): an Android phone with a local SIM answers SMS forwarded to it with the
+  card, made on the phone, offline. The only build with SMS permissions; never in a store.
 - Design and prototype for phones with no internet (`docs/sms-ussd.md`, `packages/gateway`): forward an SMS and get
   the card back by SMS; a USSD menu. Not deployed.
 - Retrain of the understanding heads on 453 messages (224 plus 229 hand-written ones in `eval/train-extra.jsonl`),

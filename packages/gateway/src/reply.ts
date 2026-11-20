@@ -1,6 +1,8 @@
 import { analyze, buildSpeechPlan, type LangTag, type ReadingLexicon, type RegionConfig } from '@sabitori/core';
 import { renderPlan, type PackRegistry } from '@sabitori/speech';
-import { smsParts, toGsm7 } from './sms.js';
+import { chooseLang, composeReply, MAX_PARTS } from './compose.js';
+
+export { chooseLang, MAX_PARTS };
 
 export interface ReplyDeps {
   region: RegionConfig;
@@ -17,19 +19,6 @@ export interface SmsReply {
   scam: 'likely_scam' | 'caution' | 'no_signs';
 }
 
-/** At most this many SMS parts per reply: enough for a card, cheap enough to send for free. */
-export const MAX_PARTS = 3;
-
-/**
- * "EN ..." or "FR ..." at the start chooses the reply language; otherwise the reply is in the message's own
- * language (French when it cannot tell, the most common language of official messages in Cameroon).
- */
-export function chooseLang(text: string, detected: string): { lang: LangTag; body: string } {
-  const m = /^\s*(EN|FR|ENG|FRA)\b[\s:,-]*/i.exec(text);
-  if (m) return { lang: m[1]!.toUpperCase().startsWith('E') ? 'en' : 'fr', body: text.slice(m[0].length) };
-  return { lang: detected === 'en' ? 'en' : 'fr', body: text };
-}
-
 /**
  * The card for a forwarded message, as one SMS reply: the same analysis and the same words as the app, in the
  * same order (a scam warning always first; a scam never gets its amount or date said back). Sections are dropped
@@ -43,13 +32,6 @@ export async function smsReply(text: string, deps: ReplyDeps, from?: string): Pr
   );
   const { lang } = chooseLang(text, card.facts.lang);
   const sections = await renderPlan(buildSpeechPlan(card, { today: deps.today }), lang, deps.registry, { region: deps.region, today: deps.today });
-  const lines = sections.map((s) => toGsm7(s.text.trim())).filter(Boolean);
-  const head = lang === 'en' ? 'SabiTori:' : 'SabiTori :';
-  let keep = lines.length;
-  let out = [head, ...lines].join('\n');
-  while (keep > 1 && smsParts(out) > MAX_PARTS) {
-    keep--;
-    out = [head, ...lines.slice(0, keep)].join('\n');
-  }
-  return { text: out, parts: smsParts(out), lang, scam: card.scam.level };
+  const { text: out, parts } = composeReply(sections.map((x) => x.text), lang);
+  return { text: out, parts, lang, scam: card.scam.level };
 }
