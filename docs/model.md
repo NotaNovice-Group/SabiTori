@@ -127,10 +127,12 @@ gain is real but much smaller there, so read the table above as one machine, not
 | Before the term prefilter | 2,409 ms | 2,077 ms |
 | After the term prefilter (2026-11-17) | 2,251 ms | not measured |
 | main on 2026-11-18 (all of today's reading words added) | 2,306 ms | 1,556 ms |
+| main on 2026-11-20 (fine-tuned encoder, redesign, picture card) | 2,454 ms and 2,098 ms (two runs of 5; single runs 1,882 to 2,538 ms) | 1,773 ms |
 
 On this machine the built-in model loading at the same time dominates a tap made right after start, and with the
-model loaded the prefilter saves about a quarter. No regression from the words added since. None of this is a phone
-measurement.
+model loaded the prefilter saves about a quarter. No regression from the words added since. On 2026-11-20 (a
+different container again) a card took about 2.1 to 2.5 s when tapped at once and 1.8 s once the model had loaded:
+the published range is now 1.3 to 2.5 s. None of this is a phone measurement.
 
 ## Voices
 
