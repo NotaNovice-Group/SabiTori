@@ -5,7 +5,7 @@ they are decisions, facts about the publisher, or results of steps outside the c
 reads "unfinished", so fill or remove them before the repository is public. `packages/understand/test/model-card.test.ts`
 checks that this list matches the files (regenerate it with `node scripts/owner-todo.mjs` after editing a document).
 
-Total: 46 placeholders in 15 files.
+Total: 47 placeholders in 16 files.
 
 ## `CHANGELOG.md` (3)
 
@@ -35,6 +35,10 @@ Total: 46 placeholders in 15 files.
 
 - [ ] `docs/ios.md:20` iOS app icon (1024 px) and launch screen
 - [ ] `docs/ios.md:84` Apple developer account
+
+## `docs/privacy.fr.md` (1)
+
+- [ ] `docs/privacy.fr.md:155` revue juridique de cette section avant la mise en service d'un relais
 
 ## `docs/privacy.md` (1)
 

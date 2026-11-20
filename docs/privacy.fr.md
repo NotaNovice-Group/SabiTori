@@ -44,7 +44,9 @@ Tout ce qui figure dans cette section est traité uniquement sur votre télépho
 - Rappels d'échéance. Si vous touchez « Me rappeler » sur une fiche avec une échéance, l'application programme jusqu'à deux notifications sur votre téléphone : à 9 h la veille de l'échéance, et à 8 h le jour même. Elles affichent l'expéditeur, l'action et la date. Elles ne sont envoyées nulle part. Dans la version web de l'application, « Me rappeler » enregistre à la place un fichier de calendrier (.ics) à l'endroit de votre choix. Ce fichier contient l'échéance et une copie du texte du message : gardez-le aussi privé que le document lui-même.
 - Textes ou photos que vous partagez avec SabiTori depuis une autre application. SabiTori garde une copie privée seulement le temps de les lire, puis la supprime. Pour une photo partagée, la copie privée est supprimée dès que l'application a chargé la photo dans sa mémoire de travail, avant la lecture du texte. Un texte partagé n'est pas copié dans un fichier : il reste uniquement en mémoire de travail.
 - Un SMS que vous autorisez (application Android, « Lire mon prochain SMS »). Après avoir appuyé sur ce bouton, Android surveille votre prochain SMS reçu pendant cinq minutes au plus, puis vous demande, dans sa propre fenêtre, si SabiTori peut lire ce seul message. SabiTori n'a aucune autorisation de lire vos SMS et ne voit jamais votre boîte de réception. Si vous appuyez sur Autoriser, le texte de ce message est traité comme un texte collé : sur votre téléphone uniquement.
-- Les packs de langues, alertes arnaque et numéros officiels téléchargés, si vous avez activé les mises à jour.
+- Les packs de langues, alertes arnaque et numéros officiels téléchargés, si vous avez activé les mises à jour. Les
+  alertes arnaque arrivent avec la mise à jour ; l'application n'envoie rien pour les recevoir et garde seulement
+  la liste des alertes déjà affichées.
 - La photo elle-même n'est pas conservée par SabiTori. Elle reste en mémoire de travail pendant la lecture de son texte. Elle n'est pas enregistrée dans votre galerie ni ajoutée à votre historique. Seul le texte lu est conservé, dans la fiche de l'historique, pendant la durée de la section 8. Une photo prise avec l'appareil photo passe d'abord par un fichier temporaire que le composant appareil photo d'Android écrit dans l'espace de stockage propre à l'application. SabiTori ne supprime pas lui-même ce fichier temporaire. SabiTori ne le transmet à aucune autre application, Android peut le nettoyer, et la désinstallation de l'application le supprime.
 
 ## 4. Ce que nous ne collectons jamais
@@ -131,15 +133,26 @@ fonction de rapports d'erreur.
 
 ## 6. Autorisations
 
-L'application déclare ces cinq autorisations Android. L'appareil photo et les notifications ne sont demandés que lorsque vous utilisez la fonction concernée. Les trois autres sont accordées par Android à l'installation de l'application et ne font pas l'objet d'une question.
+L'application déclare ces six autorisations Android. L'appareil photo et les notifications ne sont demandés que lorsque vous utilisez la fonction concernée. Les quatre autres sont accordées par Android à l'installation de l'application et ne font pas l'objet d'une question.
 
 - **Internet.** Utilisée uniquement pour les deux fonctions facultatives de la section 5.
 - **Appareil photo.** Demandée uniquement lorsque vous touchez le bouton appareil photo. La photo est prise pour SabiTori et lue sur votre téléphone. Choisir une photo dans votre galerie utilise le sélecteur de photos du téléphone, qui ne demande aucune autorisation à SabiTori.
 - **Notifications.** Demandées uniquement lorsque vous touchez « Me rappeler » sur une fiche avec une échéance. Utilisées uniquement pour les rappels de la section 3.
 - **Réception de la fin du démarrage (boot completed).** Permet aux rappels que vous avez programmés de survivre au redémarrage de votre téléphone : Android prévient l'application que le téléphone a démarré, et elle peut les reprogrammer. Elle vient du composant de notifications de l'application. Elle ne sert à rien d'autre.
 - **Maintien de l'éveil (wake lock).** Permet au téléphone de se réveiller brièvement pour afficher un rappel à son heure. Elle vient du même composant de notifications. Elle ne sert à rien d'autre.
+- **Vibration.** Fait vibrer le téléphone quand une fiche signale une arnaque probable (trois longues vibrations) ou appelle à la prudence (une), pour qu'une personne qui n'entend pas sente l'avertissement. Elle ne sert à rien d'autre.
 
 SabiTori ne demande ni votre position, ni vos contacts, ni votre microphone.
+
+## 6a. SabiTori par SMS (téléphones relais)
+
+L'application sur votre téléphone n'envoie jamais vos messages nulle part et n'a besoin d'aucune autorisation SMS.
+Par ailleurs, un partenaire peut faire fonctionner un **téléphone relais** SabiTori : un téléphone auquel vous pouvez
+envoyer un SMS et qui répond par SMS avec la fiche. Si vous envoyez un message à un téléphone relais, il est lu sur
+ce téléphone pour écrire la réponse, puis n'est pas gardé ; le relais garde seulement le nombre de réponses et,
+pendant une heure, les heures auxquelles il a répondu à votre numéro (pour limiter le nombre de réponses par numéro).
+Votre opérateur transporte le SMS, comme pour tout SMS. Le téléphone relais utilise une version séparée de SabiTori,
+la seule qui a les autorisations SMS ; elle n'est dans aucune boutique d'applications. [OWNER: revue juridique de cette section avant la mise en service d'un relais]
 
 ## 7. Base juridique (RGPD)
 
