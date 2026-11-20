@@ -83,6 +83,24 @@ jobs:
       - name: Assemble debug APK
         working-directory: apps/app/android
         run: ./gradlew assembleDebug --no-daemon
+      # Google Play refuses a bundle whose base download is over 200 MB. The Kokoro model (177 MB) ships in the
+      # install-time asset pack kokoro_pack instead: build the release bundle (unsigned; also exercises R8) and
+      # check both the base module and the pack.
+      - name: Release bundle fits Google Play (base under 200 MB, voice in its asset pack)
+        working-directory: apps/app/android
+        run: |
+          ./gradlew bundleRelease --no-daemon
+          python3 - <<'PY'
+          import zipfile, sys
+          z = zipfile.ZipFile('app/build/outputs/bundle/release/app-release.aab')
+          size = lambda p: sum(i.compress_size for i in z.infolist() if i.filename.startswith(p))
+          base, pack = size('base/'), size('kokoro_pack/')
+          names = [i.filename for i in z.infolist()]
+          print(f'base module {base/1e6:.1f} MB, kokoro_pack {pack/1e6:.1f} MB')
+          if base > 190e6: sys.exit('base module too large for Google Play (limit 200 MB)')
+          if not any(n.endswith('kokoro_pack/kokoro.onnx') for n in names): sys.exit('kokoro_pack/kokoro.onnx missing from the asset pack')
+          if any(n.endswith('model_uint8.onnx') for n in names): sys.exit('the Kokoro model is also in the base module')
+          PY
       - uses: actions/upload-artifact@v4.6.2
         with:
           name: sabitori-debug-apk

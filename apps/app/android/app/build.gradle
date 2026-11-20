@@ -28,7 +28,9 @@ android {
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
-            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+            // !model_uint8.onnx: the web build's copy of the Kokoro model stays out of the base download; the app
+            // reads it from the kokoro_pack asset pack instead (kokoro_pack/kokoro.onnx), see below.
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~:!model_uint8.onnx'
         }
     }
     signingConfigs {
@@ -48,6 +50,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             if (hasSigning) signingConfig signingConfigs.release
         }
+    }
+    // The Kokoro model ships in an install-time asset pack (Play: outside the 200 MB base limit, installed with
+    // the app). Stored uncompressed so the plugin memory-maps it in place instead of copying 177 MB.
+    assetPacks = [":kokoro_pack"]
+    androidResources {
+        noCompress += ['onnx']
+    }
+    sourceSets {
+        // A debug APK (Android Studio, `cap run`, CI) has no asset packs: give it the same folder directly.
+        debug.assets.srcDirs += ['../kokoro_pack/src/main/assets']
     }
     bundle {
         // The web app is the same for every language; keep every language resource in the bundle.

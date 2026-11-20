@@ -52,8 +52,8 @@ Total: 40 placeholders in 12 files.
 - [ ] `docs/release.md:72` the testing requirement that applies to this account on the day you submit.
 - [ ] `docs/release.md:90` the current upload-key reset process in the Play Console help.
 - [ ] `docs/release.md:116` whether CI uploads to Play, or the AAB is uploaded by hand.
-- [ ] `docs/release.md:136` Sentry organisation and project names.
-- [ ] `docs/release.md:169` testing period.
+- [ ] `docs/release.md:142` Sentry organisation and project names.
+- [ ] `docs/release.md:175` testing period.
 
 ## `docs/store/data-safety.md` (1)
 

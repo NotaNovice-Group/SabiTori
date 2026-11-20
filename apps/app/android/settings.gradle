@@ -1,4 +1,6 @@
 include ':app'
+// The Kokoro voice model as an install-time Play asset pack (see kokoro_pack/build.gradle).
+include ':kokoro_pack'
 include ':capacitor-cordova-android-plugins'
 project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
 

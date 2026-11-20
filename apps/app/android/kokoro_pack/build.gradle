@@ -1,0 +1,13 @@
+// Google Play asset pack for the Kokoro voice model (177 MB). "install-time": Play installs it together with the
+// app, so the voice is on the phone and offline from the first launch, but it does not count towards the 200 MB
+// limit of the base download. Its file is staged by the web build (apps/app/vite.config.ts) into
+// src/main/assets/kokoro_pack/kokoro.onnx (git-ignored). Debug APKs, which carry no asset packs, get the same
+// folder through the app's debug source set (app/build.gradle).
+apply plugin: 'com.android.asset-pack'
+
+assetPack {
+    packName = "kokoro_pack"
+    dynamicDelivery {
+        deliveryType = "install-time"
+    }
+}

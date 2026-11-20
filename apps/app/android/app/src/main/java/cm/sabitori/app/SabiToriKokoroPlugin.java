@@ -5,6 +5,7 @@ import ai.onnxruntime.OnnxValue;
 import ai.onnxruntime.OrtEnvironment;
 import ai.onnxruntime.OrtSession;
 import android.content.pm.PackageInfo;
+import android.content.res.AssetFileDescriptor;
 import android.util.Base64;
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
@@ -21,6 +22,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.LongBuffer;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,13 +40,16 @@ import java.util.regex.Pattern;
  *   synthesize({ ids, style (256), speed }) -> { audio: base64 Int16 little-endian PCM, sampleRate: 24000 }
  *   unload()
  *
- * The model is read from the APK's assets (public/...). onnxruntime needs a file path, so it is copied once to the
- * app's private files (again after an app update).
+ * The model comes from the kokoro_pack install-time asset pack (Play installs it with the app; the debug APK carries
+ * the same folder) and is memory-mapped where it lies. Only if it cannot be mapped is it copied once to the app's
+ * private files (again after an app update).
  */
 @CapacitorPlugin(name = "SabiToriKokoro")
 public class SabiToriKokoroPlugin extends Plugin {
 
     private static final Pattern SAFE_PATH = Pattern.compile("^[A-Za-z0-9._/-]+$");
+    /** The model inside the kokoro_pack install-time asset pack (android/kokoro_pack), stored uncompressed. */
+    static final String PACK_MODEL = "kokoro_pack/kokoro.onnx";
     /** One model run at a time, off the main thread and off Capacitor's plugin thread. */
     private final ExecutorService worker = Executors.newSingleThreadExecutor();
     private OrtSession session;
@@ -69,12 +75,13 @@ public class SabiToriKokoroPlugin extends Plugin {
                     call.resolve(r);
                     return;
                 }
-                File file = localCopy(model);
                 OrtEnvironment env = OrtEnvironment.getEnvironment();
                 OrtSession.SessionOptions options = new OrtSession.SessionOptions();
                 options.setIntraOpNumThreads(wanted);
                 options.setOptimizationLevel(OrtSession.SessionOptions.OptLevel.ALL_OPT);
-                OrtSession s = env.createSession(file.getAbsolutePath(), options);
+                // The Play asset pack (or the debug APK's copy of it) holds the model uncompressed: map it in place.
+                MappedByteBuffer mapped = model.startsWith("kokoro/") ? mapAsset(PACK_MODEL) : null;
+                OrtSession s = mapped != null ? env.createSession(mapped, options) : env.createSession(localCopy(model).getAbsolutePath(), options);
                 for (String name : new String[] { "input_ids", "style", "speed" }) {
                     if (!s.getInputNames().contains(name)) {
                         s.close();
@@ -182,7 +189,16 @@ public class SabiToriKokoroPlugin extends Plugin {
         loadedModel = null;
     }
 
-    /** The model from the APK assets as a file onnxruntime can open, copied once per app install or update. */
+    /** An uncompressed asset, memory-mapped where it is installed (no copy); null when absent or stored compressed. */
+    private MappedByteBuffer mapAsset(String path) {
+        try (AssetFileDescriptor fd = getContext().getAssets().openFd(path); FileInputStream in = new FileInputStream(fd.getFileDescriptor())) {
+            return in.getChannel().map(FileChannel.MapMode.READ_ONLY, fd.getStartOffset(), fd.getLength());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** Fallback: the model as a file onnxruntime can open, copied once per app install or update. */
     private File localCopy(String model) throws Exception {
         File dir = new File(getContext().getFilesDir(), "kokoro");
         if (!dir.isDirectory() && !dir.mkdirs()) throw new IllegalStateException("cannot create " + dir);
@@ -196,7 +212,7 @@ public class SabiToriKokoroPlugin extends Plugin {
         File[] old = dir.listFiles();
         if (old != null) for (File f : old) if (!f.delete()) f.deleteOnExit();
         File tmp = new File(dir, name + ".part");
-        try (InputStream in = getContext().getAssets().open("public/" + model); OutputStream out = new FileOutputStream(tmp)) {
+        try (InputStream in = openModelAsset(model); OutputStream out = new FileOutputStream(tmp)) {
             byte[] buf = new byte[1 << 16];
             int r;
             while ((r = in.read(buf)) > 0) out.write(buf, 0, r);
@@ -206,6 +222,18 @@ public class SabiToriKokoroPlugin extends Plugin {
             out.write(want.getBytes(StandardCharsets.UTF_8));
         }
         return file;
+    }
+
+    /** The asset pack's copy first (a compressed pack still opens as a stream), then the web assets' copy. */
+    private InputStream openModelAsset(String model) throws Exception {
+        if (model.startsWith("kokoro/")) {
+            try {
+                return getContext().getAssets().open(PACK_MODEL);
+            } catch (Exception ignored) {
+                // not in a pack: older build or a web-only copy
+            }
+        }
+        return getContext().getAssets().open("public/" + model);
     }
 
     private static String readText(File f) {

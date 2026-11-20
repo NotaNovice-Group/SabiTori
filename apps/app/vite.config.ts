@@ -112,6 +112,13 @@ function sabitoriAssets(): Plugin {
               mkdirSync(dirname(resolve(pub, 'kokoro', f)), { recursive: true });
               copyFileSync(resolve(kdir, f), resolve(pub, 'kokoro', f));
             }
+            // Android: the model also goes to the kokoro_pack asset pack (android/kokoro_pack/build.gradle), which
+            // Play installs with the app outside the 200 MB base limit; the base APK leaves public/kokoro's copy out.
+            const packDir = resolve(here, 'android/kokoro_pack/src/main/assets/kokoro_pack');
+            if (existsSync(resolve(here, 'android/kokoro_pack'))) {
+              mkdirSync(packDir, { recursive: true });
+              copyFileSync(resolve(kdir, 'model_uint8.onnx'), resolve(packDir, 'kokoro.onnx'));
+            }
           } else console.warn('[sabitori] Kokoro voice not staged: the app will speak with Piper');
         }
         rmSync(resolve(pub, 'piper'), { recursive: true, force: true }); // drop files staged by older builds
