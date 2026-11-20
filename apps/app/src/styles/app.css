@@ -652,3 +652,6 @@ a { color: inherit; text-decoration: none; }
 .howto-step svg { width: 36px; height: 36px; }
 .howto-listen { background: var(--listen); color: var(--on-listen); }
 .howto-arrow { width: 24px; height: 24px; color: var(--brand); flex: none; }
+
+/* What broke, under a failed photo reading: small, quiet, selectable so it can be copied into a report. */
+.error-detail { font-size: 0.9375rem; color: var(--ink-2); user-select: text; -webkit-user-select: text; overflow-wrap: anywhere; }
