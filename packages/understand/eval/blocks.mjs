@@ -186,4 +186,5 @@ export function fillBlocks(text, blocks) {
 }
 
 /** Text with every block removed (to check no stray, hand-written evaluation number remains). */
-export const outsideBlocks = (text) => text.replace(RE, '');
+// Also the README block written by scripts/numbers.mjs (scam and photo numbers), checked by `numbers.mjs --check`.
+export const outsideBlocks = (text) => text.replace(RE, '').replace(/<!-- numbers:readme[\s\S]*?<!-- \/numbers:readme -->/g, '');
