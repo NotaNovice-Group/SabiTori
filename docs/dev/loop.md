@@ -31,6 +31,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 
 ## Backlog (top first)
 
+- [x] **Deleted items still looked sent.** After "Delete everything I sent", a card still said "reported" (and could
+      not be reported again) and the teaching stayed in "What you taught". Marks now cleared per deleted item.
 - [x] **Storage full: a report or recording was lost but shown as sent.** When the outbox could not be saved
       (a teaching with a recording can be over a megabyte) and the phone was offline, the item vanished and the
       screen said "sent". Now sent directly when online, else an error and the form is kept for another try.
@@ -538,3 +540,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #115 | Outbox: an item added during a running send is no longer lost or shown as sent | local gate (Actions budget) |
 | 2026-11-20 | #117 | Public privacy pages regenerated from the policy; CI check keeps them in sync | local gate (Actions budget) |
 | 2026-11-20 | #118 | Storage full: a report or recording is never lost while shown as sent | local gate (Actions budget) |
+| 2026-11-20 | #119 | After deletion, cards no longer say reported and teachings leave the list | local gate (Actions budget) |

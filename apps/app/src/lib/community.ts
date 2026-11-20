@@ -50,6 +50,21 @@ export interface SentItem {
   id: string;
   key: string;
   at: string;
+  /** The phone's own id for it (`scam-<cardId>` or `teach-<time>`), to clear its "reported"/"taught" mark once deleted. */
+  ref?: string;
+}
+
+/** Once an item is deleted, the card no longer says it was reported and the teaching leaves "What you taught". */
+function forgetMark(ref: string | undefined): void {
+  if (!ref) return;
+  if (ref.startsWith('scam-')) {
+    const rep = read<Record<string, string>>(REPORTED, {});
+    delete rep[ref.slice(5)];
+    write(REPORTED, rep);
+  } else if (ref.startsWith('teach-')) {
+    const at = ref.slice(6);
+    write(TAUGHT, read<TaughtItem[]>(TAUGHT, []).filter((i) => i.at !== at));
+  }
 }
 
 const OUTBOX = 'sabitori.outbox';
@@ -128,7 +143,7 @@ async function enqueue(item: Outgoing): Promise<SendResult> {
     // The phone could not keep it (storage full): send it now or say so; never claim it was sent.
     const r = await post(item.kind === 'scam' ? '/v1/scams' : '/v1/teach', { ...item.body, deleteKey: item.key });
     if (r.ok !== 'sent') return 'failed';
-    if (r.id) write(SENT, [...read<SentItem[]>(SENT, []), { kind: item.kind, id: r.id, key: item.key!, at: new Date().toISOString() }]);
+    if (r.id) write(SENT, [...read<SentItem[]>(SENT, []), { kind: item.kind, id: r.id, key: item.key!, at: new Date().toISOString(), ref: item.id }]);
     return 'sent';
   }
   await flushing; // a send already running read the outbox before this item was added
@@ -146,7 +161,7 @@ export function flushOutbox(): Promise<void> {
       const key = item.key ?? newDeleteKey(); // items queued by an older version had none
       const r = await post(item.kind === 'scam' ? '/v1/scams' : '/v1/teach', { ...item.body, deleteKey: key });
       if (r.ok === 'retry') left.push({ ...item, key });
-      else if (r.ok === 'sent' && r.id) write(SENT, [...read<SentItem[]>(SENT, []), { kind: item.kind, id: r.id, key, at: new Date().toISOString() }]);
+      else if (r.ok === 'sent' && r.id) write(SENT, [...read<SentItem[]>(SENT, []), { kind: item.kind, id: r.id, key, at: new Date().toISOString(), ref: item.id }]);
     }
     // Keep what was added while this pass was sending (it was not in `box`), or it would be lost unsent.
     const tried = new Set(box.map((x) => x.id));
@@ -172,11 +187,13 @@ export function sentItems(now = new Date()): SentItem[] {
  */
 export async function deleteAllSent(): Promise<{ left: number }> {
   await flushing; // never race a send in progress
+  for (const o of read<Outgoing[]>(OUTBOX, [])) forgetMark(o.id);
   write(OUTBOX, []);
   const left: SentItem[] = [];
   for (const s of sentItems()) {
     const r = await post('/v1/delete', { kind: s.kind, id: s.id, key: s.key });
     if (r.ok === 'retry' || (r.ok === 'refused' && r.status !== 404 && r.status !== 400)) left.push(s);
+    else forgetMark(s.ref);
   }
   write(SENT, left);
   return { left: left.length };

@@ -173,3 +173,24 @@ describe('when the phone cannot keep an item (storage full)', () => {
     expect(sentItems().map((s) => s.id)).toEqual(['00000009-aaaa-bbbb']);
   });
 });
+
+describe('after "Delete everything I sent"', () => {
+  it('a deleted report no longer shows as reported and a deleted teaching leaves the list; an undeleted one stays', async () => {
+    let n = 0;
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(JSON.stringify({ id: `0000000${++n}-aaaa-bbbb` }), { status: 201 }));
+    await sendScamReport('gone', REPORT);
+    await sendScamReport('stays', REPORT);
+    await sendTeaching({ lang: 'dua', meaning: 'Hello', meaningLang: 'en' });
+    vi.spyOn(globalThis, 'fetch').mockRejectedValueOnce(new TypeError('offline'));
+    await sendTeaching({ lang: 'dua', meaning: 'Queued', meaningLang: 'en' }); // still in the outbox
+    expect(taughtItems()).toHaveLength(2);
+    vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response('{"ok":true}', { status: 200 })) // 'gone'
+      .mockRejectedValueOnce(new TypeError('offline')) // 'stays': could not reach the service
+      .mockResolvedValueOnce(new Response('{"ok":true}', { status: 200 })); // the sent teaching
+    expect(await deleteAllSent()).toEqual({ left: 1 });
+    expect(wasReported('gone')).toBe(false);
+    expect(wasReported('stays')).toBe(true);
+    expect(taughtItems()).toEqual([]);
+  });
+});
