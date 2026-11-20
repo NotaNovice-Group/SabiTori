@@ -1,20 +1,20 @@
 import type { TtsBackend } from '../player.js';
 import { createWebAudioOutput, type AudioOutput } from './audio.js';
 import { lengthScaleForRate, splitSentences } from './config.js';
-import { voiceKey, type PiperAudio, type PiperEngine, type PiperEngineFactory, type PiperVoiceSpec } from './engine.js';
+import { voiceKey, type PiperAudio, type PiperEngine, type PiperVoiceSpec } from './engine.js';
 
 export type PiperEvent =
   | { type: 'ready'; voice: string; loadMs: number }
   | { type: 'synth'; voice: string; chars: number; ms: number; audioSeconds: number; cached: false }
   | { type: 'fallback'; reason: 'no-voice' | 'load-error' | 'load-slow' | 'first-synthesis-slow' | 'synthesis-error' | 'audio-error' | 'disabled'; voice?: string; detail?: string };
 
-export interface PiperTtsOptions {
-  engines: PiperEngineFactory;
+export interface PiperTtsOptions<V extends PiperVoiceSpec = PiperVoiceSpec> {
+  engines: (voice: V) => PiperEngine;
   /**
    * The Piper voice that speaks this BCP 47 tag, or null when no pack offers one (then the fallback speaks).
    * `ref` is the pack tag and voice id the rendered part carries: two packs sharing a BCP 47 tag get their own voices.
    */
-  resolveVoice: (bcp47: string, ref?: { tag?: string; voice?: string }) => PiperVoiceSpec | null | Promise<PiperVoiceSpec | null>;
+  resolveVoice: (bcp47: string, ref?: { tag?: string; voice?: string }) => V | null | Promise<V | null>;
   /**
    * The phone's own TTS. Used whenever Piper cannot speak: the listener is never left in silence. When the phone
    * has no voice for the language either, this backend (createBrowserTts) rejects with TtsVoiceUnavailableError;
@@ -22,8 +22,26 @@ export interface PiperTtsOptions {
    */
   fallback: TtsBackend;
   output?: AudioOutput;
-  /** The first synthesis of a voice must finish within this, or that voice is switched off for the session. Default 6000. */
-  firstSynthesisMs?: number;
+  /**
+   * The first synthesis of a voice must finish within this, or that voice is switched off for the session. Default 6000.
+   * A function gets the first piece of text and the rate (a longer piece may get more time).
+   */
+  firstSynthesisMs?: number | ((text: string, rate: number) => number);
+  /**
+   * Judges the first synthesis that did finish in time: false switches the voice off for the session like a timeout
+   * ('first-synthesis-slow'; `why` goes into the event's detail). Default: always fast enough.
+   */
+  acceptFirstSynthesis?: (m: { ms: number; audioSeconds: number }) => { ok: true } | { ok: false; why: string };
+  /** A voice too slow for the phone switches off EVERY voice of this backend (they share one model). Default false. */
+  slowMeansAllSlow?: boolean;
+  /** Cuts the text into synthesis pieces (the first plays while the next is made). Default splitSentences. */
+  split?: (text: string) => string[];
+  /**
+   * A short text that warm() synthesizes once after loading a voice, as a speed test judged like a first synthesis
+   * (firstSynthesisMs, acceptFirstSynthesis), before anyone listens: a phone that is too slow is found out in the
+   * background and the fallback is ready for the first tap. Null or absent: no speed test.
+   */
+  probe?: (voice: V) => string | null;
   /** How long one utterance waits for a model that is still loading before the fallback speaks it. Default 6000. */
   loadGraceMs?: number;
   /** In-memory audio cache for "Again": total bytes of PCM kept. Default 32 MB. */
@@ -41,25 +59,33 @@ export interface PiperTts extends TtsBackend {
   readonly disabled: boolean;
   /** Voices (id@version) switched off for the session: a slow first synthesis, or a model that does not match its config. Other voices keep working. */
   readonly disabledVoices: ReadonlySet<string>;
+  /** With slowMeansAllSlow: why the backend is off for the session (too slow on this phone), else null. */
+  readonly tooSlow: string | null;
   /** Drops cached audio and loaded models. */
   dispose(): void;
 }
 
-interface Entry {
-  voice: PiperVoiceSpec;
+interface Entry<V extends PiperVoiceSpec = PiperVoiceSpec> {
+  voice: V;
   engine: PiperEngine;
   loaded: Promise<void>;
   ready: boolean;
   broken: boolean;
   verified: boolean;
+  /** The background speed test (opts.probe) while it runs: resolves true when the voice is fast enough. */
+  probing?: Promise<boolean>;
   used: number;
 }
 
 const wait = (ms: number): Promise<'timeout'> => new Promise((r) => setTimeout(() => r('timeout'), ms));
 
-export function createPiperTts(opts: PiperTtsOptions): PiperTts {
+export function createPiperTts<V extends PiperVoiceSpec = PiperVoiceSpec>(opts: PiperTtsOptions<V>): PiperTts {
   const output = opts.output ?? createWebAudioOutput();
-  const firstSynthesisMs = opts.firstSynthesisMs ?? 6000;
+  const firstSynthesisBudget = (text: string, rate: number): number => {
+    const f = opts.firstSynthesisMs ?? 6000;
+    return typeof f === 'function' ? f(text, rate) : f;
+  };
+  const split = opts.split ?? ((t: string) => splitSentences(t));
   const loadGraceMs = opts.loadGraceMs ?? 6000;
   const maxBytes = opts.maxCacheBytes ?? 32 * 1024 * 1024;
   const maxLoaded = Math.max(opts.maxLoadedVoices ?? 2, 1);
@@ -72,8 +98,10 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
     }
   };
 
-  const entries = new Map<string, Entry>();
+  const entries = new Map<string, Entry<V>>();
   let disabled = false;
+  /** slowMeansAllSlow: the backend was too slow on this phone; every voice stays off for the session. */
+  let tooSlow: string | null = null;
   /** Voices (by key) that must not be used again this session: slow, or broken. A broken voice is not reloaded for every utterance. */
   const off = new Set<string>();
   const brokenWhy = new Map<string, string>();
@@ -107,7 +135,7 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
     }
   };
 
-  function drop(entry: Entry): void {
+  function drop(entry: Entry<V>): void {
     entries.delete(voiceKey(entry.voice));
     try {
       entry.engine.dispose();
@@ -116,7 +144,7 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
     }
   }
 
-  function startLoad(entry: Entry): void {
+  function startLoad(entry: Entry<V>): void {
     const t0 = now();
     entry.ready = false;
     entry.loaded = entry.engine.load().then(
@@ -132,7 +160,7 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
     entry.loaded.catch(() => undefined); // reported by whoever awaits it
   }
 
-  function entryFor(voice: PiperVoiceSpec): Entry {
+  function entryFor(voice: V): Entry<V> {
     const key = voiceKey(voice);
     let e = entries.get(key);
     if (!e) {
@@ -141,7 +169,7 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
         if (!lru) break;
         drop(lru);
       }
-      const entry: Entry = { voice, engine: opts.engines(voice), loaded: Promise.resolve(), ready: false, broken: false, verified: false, used: ++clock };
+      const entry: Entry<V> = { voice, engine: opts.engines(voice), loaded: Promise.resolve(), ready: false, broken: false, verified: false, used: ++clock };
       startLoad(entry);
       entries.set(key, entry);
       e = entry;
@@ -151,16 +179,16 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
   }
 
   /** The worker that held the model was restarted: forget that the voice is ready and load it again. */
-  function revive(entry: Entry): void {
+  function revive(entry: Entry<V>): void {
     if (entry.ready && entry.engine.alive && !entry.engine.alive()) startLoad(entry);
   }
 
-  const markBroken = (voice: PiperVoiceSpec, why: string): void => {
+  const markBroken = (voice: V, why: string): void => {
     off.add(voiceKey(voice));
     brokenWhy.set(voiceKey(voice), why);
   };
 
-  function synth(entry: Entry, sentence: string, scale: number): Promise<PiperAudio> {
+  function synth(entry: Entry<V>, sentence: string, scale: number): Promise<PiperAudio> {
     const key = `${voiceKey(entry.voice)}|${scale}|${sentence}`;
     const hit = cacheGet(key);
     if (hit) return Promise.resolve(hit);
@@ -186,6 +214,46 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
 
   const errText = (e: unknown): string => (e instanceof Error ? e.message : String(e));
 
+  /** The voice is too slow for this phone: off for the session (with slowMeansAllSlow: every voice), worker freed. */
+  const markSlow = (voice: V, why: string): void => {
+    off.add(voiceKey(voice));
+    if (opts.slowMeansAllSlow) tooSlow = why;
+    for (const e of [...entries.values()]) drop(e); // frees the worker; the stuck call dies with it
+  };
+
+  /** Runs opts.probe once for a loaded voice. Never rejects. */
+  function speedTest(entry: Entry<V>): Promise<boolean> {
+    const text = opts.probe?.(entry.voice);
+    if (!text || entry.verified) return Promise.resolve(true);
+    entry.probing ??= (async () => {
+      const budget = firstSynthesisBudget(text, 1);
+      const t0 = now();
+      const p = synth(entry, text, 1);
+      p.catch(() => undefined);
+      const r = await Promise.race([p.then((a) => a, (e: unknown) => ({ error: e })), wait(budget)]);
+      if (entry.verified) return true; // a speak() judged it meanwhile
+      const slow = (why: string): boolean => {
+        markSlow(entry.voice, why);
+        emit({ type: 'fallback', reason: 'first-synthesis-slow', voice: entry.voice.id, detail: `speed test: ${why}` });
+        return false;
+      };
+      if (r === 'timeout') return slow(`not ready after ${budget} ms`);
+      if (!('samples' in r)) {
+        drop(entry);
+        markBroken(entry.voice, errText(r.error));
+        emit({ type: 'fallback', reason: 'synthesis-error', voice: entry.voice.id, detail: `speed test: ${errText(r.error)}` });
+        return false;
+      }
+      const verdict = opts.acceptFirstSynthesis?.({ ms: now() - t0, audioSeconds: r.samples.length / r.sampleRate }) ?? { ok: true as const };
+      if (!verdict.ok) return slow(verdict.why);
+      entry.verified = true;
+      return true;
+    })().finally(() => {
+      entry.probing = undefined;
+    });
+    return entry.probing;
+  }
+
   return {
     get disabled() {
       return disabled;
@@ -193,16 +261,19 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
     get disabledVoices() {
       return off;
     },
+    get tooSlow() {
+      return tooSlow;
+    },
 
     async warm(bcp47, ref) {
-      if (disabled) return false;
+      if (disabled || tooSlow) return false;
       try {
         const voice = await opts.resolveVoice(bcp47, ref);
         if (!voice || off.has(voiceKey(voice))) return false;
         const e = entryFor(voice);
         revive(e);
         await e.loaded;
-        return true;
+        return await speedTest(e);
       } catch {
         return false;
       }
@@ -212,7 +283,8 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
       const my = ++token;
       const { text, bcp47, rate, onProgress } = req;
       if (disabled) return useFallback('disabled', req);
-      let voice: PiperVoiceSpec | null;
+      if (tooSlow) return useFallback('disabled', req, undefined, tooSlow);
+      let voice: V | null;
       try {
         voice = await opts.resolveVoice(bcp47, { ...(req.tag ? { tag: req.tag } : {}), ...(req.voice ? { voice: req.voice } : {}) });
       } catch {
@@ -239,30 +311,43 @@ export function createPiperTts(opts: PiperTtsOptions): PiperTts {
         }
       }
 
-      const sentences = splitSentences(text);
+      // The background speed test is still running: its verdict decides (it has its own time limit).
+      if (!entry.verified && entry.probing) {
+        const fast = await entry.probing;
+        if (my !== token) return;
+        if (!fast) return useFallback('first-synthesis-slow', req, voice.id, tooSlow ?? brokenWhy.get(vkey) ?? 'speed test failed');
+      }
+
+      const sentences = split(text);
       if (sentences.length === 0) return;
       const scale = lengthScaleForRate(rate);
       const weight = sentences.reduce((n, s) => n + s.length, 0) || 1;
       let doneChars = 0;
 
       // Start the first sentence; the very first synthesis of the session is timed.
+      const t0 = now();
       let current: Promise<PiperAudio> = synth(entry, sentences[0]!, scale);
       current.catch(() => undefined);
       if (!entry.verified) {
-        const first = await Promise.race([current.then((a) => a, (e: unknown) => ({ error: e })), wait(firstSynthesisMs)]);
+        const budget = firstSynthesisBudget(sentences[0]!, rate);
+        const tooSlowNow = (why: string): Promise<void> => {
+          // Only this voice is too slow for the phone: others (and a faster language) keep Piper. Unless all
+          // voices share one model (slowMeansAllSlow): then none of them is tried again this session.
+          markSlow(voice, why);
+          return useFallback('first-synthesis-slow', req, voice.id, why);
+        };
+        const first = await Promise.race([current.then((a) => a, (e: unknown) => ({ error: e })), wait(budget)]);
         if (my !== token) return;
-        if (first === 'timeout') {
-          // Only this voice is too slow for the phone: others (and a faster language) keep Piper.
-          off.add(vkey);
-          for (const e of [...entries.values()]) drop(e); // frees the worker; the stuck call dies with it
-          return useFallback('first-synthesis-slow', req, voice.id);
-        }
-        if ('error' in first && !('samples' in first)) {
+        if (first === 'timeout') return tooSlowNow(`first synthesis not ready after ${budget} ms`);
+        if (!('samples' in first)) {
           drop(entry);
           // Failing before it ever produced audio: the model and config do not belong together (or the voice is damaged).
           markBroken(voice, errText(first.error));
           return useFallback('synthesis-error', req, voice.id, errText(first.error));
         }
+        const ms = now() - t0;
+        const verdict = opts.acceptFirstSynthesis?.({ ms, audioSeconds: first.samples.length / first.sampleRate }) ?? { ok: true as const };
+        if (!verdict.ok) return tooSlowNow(verdict.why);
         entry.verified = true;
       }
 

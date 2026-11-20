@@ -28,7 +28,9 @@ android {
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
              // Default: https://android.googlesource.com/platform/frameworks/base/+/282e181b58cf72b6ca770dc7ca5f91f135444502/tools/aapt/AaptAssets.cpp#61
-            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+            // !model_uint8.onnx: the web build's copy of the Kokoro model stays out of the base download; the app
+            // reads it from the kokoro_pack asset pack instead (kokoro_pack/kokoro.onnx), see below.
+            ignoreAssetsPattern = '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~:!model_uint8.onnx'
         }
     }
     signingConfigs {
@@ -57,6 +59,17 @@ android {
             if (hasSigning) signingConfig signingConfigs.release
         }
     }
+    // The Kokoro model ships in an install-time asset pack (Play: outside the 200 MB base limit, installed with
+    // the app). noCompress keeps the debug APK's copy uncompressed, so the plugin maps it in place; inside a Play
+    // bundle the pack is compressed and the plugin copies the model once to its private files instead.
+    assetPacks = [":kokoro_pack"]
+    androidResources {
+        noCompress += ['onnx']
+    }
+    sourceSets {
+        // A debug APK (Android Studio, `cap run`, CI) has no asset packs: give it the same folder directly.
+        debug.assets.srcDirs += ['../kokoro_pack/src/main/assets']
+    }
     bundle {
         // The web app is the same for every language; keep every language resource in the bundle.
         language { enableSplit = false }
@@ -84,6 +97,8 @@ dependencies {
     implementation project(':capacitor-android')
     // SMS User Consent API: one incoming SMS, only when the person allows it. No SMS permission.
     implementation 'com.google.android.gms:play-services-auth-api-phone:18.1.0'
+    // Kokoro voice: Microsoft's onnxruntime (CPU, MIT) runs the bundled model natively (SabiToriKokoroPlugin).
+    implementation 'com.microsoft.onnxruntime:onnxruntime-android:1.28.0'
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"

@@ -6,12 +6,8 @@
  */
 import { createPiperRuntime, type LoadedVoice, type OrtLike, type PhonemizerLike } from './runtime.js';
 import { voiceKey } from './engine.js';
+import { fetchBytes, loadOrt, loadPhonemizer, retryingOnce } from './worker-assets.js';
 import type { WorkerRequest, WorkerResponse } from './worker-protocol.js';
-
-interface EmscriptenModule {
-  callMain(args: string[]): void;
-}
-type CreatePhonemize = (opts: Record<string, unknown>) => Promise<EmscriptenModule>;
 
 const scope = self as unknown as {
   postMessage(msg: WorkerResponse, transfer?: Transferable[]): void;
@@ -22,51 +18,8 @@ let assetBase = '';
 let ortBase = '';
 const voices = new Map<string, Promise<LoadedVoice>>();
 
-async function fetchBytes(url: string): Promise<Uint8Array> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
-  return new Uint8Array(await res.arrayBuffer());
-}
-
-async function loadOrt(): Promise<OrtLike> {
-  const ort = (await import(/* @vite-ignore */ `${ortBase}ort.wasm.min.mjs`)) as unknown as OrtLike & { env: { wasm: Record<string, unknown> } };
-  ort.env.wasm.wasmPaths = ortBase;
-  ort.env.wasm.numThreads = 1; // single thread: works without cross-origin isolation
-  ort.env.wasm.proxy = false;
-  // Fetch the wasm ourselves: a failed download (network lost on a first web visit) is then a normal,
-  // catchable error here instead of an uncaught "Aborted(NetworkError ...)" from inside the runtime.
-  ort.env.wasm.wasmBinary = (await fetchBytes(`${ortBase}ort-wasm-simd-threaded.wasm`)).buffer;
-  return ort;
-}
-
-async function loadPhonemizer(): Promise<PhonemizerLike> {
-  const mod = (await import(/* @vite-ignore */ `${assetBase}piper_phonemize.mjs`)) as { default: CreatePhonemize };
-  let lines: string[] = [];
-  const errors: string[] = [];
-  const m = await mod.default({
-    noInitialRun: true,
-    print: (d: string) => lines.push(d),
-    printErr: (e: string) => errors.push(e),
-    locateFile: (f: string) => `${assetBase}${f}`,
-  });
-  return {
-    phonemize(voice, text) {
-      lines = [];
-      errors.length = 0;
-      m.callMain(['-l', voice, '--input', JSON.stringify([{ text }]), '--espeak_data', '/espeak-ng-data']);
-      const line = lines.find((l) => l.startsWith('{'));
-      if (!line) throw new Error(`espeak-ng produced no output: ${errors.join(' ').slice(0, 200)}`);
-      return (JSON.parse(line) as { phonemes: string[] }).phonemes;
-    },
-  };
-}
-
-let phonemizerP: Promise<PhonemizerLike> | null = null;
-const sharedPhonemizer = (): Promise<PhonemizerLike> => (phonemizerP ??= loadPhonemizer().catch((e) => {
-  phonemizerP = null;
-  throw e;
-}));
-let ortP: Promise<OrtLike> | null = null;
+const sharedPhonemizer = retryingOnce((): Promise<PhonemizerLike> => loadPhonemizer(assetBase));
+const sharedOrt = retryingOnce((): Promise<OrtLike> => loadOrt(ortBase)); // a failure is tried again on the next load
 
 scope.onmessage = (e) => {
   const msg = e.data;
@@ -77,11 +30,7 @@ scope.onmessage = (e) => {
       if (msg.type === 'load') {
         assetBase = msg.assetBase;
         ortBase = msg.ortBase ?? msg.assetBase;
-        ortP ??= loadOrt().catch((e) => {
-          ortP = null; // try again on the next load
-          throw e;
-        });
-        const ort = await ortP;
+        const ort = await sharedOrt();
         const rt = createPiperRuntime({ ort, loadPhonemizer: sharedPhonemizer, fetchBytes });
         const p = rt.load(msg.voice);
         voices.set(voiceKey(msg.voice), p);

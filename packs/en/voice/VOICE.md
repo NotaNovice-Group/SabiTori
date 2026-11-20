@@ -1,5 +1,8 @@
 # English voice (Piper)
 
+Kokoro-82M (`voices/kokoro/VOICE.md`) is the first voice for English; this Piper voice speaks when Kokoro is too slow
+on the phone or cannot load, and the phone's own voice after it.
+
 | | |
 | --- | --- |
 | Model id | `en_GB-alba-medium` (manifest `voiceHint`) |

@@ -136,7 +136,7 @@ the published range is now 1.3 to 2.5 s. None of this is a phone measurement.
 
 ## Voices
 
-SabiTori speaks with small open neural voices that run on the phone, replacing the phone maker's closed TTS as the default. The phone's own TTS stays underneath as an automatic fallback.
+SabiTori speaks with small open neural voices that run on the phone, replacing the phone maker's closed TTS as the default. Order, each falling back to the next: **Kokoro-82M** (English and French, see "Kokoro" below), **Piper** (per pack), then the phone's own TTS. On iOS a smooth installed phone voice (Enhanced, Premium, Siri) is preferred over Piper, below Kokoro.
 
 ### Runtime
 
@@ -156,6 +156,7 @@ Runtime files (staged into `public/piper/` by `scripts/piper-assets.mjs`): ORT w
 | --- | --- | --- | --- |
 | fr | `fr_FR-siwis-medium` (22.05 kHz) | CC BY 4.0 | 63.2 MB |
 | en | `en_GB-alba-medium` (22.05 kHz) | CC BY 4.0 | 63.2 MB |
+| en, fr (and packs using the en voice files) | Kokoro-82M `model_uint8.onnx` + `af_heart` (en) / `ff_siwis` (fr) style files (24 kHz) | Apache-2.0 (ff_siwis trained on CC BY 4.0 data) | 177.5 MB + 0.5 MB per voice, one model for both languages (`voices/kokoro/`) |
 
 Together over 80 MB, so the `.onnx` files are git-ignored: `node scripts/fetch-voices.mjs` restores them from a pinned Hugging Face revision and verifies sha256, and the app build runs it when a model is missing (offline build: it warns and the app uses the phone voice). No English voice at or below about 30 MB with a redistributable licence exists in rhasspy/piper-voices (no `x_low`; all `low` English voices are 63 MB). Records: `packs/<tag>/voice/VOICE.md`, `THIRD_PARTY_NOTICES.md`.
 
@@ -185,3 +186,94 @@ Chromium's 4× CPU throttling does not slow Web Workers, so the two "Main thread
 Sentences: "Vous avez reçu 5 000 francs de votre opérateur.", "Ne partagez jamais votre code secret avec personne.", "Le rendez-vous est prévu demain à dix heures au centre de santé."; "You have received 5,000 francs from your operator.", "Never share your secret code with anyone.", "Your appointment is tomorrow at ten o'clock at the health centre."
 
 Reading: French (low) stays under the 6 s limit with margin at 4x; English (medium) is within about 1 s of it on the first sentence, and at RTF above 1 there are pauses between sentences. On slower phones the 6 s rule switches to the system voice. Loading takes 2 to 10 s, which is why the phone-language voice is warmed at start. No system-fallback utterances occurred in any run.
+
+### Kokoro (primary voice for English and French)
+
+Kokoro-82M v1.0 (Apache-2.0) sounds much smoother than the Piper voices. The text work is the same on every
+platform and lives in `packages/speech/src/kokoro/`; only the model run differs:
+
+| Where | Model run | When Kokoro is tried |
+| --- | --- | --- |
+| Android and iOS app | Native onnxruntime 1.28.0 (Microsoft, MIT) in the project's own Capacitor plugin `SabiToriKokoro` (`apps/app/android/.../SabiToriKokoroPlugin.java`, `apps/app/ios/App/App/SabiToriKokoroPlugin.swift` with the C shim package `apps/app/ios/App/KokoroORT`), up to 4 threads, on its own thread | Always (then the speed guard decides) |
+| Web | onnxruntime-web 1.22 (WebAssembly) in its own module Web Worker | Only when the page is cross-origin isolated, so it can use several threads: with one thread it is far slower than real time (measurements below) and the 177 MB download would be wasted |
+
+- Text: split into sentences (a long first sentence is cut at a comma so the first audio comes sooner); espeak-ng
+  IPA (`en-us` for `af_heart`, `fr` for `ff_siwis`) from the same phonemizer files as Piper (on the page in the app,
+  in the worker on the web); the kokoro-js 1.2.1 spelling rules for English (checked: the same phoneme strings as
+  kokoro-js for the two English benchmark sentences) and misaki's espeak rules for French; ids from the model's
+  115-symbol vocabulary, padded with 0, at most 510 per call (longer text is cut at clause marks).
+- Model inputs: `input_ids` int64 [1, n], `style` = row n-2 of the voice file (float32 [510, 256]), `speed` = rate.
+  Output `waveform`, 24 kHz. One loaded model serves both voices. The native plugin returns Int16 PCM as base64
+  (half the bridge traffic of Float32).
+- Which packs: a part whose pack speaks with the `en` or `fr` Piper voice files gets the Kokoro voice of that
+  language (so Pidgin, which uses the `en` files, gets `af_heart`, an American accent). Other packs are unchanged.
+- Files: `scripts/fetch-kokoro.mjs` (pinned revision, sha256), staged by the app build into `public/kokoro/`
+  (`SABITORI_BUNDLE_KOKORO=0` leaves them out). Android: in the APK assets; the plugin copies the model once to the
+  app's private files (onnxruntime needs a file path), so it takes its size twice on the phone. iOS: in the app
+  bundle, read in place. Web: the 0.5 MB voice files are precached; the model is cached on first load.
+
+Speed guard (`packages/speech/src/kokoro/speed-guard.ts`), the same for both back ends, so nobody waits in silence:
+
+1. While the person looks at the card, the app loads Kokoro for the phone's language and synthesizes one short test
+   sentence (about 2.5 s of speech) that is never played.
+2. It must be ready within 2.5 s and run faster than real time (real-time factor below 1.0). Without the test (a tap
+   before it ran), the first real piece is judged the same way, with a deadline of 2.5 s, or 0.6 s per expected
+   second of speech for a long piece, at most 5 s; past the deadline the fallback speaks it.
+3. Too slow: Kokoro is off for the session for both languages, the model is freed, Piper is loaded and speaks. The
+   verdict is kept in local storage for 30 days (same model version, back end and thread count), so later starts do
+   not load the model at all. A model that fails to load or returns invalid audio (NaN) also falls back.
+
+#### Which model file
+
+`model_uint8.onnx` (177.5 MB). Native onnxruntime 1.29 (CPU execution provider, Python) on a 4-core Intel Xeon
+2.10 GHz cloud VM, x86 (not a phone, not ARM), the phonemes of English sentence 1 / French sentence 1 below, two
+runs each:
+
+| File | 1 thread | 2 threads | 4 threads |
+| --- | --- | --- | --- |
+| `model_uint8.onnx` | en 0.58 / 0.58, fr 0.54 / 0.58 | en 0.35 / 0.39, fr 0.31 / 0.32 | en 0.23 / 0.23, fr 0.25 / 0.22 |
+| `model_quantized.onnx` (92.4 MB) | en 1.75 / 1.89, fr 1.64 / 1.66 | en 1.35 / 1.37, fr 1.42 / 1.48 | en 1.33 / 1.43, fr 1.31 / 1.33 |
+| `model.onnx` (fp32, 325.5 MB), earlier run | en 0.71 / 0.67, fr 0.65 / 0.77 | | en 0.30 / 0.33, fr 0.27 / 0.28 |
+| `model_q8f16.onnx` (86.0 MB), earlier run | en 1.62 / 1.94, fr 1.73 / 1.68 | | en 1.17 / 1.31, fr 1.23 / 1.34 |
+
+(Real-time factor: synthesis time divided by audio length; below 1 is faster than real time.) The smaller
+`model_quantized.onnx` stays above real time even with 4 threads natively, so the 177 MB file is used. With
+`model_uint8.onnx` natively all four benchmark sentences gave audio without NaN, and Whisper-small (ONNX, greedy)
+transcribed them back to the input text apart from the acronym ENEO. A phone's cores are slower than this server's:
+the speed on a phone is not measured.
+
+#### Web (onnxruntime-web) measurements
+
+Headless Chromium 153 (Chrome for Testing) on the same VM, the app's worker code path (`createKokoroWorkerEngines`,
+`packages/speech/bench/kokoro-run.mjs`). One run each; expect noise of about 10 to 20 %. These were measured with
+`model_quantized.onnx` (the file shipped before the native path), 1 thread:
+
+| Language | Model load | Sentence 1 (about 8 s of speech) | Sentence 2 |
+| --- | --- | --- | --- |
+| en (`af_heart`) | 1.4 s | 7.92 s of audio in 20.7 s: RTF 2.62 | 5.75 s in 15.8 s: RTF 2.75 |
+| fr (`ff_siwis`) | 1.5 s | 7.25 s of audio in 19.6 s: RTF 2.71 | 6.85 s in 19.1 s: RTF 2.79 |
+
+Sentences: "Your electricity bill of twelve thousand five hundred francs must be paid before the end of the month, at
+any ENEO agency.", "Never share your secret code with anyone, not even with someone who says they work for your
+bank."; "Votre facture d'électricité de douze mille cinq cents francs doit être payée avant la fin du mois, dans une
+agence ENEO.", "Ne partagez jamais votre code secret avec personne, même pas avec quelqu'un qui dit travailler pour
+votre banque."
+
+In the same runs the speed guard switched Kokoro off after load plus test (4.1 s) and both utterances went to the
+fallback without waiting. Model files compared in Chromium on English sentence 1 (two runs each):
+
+| File | RTF, 1 thread | RTF, 4 threads (cross-origin isolated page) | Note |
+| --- | --- | --- | --- |
+| `model_q8f16.onnx` | 3.05 / 2.60 | 1.90 / 1.79 | NaN audio for French sentence 2 with 1 thread |
+| `model_quantized.onnx` | 2.95 / 3.02 | 1.85 / 1.68 | |
+| `model_uint8.onnx` | 2.51 / 2.29 | 0.94 / 0.85 | shipped |
+| `model.onnx` (fp32) | 2.68 / 2.72 | 1.14 / 1.04 | |
+
+So in WebAssembly Kokoro is only near real time with several threads; that is why the web tries it only on a
+cross-origin isolated page, and the phone apps run it natively (about 4 times faster than single-thread WebAssembly
+on this machine for `model_uint8.onnx`).
+
+#### Not measured
+
+Kokoro has not run on a phone: no real-time factor, time to first audio or memory use on Android or iPhone, and
+nobody has judged by ear whether Kokoro or the iPhone's Enhanced/Premium voices sound better.

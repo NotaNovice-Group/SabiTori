@@ -128,6 +128,15 @@ cd android && ./gradlew bundleRelease
 ```
 
 - Use `bundleRelease` (an AAB), which Play requires. The README's `assembleDebug` builds a test APK only.
+- The Kokoro voice model (177 MB) is in the install-time asset pack `kokoro_pack` (`android/kokoro_pack`): Play installs
+  it with the app, outside the 200 MB limit of the base download, so the smooth voice works offline from the first
+  launch. Only the AAB carries asset packs: a release APK (`assembleRelease`) has no Kokoro model and speaks with Piper.
+  CI builds the release bundle and fails if the base module is over 190 MB or the model is not in the pack (first run:
+  base 142.7 MB, kokoro_pack 156.4 MB, compressed sizes inside the AAB).
+  Inside the AAB the pack's model is compressed, so on a Play install the app copies it once to its private files on the
+  first Kokoro load (about 177 MB, one time); a debug APK stores it uncompressed and the app maps it in place.
+  To test the bundle as Play would install it: `bundletool build-apks --local-testing --bundle app-release.aab --output app.apks`
+  then `bundletool install-apks --apks app.apks`.
 - The signed bundle is at `apps/app/android/app/build/outputs/bundle/release/`. It is signed only when the keystore environment variables are set (see `build.gradle` and section 3).
 - Before uploading, check that the bundle's manifest declares only the permissions you expect (section 0).
 

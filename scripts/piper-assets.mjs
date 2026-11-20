@@ -6,19 +6,24 @@
  *
  * The espeak-ng data from @diffusionstudio/piper-wasm holds a dictionary for about 100 languages
  * (18 MB). Only the dictionaries the bundled voices need are kept (the `espeak.voice` of every
- * packs/<tag>/voice/*.onnx.json, so French and English today, about 1.5 MB). A pack whose Piper model
+ * packs/<tag>/voice/*.onnx.json and of the Kokoro voices, so French and English today, about 1 MB). The Kokoro
+ * worker uses the same phonemizer files. A pack whose Piper model
  * uses phoneme_type "text" needs no dictionary at all. Used by apps/app/vite.config.ts.
  */
 import { copyFileSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { KOKORO_ESPEAK_LANGS } from './fetch-kokoro.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const speechModules = join(root, 'packages/speech/node_modules');
 
-/** espeak language codes ("fr", "en-gb-x-rp" -> "en") needed by the models under packs/<tag>/voice/. */
-export function neededDictionaries(packsDir = join(root, 'packs')) {
-  const langs = new Set();
+/**
+ * espeak language codes ("fr", "en-gb-x-rp" -> "en") needed by the models under packs/<tag>/voice/, plus the
+ * Kokoro voices' (scripts/fetch-kokoro.mjs; pass `extra: []` to leave them out).
+ */
+export function neededDictionaries(packsDir = join(root, 'packs'), extra = KOKORO_ESPEAK_LANGS) {
+  const langs = new Set(extra);
   if (existsSync(packsDir)) {
     for (const tag of readdirSync(packsDir)) {
       const dir = join(packsDir, tag, 'voice');

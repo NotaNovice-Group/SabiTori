@@ -20,3 +20,11 @@ export { parsePiperConfig, textToIds, textToIdsChecked, MIN_KNOWN_SHARE, phoneme
 export { createPiperRuntime, type OrtLike, type PhonemizerLike } from './piper/runtime.js';
 export { piperVoiceFromManifest, createManifestVoiceResolver, createPacksVoiceResolver, loadManifests, type VoiceRef } from './piper/voices.js';
 export { createPiperWorkerEngines, piperSupported } from './piper/create-worker.js';
+export { createKokoroTts, KOKORO_PROBE, type KokoroTtsOptions } from './kokoro/tts.js';
+export { createKokoroRuntime, ortModelOpener, allFinite, type LoadedKokoroVoice, type KokoroModel } from './kokoro/runtime.js';
+export { createKokoroNativeEngines, nativeModelOpener, assetPathOf, int16Base64ToFloat, type KokoroNativePlugin } from './kokoro/native.js';
+export { loadPhonemizer } from './piper/worker-assets.js';
+export { createKokoroWorkerEngines, kokoroThreads } from './kokoro/create-worker.js';
+export { createKokoroVoiceResolver, kokoroVoiceFor, KOKORO_VOICES, KOKORO_MODEL_FILE, KOKORO_VERSION, type KokoroVoiceSpec } from './kokoro/voices.js';
+export { KOKORO_VOCAB, KOKORO_MAX_PHONEMES, KOKORO_SAMPLE_RATE, kokoroPhonemes, kokoroIds, styleRow, styleRowIndex, chunkPhonemes, kokoroSpeed, splitForFirstAudio, type KokoroLang } from './kokoro/text.js';
+export { kokoroFirstSynthesisBudget, kokoroSpeedVerdict, skipKokoro, KOKORO_FIRST_AUDIO_MS, KOKORO_MAX_RTF, KOKORO_MAX_WAIT_MS, KOKORO_RETEST_MS, type SpeedVerdict, type SlowVerdict } from './kokoro/speed-guard.js';

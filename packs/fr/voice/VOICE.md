@@ -1,5 +1,8 @@
 # French voice (Piper)
 
+Kokoro-82M (`voices/kokoro/VOICE.md`) is the first voice for French; this Piper voice speaks when Kokoro is too slow
+on the phone or cannot load, and the phone's own voice after it.
+
 | | |
 | --- | --- |
 | Model id | `fr_FR-siwis-medium` (manifest `voiceHint`) |
