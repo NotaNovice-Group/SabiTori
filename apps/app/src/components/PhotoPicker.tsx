@@ -13,16 +13,26 @@ import { pickNativePhoto, type PhotoSource } from '../lib/photo';
 export function useNativePhoto(onFile: (f: File) => void) {
   const { t } = useApp();
   const [problem, setProblem] = useState<'denied' | 'failed' | null>(null);
+  const [detail, setDetail] = useState('');
   const pick = useCallback(
     async (source: PhotoSource) => {
       const r = await pickNativePhoto(source);
       if (r.ok) onFile(r.file);
-      else if (r.reason !== 'cancelled') setProblem(r.reason);
+      else if (r.reason !== 'cancelled') {
+        setDetail(r.reason === 'failed' ? r.detail ?? '' : '');
+        setProblem(r.reason);
+      }
     },
     [onFile],
   );
   const notice = problem && (
-    <Sheet title={t(problem === 'denied' ? 'app.photo.denied_title' : 'app.capture.failed')} onClose={() => setProblem(null)}>
+    <Sheet title={t(problem === 'denied' ? 'app.photo.denied_title' : 'app.photo.failed')} onClose={() => setProblem(null)}>
+      {problem === 'failed' && (
+        <>
+          <p className="note">{t('app.photo.failed_hint')}</p>
+          {detail && <p className="note error-detail">{detail}</p>}
+        </>
+      )}
       {problem === 'denied' && (
         <>
           <p className="note">{t('app.photo.denied')}</p>
