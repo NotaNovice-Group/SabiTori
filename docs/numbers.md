@@ -36,7 +36,8 @@ photo warned as a likely scam (0); from the photos' true text: 30 of 30 amounts,
 ## Other measured facts (with their source)
 
 - Model size: 32.7 MB (int8, 33 M parameters).
-- Slow-phone stand-in (desktop CPU slowed 4x, not a phone): a pasted bill becomes a card in 1.3 to 2.3 s depending
-  on the test machine (`docs/model.md`, "App start and card time", 2026-11-17 and 2026-11-18). Not measured on a phone.
+- Slow-phone stand-in (desktop CPU slowed 4x, not a phone): a pasted bill becomes a card in 1.3 to 2.5 s depending
+  on the test machine and on whether the built-in model is still loading (`docs/model.md`, "App start and card time",
+  2026-11-17 to 2026-11-20). Not measured on a phone.
 - Accessibility: 163 screen states, WCAG 2.2 AA (axe-core) plus manual-class checks, 0 violations
   (`apps/app/a11y-report.md`); no disabled person has tested the app yet (`docs/accessibility.md`).
