@@ -31,6 +31,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 
 ## Backlog (top first)
 
+- [x] **Public privacy page lagged the policy.** `site/privacy.html` and `privacy-fr.html` (linked from the stores)
+      missed community reports, push alerts and the 90-day rule. Regenerated; `scripts/site-privacy.mjs --check` in CI and the local gate.
 - [x] **Outbox race.** A report or teaching sent while an earlier send was still running was dropped from the
       outbox unsent, and shown as "sent". Now kept and sent after it (test in `apps/app/test/community.test.ts`).
 - [x] **Community retention and deletion** (owner: keep 90 days, delete on request in the app or by email): daily
@@ -531,3 +533,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #113 | Instant scam alerts by Firebase topic (opt-in); privacy policy: microphone, community reports, push | local gate (Actions budget) |
 | 2026-11-20 | #114 | Community service: 90-day retention, delete from the app (per-item key) or by email; privacy placeholders filled | local gate (Actions budget) |
 | 2026-11-20 | #115 | Outbox: an item added during a running send is no longer lost or shown as sent | local gate (Actions budget) |
+| 2026-11-20 | #117 | Public privacy pages regenerated from the policy; CI check keeps them in sync | local gate (Actions budget) |
