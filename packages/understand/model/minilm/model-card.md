@@ -45,11 +45,11 @@ urgency. It never produces a date, amount, phone number or text; those come from
 | --- | --- |
 | Exported parameters | 33.0M (source model 117.7M; vocabulary pruned to 30,000 pieces, fill strategy `freq`) |
 | `encoder.int8.onnx` | 34.2 MB |
-| Fidelity (held-out text only) | mean cosine 0.989, min 0.945 between exported and original fp32 sentence embeddings, n=80 |
+| Fidelity (held-out text only) | mean cosine 0.989, min 0.959 between exported and original fp32 sentence embeddings, n=80 |
 
 | Held-out set | n | mean cosine | min | below 0.95 | tokenised exactly as the original |
 | --- | --- | --- | --- | --- | --- |
-| heldout-sentences.txt | 80 | 0.989 | 0.945 | 1 | 78 |
+| heldout-sentences.txt | 80 | 0.989 | 0.959 | 0 | 78 |
 <!-- /results:card-export -->
 
 Fidelity is measured only on text that chose nothing in the export: the test split, the unseen set and
@@ -92,42 +92,42 @@ Two synthetic sets, both labelled by the rules in `eval/README.md`:
 | Set | System | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- | --- |
 | test split (n=96) | rules@1 (keyword rules) | 86.5% [79.2–92.7] | 77.1% [68.8–85.4] | 88.5% [81.3–94.8] | 63.5% [54.2–72.9] |
-| test split (n=96) | encoder alone | 97.9% [94.8–100.0] | 96.9% [92.7–100.0] | 86.5% [79.2–92.7] | 81.3% [72.9–88.5] |
-| test split (n=96) | **encoder + rules (default)** | 99.0% [96.9–100.0] | 95.8% [91.7–99.0] | 90.6% [84.4–95.8] | 88.5% [82.3–94.8] |
+| test split (n=96) | encoder alone | 97.9% [94.8–100.0] | 97.9% [94.8–100.0] | 88.5% [82.3–94.8] | 84.4% [77.1–91.7] |
+| test split (n=96) | **encoder + rules (default)** | 97.9% [94.8–100.0] | 96.9% [92.7–100.0] | 92.7% [87.5–97.9] | 88.5% [82.3–94.8] |
 | unseen set (n=100) | rules@1 (keyword rules) | 90.0% [84.0–95.0] | 56.0% [46.0–66.0] | 88.0% [81.0–94.0] | 47.0% [37.0–57.0] |
-| unseen set (n=100) | encoder alone | 97.0% [93.0–100.0] | 86.0% [79.0–92.0] | 71.0% [62.0–80.0] | 62.0% [52.0–71.0] |
-| unseen set (n=100) | **encoder + rules (default)** | 98.0% [95.0–100.0] | 88.0% [81.0–94.0] | 86.0% [79.0–92.0] | 77.0% [69.0–85.0] |
-| second unseen set (n=100) | rules@1 (keyword rules) | 84.0% [76.0–91.0] | 64.0% [54.0–73.0] | 85.0% [78.0–92.0] | 48.0% [38.0–58.0] |
-| second unseen set (n=100) | encoder alone | 100.0% [100.0–100.0] | 88.0% [81.0–94.0] | 82.0% [74.0–89.0] | 75.0% [66.0–83.0] |
-| second unseen set (n=100) | **encoder + rules (default)** | 98.0% [95.0–100.0] | 84.0% [77.0–91.0] | 90.0% [84.0–96.0] | 79.0% [71.0–87.0] |
+| unseen set (n=100) | encoder alone | 95.0% [90.0–99.0] | 84.0% [76.0–91.0] | 74.0% [65.0–82.0] | 62.0% [52.0–72.0] |
+| unseen set (n=100) | **encoder + rules (default)** | 95.0% [90.0–99.0] | 86.0% [79.0–92.0] | 91.0% [85.0–96.0] | 77.0% [68.0–85.0] |
+| second unseen set (n=100) | rules@1 (keyword rules) | 84.0% [76.0–91.0] | 65.0% [55.0–74.0] | 86.0% [79.0–92.0] | 49.0% [39.0–59.0] |
+| second unseen set (n=100) | encoder alone | 100.0% [100.0–100.0] | 87.0% [80.0–93.0] | 80.0% [72.0–88.0] | 72.0% [63.0–81.0] |
+| second unseen set (n=100) | **encoder + rules (default)** | 100.0% [100.0–100.0] | 87.0% [80.0–93.0] | 89.0% [83.0–95.0] | 82.0% [74.0–89.0] |
 
 Paired differences against rules on the same messages (points, 95% bootstrap interval, messages only that system gets right vs only rules gets right, exact McNemar p; `*` = p < 0.05):
 
 | Set | Comparison | kind | action | urgency | all three |
 | --- | --- | --- | --- | --- | --- |
-| test split | encoder + rules vs rules | +12.5 pts [6.3–19.8], 12 vs 0, p < 0.001 * | +18.8 pts [11.5–27.1], 18 vs 0, p < 0.001 * | +2.1 pts [0.0–5.2], 2 vs 0, p = 0.500 | +25.0 pts [16.7–34.4], 24 vs 0, p < 0.001 * |
-| test split | encoder alone vs rules | +11.5 pts [5.2–18.8], 12 vs 1, p = 0.003 * | +19.8 pts [11.5–29.2], 21 vs 2, p < 0.001 * | -2.1 pts [-10.4–6.3], 7 vs 9, p = 0.804 | +17.7 pts [6.3–29.2], 25 vs 8, p = 0.005 * |
-| unseen set | encoder + rules vs rules | +8.0 pts [2.0–15.0], 10 vs 2, p = 0.039 * | +32.0 pts [21.0–43.0], 36 vs 4, p < 0.001 * | -2.0 pts [-8.0–4.0], 4 vs 6, p = 0.754 | +30.0 pts [19.0–41.0], 34 vs 4, p < 0.001 * |
-| unseen set | encoder alone vs rules | +7.0 pts [0.0–14.0], 10 vs 3, p = 0.092 | +30.0 pts [18.0–41.0], 37 vs 7, p < 0.001 * | -17.0 pts [-27.0–-7.0], 6 vs 23, p = 0.002 * | +15.0 pts [2.0–28.0], 31 vs 16, p = 0.040 * |
-| second unseen set | encoder + rules vs rules | +14.0 pts [8.0–21.0], 14 vs 0, p < 0.001 * | +20.0 pts [11.0–29.0], 22 vs 2, p < 0.001 * | +5.0 pts [1.0–10.0], 5 vs 0, p = 0.063 | +31.0 pts [21.0–41.0], 33 vs 2, p < 0.001 * |
-| second unseen set | encoder alone vs rules | +16.0 pts [9.0–24.0], 16 vs 0, p < 0.001 * | +24.0 pts [15.0–34.0], 27 vs 3, p < 0.001 * | -3.0 pts [-12.0–5.0], 8 vs 11, p = 0.648 | +27.0 pts [15.0–39.0], 35 vs 8, p < 0.001 * |
+| test split | encoder + rules vs rules | +11.5 pts [5.2–18.8], 12 vs 1, p = 0.003 * | +19.8 pts [11.5–28.1], 20 vs 1, p < 0.001 * | +4.2 pts [1.0–8.3], 4 vs 0, p = 0.125 | +25.0 pts [15.6–34.4], 26 vs 2, p < 0.001 * |
+| test split | encoder alone vs rules | +11.5 pts [5.2–18.8], 12 vs 1, p = 0.003 * | +20.8 pts [12.5–29.2], 21 vs 1, p < 0.001 * | +0.0 pts [-7.3–7.3], 7 vs 7, p = 1.000 | +20.8 pts [10.4–32.3], 27 vs 7, p < 0.001 * |
+| unseen set | encoder + rules vs rules | +5.0 pts [-1.0–12.0], 8 vs 3, p = 0.227 | +30.0 pts [19.0–41.0], 35 vs 5, p < 0.001 * | +3.0 pts [-2.0–8.0], 5 vs 2, p = 0.453 | +30.0 pts [19.0–41.0], 35 vs 5, p < 0.001 * |
+| unseen set | encoder alone vs rules | +5.0 pts [-1.0–12.0], 8 vs 3, p = 0.227 | +28.0 pts [16.0–40.0], 36 vs 8, p < 0.001 * | -14.0 pts [-24.0–-4.0], 7 vs 21, p = 0.013 * | +15.0 pts [2.0–28.0], 30 vs 15, p = 0.036 * |
+| second unseen set | encoder + rules vs rules | +16.0 pts [9.0–24.0], 16 vs 0, p < 0.001 * | +22.0 pts [14.0–31.0], 23 vs 1, p < 0.001 * | +3.0 pts [-2.0–8.0], 5 vs 2, p = 0.453 | +33.0 pts [23.0–43.0], 34 vs 1, p < 0.001 * |
+| second unseen set | encoder alone vs rules | +16.0 pts [9.0–24.0], 16 vs 0, p < 0.001 * | +22.0 pts [13.0–31.0], 24 vs 2, p < 0.001 * | -6.0 pts [-15.0–3.0], 8 vs 14, p = 0.286 | +23.0 pts [12.0–35.0], 31 vs 8, p < 0.001 * |
 
 By message language (all three labels right):
 
 | Set | Lang | n | rules, all three | encoder + rules, all three | difference |
 | --- | --- | --- | --- | --- | --- |
-| test split | fr | 38 | 63.2% [47.4–79.0] | 89.5% [79.0–97.4] | +26.3 pts [13.2–42.1], 10 vs 0, p = 0.002 * |
-| test split | en | 43 | 79.1% [65.1–90.7] | 95.3% [88.4–100.0] | +16.3 pts [7.0–27.9], 7 vs 0, p = 0.016 * |
-| test split | wes | 15 | 20.0% [0.0–40.0] | 66.7% [40.0–86.7] | +46.7 pts [20.0–73.3], 7 vs 0, p = 0.016 * |
-| unseen set | fr | 40 | 42.5% [27.5–57.5] | 72.5% [57.5–85.0] | +30.0 pts [12.4–47.5], 15 vs 3, p = 0.007 * |
-| unseen set | en | 38 | 47.4% [31.6–63.2] | 81.6% [68.4–92.1] | +34.2 pts [21.1–50.0], 13 vs 0, p < 0.001 * |
-| unseen set | wes | 22 | 54.5% [31.8–72.7] | 77.3% [59.1–95.5] | +22.7 pts [0.0–45.5], 6 vs 1, p = 0.125 |
-| second unseen set | fr | 40 | 45.0% [30.0–60.0] | 77.5% [65.0–90.0] | +32.5 pts [17.5–47.5], 14 vs 1, p = 0.001 * |
-| second unseen set | en | 38 | 63.2% [47.4–79.0] | 86.8% [76.3–97.4] | +23.7 pts [7.9–39.5], 10 vs 1, p = 0.012 * |
-| second unseen set | wes | 22 | 27.3% [9.1–45.5] | 68.2% [50.0–86.4] | +40.9 pts [22.7–63.6], 9 vs 0, p = 0.004 * |
+| test split | fr | 38 | 63.2% [47.4–79.0] | 89.5% [79.0–97.4] | +26.3 pts [10.5–42.1], 11 vs 1, p = 0.006 * |
+| test split | en | 43 | 79.1% [65.1–90.7] | 93.0% [83.7–100.0] | +14.0 pts [2.3–25.6], 7 vs 1, p = 0.070 |
+| test split | wes | 15 | 20.0% [0.0–40.0] | 73.3% [46.7–93.3] | +53.3 pts [26.7–80.0], 8 vs 0, p = 0.008 * |
+| unseen set | fr | 40 | 42.5% [27.5–57.5] | 77.5% [65.0–90.0] | +35.0 pts [17.5–52.5], 16 vs 2, p = 0.001 * |
+| unseen set | en | 38 | 47.4% [31.6–63.2] | 79.0% [65.8–92.1] | +31.6 pts [15.8–47.4], 13 vs 1, p = 0.002 * |
+| unseen set | wes | 22 | 54.5% [31.8–72.7] | 72.7% [54.5–90.9] | +18.2 pts [-4.5–40.9], 6 vs 2, p = 0.289 |
+| second unseen set | fr | 40 | 47.5% [32.5–62.5] | 85.0% [72.5–95.0] | +37.5 pts [22.5–52.5], 15 vs 0, p < 0.001 * |
+| second unseen set | en | 38 | 63.2% [47.4–79.0] | 89.5% [79.0–97.4] | +26.3 pts [10.5–42.1], 11 vs 1, p = 0.006 * |
+| second unseen set | wes | 22 | 27.3% [9.1–45.5] | 63.6% [40.9–81.8] | +36.4 pts [18.2–54.5], 8 vs 0, p = 0.008 * |
 
-Scam level (`assessScam`, code, not changed by this model): test 100.0% [100.0–100.0], unseen 93.0% [88.0–98.0], second unseen 91.0% [85.0–96.0].
-Training: 2115 train messages; 5-fold CV accuracy of the encoder heads alone: kind 96.0%, action 95.0%, urgency 83.1%.
+Scam level (`assessScam`, code, not changed by this model): test 100.0% [100.0–100.0], unseen 95.0% [90.0–99.0], second unseen 91.0% [85.0–96.0].
+Training: 2115 train messages; 5-fold CV accuracy of the encoder heads alone: kind 96.3%, action 95.8%, urgency 83.7%.
 Statistics: 95% percentile bootstrap over rows, 10000 resamples, seed 20261102; exact two-sided McNemar on discordant pairs.
 <!-- /results:card-eval -->
 
@@ -139,25 +139,25 @@ probability):
 <!-- results:card-calibration -->
 | Set | Head | ECE | mean confidence | accuracy |
 | --- | --- | --- | --- | --- |
-| test split | kind | 0.007 | 0.98 | 0.98 |
-| test split | action | 0.046 | 0.95 | 0.97 |
-| test split | urgency | 0.093 | 0.82 | 0.86 |
-| unseen set | kind | 0.030 | 0.96 | 0.97 |
-| unseen set | action | 0.062 | 0.89 | 0.86 |
-| unseen set | urgency | 0.111 | 0.82 | 0.71 |
-| second unseen set | kind | 0.041 | 0.96 | 1.00 |
-| second unseen set | action | 0.087 | 0.93 | 0.88 |
-| second unseen set | urgency | 0.064 | 0.81 | 0.82 |
+| test split | kind | 0.015 | 0.98 | 0.98 |
+| test split | action | 0.037 | 0.96 | 0.98 |
+| test split | urgency | 0.096 | 0.82 | 0.89 |
+| unseen set | kind | 0.030 | 0.97 | 0.95 |
+| unseen set | action | 0.076 | 0.91 | 0.84 |
+| unseen set | urgency | 0.080 | 0.81 | 0.74 |
+| second unseen set | kind | 0.022 | 0.98 | 1.00 |
+| second unseen set | action | 0.070 | 0.94 | 0.87 |
+| second unseen set | urgency | 0.060 | 0.81 | 0.80 |
 
 Threshold grid (train split, out-of-fold, n=2115): accuracy of each field when the encoder's label is used at or above t, through the app's own combination code. Chosen: the middle of the plateau within half a point of the best.
 
 | Field | 0.30 | 0.35 | 0.40 | 0.45 | 0.50 | 0.55 | 0.60 | 0.65 | 0.70 | 0.75 | 0.80 | 0.85 | 0.90 | 0.95 | never | chosen |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| kind | 95.9 | 96.0 | 96.3 | 96.5 | 96.7 | 96.8 | 96.9 | 97.1 | 96.9 | 96.9 | 96.6 | 96.1 | 95.7 | 94.8 | 87.0 | 0.65 |
-| action | 89.9 | 89.8 | 89.8 | 89.6 | 89.5 | 89.5 | 89.5 | 89.5 | 89.5 | 89.2 | 88.6 | 87.7 | 87.0 | 84.9 | 63.0 | 0.5 |
-| urgency | 92.5 | 92.5 | 92.4 | 92.4 | 92.4 | 92.6 | 92.6 | 92.6 | 92.7 | 92.6 | 92.6 | 92.5 | 92.5 | 92.5 | 92.5 | 0.65 |
+| kind | 96.4 | 96.5 | 96.6 | 96.8 | 97.0 | 97.3 | 97.0 | 97.0 | 96.8 | 96.9 | 96.7 | 96.4 | 96.0 | 95.6 | 87.0 | 0.6 |
+| action | 94.6 | 94.6 | 94.5 | 94.4 | 94.1 | 93.9 | 93.8 | 93.7 | 93.6 | 93.4 | 92.9 | 92.6 | 91.4 | 89.5 | 63.7 | 0.4 |
+| urgency | 96.3 | 96.3 | 96.3 | 96.3 | 96.3 | 96.4 | 96.4 | 96.5 | 96.5 | 96.5 | 96.5 | 96.4 | 96.4 | 96.4 | 96.4 | 0.65 |
 
-Thresholds shipped in `heads.json`: kind 0.65, action 0.5, urgency 0.65.
+Thresholds shipped in `heads.json`: kind 0.6, action 0.4, urgency 0.65.
 <!-- /results:card-calibration -->
 
 ## Limits

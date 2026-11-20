@@ -10,16 +10,18 @@ Built-in model minilm-l12-int8@4 plus rules (heads trained on 2115 messages), th
 
 | Set | All three right | Kind | Action | Urgency | Rules alone, all three | Model + rules vs rules |
 | --- | --- | --- | --- | --- | --- | --- |
-| Second unseen set (100 messages by an independent author, written after the retrain and evaluated once): **the number to quote** | **79.0% [71.0–87.0]** | 98.0% [95.0–100.0] | 84.0% [77.0–91.0] | 90.0% [84.0–96.0] | 48.0% [38.0–58.0] | +31.0 points, p < 0.001 |
-| First unseen set (100 messages; its per-class error counts were read once to decide what training messages to add, so it is no longer untouched) | 77.0% [69.0–85.0] | 98.0% [95.0–100.0] | 88.0% [81.0–94.0] | 86.0% [79.0–92.0] | 47.0% [37.0–57.0] | +30.0 points, p < 0.001 |
-| Test split (96 messages, same templates as training) | 88.5% [82.3–94.8] | 99.0% [96.9–100.0] | 95.8% [91.7–99.0] | 90.6% [84.4–95.8] | 63.5% [54.2–72.9] | +25.0 points, p < 0.001 |
+| Third unseen set (150 messages by an independent author, labels checked by a second reviewer, never read while training the fine-tuned model, evaluated once): **the number to quote** | **75.3% [68.0–82.0]** | 96.7% [93.3–99.3] | 86.7% [81.3–92.0] | 84.0% [78.0–89.3] | 45.3% [37.3–53.3] | +30.0 points, p < 0.001 |
+| Second unseen set (100 messages by an independent author; its overall score was seen before the fine-tune) | 82.0% [74.0–89.0] | 100.0% [100.0–100.0] | 87.0% [80.0–93.0] | 89.0% [83.0–95.0] | 49.0% [39.0–59.0] | +33.0 points, p < 0.001 |
+| First unseen set (100 messages; its per-class error counts were read once to decide what training messages to add, so it is no longer untouched) | 77.0% [68.0–85.0] | 95.0% [90.0–99.0] | 86.0% [79.0–92.0] | 91.0% [85.0–96.0] | 47.0% [37.0–57.0] | +30.0 points, p < 0.001 |
+| Test split (96 messages, same templates as training) | 88.5% [82.3–94.8] | 97.9% [94.8–100.0] | 96.9% [92.7–100.0] | 92.7% [87.5–97.9] | 63.5% [54.2–72.9] | +25.0 points, p < 0.001 |
 
 Brackets: 95% bootstrap intervals. Comparison: exact McNemar test on the same messages.
 
 ## Scam warnings (code, not the model)
 
+- Third unseen set: 34 of 44 scams warned; 7 of 106 genuine messages falsely warned.
 - Second unseen set: 19 of 22 scams warned; 5 of 78 genuine messages falsely warned.
-- First unseen set: 18 of 21 scams warned; 2 of 79 genuine messages falsely warned.
+- First unseen set: 20 of 21 scams warned; 2 of 79 genuine messages falsely warned.
 - Test split: 22 of 22 scams warned; 0 of 74 genuine messages falsely warned (small; the unseen set is the fairer number).
 
 ## Reading photos (on-device OCR)
