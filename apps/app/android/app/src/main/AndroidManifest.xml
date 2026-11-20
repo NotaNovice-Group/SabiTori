@@ -72,6 +72,9 @@
     <!-- Take a photo of a paper. Asked when the person taps "Take a photo". Choosing a photo from the
          gallery uses the system photo picker and needs no media permission. -->
     <uses-permission android:name="android.permission.CAMERA" />
+    <!-- "Teach": record a word or phrase, asked for only when the person taps Record. -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <!-- Reminders (Android 13+). Asked when the person taps "Remind me". Reminders are scheduled with
          inexact, idle-allowed alarms, so the exact-alarm permission that the plugin declares is removed. -->

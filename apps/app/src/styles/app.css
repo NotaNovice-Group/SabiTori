@@ -99,6 +99,7 @@ html {
   text-size-adjust: 100%;
   -webkit-tap-highlight-color: transparent;
   scroll-padding-top: calc(var(--bar-h, 0px) + 8px); /* the sticky top bar never hides what is scrolled or focused into view */
+  scroll-padding-bottom: calc(var(--dock-h, 0px) + var(--tabbar-h, 0px) + 8px); /* nor the dock and the tab bar */
   scrollbar-color: var(--ink-2) var(--ground);
   scrollbar-width: thin;
   accent-color: var(--brand);
@@ -134,7 +135,7 @@ h1:focus { outline: none; }
 
 h1, h2, h3, p, ul, ol { margin: 0; padding: 0; }
 ul, ol { list-style: none; }
-button, input, textarea { font: inherit; color: inherit; }
+button, input, textarea, select { font: inherit; color: inherit; }
 a { color: inherit; text-decoration: none; }
 
 .num { font-variant-numeric: tabular-nums; font-feature-settings: 'tnum'; }
@@ -655,3 +656,104 @@ a { color: inherit; text-decoration: none; }
 
 /* What broke, under a failed photo reading: small, quiet, selectable so it can be copied into a report. */
 .error-detail { font-size: 0.9375rem; color: var(--ink-2); user-select: text; -webkit-user-select: text; overflow-wrap: anywhere; }
+
+/* ---------- Phone number: country picker + number, checked as typed ---------- */
+.phone-field { display: grid; gap: var(--s2); }
+.phone-row { display: flex; align-items: stretch; gap: var(--s2); position: relative; }
+/* The native <select> sits invisibly over a big, readable face (flag + code): the phone's own picker opens on tap. */
+.phone-cc { position: relative; flex: none; display: flex; }
+.phone-cc-face {
+  display: inline-flex; align-items: center; gap: var(--s2); min-height: 56px; padding-inline: var(--s3) var(--s4);
+  border: 2px solid var(--line); border-radius: 12px; background: var(--surface); font-weight: 700; font-size: var(--fs-body);
+}
+.phone-cc-face::after { content: ''; width: 8px; height: 8px; margin-inline-start: var(--s1); border-right: 2px solid var(--ink-2); border-bottom: 2px solid var(--ink-2); transform: translateY(-2px) rotate(45deg); }
+.phone-flag { font-size: 1.5rem; line-height: 1; }
+.phone-cc select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; font-size: 16px; cursor: pointer; }
+.phone-cc:focus-within .phone-cc-face { outline: 3px solid var(--focus); outline-offset: 2px; }
+.phone-input { flex: 1; min-width: 0; letter-spacing: 0.02em; }
+.phone-row[data-state='invalid'] .phone-input { border-color: var(--urgent); }
+.phone-row[data-state='valid'] .phone-input { border-color: var(--info); padding-inline-end: 48px; }
+.phone-ok { position: absolute; inset-inline-end: var(--s3); top: 50%; transform: translateY(-50%); color: var(--info); pointer-events: none; }
+.phone-msg { display: flex; gap: var(--s2); align-items: flex-start; font-size: var(--fs-small); color: var(--ink-2); }
+.phone-msg-bad { color: var(--urgent); font-weight: 700; }
+.phone-msg svg { flex: none; margin-top: 1px; }
+
+/* ---------- Bottom tab bar: Home, Scams, Teach (always reachable after first run) ---------- */
+.tabbar {
+  position: fixed; inset-inline: 0; bottom: 0; z-index: 8;
+  background: var(--surface);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -6px 24px rgb(31 26 20 / 0.06);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tabbar-inner { list-style: none; margin: 0 auto; padding: var(--s1) var(--gutter); max-width: 560px; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s2); }
+.tabbar-inner > li { display: flex; }
+.tab.btn-quiet {
+  flex: 1; min-height: 64px; flex-direction: column; gap: 2px; padding: var(--s1) var(--s2);
+  border-radius: 16px; background: transparent; color: var(--ink-2); text-decoration: none;
+}
+.tab-ic { display: grid; place-items: center; width: 64px; height: 32px; border-radius: 999px; transition: background-color 160ms ease-out; }
+.tab-label { font-size: var(--fs-small); font-weight: 700; line-height: 1.2; text-align: center; overflow-wrap: anywhere; }
+.tab[data-current] { color: var(--brand); }
+.tab[data-current] .tab-ic { background: var(--brand-tint); }
+@media (prefers-reduced-motion: reduce) { .tab-ic { transition: none; } }
+/* With the bar on screen: the page leaves room for it, the dock rests on top of it, and Home leaves the top bar. */
+.has-tabbar .screen { padding-bottom: var(--tabbar-h, 0px); }
+.has-tabbar .dock { bottom: var(--tabbar-h, 0px); padding-bottom: var(--s3); }
+.has-tabbar .topbar-home { display: none; }
+
+/* ---------- Report a scam ---------- */
+.report-flagged { margin-top: calc(var(--s3) * -1); }
+.report-btn { border-color: var(--stop); color: var(--stop); }
+.report-done { display: flex; gap: var(--s3); align-items: flex-start; padding: var(--s4); border-radius: 12px; background: var(--brand-tint); color: var(--ink); font-weight: 700; }
+.report-done svg { flex: none; color: var(--brand); }
+.sheet-lead { font-size: var(--fs-body); }
+.sheet-actions { display: grid; gap: var(--s3); margin-top: var(--s3); }
+.check-row { display: flex; gap: var(--s3); align-items: flex-start; min-height: 56px; padding: var(--s3); border-radius: 12px; background: var(--surface-2); cursor: pointer; }
+.check-row input { width: 28px; height: 28px; flex: none; accent-color: var(--brand); margin: 0; }
+
+/* ---------- Scams screen ---------- */
+.panel-title svg, .section-title svg { vertical-align: -4px; margin-inline-end: var(--s1); }
+.scam-check { display: grid; gap: var(--s3); }
+.lookup { display: flex; gap: var(--s3); align-items: flex-start; padding: var(--s4); border-radius: 12px; background: var(--surface-2); }
+.lookup svg { flex: none; color: var(--ink-2); }
+.lookup-hit { background: color-mix(in srgb, var(--stop) 12%, var(--surface)); }
+.lookup-hit svg { color: var(--stop); }
+.two-up { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--s3); }
+.section-head { display: flex; align-items: center; justify-content: space-between; gap: var(--s2); }
+.section-head .section-title { margin-bottom: 0; }
+.row-ic-caution { color: var(--soon); }
+.chip-quiet { font-size: var(--fs-small); color: var(--ink-2); }
+.scam-list { list-style: none; margin: var(--s3) 0 0; padding: 0; display: grid; gap: var(--s3); }
+.scam-item { padding: var(--s4); border-radius: 12px; background: var(--surface); box-shadow: inset 4px 0 0 var(--stop), 0 1px 2px rgb(31 26 20 / 0.06); }
+.scam-item[data-level='caution'] { box-shadow: inset 4px 0 0 var(--soon), 0 1px 2px rgb(31 26 20 / 0.06); }
+.scam-item-top { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s2); }
+.scam-item-top .row-ago { margin-inline-start: auto; }
+.scam-text { margin-top: var(--s2); white-space: pre-wrap; overflow-wrap: anywhere; color: var(--ink-2); display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.privacy-note { font-size: var(--fs-small); color: var(--ink-2); text-align: center; }
+.spin { animation: spin 900ms linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .spin { animation: none; } }
+
+/* ---------- Teach ---------- */
+.teach-intro { font-size: var(--fs-body); }
+.teach-stats { display: flex; flex-wrap: wrap; gap: var(--s2) var(--s4); align-items: center; color: var(--ink-2); }
+.teach-stats svg { color: var(--listen); vertical-align: -4px; }
+.field-label svg { vertical-align: -4px; }
+.select { appearance: none; -webkit-appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--ink-2) 50%), linear-gradient(135deg, var(--ink-2) 50%, transparent 50%); background-position: calc(100% - 22px) 52%, calc(100% - 16px) 52%; background-size: 6px 6px; background-repeat: no-repeat; padding-inline-end: 44px; }
+.prompt-card { padding: var(--s5) var(--s4) var(--s3); border-radius: 12px; background: var(--brand-tint); display: grid; gap: var(--s2); }
+.prompt-eyebrow { font-weight: 700; color: var(--brand); }
+.prompt-text { font-size: var(--fs-lead); line-height: 1.2; font-weight: 700; overflow-wrap: anywhere; }
+.prompt-alt { color: var(--ink-2); }
+.prompt-actions { display: flex; flex-wrap: wrap; gap: var(--s2); margin-inline-start: calc(var(--s3) * -1); }
+.rec-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s3); }
+.rec-live { display: inline-flex; align-items: center; gap: var(--s2); font-weight: 700; color: var(--urgent); }
+.rec-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--urgent); animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) { .rec-dot { animation: none; } }
+.rec-len { color: var(--ink-2); }
+.taught { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s2); }
+.taught li { display: grid; gap: 2px; padding: var(--s3) var(--s4); border-radius: 12px; background: var(--surface); }
+.taught .row-ago { display: inline-flex; gap: var(--s2); align-items: center; }
+/* A phrase is a few words: a short box that grows by hand, not the 200px message box. */
+.teach .textarea { min-height: calc(3 * 1.4em + 40px); }
