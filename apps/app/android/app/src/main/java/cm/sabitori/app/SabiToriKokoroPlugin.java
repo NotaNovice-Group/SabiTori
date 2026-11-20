@@ -41,8 +41,8 @@ import java.util.regex.Pattern;
  *   unload()
  *
  * The model comes from the kokoro_pack install-time asset pack (Play installs it with the app; the debug APK carries
- * the same folder) and is memory-mapped where it lies. Only if it cannot be mapped is it copied once to the app's
- * private files (again after an app update).
+ * the same folder). Where it is stored uncompressed (debug APK) it is memory-mapped in place; where it is compressed
+ * (the Play asset pack) it is copied once to the app's private files (again after an app update).
  */
 @CapacitorPlugin(name = "SabiToriKokoro")
 public class SabiToriKokoroPlugin extends Plugin {

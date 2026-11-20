@@ -52,7 +52,8 @@ android {
         }
     }
     // The Kokoro model ships in an install-time asset pack (Play: outside the 200 MB base limit, installed with
-    // the app). Stored uncompressed so the plugin memory-maps it in place instead of copying 177 MB.
+    // the app). noCompress keeps the debug APK's copy uncompressed, so the plugin maps it in place; inside a Play
+    // bundle the pack is compressed and the plugin copies the model once to its private files instead.
     assetPacks = [":kokoro_pack"]
     androidResources {
         noCompress += ['onnx']
