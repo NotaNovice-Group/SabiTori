@@ -87,6 +87,10 @@ function pageChecks({ minTarget, minGap }) {
     const a = targets[i], b = targets[j];
     if (a.contains(b) || b.contains(a)) continue;
     if (!!a.closest('.dock') !== !!b.closest('.dock')) continue; // content scrolls under the sticky dock by design
+    // and under the sticky top bar (opaque; html scroll-padding keeps focused or read content below it). A tall top
+    // bar does not stick (data-tall) and is checked like any content.
+    const stickyBar = (e) => !!e.closest('.topbar:not([data-tall])') && getComputedStyle(e.closest('.topbar')).position === 'sticky';
+    if (stickyBar(a) !== stickyBar(b)) continue;
     const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
     const dx = Math.max(rb.left - ra.right, ra.left - rb.right, 0);
     const dy = Math.max(rb.top - ra.bottom, ra.top - rb.bottom, 0);
@@ -150,6 +154,8 @@ function pageChecks({ minTarget, minGap }) {
     const a = targets[i], b = targets[j];
     if (a.contains(b) || b.contains(a)) continue;
     if (!!a.closest('.dock') !== !!b.closest('.dock')) continue;
+    const onBar = (e) => !!e.closest('.topbar:not([data-tall])') && getComputedStyle(e.closest('.topbar')).position === 'sticky';
+    if (onBar(a) !== onBar(b)) continue; // content scrolls under the sticky top bar by design
     const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
     if (ra.left < rb.right - 1 && rb.left < ra.right - 1 && ra.top < rb.bottom - 1 && rb.top < ra.bottom - 1) add('overlap', a, `overlaps ${desc(b)}`);
   }

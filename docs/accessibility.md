@@ -30,7 +30,7 @@ machines on every change, and what has **not** been checked yet.
 
 | Check | What | How often |
 | --- | --- | --- |
-| Full audit | 163 screen states at 360 x 780, text at 100 / 150 / 200 %, light and dark: axe-core WCAG 2.2 AA plus target size, spacing, names, clipping, overlap, headings, focus. Result on 2026-11-19, after the redesign and picture card: **0 violations, 0 failures** (`apps/app/a11y-report.md`) | `node apps/app/scripts/a11y.mjs` |
+| Full audit | 163 screen states at 360 x 780, text at 100 / 150 / 200 %, light and dark: axe-core WCAG 2.2 AA plus target size, spacing, names, clipping, overlap, headings, focus. Result on 2026-11-20, after the sticky top bar, picture choices and titles: **0 violations, 0 failures** (`apps/app/a11y-report.md`) | `node apps/app/scripts/a11y.mjs` |
 | Browser tests | axe-core WCAG 2.1 AA on 8 screens in light and dark, and 200 % text on a 320 px screen with no sideways scrolling (`apps/app/e2e/a11y.spec.ts`) | every change (`pnpm e2e`) |
 | Unit tests | listen-first behaviour, assistive taps, sheet focus trap (`apps/app/test/a11y.test.ts`) | every change |
 
