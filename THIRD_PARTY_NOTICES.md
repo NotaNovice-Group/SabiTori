@@ -9,7 +9,8 @@ whenever you bundle another component.
 | Component | What it does in SabiTori | Licence | Source |
 | --- | --- | --- | --- |
 | `paraphrase-multilingual-MiniLM-L12-v2` (vocabulary pruned to 30k pieces, int8; `packages/understand/model/minilm/`) | Understands every message (kind, action, urgency) | Apache-2.0 | https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 |
-| onnxruntime-web (runs MiniLM and the Piper voices; versions in `packages/understand/package.json` and `packages/speech/package.json`) | Model runtime, WebAssembly, single thread | MIT | https://github.com/microsoft/onnxruntime |
+| onnxruntime-web (runs MiniLM, the Kokoro voice and the Piper voices; versions in `packages/understand/package.json` and `packages/speech/package.json`) | Model runtime, WebAssembly, single thread | MIT | https://github.com/microsoft/onnxruntime |
+| Kokoro-82M v1.0, ONNX export `model_quantized.onnx` and voice files `af_heart.bin`, `ff_siwis.bin` (`voices/kokoro/`, served from `public/kokoro/`) | Primary voice for English and French | Apache-2.0 | https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX , https://huggingface.co/hexgrad/Kokoro-82M |
 | `@huggingface/tokenizers` 0.2.0 | Tokenizer for MiniLM | Apache-2.0 | https://github.com/huggingface/tokenizers |
 | tesseract.js 7.0.0 and tesseract.js-core 7.0.0 | Text recognition (OCR) of photos | Apache-2.0 | https://github.com/naptha/tesseract.js |
 | Tesseract LSTM models `eng` and `fra`, integer-quantised `best_int` variant (`4.0.0_best_int`, packaged as `@tesseract.js-data/eng` and `/fra` 1.0.0, MIT packaging) | OCR language data | Apache-2.0 | https://github.com/tesseract-ocr/tessdata_best (via the `4.0.0_best_int` folder of the npm packages) |
@@ -136,6 +137,39 @@ commercial use, if you give appropriate credit, provide a link to the licence an
 made. Full text: https://creativecommons.org/licenses/by/4.0/legalcode ; summary:
 https://creativecommons.org/licenses/by/4.0/ .
 
+## On-device voice (Kokoro)
+
+`packages/speech/src/kokoro/` (SabiTori code, MPL-2.0) runs Kokoro-82M with onnxruntime-web in its own Web Worker,
+after turning text into phonemes with the same espeak-ng files as Piper (above: GPL-3.0-or-later, separate files
+loaded at run time). It is the first voice for English and French; when it is too slow on a phone or cannot load,
+Piper speaks. No transformers.js or kokoro-js code is included. Record: `voices/kokoro/VOICE.md`.
+
+| Component | Where | Version | Licence | Source |
+| --- | --- | --- | --- | --- |
+| Kokoro-82M model, ONNX export `onnx/model_quantized.onnx` (unmodified) | `voices/kokoro/model_quantized.onnx` -> `public/kokoro/` | onnx-community/Kokoro-82M-v1.0-ONNX at revision `1939ad2a8e416c0acfeecc08a694d14ef25f2231` (pinned in `scripts/fetch-kokoro.mjs`) | **Apache-2.0** | https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX , upstream https://huggingface.co/hexgrad/Kokoro-82M |
+| Voice `af_heart` (English) | `voices/kokoro/voices/af_heart.bin` | same revision | **Apache-2.0** | same |
+| Voice `ff_siwis` (French) | `voices/kokoro/voices/ff_siwis.bin` | same revision | **Apache-2.0**; trained on the SIWIS database, CC BY 4.0 (attribution below) | same; data https://datashare.ed.ac.uk/handle/10283/2353 |
+| Kokoro vocabulary (115 phoneme symbols, copied into `packages/speech/src/kokoro/text.ts`) | source code | from `tokenizer.json` of the same revision | Apache-2.0 | same |
+
+sha256: model `fbae9257e1e05ffc727e951ef9b9c98418e6d79f1c9b6b13bd59f5c9028a1478`, `af_heart.bin`
+`d583ccff3cdca2f7fae535cb998ac07e9fcb90f09737b9a41fa2734ec44a8f0b`, `ff_siwis.bin`
+`a35f5675ad08948e326ae75fd0ea16ba5d0042e4f76b5f3d1df77d0a48c54861`.
+
+Attribution: *Voice: Kokoro-82M by hexgrad (Apache-2.0), ONNX export by onnx-community. The French voice `ff_siwis`
+is trained on the SIWIS French Speech Synthesis Database (University of Edinburgh), CC BY 4.0.*
+
+The phoneme spelling rules in `packages/speech/src/kokoro/text.ts` follow kokoro-js 1.2.1 (Apache-2.0,
+https://github.com/hexgrad/kokoro/tree/main/kokoro.js) and misaki (Apache-2.0, https://github.com/hexgrad/misaki);
+they are a few string replacements written for SabiTori, no code from either is included.
+
+### Apache License 2.0 (Kokoro-82M and its voices)
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use these files except in compliance
+with the License. You may obtain a copy of the License at https://www.apache.org/licenses/LICENSE-2.0 . Unless
+required by applicable law or agreed to in writing, software distributed under the License is distributed on an
+"AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+specific language governing permissions and limitations under the License.
+
 ### Considered and not used
 
 - `@mintplex-labs/piper-tts-web` 1.0.5 (MIT): a thin wrapper that downloads voices from Hugging Face, keeps
@@ -145,3 +179,7 @@ https://creativecommons.org/licenses/by/4.0/ .
   (one 15 MB wasm); a browser build has to be compiled with Emscripten with the model embedded as preloaded
   data. See `docs/model.md`.
 - MMS-TTS voices (CC BY-NC 4.0): non-commercial, not bundled (see `docs/languages.md`).
+- kokoro-js 1.2.1 (Apache-2.0): pulls in transformers.js and its phonemizer has English only. SabiTori runs the
+  Kokoro model directly with onnxruntime-web instead.
+- Kokoro `onnx/model_q8f16.onnx` (86 MB): returned NaN audio (silence) for a French test sentence in single-thread
+  WebAssembly; `model_quantized.onnx` is used (see `voices/kokoro/VOICE.md`).
