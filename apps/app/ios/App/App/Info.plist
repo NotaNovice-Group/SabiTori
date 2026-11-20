@@ -31,7 +31,7 @@
 	<key>NSMicrophoneUsageDescription</key>
 	<string>SabiTori uses the microphone only when you choose to record a word or phrase to teach it your language.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>SabiTori never saves anything to your photos. iOS asks apps that use the camera to say this.</string>
+	<string>SabiTori never saves photos to your library. iOS asks for this permission because SabiTori uses the system camera.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>SabiTori opens a photo you choose so it can read the letter, bill or message in it. The photo is read on your phone and never leaves it.</string>
 	<key>UIApplicationSceneManifest</key>

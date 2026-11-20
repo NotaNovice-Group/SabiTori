@@ -31,6 +31,18 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 
 ## Backlog (top first)
 
+- [x] **Delete route unbounded.** `POST /v1/delete` read any body size and had no limit; now 1 KB at most and
+      10 times the daily post limit per address (a separate counter, so deleting never blocks posting).
+- [x] **Rate counters kept longer than the policy said, and the D1 SQL was untested.** Hashed-IP rate rows were
+      deleted only on the next post (never, on a quiet service); now also by the daily cron, three days at most, and the
+      policy says so. `services/community/test/d1-store.test.ts` runs the real SQL and migration on SQLite.
+- [x] **Deleted items still looked sent.** After "Delete everything I sent", a card still said "reported" (and could
+      not be reported again) and the teaching stayed in "What you taught". Marks now cleared per deleted item.
+- [x] **Storage full: a report or recording was lost but shown as sent.** When the outbox could not be saved
+      (a teaching with a recording can be over a megabyte) and the phone was offline, the item vanished and the
+      screen said "sent". Now sent directly when online, else an error and the form is kept for another try.
+- [x] **Public privacy page lagged the policy.** `site/privacy.html` and `privacy-fr.html` (linked from the stores)
+      missed community reports, push alerts and the 90-day rule. Regenerated; `scripts/site-privacy.mjs --check` in CI and the local gate.
 - [x] **Outbox race.** A report or teaching sent while an earlier send was still running was dropped from the
       outbox unsent, and shown as "sent". Now kept and sent after it (test in `apps/app/test/community.test.ts`).
 - [x] **Community retention and deletion** (owner: keep 90 days, delete on request in the app or by email): daily
@@ -531,3 +543,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #113 | Instant scam alerts by Firebase topic (opt-in); privacy policy: microphone, community reports, push | local gate (Actions budget) |
 | 2026-11-20 | #114 | Community service: 90-day retention, delete from the app (per-item key) or by email; privacy placeholders filled | local gate (Actions budget) |
 | 2026-11-20 | #115 | Outbox: an item added during a running send is no longer lost or shown as sent | local gate (Actions budget) |
+| 2026-11-20 | #117 | Public privacy pages regenerated from the policy; CI check keeps them in sync | local gate (Actions budget) |
+| 2026-11-20 | #118 | Storage full: a report or recording is never lost while shown as sent | local gate (Actions budget) |
+| 2026-11-20 | #119 | After deletion, cards no longer say reported and teachings leave the list | local gate (Actions budget) |
+| 2026-11-20 | #120 | Community: rate counters deleted daily (3 days max, policy matches); D1 store SQL tested on SQLite | local gate (Actions budget) |
+| 2026-11-20 | #121 | Community: delete requests capped at 1 KB and rate-limited per address | local gate (Actions budget) |

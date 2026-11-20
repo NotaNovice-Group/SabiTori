@@ -42,6 +42,8 @@ export interface PiperTtsOptions<V extends PiperVoiceSpec = PiperVoiceSpec> {
    * background and the fallback is ready for the first tap. Null or absent: no speed test.
    */
   probe?: (voice: V) => string | null;
+  /** With probe: a short text synthesised once, untimed, before the timed speed test (null: the probe text). */
+  warmUp?: (voice: V) => string | null;
   /** How long one utterance waits for a model that is still loading before the fallback speaks it. Default 6000. */
   loadGraceMs?: number;
   /** In-memory audio cache for "Again": total bytes of PCM kept. Default 32 MB. */
@@ -78,6 +80,8 @@ interface Entry<V extends PiperVoiceSpec = PiperVoiceSpec> {
 }
 
 const wait = (ms: number): Promise<'timeout'> => new Promise((r) => setTimeout(() => r('timeout'), ms));
+/** The untimed warm-up before a speed test waits at most this long (a phone this slow fails the test anyway). */
+const WARM_UP_CAP_MS = 15000;
 
 export function createPiperTts<V extends PiperVoiceSpec = PiperVoiceSpec>(opts: PiperTtsOptions<V>): PiperTts {
   const output = opts.output ?? createWebAudioOutput();
@@ -227,6 +231,14 @@ export function createPiperTts<V extends PiperVoiceSpec = PiperVoiceSpec>(opts: 
     if (!text || entry.verified) return Promise.resolve(true);
     entry.probing ??= (async () => {
       const budget = firstSynthesisBudget(text, 1);
+      // The model's very first run pays one-time start-up costs (memory, graph set-up) that the listener never
+      // hears again: run once untimed so the test measures real speed, not that cold start.
+      if (opts.warmUp) {
+        const w = synth(entry, opts.warmUp(entry.voice) ?? text, 1);
+        w.catch(() => undefined);
+        await Promise.race([w.then(() => undefined, () => undefined), wait(WARM_UP_CAP_MS)]);
+        if (entry.verified) return true;
+      }
       const t0 = now();
       const p = synth(entry, text, 1);
       p.catch(() => undefined);

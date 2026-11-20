@@ -1,5 +1,6 @@
 // Builds site/privacy.html and site/privacy-fr.html from docs/privacy.md and docs/privacy.fr.md.
-// Run after editing either policy: npx -y -p marked node scripts/site-privacy.mjs  (or with marked installed).
+// Run after editing either policy: node scripts/site-privacy.mjs. `--check` fails if the pages are out of date
+// (scripts/ci-local.sh runs it), so the public policy never lags the one in docs/.
 import { readFileSync, writeFileSync } from "node:fs";
 import { marked } from "marked";
 
@@ -11,11 +12,13 @@ const pages = [
 ];
 const slug = (t) => t.toLowerCase().replace(/<[^>]+>/g, "").replace(/[^\p{L}\p{N}]+/gu, "-").replace(/^-|-$/g, "");
 const SITE = "https://sabitori.pages.dev";
+const CHECK = process.argv.includes("--check");
+let stale = 0;
 for (const [src, out, lang, title, back, other, otherName, desc] of pages) {
   const pageSlug = out.replace("site/", "").replace(".html", ""), otherSlug = other.replace(".html", ""), otherLang = lang === "en" ? "fr" : "en";
   let body = marked.parse(readFileSync(src, "utf8"));
   body = body.replace(/<h2>(.*?)<\/h2>/g, (_, t) => `<h2 id="${slug(t)}">${t}</h2>`);
-  writeFileSync(out, `<!doctype html>
+  const html = `<!doctype html>
 <html lang="${lang}">
 <head>
 <meta charset="utf-8">
@@ -36,6 +39,12 @@ ${body}
 </main>
 </body>
 </html>
-`);
-  console.log(out);
+`;
+  if (CHECK) {
+    if (readFileSync(out, "utf8") !== html) { console.error(`${out} is out of date with ${src}: run node scripts/site-privacy.mjs`); stale++; }
+  } else {
+    writeFileSync(out, html);
+    console.log(out);
+  }
 }
+if (stale) process.exit(1);

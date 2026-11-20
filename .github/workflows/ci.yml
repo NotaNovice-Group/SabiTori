@@ -27,6 +27,7 @@ jobs:
       - run: pnpm -r test
       - run: pnpm -r typecheck
       - run: node scripts/check-packs.mjs
+      - run: node scripts/site-privacy.mjs --check
 
   e2e:
     name: End-to-end (browser)

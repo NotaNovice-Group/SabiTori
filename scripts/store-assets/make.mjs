@@ -27,7 +27,7 @@ const slides = {
   ],
 };
 // App Store Connect (Nov 2026) asks for the 6.3 inch size in its default iPhone slot.
-const sizes = { "play-phone": [1080, 1920], "ios-6.3": [1206, 2622], "ios-6.9": [1320, 2868], "ios-6.5": [1284, 2778] };
+const sizes = { "play-phone": [1080, 1920], "ios-6.3": [1206, 2622], "ios-6.9": [1320, 2868], "ios-6.5": [1284, 2778], "ios-ipad-13": [2064, 2752] };
 
 function shot(file, w, h, params) {
   mkdirSync(dirname(file), { recursive: true });

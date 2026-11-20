@@ -145,3 +145,52 @@ describe('outbox under concurrency', () => {
     expect(sentItems()).toHaveLength(2);
   });
 });
+
+describe('when the phone cannot keep an item (storage full)', () => {
+  const full = () => {
+    const real = Storage.prototype.setItem;
+    return vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, k: string, v: string) {
+      if (k === 'sabitori.outbox' && v.length > 2) throw new DOMException('quota', 'QuotaExceededError');
+      return real.call(this, k, v);
+    });
+  };
+
+  it('offline: says it failed, and does not mark the card reported or list the teaching', async () => {
+    full();
+    vi.spyOn(globalThis, 'fetch').mockRejectedValue(new TypeError('offline'));
+    expect(await sendScamReport('card-full', REPORT)).toBe('failed');
+    expect(wasReported('card-full')).toBe(false);
+    expect(await sendTeaching({ lang: 'dua', meaning: 'Hello', meaningLang: 'en', audio: { base64: 'AAAA', type: 'audio/webm' } })).toBe('failed');
+    expect(taughtItems()).toEqual([]);
+  });
+
+  it('online: sends it directly, without the outbox, and it can still be deleted later', async () => {
+    full();
+    const f = vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response('{"id":"00000009-aaaa-bbbb"}', { status: 201 }));
+    expect(await sendScamReport('card-full2', REPORT)).toBe('sent');
+    expect(JSON.parse((f.mock.calls[0]![1] as RequestInit).body as string).deleteKey).toMatch(/^[A-Za-z0-9_-]{28}$/);
+    expect(wasReported('card-full2')).toBe(true);
+    expect(sentItems().map((s) => s.id)).toEqual(['00000009-aaaa-bbbb']);
+  });
+});
+
+describe('after "Delete everything I sent"', () => {
+  it('a deleted report no longer shows as reported and a deleted teaching leaves the list; an undeleted one stays', async () => {
+    let n = 0;
+    vi.spyOn(globalThis, 'fetch').mockImplementation(async () => new Response(JSON.stringify({ id: `0000000${++n}-aaaa-bbbb` }), { status: 201 }));
+    await sendScamReport('gone', REPORT);
+    await sendScamReport('stays', REPORT);
+    await sendTeaching({ lang: 'dua', meaning: 'Hello', meaningLang: 'en' });
+    vi.spyOn(globalThis, 'fetch').mockRejectedValueOnce(new TypeError('offline'));
+    await sendTeaching({ lang: 'dua', meaning: 'Queued', meaningLang: 'en' }); // still in the outbox
+    expect(taughtItems()).toHaveLength(2);
+    vi.spyOn(globalThis, 'fetch')
+      .mockResolvedValueOnce(new Response('{"ok":true}', { status: 200 })) // 'gone'
+      .mockRejectedValueOnce(new TypeError('offline')) // 'stays': could not reach the service
+      .mockResolvedValueOnce(new Response('{"ok":true}', { status: 200 })); // the sent teaching
+    expect(await deleteAllSent()).toEqual({ left: 1 });
+    expect(wasReported('gone')).toBe(false);
+    expect(wasReported('stays')).toBe(true);
+    expect(taughtItems()).toEqual([]);
+  });
+});

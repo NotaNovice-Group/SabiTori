@@ -17,6 +17,15 @@ describe('native photo configuration', () => {
     const plist = readFileSync(resolve(app, 'ios/App/App/Info.plist'), 'utf8');
     for (const k of keys) expect(plist, k).toMatch(new RegExp(`<key>${k}</key>\\s*<string>[^<]{10,}</string>`));
   });
+  // The app's own iOS plugins (SabiToriVision reads photos, SabiToriKokoro speaks) are registered only by
+  // MainViewController. SceneDelegate once built a plain CAPBridgeViewController, so neither ever loaded on a phone.
+  it('iOS starts MainViewController, which registers the app plugins', () => {
+    const scene = readFileSync(resolve(app, 'ios/App/App/SceneDelegate.swift'), 'utf8');
+    expect(scene).toMatch(/rootViewController\s*=\s*MainViewController\(\)/);
+    expect(scene).not.toMatch(/=\s*CAPBridgeViewController\(/);
+    const main = readFileSync(resolve(app, 'ios/App/App/MainViewController.swift'), 'utf8');
+    for (const plugin of ['SabiToriVisionPlugin', 'SabiToriKokoroPlugin']) expect(main, plugin).toContain(`registerPluginInstance(${plugin}())`);
+  });
   it('Android: the camera plugin\'s FileProvider authority and its Pictures folder are declared', () => {
     const manifest = readFileSync(resolve(app, 'android/app/src/main/AndroidManifest.xml'), 'utf8');
     expect(manifest).toContain('android:authorities="${applicationId}.fileprovider"');

@@ -45,7 +45,8 @@ CREATE INDEX IF NOT EXISTS scam_reports_created ON scam_reports (created_at);
 CREATE INDEX IF NOT EXISTS teachings_created ON teachings (created_at);
 
 -- Per-day counters keyed by a salted hash of the address (the salt is a secret that changes daily): a limit,
--- never a record of who sent what. Rows older than two days are deleted on the next write.
+-- never a record of who sent what. Rows from before yesterday are deleted on the next post and by the daily cron,
+-- so a row lives three days at most.
 CREATE TABLE IF NOT EXISTS rate (
   bucket TEXT PRIMARY KEY,
   day TEXT NOT NULL,
