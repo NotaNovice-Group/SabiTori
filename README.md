@@ -41,14 +41,17 @@ higher (p < 0.001). On 100 further messages written to avoid the generator's tem
 set), it is 77.0% [68.0–85.0] against 47.0% [37.0–57.0]: higher (p < 0.001).
 On a second unseen set of 100 messages, written by an independent author after the model was retrained and
 evaluated once, it is 82.0% [74.0–89.0] against 49.0% [39.0–59.0]: higher (p < 0.001).
+On a third unseen set of 150 messages, written by an independent author, labels checked by a second reviewer,
+never read while training the fine-tuned model and evaluated once (the number to quote), it is
+75.3% [68.0–82.0] against 45.3% [37.3–53.3]: higher (p < 0.001).
 Brackets are 95% bootstrap intervals; p is an exact McNemar test on the same messages. All sets are synthetic and
 small, so treat these as development numbers, not field accuracy
 ([`packages/understand/eval`](packages/understand/eval), generated from `eval/results.json`).
 <!-- /results:headline -->
 
 Scam warnings come from code, not from the model: all 22 scam or suspicious messages got a warning on the test
-set, 18 of 21 on the first unseen set and 19 of 22 on the second, while 0 of 74, 2 of 79 and 5 of 78 genuine
-messages got a false alarm (the rules were tuned on the train split only; the unseen sets, never used for tuning,
+set, 20 of 21 on the first unseen set, 19 of 22 on the second and 34 of 44 on the third, while 0 of 74, 2 of 79,
+5 of 78 and 7 of 106 genuine messages got a false alarm (the rules were tuned on the train split only; the unseen sets, never used for tuning,
 are the fairer numbers). For photos, every
 fact is checked against the text the phone read, not against the paper itself: on 30 degraded synthetic photos of
 bills, letters and SMS screenshots, on-device OCR recovers about five in six of the dates, amounts and phone numbers,
