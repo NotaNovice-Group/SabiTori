@@ -10,7 +10,7 @@ whenever you bundle another component.
 | --- | --- | --- | --- |
 | `paraphrase-multilingual-MiniLM-L12-v2` (vocabulary pruned to 30k pieces, int8; `packages/understand/model/minilm/`) | Understands every message (kind, action, urgency) | Apache-2.0 | https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 |
 | onnxruntime-web (runs MiniLM, the Kokoro voice and the Piper voices; versions in `packages/understand/package.json` and `packages/speech/package.json`) | Model runtime, WebAssembly, single thread | MIT | https://github.com/microsoft/onnxruntime |
-| Kokoro-82M v1.0, ONNX export `model_quantized.onnx` and voice files `af_heart.bin`, `ff_siwis.bin` (`voices/kokoro/`, served from `public/kokoro/`) | Primary voice for English and French | Apache-2.0 | https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX , https://huggingface.co/hexgrad/Kokoro-82M |
+| Kokoro-82M v1.0, ONNX export `model_uint8.onnx` and voice files `af_heart.bin`, `ff_siwis.bin` (`voices/kokoro/`, served from `public/kokoro/`) | Primary voice for English and French | Apache-2.0 | https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX , https://huggingface.co/hexgrad/Kokoro-82M |
 | `@huggingface/tokenizers` 0.2.0 | Tokenizer for MiniLM | Apache-2.0 | https://github.com/huggingface/tokenizers |
 | tesseract.js 7.0.0 and tesseract.js-core 7.0.0 | Text recognition (OCR) of photos | Apache-2.0 | https://github.com/naptha/tesseract.js |
 | Tesseract LSTM models `eng` and `fra`, integer-quantised `best_int` variant (`4.0.0_best_int`, packaged as `@tesseract.js-data/eng` and `/fra` 1.0.0, MIT packaging) | OCR language data | Apache-2.0 | https://github.com/tesseract-ocr/tessdata_best (via the `4.0.0_best_int` folder of the npm packages) |
@@ -110,9 +110,9 @@ also lists a few smaller parts under other permissive licences. What this means 
 - `scripts/piper-assets.mjs` copies only the espeak-ng dictionaries the bundled voices need (French and
   English). The remaining language dictionaries from the upstream package are not shipped.
 
-### MIT licence (onnxruntime-web, piper-phonemize, @diffusionstudio/piper-wasm, Piper)
+### MIT licence (onnxruntime-web, onnxruntime for Android and iOS, piper-phonemize, @diffusionstudio/piper-wasm, Piper)
 
-Copyright (c) Microsoft Corporation (onnxruntime-web); Copyright (c) 2023 Michael Hansen (piper-phonemize);
+Copyright (c) Microsoft Corporation (onnxruntime, onnxruntime-web); Copyright (c) 2023 Michael Hansen (piper-phonemize);
 Copyright (c) the `@diffusionstudio/piper-wasm` authors; Copyright (c) the Piper authors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
@@ -139,19 +139,22 @@ https://creativecommons.org/licenses/by/4.0/ .
 
 ## On-device voice (Kokoro)
 
-`packages/speech/src/kokoro/` (SabiTori code, MPL-2.0) runs Kokoro-82M with onnxruntime-web in its own Web Worker,
-after turning text into phonemes with the same espeak-ng files as Piper (above: GPL-3.0-or-later, separate files
+`packages/speech/src/kokoro/` (SabiTori code, MPL-2.0) runs Kokoro-82M with Microsoft's native onnxruntime in the
+phone apps (the project's own `SabiToriKokoro` plugin) and with onnxruntime-web on the web, after turning text into
+phonemes with the same espeak-ng files as Piper (above: GPL-3.0-or-later, separate files
 loaded at run time). It is the first voice for English and French; when it is too slow on a phone or cannot load,
 Piper speaks. No transformers.js or kokoro-js code is included. Record: `voices/kokoro/VOICE.md`.
 
 | Component | Where | Version | Licence | Source |
 | --- | --- | --- | --- | --- |
-| Kokoro-82M model, ONNX export `onnx/model_quantized.onnx` (unmodified) | `voices/kokoro/model_quantized.onnx` -> `public/kokoro/` | onnx-community/Kokoro-82M-v1.0-ONNX at revision `1939ad2a8e416c0acfeecc08a694d14ef25f2231` (pinned in `scripts/fetch-kokoro.mjs`) | **Apache-2.0** | https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX , upstream https://huggingface.co/hexgrad/Kokoro-82M |
+| Kokoro-82M model, ONNX export `onnx/model_uint8.onnx` (unmodified) | `voices/kokoro/model_uint8.onnx` -> `public/kokoro/` | onnx-community/Kokoro-82M-v1.0-ONNX at revision `1939ad2a8e416c0acfeecc08a694d14ef25f2231` (pinned in `scripts/fetch-kokoro.mjs`) | **Apache-2.0** | https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX , upstream https://huggingface.co/hexgrad/Kokoro-82M |
 | Voice `af_heart` (English) | `voices/kokoro/voices/af_heart.bin` | same revision | **Apache-2.0** | same |
 | Voice `ff_siwis` (French) | `voices/kokoro/voices/ff_siwis.bin` | same revision | **Apache-2.0**; trained on the SIWIS database, CC BY 4.0 (attribution below) | same; data https://datashare.ed.ac.uk/handle/10283/2353 |
+| onnxruntime for Android (`com.microsoft.onnxruntime:onnxruntime-android`, native libraries + Java API) | Android app, runs the Kokoro model (`SabiToriKokoroPlugin.java`) | 1.28.0 | MIT | https://github.com/microsoft/onnxruntime , https://github.com/microsoft/onnxruntime/blob/main/ThirdPartyNotices.txt |
+| onnxruntime for iOS (Swift package `onnxruntime-swift-package-manager`: the `onnxruntime.xcframework` binary + Objective-C bindings) | iOS app, runs the Kokoro model (`SabiToriKokoroPlugin.swift`) | 1.28.0 | MIT | https://github.com/microsoft/onnxruntime-swift-package-manager , https://github.com/microsoft/onnxruntime |
 | Kokoro vocabulary (115 phoneme symbols, copied into `packages/speech/src/kokoro/text.ts`) | source code | from `tokenizer.json` of the same revision | Apache-2.0 | same |
 
-sha256: model `fbae9257e1e05ffc727e951ef9b9c98418e6d79f1c9b6b13bd59f5c9028a1478`, `af_heart.bin`
+sha256: model `6607a397d77b8514065420b7c1e7320117f7aabfdb45ce15f0050c5b0fe75aea`, `af_heart.bin`
 `d583ccff3cdca2f7fae535cb998ac07e9fcb90f09737b9a41fa2734ec44a8f0b`, `ff_siwis.bin`
 `a35f5675ad08948e326ae75fd0ea16ba5d0042e4f76b5f3d1df77d0a48c54861`.
 
@@ -181,5 +184,6 @@ specific language governing permissions and limitations under the License.
 - MMS-TTS voices (CC BY-NC 4.0): non-commercial, not bundled (see `docs/languages.md`).
 - kokoro-js 1.2.1 (Apache-2.0): pulls in transformers.js and its phonemizer has English only. SabiTori runs the
   Kokoro model directly with onnxruntime-web instead.
-- Kokoro `onnx/model_q8f16.onnx` (86 MB): returned NaN audio (silence) for a French test sentence in single-thread
-  WebAssembly; `model_quantized.onnx` is used (see `voices/kokoro/VOICE.md`).
+- Kokoro `onnx/model_q8f16.onnx` (86 MB) and `onnx/model_quantized.onnx` (92 MB): slower than real time even in
+  native onnxruntime with 4 threads, and `model_q8f16.onnx` returned NaN audio in single-thread WebAssembly;
+  `model_uint8.onnx` is used (see `voices/kokoro/VOICE.md`).
