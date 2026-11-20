@@ -1,6 +1,7 @@
 # SabiTori by SMS and USSD: for phones with no internet
 
-Status: **design and prototype** (`packages/gateway`). Not deployed. No number or short code exists yet.
+Status: **prototype**. The relay build (route A) builds and is tested in code, not yet on a phone. No number or
+short code is public yet.
 
 ## Why
 
@@ -82,16 +83,43 @@ The app never sends a message anywhere. These channels are different: the person
 - Before launch, `docs/privacy.md` gets a section for these channels, and the first reply of a new number says in one
   line that the message is read by SabiTori and not kept. [OWNER: legal review of that section]
 
+## The relay phone (route A), built
+
+`scripts/build-relay.sh` builds `app-relay.apk` (app id `cm.sabitori.app.relay`, installed beside the normal app):
+the same app plus a **Relay SMS** screen in Settings, and the only build with the two SMS permissions
+(receive, send; never "read the inbox"). The store build has no SMS permission (tested in
+`apps/app/test/relay-manifest.test.ts`).
+
+1. Install it with `adb install` on an Android phone with a local SIM (MTN or Orange), on a charger.
+2. Settings, Relay SMS, Start answering SMS; allow the SMS permission. The screen stays on.
+3. Anyone texts that phone's number: the card is made on the relay phone, offline, and sent back as at most 3 SMS.
+
+Safety rules in code (`apps/app/src/lib/relay.ts`, tested): only ordinary Cameroonian mobile numbers get a reply (never
+a short code, a company name or a foreign number: no loops with services, no international charges); at most 5 replies
+per number and 60 per hour; the screen shows counts, never a message or a number; nothing is stored.
+
+Why a separate build: Google Play allows the SMS permissions only to an app whose core job is being the phone's
+default SMS app (abuse: stolen one-time codes, premium-SMS fraud, private messages read). The relay build is installed
+by hand on the partner's relay phone only.
+
+Not yet done: the relay answers only while the app is open on its screen (no background service yet); a reply cut
+by the operator is not retried; not yet tried on a real phone and SIM.
+
+**Who pays the replies:** NotaNovice (the project) for now, through an SMS bundle on the relay SIM. A forwarded
+message costs the sender a normal SMS. Later, a toll-free short code (route B) would make it free for the sender.
+
 ## What only the owner can do
 
 - [OWNER: a partner organisation in one town to host a relay phone (route A) and tell people the number]
 - [OWNER: talks with MTN Cameroon, Orange Cameroun and Camtel for a toll-free short code and a USSD code (routes B, C)]
-- [OWNER: who pays the reply SMS: operator zero-rating, a sponsor, or the partner]
+- [OWNER: budget for the relay SIM's SMS bundle (NotaNovice pays the replies for now)]
 - A native French and a Pidgin speaker to read the SMS and USSD wording before any launch.
 
 ## Next steps in the code
 
-1. Relay mode in the Android app (separate build with SMS permissions): receive an SMS, `smsReply`, send the reply.
+1. Done: relay build (see above). Next: a background service so the relay answers with the screen off; retries.
+5. Talks with MTN Cameroon, Orange Cameroun and Camtel for a toll-free short code and a USSD code (routes B, C),
+   and ART approval; the gateway service (`packages/gateway/src/server.ts`) is ready to plug in.
 2. Two-way follow-ups: reply "1" for the full card in more SMS, "EN"/"FR" to switch language (stateless: the number
    and last message are not kept, so a follow-up re-sends the message).
 3. Let the person add the sender: "forward the SMS, then send the number it came from" (or "DE 677123456" at the start),

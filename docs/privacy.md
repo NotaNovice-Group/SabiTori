@@ -143,6 +143,15 @@ The app declares these six Android permissions. Camera and Notifications are ask
 
 SabiTori does not ask for your location, contacts or microphone.
 
+## 6a. SabiTori by SMS (relay phones)
+
+The app on your phone never sends your messages anywhere, and needs no SMS permission. Separately, a partner may run a
+SabiTori **relay phone**: a phone you can send an SMS to, which answers with the card by SMS. If you send a message to
+a relay phone, it is read on that phone to write the answer, then not kept; the relay keeps only a count of answers
+and, for one hour, the times it answered your number (to limit how many answers one number gets). Your operator
+carries the SMS, as for any SMS. The relay phone uses a separate SabiTori build, the only one with the SMS
+permissions; it is not in any app store. [OWNER: legal review of this section before a relay goes live]
+
 ## 7. Legal basis (GDPR)
 
 - **Optional features (section 5):** consent, under Article 6(1)(a) GDPR. You give consent by

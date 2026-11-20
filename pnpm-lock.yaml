@@ -41,6 +41,9 @@ importers:
       '@sabitori/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@sabitori/gateway':
+        specifier: workspace:*
+        version: link:../../packages/gateway
       '@sabitori/speech':
         specifier: workspace:*
         version: link:../../packages/speech
