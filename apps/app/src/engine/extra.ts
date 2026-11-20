@@ -81,6 +81,11 @@ export const EXTRA = x({
   'app.report.send': { en: 'Send the report', fr: 'Envoyer le signalement', context: 'Main button of the report sheet.' },
   'app.report.cancel': { en: 'Do not send', fr: 'Ne pas envoyer', context: 'Second button of the report sheet.' },
   'app.report.thanks': { en: 'Thank you. Your report was sent. It will be checked, then other people will be warned.', fr: 'Merci. Votre signalement est envoyé. Il sera vérifié, puis d’autres personnes seront prévenues.', context: 'Shown on the card after a report was sent.' },
+  'app.share.failed': {
+    en: 'This phone is full, so it could not keep this to send later. Try again when you are online.',
+    fr: 'Ce téléphone est plein : il n’a pas pu le garder pour l’envoyer plus tard. Réessayez quand vous êtes en ligne.',
+    context: 'Error after Send: nothing was sent and nothing was saved (storage full and offline).',
+  },
   'app.report.queued': { en: 'Thank you. Your report will be sent when your phone is online.', fr: 'Merci. Votre signalement sera envoyé quand votre téléphone sera en ligne.', context: 'After Send while offline.' },
   'app.report.saved': { en: 'Thank you. Your report is kept on this phone. It will be sent when sharing is switched on in a future version.', fr: 'Merci. Votre signalement est gardé sur ce téléphone. Il sera envoyé quand le partage sera activé dans une prochaine version.', context: 'After Send when this build has no community service configured.' },
   'app.push.title': { en: 'Instant scam alerts', fr: 'Alertes arnaques instantanées', context: 'Settings: push alerts (optional).' },

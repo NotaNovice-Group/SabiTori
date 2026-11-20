@@ -75,13 +75,18 @@ const read = <T>(k: string, d: T): T => {
     return d;
   }
 };
-const write = (k: string, v: unknown): void => {
+/** False when storage is full or blocked (a teaching with a recording can be over a megabyte). */
+const write = (k: string, v: unknown): boolean => {
   try {
     localStorage.setItem(k, JSON.stringify(v));
+    return true;
   } catch {
-    /* storage full or blocked: the item stays in memory for this session only */
+    return false;
   }
 };
+
+/** What happened to an item: sent now, waiting on the phone, or neither (not saved: the person must try again). */
+export type SendResult = 'sent' | 'queued' | 'failed';
 
 export const communityConfigured = (): boolean => config.community !== null;
 
@@ -117,9 +122,15 @@ async function post(path: string, body: unknown): Promise<Sent> {
 }
 
 /** Queue an item and try to send the queue now. Resolves to what happened to this item. */
-async function enqueue(item: Outgoing): Promise<'sent' | 'queued'> {
+async function enqueue(item: Outgoing): Promise<SendResult> {
   item = { ...item, key: item.key ?? newDeleteKey() };
-  write(OUTBOX, [...read<Outgoing[]>(OUTBOX, []), item]);
+  if (!write(OUTBOX, [...read<Outgoing[]>(OUTBOX, []), item])) {
+    // The phone could not keep it (storage full): send it now or say so; never claim it was sent.
+    const r = await post(item.kind === 'scam' ? '/v1/scams' : '/v1/teach', { ...item.body, deleteKey: item.key });
+    if (r.ok !== 'sent') return 'failed';
+    if (r.id) write(SENT, [...read<SentItem[]>(SENT, []), { kind: item.kind, id: r.id, key: item.key!, at: new Date().toISOString() }]);
+    return 'sent';
+  }
   await flushing; // a send already running read the outbox before this item was added
   await flushOutbox();
   return read<Outgoing[]>(OUTBOX, []).some((x) => x.id === item.id) ? 'queued' : 'sent';
@@ -171,9 +182,10 @@ export async function deleteAllSent(): Promise<{ left: number }> {
   return { left: left.length };
 }
 
-export async function sendScamReport(cardId: string, body: ScamReport): Promise<'sent' | 'queued'> {
-  write(REPORTED, { ...read<Record<string, string>>(REPORTED, {}), [cardId]: new Date().toISOString() });
-  return enqueue({ kind: 'scam', id: `scam-${cardId}`, at: new Date().toISOString(), body });
+export async function sendScamReport(cardId: string, body: ScamReport): Promise<SendResult> {
+  const r = await enqueue({ kind: 'scam', id: `scam-${cardId}`, at: new Date().toISOString(), body });
+  if (r !== 'failed') write(REPORTED, { ...read<Record<string, string>>(REPORTED, {}), [cardId]: new Date().toISOString() });
+  return r;
 }
 
 export const wasReported = (cardId: string): boolean => Boolean(read<Record<string, string>>(REPORTED, {})[cardId]);
@@ -187,11 +199,12 @@ export interface TaughtItem {
   promptId?: string;
 }
 
-export async function sendTeaching(body: Teaching): Promise<'sent' | 'queued'> {
+export async function sendTeaching(body: Teaching): Promise<SendResult> {
   const at = new Date().toISOString();
   const item: TaughtItem = { at, lang: body.lang, meaning: body.meaning, withAudio: Boolean(body.audio), ...(body.phrase ? { phrase: body.phrase } : {}), ...(body.promptId ? { promptId: body.promptId } : {}) };
-  write(TAUGHT, [item, ...read<TaughtItem[]>(TAUGHT, [])].slice(0, 500));
-  return enqueue({ kind: 'teach', id: `teach-${at}`, at, body });
+  const r = await enqueue({ kind: 'teach', id: `teach-${at}`, at, body });
+  if (r !== 'failed') write(TAUGHT, [item, ...read<TaughtItem[]>(TAUGHT, [])].slice(0, 500));
+  return r;
 }
 
 export const taughtItems = (): TaughtItem[] => read<TaughtItem[]>(TAUGHT, []);

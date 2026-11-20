@@ -20,6 +20,7 @@ export function ReportScam({ card }: { card: Card }) {
   const [text, setText] = useState(base.text);
   const [withSender, setWithSender] = useState(base.sender.kind !== 'unknown');
   const [busy, setBusy] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   const send = async () => {
     if (busy || text.trim().length < 8) return;
@@ -31,6 +32,8 @@ export function ReportScam({ card }: { card: Card }) {
       sender: withSender ? base.sender : { kind: 'unknown' },
     });
     setBusy(false);
+    setFailed(r === 'failed');
+    if (r === 'failed') return; // keep the sheet open with the text, so the person can try again
     setDone(r);
     setOpen(false);
   };
@@ -67,6 +70,7 @@ export function ReportScam({ card }: { card: Card }) {
             </label>
           )}
           <p className="note">{t('app.report.review_note')}</p>
+          {failed && <p className="error" role="alert">{t('app.share.failed')}</p>}
           <div className="sheet-actions">
             <SpeakingButton speakKey="app.report.send" variant="primary" className="btn-block" icon={<Send size={24} strokeWidth={2} aria-hidden />} disabled={busy || text.trim().length < 8} onAct={() => void send()} />
             <SpeakingButton speakKey="app.report.cancel" variant="quiet" className="btn-block" onAct={() => setOpen(false)} />
