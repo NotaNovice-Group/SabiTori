@@ -29,6 +29,24 @@ export function Screen({ title, back, right, children, dock, className, quietTit
   const { t, engine } = useApp();
   const root = useRef<HTMLDivElement>(null);
   const dockEl = useRef<HTMLDivElement>(null);
+  const bar = useRef<HTMLElement>(null);
+  // The top bar sticks while the page scrolls, unless large text makes it tall: then it would cover the content
+  // it should leave room for, so it scrolls away with the page (same rule as the dock).
+  useLayoutEffect(() => {
+    const b = bar.current;
+    if (!b) return;
+    const set = () => {
+      const tall = b.offsetHeight > window.innerHeight * 0.15;
+      b.toggleAttribute('data-tall', tall);
+      // While it sticks, nothing scrolled into view (a focused button, the section being read) may end under it.
+      document.documentElement.style.setProperty('--bar-h', tall ? '0px' : `${b.offsetHeight}px`);
+    };
+    set();
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(set) : null;
+    ro?.observe(b);
+    window.addEventListener('resize', set);
+    return () => { ro?.disconnect(); window.removeEventListener('resize', set); };
+  }, []);
   useLayoutEffect(() => {
     const d = dockEl.current;
     const r = root.current;
@@ -51,7 +69,7 @@ export function Screen({ title, back, right, children, dock, className, quietTit
   return (
     <main ref={root} className={`screen${dock ? ' has-dock' : ''}${className ? ' ' + className : ''}`}>
       {above}
-      <header className="topbar">
+      <header ref={bar} className="topbar">
         {back && (
           <SpeakingButton speakKey="ui.back" variant="quiet" icon={<ArrowLeft size={24} strokeWidth={2} aria-hidden />} label={t('ui.back')} onAct={back} className="topbar-back" />
         )}

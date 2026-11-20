@@ -353,6 +353,13 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       hospital, cap = school; the prize stays neutral, it is the lesson). Screen titles were split mid-word
       ("d'entraînem / ent") beside the Back and Home buttons: the title is now as wide as its longest word and takes
       its own line when that does not fit; never wider than the screen (200 % text on 320 px: no overflow).
+- [x] **Full accessibility audit after the sticky top bar: 194 failures -> 0.** The owner's sticky top bar
+      (Home on every screen) made the audit fail 194 manual checks. Two real problems: at large text the bar grew tall
+      and covered the content (it now scrolls away when taller than 15% of the screen, like the dock), and content
+      scrolled into view could end under it (html `scroll-padding-top` and section scroll margins now use its
+      measured height: WCAG 2.2 focus not obscured). The audit now treats content scrolling under the sticky bar like
+      under the dock (by design). Practice names at 200 % drop below their picture instead of breaking mid-word.
+      Re-run: 163 states, 0 axe violations, 0 manual failures.
 
 ## Log
 
@@ -451,3 +458,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #96 | Paste: "Who sent it?" choices carry pictures | local gate (Actions budget) |
 | 2026-11-20 | #97 | Settings choices carry pictures (on/off, voice speed, keep messages) | local gate (Actions budget) |
 | 2026-11-20 | #98 | Practice examples carry pictures; screen titles never split mid-word | local gate (Actions budget) |
+| 2026-11-20 | #99 | Accessibility audit back to 0 failures after the sticky top bar (tall bar scrolls away, scroll padding) | local gate (Actions budget) |
