@@ -5,13 +5,13 @@ they are decisions, facts about the publisher, or results of steps outside the c
 reads "unfinished", so fill or remove them before the repository is public. `packages/understand/test/model-card.test.ts`
 checks that this list matches the files (regenerate it with `node scripts/owner-todo.mjs` after editing a document).
 
-Total: 40 placeholders in 12 files.
+Total: 45 placeholders in 14 files.
 
 ## `CHANGELOG.md` (3)
 
-- [ ] `CHANGELOG.md:146` release date, once released.
-- [ ] `CHANGELOG.md:177` French review status; resolve before release.
-- [ ] `CHANGELOG.md:178` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
+- [ ] `CHANGELOG.md:150` release date, once released.
+- [ ] `CHANGELOG.md:181` French review status; resolve before release.
+- [ ] `CHANGELOG.md:182` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
 
 ## `CODE_OF_CONDUCT.md` (1)
 
@@ -36,6 +36,10 @@ Total: 40 placeholders in 12 files.
 - [ ] `docs/ios.md:20` iOS app icon (1024 px) and launch screen
 - [ ] `docs/ios.md:84` Apple developer account
 
+## `docs/privacy.md` (1)
+
+- [ ] `docs/privacy.md:153` legal review of this section before a relay goes live
+
 ## `docs/release.md` (16)
 
 - [ ] `docs/release.md:3` ...
@@ -54,6 +58,13 @@ Total: 40 placeholders in 12 files.
 - [ ] `docs/release.md:116` whether CI uploads to Play, or the AAB is uploaded by hand.
 - [ ] `docs/release.md:145` Sentry organisation and project names.
 - [ ] `docs/release.md:178` testing period.
+
+## `docs/sms-ussd.md` (4)
+
+- [ ] `docs/sms-ussd.md:84` legal review of that section
+- [ ] `docs/sms-ussd.md:113` a partner organisation in one town to host a relay phone (route A) and tell people the number
+- [ ] `docs/sms-ussd.md:114` talks with MTN Cameroon, Orange Cameroun and Camtel for a toll-free short code and a USSD code (routes B, C)
+- [ ] `docs/sms-ussd.md:115` budget for the relay SIM's SMS bundle (NotaNovice pays the replies for now)
 
 ## `docs/store/data-safety.md` (1)
 

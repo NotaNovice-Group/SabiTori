@@ -71,6 +71,12 @@ lists what a pilot would measure).
 Speed: the understanding model takes 235 ms median per message in headless Chromium with a 4× CPU throttle,
 on the main thread, on a desktop CPU ([`docs/model.md`](docs/model.md)). Phone latency is not yet measured on a phone.
 
+## Phones with no internet (design)
+
+SMS and USSD for basic phones and phones with no data: forward a message to a number and get the card back by SMS,
+or dial a USSD menu. Design, sources and numbers in [`docs/sms-ussd.md`](docs/sms-ussd.md); prototype in
+[`packages/gateway`](packages/gateway). Not deployed.
+
 ## Languages
 
 Every word SabiTori says comes from a language pack in [`packs/`](packs/). Adding a language is

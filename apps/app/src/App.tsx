@@ -13,6 +13,10 @@ import { ExampleRoute } from './screens/Example';
 import { SettingsScreen } from './screens/Settings';
 import { ScamsScreen } from './screens/Scams';
 import { TeachScreen } from './screens/Teach';
+import { RelayScreen } from './screens/Relay';
+import { relayEnabled } from './lib/relay';
+
+const RELAY = relayEnabled(import.meta.env as unknown as Record<string, string | undefined>);
 import { TabBar, tabOf } from './components/TabBar';
 import { communityConfigured, flushOutbox } from './lib/community';
 import { navigate } from './lib/router';
@@ -91,6 +95,7 @@ function Screens({ head, arg, query }: { head: string; arg: string; query: URLSe
     case 'settings': return <SettingsScreen />;
     case 'scams': return <ScamsScreen />;
     case 'teach': return <TeachScreen />;
+    case 'relay': return RELAY ? <RelayScreen /> : <HomeScreen />;
     case 'about': return <Suspense fallback={null}><AboutScreen /></Suspense>;
     default: return <HomeScreen key={route.query.get('s') ?? ''} />;
   }

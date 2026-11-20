@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Trash2, FileUp, X, RefreshCw, Info, RotateCcw, ToggleRight, ToggleLeft, Rabbit, Turtle, Snail, CalendarDays, CalendarRange, CalendarX } from 'lucide-react';
+import { Trash2, FileUp, X, RefreshCw, Info, RotateCcw, ToggleRight, ToggleLeft, Rabbit, Turtle, Snail, CalendarDays, CalendarRange, CalendarX, Radio } from 'lucide-react';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
 import { SpeakingButton } from '../components/SpeakingButton';
@@ -13,6 +13,7 @@ import { config, anyConnected } from '../config';
 import { clearUpdates, forgetQuarantine, loadMemo, loadQuarantine, runUpdateCheck, type UpdateMemo } from '../lib/updates';
 import { session } from '../lib/session';
 import { pilot, pilotEnabled, pilotSummary, pilotTotals } from '../lib/pilot';
+import { relayEnabled } from '../lib/relay';
 import { nativePlatform } from '../lib/native';
 import { hasSmoothPhoneVoice } from '../engine/native-player';
 import type { UpdateResult } from '@sabitori/connect';
@@ -263,6 +264,12 @@ export function SettingsScreen() {
       )}
 
       {PILOT && <PilotPanel />}
+      {RELAY && (
+        <section className="panel" aria-labelledby="s-relay">
+          <h2 id="s-relay" className="panel-title">{t('app.relay.title')}</h2>
+          <SpeakingButton speakKey="app.relay.title" variant="secondary" icon={<Radio size={24} strokeWidth={2} aria-hidden />} onAct={() => navigate('/relay')} />
+        </section>
+      )}
 
       <section className="panel" aria-labelledby="s-priv">
         <h2 id="s-priv" className="panel-title">{t('app.settings.privacy')}</h2>
@@ -339,6 +346,7 @@ export function SettingsScreen() {
 }
 
 const PILOT = pilotEnabled(import.meta.env as unknown as Record<string, string | undefined>);
+const RELAY = relayEnabled(import.meta.env as unknown as Record<string, string | undefined>);
 
 /** Pilot builds only: the counts this phone keeps (never message content), shared only by the participant. */
 function PilotPanel() {

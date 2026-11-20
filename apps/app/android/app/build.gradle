@@ -44,6 +44,14 @@ android {
         }
     }
     buildTypes {
+        // The SMS relay phone (docs/sms-ussd.md, route A): a debug-signed build with its own id and the two SMS
+        // permissions from src/relay/AndroidManifest.xml. Installed by hand on the relay phone, never on the store.
+        relay {
+            initWith debug
+            applicationIdSuffix ".relay"
+            versionNameSuffix "-relay"
+            matchingFallbacks = ['debug']
+        }
         release {
             minifyEnabled true
             shrinkResources true
