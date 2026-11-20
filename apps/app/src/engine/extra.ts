@@ -150,6 +150,8 @@ export const EXTRA = x({
     fr: 'Nous n’avons lu aucun mot sur cette photo.',
     context: 'OCR found no text.',
   },
+  'app.photo.failed': { en: 'The photo could not be opened', fr: 'La photo n’a pas pu être ouverte', context: 'Sheet title when taking or choosing a photo fails before any reading (camera or gallery error).' },
+  'app.photo.failed_hint': { en: 'Try again. If it keeps happening, paste the message instead.', fr: 'Essayez encore. Si cela continue, collez plutôt le message.', context: 'Under "The photo could not be opened".' },
   'app.capture.failed': { en: 'Reading failed. Please try again.', fr: 'La lecture a échoué. Essayez encore.', context: 'Unexpected error.' },
   'app.sms.wait': { en: 'Read my next SMS', fr: 'Lire mon prochain SMS', context: 'Quiet button on the home screen (Android app): wait for the next incoming SMS and ask to read it.' },
   'app.relay.title': { en: 'SMS relay', fr: 'Relais SMS', context: 'Relay build only: screen title.' },

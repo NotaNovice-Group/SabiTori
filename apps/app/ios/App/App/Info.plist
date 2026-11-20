@@ -30,6 +30,8 @@
 	<string>SabiTori uses the camera to take a photo of a letter, bill or message. The photo is read on your phone and never leaves it.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>SabiTori uses the microphone only when you choose to record a word or phrase to teach it your language.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>SabiTori never saves anything to your photos. iOS asks apps that use the camera to say this.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>SabiTori opens a photo you choose so it can read the letter, bill or message in it. The photo is read on your phone and never leaves it.</string>
 	<key>UIApplicationSceneManifest</key>
