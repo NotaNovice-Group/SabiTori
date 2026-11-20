@@ -20,6 +20,11 @@ export interface OfficialSender {
   /** Official USSD code to check a balance, e.g. for mobile money. */
   balanceCode?: string;
   /**
+   * The company's own web domains ("mtn.cm"). A link to one of them, or to a subdomain, is its website, printed on
+   * every bill, letter and business card: not a scam sign. A look-alike ("mtn-cm.xyz", "mtn.cm.bonus.top") still is.
+   */
+  domains?: string[];
+  /**
    * False until a maintainer has confirmed smsSenderIds/shortCodes/helpline
    * from an official source. Unverified entries are never used to call a
    * message genuine; they are only used to detect a *claimed* sender.

@@ -1210,7 +1210,13 @@
       "urgence médicale",
       "urgence medicale",
       "est à l'hôpital",
-      "hospitalisé*"
+      "hospitalisé*",
+      "mandat d'arrêt",
+      "mandat d'arret",
+      "plainte a été déposée",
+      "plainte contre vous",
+      "police judiciaire",
+      "votre enfant a un problème"
     ],
     "offerWords": [
       "recrutement",

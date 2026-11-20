@@ -849,7 +849,12 @@
       "send me the money",
       "return the money",
       "forward it to me",
-      "send it to me"
+      "send it to me",
+      "send am back",
+      "sen am back",
+      "return am",
+      "give me back",
+      "send back am"
     ],
     "prizeWords": [
       "congratulations",
@@ -934,7 +939,13 @@
       "has been deactivated",
       "is blocked",
       "is suspended",
-      "is deactivated"
+      "is deactivated",
+      "go block",
+      "dem go block",
+      "go cut ya line",
+      "go cut your line",
+      "go suspend ya",
+      "go close ya"
     ],
     "timePressure": [
       "immediately",
@@ -1031,7 +1042,13 @@
       "through",
       "using",
       "use",
-      "thanks to"
+      "thanks to",
+      "for ya",
+      "for yu",
+      "for your",
+      "for my",
+      "for ma",
+      "for"
     ],
     "clauseBreaks": [
       "but",
@@ -1093,7 +1110,19 @@
       "get accident",
       "don get accident",
       "dey hospital",
-      "for hospital now"
+      "for hospital now",
+      "warrant of arrest",
+      "arrest warrant",
+      "warrant for your arrest",
+      "on an arrest warrant",
+      "complaint has been filed",
+      "complaint against you",
+      "judicial police",
+      "commissaire for police",
+      "we don find ya",
+      "ya pikin get problem",
+      "your child has a problem",
+      "e go be suspend"
     ],
     "offerWords": [
       "recruitment",

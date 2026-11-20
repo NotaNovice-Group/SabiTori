@@ -47,7 +47,11 @@
       "smsSenderIds": [],
       "shortCodes": [],
       "verified": false,
-      "source": "TODO: confirm from official operator page"
+      "source": "TODO: confirm from official operator page",
+      "domains": [
+        "mtn.cm",
+        "mtn.com"
+      ]
     },
     {
       "id": "orange-money",
@@ -59,7 +63,10 @@
       "smsSenderIds": [],
       "shortCodes": [],
       "verified": false,
-      "source": "TODO: confirm from official operator page"
+      "source": "TODO: confirm from official operator page",
+      "domains": [
+        "orange.cm"
+      ]
     },
     {
       "id": "eneo",
@@ -74,7 +81,10 @@
       "smsSenderIds": [],
       "shortCodes": [],
       "verified": false,
-      "source": "TODO: confirm from official operator page"
+      "source": "TODO: confirm from official operator page",
+      "domains": [
+        "eneo.cm"
+      ]
     },
     {
       "id": "camwater",
@@ -88,7 +98,10 @@
       "smsSenderIds": [],
       "shortCodes": [],
       "verified": false,
-      "source": "TODO: confirm from official operator page"
+      "source": "TODO: confirm from official operator page",
+      "domains": [
+        "camwater.cm"
+      ]
     },
     {
       "id": "mtn-cameroon",
@@ -102,7 +115,11 @@
       "smsSenderIds": [],
       "shortCodes": [],
       "verified": false,
-      "source": "TODO: confirm from official operator page"
+      "source": "TODO: confirm from official operator page",
+      "domains": [
+        "mtn.cm",
+        "mtn.com"
+      ]
     },
     {
       "id": "orange-cameroun",
@@ -116,7 +133,10 @@
       "smsSenderIds": [],
       "shortCodes": [],
       "verified": false,
-      "source": "TODO: confirm from official operator page"
+      "source": "TODO: confirm from official operator page",
+      "domains": [
+        "orange.cm"
+      ]
     }
   ]
 }

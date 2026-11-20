@@ -31,6 +31,34 @@ function claimsOrgPrefix(text: string): boolean {
   return !!m && !NOT_ORG.has(m[1]!.replace(/[.\-&]/g, ''));
 }
 
+/** The host of a link as written ("https://www.MTN.cm/momo" -> "mtn.cm"), or "" when there is none. */
+export function linkHost(url: string): string {
+  const h = url.trim().toLowerCase().replace(/^[a-z][a-z0-9+.-]*:\/\//, '').split(/[/?#\\]/)[0] ?? '';
+  return h.replace(/^[^@]*@/, '').replace(/:\d+$/, '').replace(/\.+$/, '').replace(/^www\./, '');
+}
+
+/** True when the link is on one of the region's official company domains (or a subdomain of one). */
+export function isOfficialLink(url: string, region: RegionConfig): boolean {
+  const host = linkHost(url);
+  if (!host) return false;
+  return region.officialSenders.some((s) => (s.domains ?? []).some((d) => host === d || host.endsWith(`.${d}`)));
+}
+
+/**
+ * A printed letter, as photographed: several lines under a letterhead in capitals ("ENEO CAMEROUN S.A.",
+ * "CAISSE NATIONALE DE PREVOYANCE SOCIALE"), or a subject line and a formal salutation, in a text longer than an SMS.
+ */
+export function isPrintedLetter(text: string): boolean {
+  if (text.length < 160) return false;
+  const lines = text.split(/\n| \| /).map((l) => l.trim()).filter(Boolean);
+  const head = lines[0] ?? '';
+  const letters = head.replace(/[^\p{L}]/gu, '');
+  const letterhead = letters.length >= 4 && head.split(/\s+/).length >= 2 && letters.replace(/\p{Lu}/gu, '').length <= letters.length * 0.2;
+  const subject = /(?:^|\n|\| )\s*(?:objet|subject|re)\s*:/i.test(text);
+  const salutation = /(?:^|\n|\| )\s*(?:monsieur|madame|mademoiselle|cher|chère|dear)\b/i.test(text);
+  return (letterhead && lines.length >= 4) || (subject && salutation);
+}
+
 function isOrdinaryNumber(input: MessageInput): boolean {
   return input.sender?.kind === 'number' && digitsOf(input.sender.value ?? '').length >= 8;
 }
@@ -133,7 +161,11 @@ export function assessScam(
   );
   const isOfficialNumber = (v: string) => officialNumbers.has(digitsOf(v).slice(-9));
   // Verification whitelists only the official numbers; any other number is a personal number whoever sent the text.
-  const personalPhones = facts.phones.filter((p) => !isOfficialNumber(p.value));
+  // A personal number is a mobile one: a fixed line (Cameroon 2xx) is an office's switchboard or the subscriber's own
+  // line printed on an invoice, never where a scam asks you to send money.
+  const mobilePrefixes = region.phone.mobilePrefixes ?? ['6'];
+  const isMobile = (v: string) => mobilePrefixes.some((m) => digitsOf(v).slice(-9).startsWith(m));
+  const personalPhones = facts.phones.filter((p) => !isOfficialNumber(p.value) && isMobile(p.value));
   const prizeHits = findTerms(n, S((s) => s.prizeWords));
   if (prizeHits.length > 0) {
     // A prize that must be claimed by paying, or by calling a personal number, is a trap.
@@ -161,7 +193,8 @@ export function assessScam(
       found.add('asks_to_call_number');
   }
   if (hasTerm(n, S((s) => s.blockThreats))) found.add('account_block_threat');
-  if (facts.urls.length > 0) found.add('link');
+  // A link is a sign only when it leads somewhere other than a known company's own website (mtn.cm, eneo.cm...).
+  if (facts.urls.some((u) => !isOfficialLink(u.value, region))) found.add('link');
   // A code that is delivered ("Votre code OTP est 739204. Il expire dans 5 minutes") says when it expires: that is not
   // pressure. Expiry wording counts only when the message does not deliver a code; any other rush word still counts.
   const pressure = findTerms(n, S((s) => s.timePressure));
@@ -330,6 +363,13 @@ export function assessScam(
     if (foreign && ((claimedSenderId && !sender.verified) || found.size > 0)) found.add('asks_to_call_number');
   }
 
+  // A printed letter (letterhead, "Objet", "Monsieur,") states its deadline and what happens after it: a cut-off or
+  // a closed account is the notice itself, not pressure. In a letter those words count only when it also gives the
+  // trap a way in: a link that is not the company's own site, a personal mobile number, a secret code, a code to dial.
+  const CONTEXTUAL: ScamSignal[] = ['time_pressure', 'account_block_threat'];
+  const channel = found.has('link') || personalPhones.length > 0 || hasTerm(n, secret) || facts.ussdCodes.length > 0;
+  if (isPrintedLetter(input.text) && !channel && [...found].every((s) => CONTEXTUAL.includes(s)))
+    for (const s of CONTEXTUAL) found.delete(s);
   const signals = SCAM_SIGNALS.filter((s) => found.has(s));
   const level =
     strongUssd || signals.some((s) => STRONG.includes(s)) || signals.length >= 2
