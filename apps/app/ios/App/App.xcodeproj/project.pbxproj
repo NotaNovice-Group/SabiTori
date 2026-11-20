@@ -19,6 +19,8 @@
 		9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9582B6822FE993A50072D4E8 /* SceneDelegate.swift */; };
 		5B1A00012FF0000100A1B2C3 /* SabiToriVisionPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A00022FF0000100A1B2C3 /* SabiToriVisionPlugin.swift */; };
 		5B1A00032FF0000100A1B2C3 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A00042FF0000100A1B2C3 /* MainViewController.swift */; };
+		5B1A00052FF0000100A1B2C3 /* SabiToriKokoroPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B1A00062FF0000100A1B2C3 /* SabiToriKokoroPlugin.swift */; };
+		5B1A00072FF0000100A1B2C3 /* onnxruntime in Frameworks */ = {isa = PBXBuildFile; productRef = 5B1A00092FF0000100A1B2C3 /* onnxruntime */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +38,7 @@
 		958DCC722DB07C7200EA8C5F /* debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = debug.xcconfig; path = ../debug.xcconfig; sourceTree = SOURCE_ROOT; };
 		5B1A00022FF0000100A1B2C3 /* SabiToriVisionPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SabiToriVisionPlugin.swift; sourceTree = "<group>"; };
 		5B1A00042FF0000100A1B2C3 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		5B1A00062FF0000100A1B2C3 /* SabiToriKokoroPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SabiToriKokoroPlugin.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +47,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D22ABE92AF431CB00220026 /* CapApp-SPM in Frameworks */,
+				5B1A00072FF0000100A1B2C3 /* onnxruntime in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,6 +79,7 @@
 				504EC3071FED79650016851F /* AppDelegate.swift */,
 				5B1A00042FF0000100A1B2C3 /* MainViewController.swift */,
 				5B1A00022FF0000100A1B2C3 /* SabiToriVisionPlugin.swift */,
+				5B1A00062FF0000100A1B2C3 /* SabiToriKokoroPlugin.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				A1B2C3D4E5F6A7B8C9D0E1F2 /* PrivacyInfo.xcprivacy */,
@@ -104,6 +109,7 @@
 			name = App;
 			packageProductDependencies = (
 				4D22ABE82AF431CB00220026 /* CapApp-SPM */,
+				5B1A00092FF0000100A1B2C3 /* onnxruntime */,
 			);
 			productName = App;
 			productReference = 504EC3041FED79650016851F /* App.app */;
@@ -136,6 +142,7 @@
 			mainGroup = 504EC2FB1FED79650016851F;
 			packageReferences = (
 				D4C12C0A2AAA248700AAC8A2 /* XCLocalSwiftPackageReference "CapApp-SPM" */,
+				5B1A00082FF0000100A1B2C3 /* XCRemoteSwiftPackageReference "onnxruntime-swift-package-manager" */,
 			);
 			productRefGroup = 504EC3051FED79650016851F /* Products */;
 			projectDirPath = "";
@@ -171,6 +178,7 @@
 				504EC3081FED79650016851F /* AppDelegate.swift in Sources */,
 				5B1A00032FF0000100A1B2C3 /* MainViewController.swift in Sources */,
 				5B1A00012FF0000100A1B2C3 /* SabiToriVisionPlugin.swift in Sources */,
+				5B1A00052FF0000100A1B2C3 /* SabiToriKokoroPlugin.swift in Sources */,
 				9582B6832FE993A70072D4E8 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -380,11 +388,27 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		5B1A00082FF0000100A1B2C3 /* XCRemoteSwiftPackageReference "onnxruntime-swift-package-manager" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/microsoft/onnxruntime-swift-package-manager";
+			requirement = {
+				kind = exactVersion;
+				version = 1.28.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		4D22ABE82AF431CB00220026 /* CapApp-SPM */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = D4C12C0A2AAA248700AAC8A2 /* XCLocalSwiftPackageReference "CapApp-SPM" */;
 			productName = "CapApp-SPM";
+		};
+		5B1A00092FF0000100A1B2C3 /* onnxruntime */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5B1A00082FF0000100A1B2C3 /* XCRemoteSwiftPackageReference "onnxruntime-swift-package-manager" */;
+			productName = onnxruntime;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

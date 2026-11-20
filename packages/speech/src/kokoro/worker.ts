@@ -7,7 +7,7 @@ import { voiceKey } from '../piper/engine.js';
 import type { OrtLike, PhonemizerLike } from '../piper/runtime.js';
 import { fetchBytes, loadOrt, loadPhonemizer, retryingOnce } from '../piper/worker-assets.js';
 import type { WorkerRequest, WorkerResponse } from '../piper/worker-protocol.js';
-import { createKokoroRuntime, type LoadedKokoroVoice } from './runtime.js';
+import { createKokoroRuntime, ortModelOpener, type LoadedKokoroVoice } from './runtime.js';
 import type { KokoroVoiceSpec } from './voices.js';
 
 const scope = self as unknown as {
@@ -34,7 +34,7 @@ scope.onmessage = (e) => {
         threads = msg.threads ?? 1; // read once: onnxruntime-web is set up by the first load
         const ort = await sharedOrt();
         // One runtime for the worker: every Kokoro voice shares the one loaded model.
-        runtime ??= createKokoroRuntime({ ort, loadPhonemizer: sharedPhonemizer, fetchBytes });
+        runtime ??= createKokoroRuntime({ loadPhonemizer: sharedPhonemizer, fetchBytes, openModel: ortModelOpener(ort, fetchBytes) });
         const key = voiceKey(msg.voice);
         const p = runtime.load(msg.voice as KokoroVoiceSpec);
         voices.set(key, p);

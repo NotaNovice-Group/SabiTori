@@ -55,7 +55,7 @@ export const KOKORO_RETEST_MS = 30 * 24 * 3600 * 1000;
 
 /**
  * True when Kokoro should not even be loaded: this phone was found too slow for this model and thread count less
- * than KOKORO_RETEST_MS ago. Loading a 92 MB model only to find out again costs memory and battery on every start.
+ * than KOKORO_RETEST_MS ago. Loading a 177 MB model only to find out again costs memory and battery on every start.
  * Anything unreadable counts as no verdict.
  */
 export function skipKokoro(stored: unknown, now: number, version: string, threads: number, retestMs = KOKORO_RETEST_MS): boolean {

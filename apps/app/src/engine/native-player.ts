@@ -10,12 +10,13 @@
  *
  * Recorded clips still play through <audio>.
  */
-import { Capacitor } from '@capacitor/core';
+import { Capacitor, registerPlugin } from '@capacitor/core';
 import { pickVoice, SMOOTH_RANK, type PhoneVoice } from './voice-pick';
 import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import {
   createBrowserClips,
   createBrowserTts,
+  createKokoroNativeEngines,
   createKokoroTts,
   createKokoroVoiceResolver,
   createKokoroWorkerEngines,
@@ -25,11 +26,13 @@ import {
   createPlayer,
   createWebAudioOutput,
   KOKORO_VERSION,
+  loadPhonemizer,
   kokoroThreads,
   piperSupported,
   skipKokoro,
   TtsVoiceUnavailableError,
   type ClipBackend,
+  type KokoroNativePlugin,
   type ManifestList,
   type SlowVerdict,
   type Player,
@@ -99,6 +102,19 @@ function preferSmoothPhoneVoice(system: TtsBackend, piper: TtsBackend): TtsBacke
   };
 }
 
+/** Native onnxruntime threads for Kokoro; the plugin caps them to the phone's active cores. */
+const NATIVE_THREADS = 4;
+
+/** SabiToriKokoro (apps/app/ios/App/App/SabiToriKokoroPlugin.swift, android/.../SabiToriKokoroPlugin.java), or null on the web. */
+function nativeKokoroPlugin(): KokoroNativePlugin | null {
+  try {
+    if (!Capacitor.isNativePlatform() || !Capacitor.isPluginAvailable('SabiToriKokoro')) return null;
+    return registerPlugin<KokoroNativePlugin>('SabiToriKokoro');
+  } catch {
+    return null;
+  }
+}
+
 export interface KokoroMemory {
   get(): unknown;
   set(v: SlowVerdict): void;
@@ -146,8 +162,13 @@ export function createAppTts(
   opts?: {
     baseUrl?: string;
     piper?: boolean;
-    /** False: no Kokoro, Piper is the top voice. Default true (where Piper can run, Kokoro can too). */
+    /**
+     * False: no Kokoro, Piper is the top voice. Default: true in the native app (SabiToriKokoro plugin), and on the
+     * web only when onnxruntime-web can use several threads.
+     */
     kokoro?: boolean;
+    /** The native Kokoro plugin, or null for none (tests). Default: SabiToriKokoro when the app has it. */
+    kokoroPlugin?: KokoroNativePlugin | null;
     /** Wraps the Piper backend before Kokoro falls back to it (iOS: prefer a smooth phone voice over Piper). */
     belowKokoro?: (piper: TtsBackend) => TtsBackend;
     /** Where the "too slow for Kokoro" verdict is kept across starts. Default: local storage. */
@@ -173,17 +194,25 @@ export function createAppTts(
   });
   const below = opts?.belowKokoro ? opts.belowKokoro(piper) : piper;
   const lang = globalThis.navigator?.language;
-  const threads = kokoroThreads();
+  // Native app: the model runs in the phone's own onnxruntime (SabiToriKokoro plugin), several cores. Web: in
+  // onnxruntime-web, only where it can use several threads (a cross-origin isolated page): with one thread it is far
+  // slower than real time, and downloading 177 MB only for the speed guard to switch it off would waste data.
+  const plugin = opts?.kokoroPlugin === undefined ? nativeKokoroPlugin() : opts.kokoroPlugin;
+  const threads = plugin ? NATIVE_THREADS : kokoroThreads();
+  const version = plugin ? `${KOKORO_VERSION}-native` : KOKORO_VERSION;
   const memory = opts?.kokoroMemory ?? localKokoroMemory();
-  // This phone was found too slow for Kokoro recently: do not load the 92 MB model again only to find out again.
-  if (opts?.kokoro === false || skipKokoro(memory.get(), Date.now(), KOKORO_VERSION, threads)) {
+  const kokoroWanted = opts?.kokoro ?? (plugin !== null || threads > 1);
+  // This phone was found too slow for Kokoro recently: do not load the 177 MB model again only to find out again.
+  if (!kokoroWanted || skipKokoro(memory.get(), Date.now(), version, threads)) {
     // Load the voice of the phone's language while the person looks at the card, so the first sentence
     // is not delayed by the load. Other voices load on first use.
     if (lang) void piper.warm(lang);
     return below;
   }
   const kokoro = createKokoroTts({
-    engines: createKokoroWorkerEngines(`${base}piper/`, `${base}ort/`, threads),
+    engines: plugin
+      ? createKokoroNativeEngines({ plugin, loadPhonemizer: () => loadPhonemizer(`${base}piper/`), threads, base })
+      : createKokoroWorkerEngines(`${base}piper/`, `${base}ort/`, threads),
     // The packs decide: a part spoken with the "en" or "fr" Piper voice files gets the Kokoro voice of that language.
     resolveVoice: createKokoroVoiceResolver(packVoice, `${base}kokoro/`),
     fallback: below,
@@ -191,7 +220,7 @@ export function createAppTts(
     onEvent: (e) => {
       if (e.type !== 'fallback') return;
       // Too slow on this phone: remember it (skipKokoro), so the next starts do not load the model at all.
-      if (e.reason === 'first-synthesis-slow') memory.set({ version: KOKORO_VERSION, threads, at: Date.now(), ...(e.detail ? { why: e.detail } : {}) });
+      if (e.reason === 'first-synthesis-slow') memory.set({ version, threads, at: Date.now(), ...(e.detail ? { why: e.detail } : {}) });
       // Kokoro is off for the session (too slow, or it cannot load): get Piper ready for the next sentences.
       if (lang && (e.reason === 'first-synthesis-slow' || e.reason === 'load-error' || e.reason === 'synthesis-error')) void piper.warm(lang);
     },

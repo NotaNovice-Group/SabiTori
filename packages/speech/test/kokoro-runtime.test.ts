@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   createKokoroRuntime,
+  ortModelOpener,
   createKokoroVoiceResolver,
   KOKORO_MODEL_FILE,
   KOKORO_VERSION,
@@ -56,7 +57,7 @@ describe('createKokoroRuntime', () => {
   it('feeds padded ids, the style row of their length and the speed, and returns 24 kHz audio', async () => {
     const { ort, runs } = fakeOrt();
     const p = phon(['h', 'ə', 'l', 'ˈ', 'o', 'ʊ']);
-    const rt = createKokoroRuntime({ ort, loadPhonemizer: async () => p, fetchBytes: fetchFrom(files) });
+    const rt = createKokoroRuntime({ openModel: ortModelOpener(ort, fetchFrom(files)), loadPhonemizer: async () => p, fetchBytes: fetchFrom(files) });
     const v = await rt.load(EN);
     const a = await v.synthesize('Hello', { lengthScale: 0.8 });
     expect(p.phonemize).toHaveBeenCalledWith('en-us', 'Hello');
@@ -72,7 +73,7 @@ describe('createKokoroRuntime', () => {
 
   it('loads the model once for every voice and releases it with the last voice', async () => {
     const { ort, create, released, runs } = fakeOrt();
-    const rt = createKokoroRuntime({ ort, loadPhonemizer: async () => phon(['a']), fetchBytes: fetchFrom(files) });
+    const rt = createKokoroRuntime({ openModel: ortModelOpener(ort, fetchFrom(files)), loadPhonemizer: async () => phon(['a']), fetchBytes: fetchFrom(files) });
     const en = await rt.load(EN);
     const fr = await rt.load(FR);
     expect(create).toHaveBeenCalledTimes(1);
@@ -89,27 +90,27 @@ describe('createKokoroRuntime', () => {
 
   it('refuses a model that does not take Kokoro inputs', async () => {
     const { ort, released } = fakeOrt({ inputs: ['input', 'input_lengths', 'scales'] });
-    const rt = createKokoroRuntime({ ort, loadPhonemizer: async () => phon(['a']), fetchBytes: fetchFrom(files) });
+    const rt = createKokoroRuntime({ openModel: ortModelOpener(ort, fetchFrom(files)), loadPhonemizer: async () => phon(['a']), fetchBytes: fetchFrom(files) });
     await expect(rt.load(EN)).rejects.toThrow(/not a Kokoro model.*"input_ids"/);
     expect(released).toHaveBeenCalled();
   });
 
   it('refuses a voice file of the wrong size', async () => {
     const { ort } = fakeOrt();
-    const rt = createKokoroRuntime({ ort, loadPhonemizer: async () => phon(['a']), fetchBytes: fetchFrom({ ...files, [EN.styleUrl]: new Uint8Array(STYLE_BYTES - 4) }) });
+    const rt = createKokoroRuntime({ openModel: ortModelOpener(ort, fetchFrom(files)), loadPhonemizer: async () => phon(['a']), fetchBytes: fetchFrom({ ...files, [EN.styleUrl]: new Uint8Array(STYLE_BYTES - 4) }) });
     await expect(rt.load(EN)).rejects.toThrow(/expected 522240/);
   });
 
   it('refuses NaN audio (it would play as silence)', async () => {
     const { ort } = fakeOrt({ out: () => new Float32Array([0.1, Number.NaN]) });
-    const rt = createKokoroRuntime({ ort, loadPhonemizer: async () => phon(['a']), fetchBytes: fetchFrom(files) });
+    const rt = createKokoroRuntime({ openModel: ortModelOpener(ort, fetchFrom(files)), loadPhonemizer: async () => phon(['a']), fetchBytes: fetchFrom(files) });
     const v = await rt.load(EN);
     await expect(v.synthesize('a', { lengthScale: 1 })).rejects.toThrow(/invalid audio/);
   });
 
   it('returns empty audio, without running the model, when nothing is speakable', async () => {
     const { ort, runs } = fakeOrt();
-    const rt = createKokoroRuntime({ ort, loadPhonemizer: async () => phon(['#']), fetchBytes: fetchFrom(files) });
+    const rt = createKokoroRuntime({ openModel: ortModelOpener(ort, fetchFrom(files)), loadPhonemizer: async () => phon(['#']), fetchBytes: fetchFrom(files) });
     const v = await rt.load(EN);
     const a = await v.synthesize('#', { lengthScale: 1 });
     expect(a.samples).toHaveLength(0);

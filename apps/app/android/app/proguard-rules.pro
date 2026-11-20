@@ -33,3 +33,6 @@
 # Local notifications stores its schedule as JSON and rebuilds it after a reboot.
 -keep class com.capacitorjs.plugins.localnotifications.** { *; }
 -dontwarn com.getcapacitor.**
+
+# onnxruntime (Kokoro voice) is called through JNI: keep its Java API.
+-keep class ai.onnxruntime.** { *; }

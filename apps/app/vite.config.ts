@@ -100,13 +100,13 @@ function sabitoriAssets(): Plugin {
           }
         }
         // Kokoro-82M, the primary voice for English and French (scripts/fetch-kokoro.mjs, pinned + sha256): one
-        // 92 MB model for both languages plus a 0.5 MB style file per voice, staged once under public/kokoro/.
+        // 177 MB model for both languages plus a 0.5 MB style file per voice, staged once under public/kokoro/.
         // SABITORI_BUNDLE_KOKORO=0 leaves it out (Piper then speaks). Without network the build still succeeds.
         rmSync(resolve(pub, 'kokoro'), { recursive: true, force: true });
         if ((process.env.SABITORI_BUNDLE_KOKORO ?? '1').trim() !== '0') {
           if (run('fetch-kokoro.mjs', '--check').status !== 0) run('fetch-kokoro.mjs');
           const kdir = resolve(repo, 'voices/kokoro');
-          const files = ['model_quantized.onnx', 'voices/af_heart.bin', 'voices/ff_siwis.bin']; // = FILES of scripts/fetch-kokoro.mjs
+          const files = ['model_uint8.onnx', 'voices/af_heart.bin', 'voices/ff_siwis.bin']; // = FILES of scripts/fetch-kokoro.mjs
           if (files.every((f) => existsSync(resolve(kdir, f)))) {
             for (const f of files) {
               mkdirSync(dirname(resolve(pub, 'kokoro', f)), { recursive: true });
@@ -180,7 +180,7 @@ export default defineConfig(({ mode }) => ({
         maximumFileSizeToCacheInBytes: 40 * 1024 * 1024,
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true,
-        // Piper voice models (28 to 63 MB each) and the Kokoro model (92 MB) are over the precache size limit: they are
+        // Piper voice models (28 to 63 MB each) and the Kokoro model (177 MB) are over the precache size limit: they are
         // cached the first time they load. The Android app ships them in the APK.
         runtimeCaching: [
           { urlPattern: /\/packs\/[^/]+\/voice\/[^/]+\.onnx$/, handler: 'CacheFirst', options: { cacheName: 'sabitori-voices', cacheableResponse: { statuses: [200] } } },

@@ -18,6 +18,7 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         registerPlugin(SabiToriNativePlugin.class);
+        registerPlugin(SabiToriKokoroPlugin.class);
         super.onCreate(savedInstanceState);
         // Capacitor only forwards *new* intents to plugins. A share (or a tapped reminder) that
         // *started* the app arrives as the launch intent, so hand it over once. Plugins keep the event

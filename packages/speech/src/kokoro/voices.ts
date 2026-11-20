@@ -16,9 +16,9 @@ export interface KokoroVoiceSpec extends PiperVoiceSpec {
 }
 
 /** Model file shipped in the app (scripts/fetch-kokoro.mjs). */
-export const KOKORO_MODEL_FILE = 'model_quantized.onnx';
+export const KOKORO_MODEL_FILE = 'model_uint8.onnx';
 /** Bump with the model or voice files (scripts/fetch-kokoro.mjs): part of every cache key. */
-export const KOKORO_VERSION = 'v1.0-1939ad2-int8';
+export const KOKORO_VERSION = 'v1.0-1939ad2-uint8';
 
 /**
  * Which Kokoro voice speaks the text a pack's Piper voice would speak, keyed by that Piper voice's folder (the pack

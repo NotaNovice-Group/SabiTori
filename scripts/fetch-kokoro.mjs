@@ -7,7 +7,7 @@
  *   node scripts/fetch-kokoro.mjs            fetch what is missing or wrong, verify all
  *   node scripts/fetch-kokoro.mjs --check    verify only, never download (exit 1 if anything is missing)
  *
- * The files are git-ignored (the model is 92 MB); voices/kokoro/VOICE.md is committed. The app build
+ * The files are git-ignored (the model is 177 MB); voices/kokoro/VOICE.md is committed. The app build
  * (apps/app/vite.config.ts) runs this like scripts/fetch-voices.mjs. Without network the build still succeeds and
  * the app speaks with Piper (then the phone's voice).
  *
@@ -29,7 +29,7 @@ const BASE = `https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX/resolve
 
 /** Repository path -> sha256. Served from public/kokoro/ under the same relative paths minus "onnx/". */
 export const FILES = {
-  'onnx/model_quantized.onnx': 'fbae9257e1e05ffc727e951ef9b9c98418e6d79f1c9b6b13bd59f5c9028a1478',
+  'onnx/model_uint8.onnx': '6607a397d77b8514065420b7c1e7320117f7aabfdb45ce15f0050c5b0fe75aea',
   'voices/af_heart.bin': 'd583ccff3cdca2f7fae535cb998ac07e9fcb90f09737b9a41fa2734ec44a8f0b',
   'voices/ff_siwis.bin': 'a35f5675ad08948e326ae75fd0ea16ba5d0042e4f76b5f3d1df77d0a48c54861',
 };

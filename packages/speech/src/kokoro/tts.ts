@@ -21,7 +21,7 @@ export interface KokoroTtsOptions {
   /** Speaks whatever Kokoro cannot: the Piper backend (which falls back to the phone's voice in turn). */
   fallback: TtsBackend;
   output?: AudioOutput;
-  /** How long an utterance waits for the model (92 MB) still loading before the fallback speaks it. Default 6000. */
+  /** How long an utterance waits for the model (177 MB) still loading before the fallback speaks it. Default 6000. */
   loadGraceMs?: number;
   maxCacheBytes?: number;
   onEvent?: (e: PiperEvent) => void;

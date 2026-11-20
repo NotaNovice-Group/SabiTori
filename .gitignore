@@ -27,7 +27,7 @@ keystore.properties
 # Piper voice models (fetched by scripts/fetch-voices.mjs; over 80 MB together)
 packs/*/voice/*.onnx
 apps/app/public/piper/
-# Kokoro voice (fetched by scripts/fetch-kokoro.mjs; the model is 92 MB)
+# Kokoro voice (fetched by scripts/fetch-kokoro.mjs; the model is 177 MB)
 voices/kokoro/*.onnx
 voices/kokoro/voices/*.bin
 apps/app/public/kokoro/
