@@ -6,6 +6,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Design and prototype for phones with no internet (`docs/sms-ussd.md`, `packages/gateway`): forward an SMS and get
+  the card back by SMS; a USSD menu. Not deployed.
 - Retrain of the understanding heads on 453 messages (224 plus 229 hand-written ones in `eval/train-extra.jsonl`),
   classifier `minilm-l12-int8@3`, and a second unseen set (`eval/unseen2.jsonl`, 100 messages by an independent author,
   labels reviewed before evaluation, evaluated once). All three labels right: 51.0% [41.0–61.0] on the second unseen
