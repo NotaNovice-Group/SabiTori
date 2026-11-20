@@ -37,6 +37,28 @@ async function sha256Hex(s: string): Promise<string> {
 
 const fromBase64 = (b64: string): Uint8Array => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
 
+/** Reports and teachings (and their recordings) are deleted this many days after they arrive (docs/privacy.md, 5.4). */
+export const RETENTION_DAYS = 90;
+
+/** Deletes everything older than RETENTION_DAYS. Run once a day by the worker's cron (wrangler.toml). */
+export async function purgeOld(store: Store, blobs: Blobs, now: Date): Promise<number> {
+  const before = new Date(now.getTime() - RETENTION_DAYS * 86_400_000).toISOString();
+  const keys = await store.purge(before);
+  for (const k of keys) await blobs.delete(k);
+  return keys.length;
+}
+
+/**
+ * A sender may attach `deleteKey`: a random secret only their phone keeps. We store its SHA-256, never the key, so
+ * only that phone can later delete the item (POST /v1/delete), with no account and nothing that names the person.
+ */
+const DELETE_KEY = /^[A-Za-z0-9_-]{22,128}$/;
+function takeDeleteKey(body: unknown): { body: unknown; key?: string } {
+  if (!body || typeof body !== 'object' || Array.isArray(body) || !('deleteKey' in body)) return { body };
+  const { deleteKey, ...rest } = body as Record<string, unknown>;
+  return typeof deleteKey === 'string' && DELETE_KEY.test(deleteKey) ? { body: rest, key: deleteKey } : { body: rest };
+}
+
 /** Max request body: a teaching with 1.5 MB of audio in base64, plus the text fields. */
 const MAX_BODY = 2_200_000;
 
@@ -78,16 +100,30 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
     return json({ error: 'not_found' }, 404);
   }
 
+  // Delete one report or teaching sent from this phone: needs the secret the phone attached when it sent it.
+  if (req.method === 'POST' && path === '/v1/delete') {
+    const b = (await req.json().catch(() => null)) as { kind?: unknown; id?: unknown; key?: unknown } | null;
+    if (!b || (b.kind !== 'scam' && b.kind !== 'teach') || typeof b.id !== 'string' || !/^[0-9a-f-]{8,40}$/.test(b.id) || typeof b.key !== 'string' || !DELETE_KEY.test(b.key)) {
+      return json({ error: 'bad_request' }, 400, h);
+    }
+    const r = await store.remove(b.kind, b.id, await sha256Hex(b.key));
+    if (!r) return json({ error: 'not_found' }, 404, h); // already deleted (or 90 days passed), or a wrong key
+    if (r.audioKey) await blobs.delete(r.audioKey);
+    return json({ ok: true }, 200, h);
+  }
+
   if (req.method === 'POST' && (path === '/v1/scams' || path === '/v1/teach')) {
     if (Number(req.headers.get('content-length') ?? 0) > MAX_BODY) return json({ error: 'too_large' }, 413, h);
     const raw = await req.text();
     if (raw.length > MAX_BODY) return json({ error: 'too_large' }, 413, h);
-    let body: unknown;
+    let parsed: unknown;
     try {
-      body = JSON.parse(raw);
+      parsed = JSON.parse(raw);
     } catch {
       return json({ error: 'json' }, 400, h);
     }
+    const { body, key } = takeDeleteKey(parsed);
+    const deleteHash = key ? await sha256Hex(key) : undefined;
     // A limit per address per day, counted under a salted hash: no address is ever stored.
     const day = now.toISOString().slice(0, 10);
     const ip = req.headers.get('cf-connecting-ip') ?? 'unknown';
@@ -98,7 +134,7 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
     if (path === '/v1/scams') {
       const c = checkScamReport(body);
       if (!c.ok) return json({ error: c.error }, 400, h);
-      await store.addScam(id, at, c.value);
+      await store.addScam(id, at, c.value, deleteHash);
       return json({ id, status: 'pending' }, 201, h);
     }
     const c = checkTeaching(body);
@@ -109,7 +145,7 @@ export async function handle(req: Request, deps: Deps): Promise<Response> {
       audioKey = `teach/${rest.lang}/${day}/${id}.${AUDIO_TYPES[audio.type]}`;
       await blobs.put(audioKey, fromBase64(audio.base64), audio.type);
     }
-    await store.addTeaching(id, at, { ...rest, ...(audioKey ? { audioKey, audioType: audio!.type } : {}) });
+    await store.addTeaching(id, at, { ...rest, ...(audioKey ? { audioKey, audioType: audio!.type } : {}) }, deleteHash);
     return json({ id }, 201, h);
   }
 

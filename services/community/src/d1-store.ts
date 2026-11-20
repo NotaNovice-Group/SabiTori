@@ -6,14 +6,15 @@ export interface D1Like {
 }
 export interface R2Like {
   put(key: string, value: Uint8Array, opts?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+  delete(key: string): Promise<unknown>;
 }
 
 export function d1Store(db: D1Like): Store {
   return {
-    async addScam(id, at, r) {
+    async addScam(id, at, r, deleteHash) {
       await db
-        .prepare('INSERT INTO scam_reports (id, created_at, region, lang, level, text, sender_kind, sender_value, claimed, signals, app_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-        .bind(id, at, r.region, r.lang, r.level, r.text, r.sender.kind, r.sender.value ?? null, r.claimed ?? null, JSON.stringify(r.signals), r.appVersion ?? null)
+        .prepare('INSERT INTO scam_reports (id, created_at, region, lang, level, text, sender_kind, sender_value, claimed, signals, app_version, delete_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .bind(id, at, r.region, r.lang, r.level, r.text, r.sender.kind, r.sender.value ?? null, r.claimed ?? null, JSON.stringify(r.signals), r.appVersion ?? null, deleteHash ?? null)
         .run();
     },
     async published(region, limit) {
@@ -47,15 +48,28 @@ export function d1Store(db: D1Like): Store {
       const r = await db.prepare('UPDATE scam_reports SET status = ?, reviewed_at = ? WHERE id = ?').bind(status, at, id).run();
       return (r.meta?.changes ?? 0) > 0;
     },
-    async addTeaching(id, at, t) {
+    async addTeaching(id, at, t, deleteHash) {
       await db
-        .prepare('INSERT INTO teachings (id, created_at, lang, dialect, phrase, meaning, meaning_lang, prompt_id, audio_key, audio_type, app_version) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-        .bind(id, at, t.lang, t.dialect ?? null, t.phrase ?? null, t.meaning, t.meaningLang, t.promptId ?? null, t.audioKey ?? null, t.audioType ?? null, t.appVersion ?? null)
+        .prepare('INSERT INTO teachings (id, created_at, lang, dialect, phrase, meaning, meaning_lang, prompt_id, audio_key, audio_type, app_version, delete_hash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+        .bind(id, at, t.lang, t.dialect ?? null, t.phrase ?? null, t.meaning, t.meaningLang, t.promptId ?? null, t.audioKey ?? null, t.audioType ?? null, t.appVersion ?? null, deleteHash ?? null)
         .run();
     },
     async teachings(since, limit) {
       const { results } = await db.prepare('SELECT * FROM teachings WHERE created_at >= ? ORDER BY created_at LIMIT ?').bind(since, limit).all<Record<string, unknown>>();
       return results;
+    },
+    async remove(kind, id, deleteHash) {
+      const table = kind === 'scam' ? 'scam_reports' : 'teachings';
+      const row = await db.prepare(`SELECT ${kind === 'teach' ? 'audio_key' : 'NULL AS audio_key'} FROM ${table} WHERE id = ? AND delete_hash = ?`).bind(id, deleteHash).first<{ audio_key: string | null }>();
+      if (!row) return false;
+      await db.prepare(`DELETE FROM ${table} WHERE id = ? AND delete_hash = ?`).bind(id, deleteHash).run();
+      return { audioKey: row.audio_key ?? null };
+    },
+    async purge(before) {
+      const { results } = await db.prepare('SELECT audio_key FROM teachings WHERE created_at < ? AND audio_key IS NOT NULL').bind(before).all<{ audio_key: string }>();
+      await db.prepare('DELETE FROM teachings WHERE created_at < ?').bind(before).run();
+      await db.prepare('DELETE FROM scam_reports WHERE created_at < ?').bind(before).run();
+      return results.map((r) => r.audio_key);
     },
     async bump(bucket, day) {
       await db.prepare('DELETE FROM rate WHERE day < ?').bind(new Date(Date.parse(day) - 2 * 86_400_000).toISOString().slice(0, 10)).run();
@@ -69,5 +83,8 @@ export function d1Store(db: D1Like): Store {
 }
 
 export function r2Blobs(bucket: R2Like): Blobs {
-  return { put: async (key, data, type) => void (await bucket.put(key, data, { httpMetadata: { contentType: type } })) };
+  return {
+    put: async (key, data, type) => void (await bucket.put(key, data, { httpMetadata: { contentType: type } })),
+    delete: async (key) => void (await bucket.delete(key)),
+  };
 }

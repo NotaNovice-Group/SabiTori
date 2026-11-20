@@ -5,13 +5,13 @@ they are decisions, facts about the publisher, or results of steps outside the c
 reads "unfinished", so fill or remove them before the repository is public. `packages/understand/test/model-card.test.ts`
 checks that this list matches the files (regenerate it with `node scripts/owner-todo.mjs` after editing a document).
 
-Total: 48 placeholders in 16 files.
+Total: 45 placeholders in 14 files.
 
 ## `CHANGELOG.md` (3)
 
-- [ ] `CHANGELOG.md:155` release date, once released.
-- [ ] `CHANGELOG.md:186` French review status; resolve before release.
-- [ ] `CHANGELOG.md:187` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
+- [ ] `CHANGELOG.md:158` release date, once released.
+- [ ] `CHANGELOG.md:189` French review status; resolve before release.
+- [ ] `CHANGELOG.md:190` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
 
 ## `CODE_OF_CONDUCT.md` (1)
 
@@ -35,14 +35,6 @@ Total: 48 placeholders in 16 files.
 
 - [ ] `docs/ios.md:20` iOS app icon (1024 px) and launch screen
 - [ ] `docs/ios.md:84` Apple developer account
-
-## `docs/privacy.fr.md` (1)
-
-- [ ] `docs/privacy.fr.md:165` conservation du service communautaire
-
-## `docs/privacy.md` (1)
-
-- [ ] `docs/privacy.md:162` retention of the community service
 
 ## `docs/release.md` (16)
 
@@ -70,10 +62,9 @@ Total: 48 placeholders in 16 files.
 - [ ] `docs/sms-ussd.md:114` talks with MTN Cameroon, Orange Cameroun and Camtel for a toll-free short code and a USSD code (routes B, C)
 - [ ] `docs/sms-ussd.md:115` budget for the relay SIM's SMS bundle (NotaNovice pays the replies for now)
 
-## `docs/store/data-safety.md` (2)
+## `docs/store/data-safety.md` (1)
 
 - [ ] `docs/store/data-safety.md:3` ...
-- [ ] `docs/store/data-safety.md:24` how a person asks the community service to delete a report or a teaching
 
 ## `docs/store/listing.en.md` (1)
 

@@ -162,8 +162,21 @@ si vous choisissez de l'enregistrer, votre voix qui le dit. Cela aide à ajouter
 L'enregistrement demande le microphone, et seulement quand vous touchez Enregistrer.
 
 **À qui.** Le service communautaire SabiTori, géré par NotaNovice. Il voit votre adresse IP, comme pour toute requête.
-Durée de conservation des signalements et enseignements : [OWNER: conservation du service communautaire]. Si vous êtes
-hors ligne, l'élément attend sur votre téléphone et est envoyé plus tard ; vous pouvez le supprimer avant son envoi.
+Il ne garde pas votre adresse IP (la limite d'envois par jour compte une forme brouillée de celle-ci, effacée après
+deux jours).
+
+**Combien de temps, et comment effacer.** Le service garde les signalements, enseignements et enregistrements
+**90 jours**, puis les efface automatiquement. Vous pouvez les faire effacer plus tôt, à tout moment :
+
+- **Dans l'application :** Réglages, « Ce que vous avez partagé », « Effacer tout ce que j'ai envoyé ». Avec chaque
+  élément, votre téléphone envoie un secret au hasard que lui seul garde ; le service ne garde qu'une forme brouillée
+  (hachage) de ce secret : seul votre téléphone peut donc effacer ce qu'il a envoyé, sans compte. Ce qui attend encore
+  dans la boîte d'envoi est aussi effacé.
+- **Par e-mail :** écrivez à legal@usesabitori.com. Dites à peu près quand vous l'avez envoyé et ce qu'il disait (par
+  exemple le message d'arnaque ou le mot appris), pour que nous le retrouvions, car rien dedans ne vous nomme.
+
+Si vous êtes hors ligne, l'élément attend sur votre téléphone et est envoyé plus tard ; « Effacer tout ce que j'ai
+envoyé » le retire aussi.
 
 ## 6. Autorisations
 

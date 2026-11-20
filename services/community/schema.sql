@@ -17,7 +17,9 @@ CREATE TABLE IF NOT EXISTS scam_reports (
   app_version TEXT,
   -- pending until a person reviews it; only 'published' reports are ever shown to anyone
   status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'published', 'rejected')),
-  reviewed_at TEXT
+  reviewed_at TEXT,
+  -- SHA-256 of a secret only the sending phone keeps: lets that phone delete this report (POST /v1/delete)
+  delete_hash TEXT
 );
 CREATE INDEX IF NOT EXISTS scam_reports_region_status ON scam_reports (region, status, created_at);
 CREATE INDEX IF NOT EXISTS scam_reports_sender ON scam_reports (sender_value);
@@ -34,9 +36,13 @@ CREATE TABLE IF NOT EXISTS teachings (
   audio_key TEXT,
   audio_type TEXT,
   app_version TEXT,
-  status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'accepted', 'rejected'))
+  status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'accepted', 'rejected')),
+  delete_hash TEXT
 );
 CREATE INDEX IF NOT EXISTS teachings_lang ON teachings (lang, created_at);
+-- Everything older than 90 days is deleted (docs/privacy.md, section 5.4): by date.
+CREATE INDEX IF NOT EXISTS scam_reports_created ON scam_reports (created_at);
+CREATE INDEX IF NOT EXISTS teachings_created ON teachings (created_at);
 
 -- Per-day counters keyed by a salted hash of the address (the salt is a secret that changes daily): a limit,
 -- never a record of who sent what. Rows older than two days are deleted on the next write.
