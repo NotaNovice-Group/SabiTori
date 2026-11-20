@@ -371,6 +371,10 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 - [x] **Stale claims swept.** Every decimal percentage in the docs and the landing page now comes from a generated
       block. The video shot list still said "French and English only": it now says Pidgin is a draft needing a native
       speaker, and shows the picture card and the scam stop sign and vibration in two existing shots.
+- [x] **Probe 18: genuine shorthand money talk.** Probe 17 read a thousands-grouped number after "send/envoie" as
+      money; 8 genuine family, school and tontine messages that talk about sending money (past tense, someone else
+      sending, a receipt, a reminder) were checked: no warning on any. Permanent test. Main also checked after the
+      owner's fine-tuned encoder (#93): `pnpm reproduce` byte-identical.
 
 ## Log
 
@@ -473,3 +477,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #100 | Landing screenshots retaken from the current app | local gate (Actions budget) |
 | 2026-11-20 | #101 | README: features of the week, scam and photo numbers generated (20 of 21 first unseen) | local gate (Actions budget) |
 | 2026-11-20 | #102 | Video shot list: Pidgin draft, picture card, stop sign and vibration | local gate (Actions budget) |
+| 2026-11-20 | #103 | Probe 18: genuine shorthand money talk stays clean (regression test); main reproduces after #93 | local gate (Actions budget) |
