@@ -187,3 +187,16 @@ describe('the deployed worker', () => {
     }
   });
 });
+
+describe('delete requests are bounded', () => {
+  it('refuses a large body and limits deletes per address per day, apart from the post limit', async () => {
+    const d = deps(); // maxPostsPerDay 3, so 30 deletes a day
+    const big = post('/v1/delete', { kind: 'scam', id: '00000001-aaaa-bbbb', key: 'k'.repeat(28), pad: 'x'.repeat(2000) });
+    expect((await handle(big, d)).status).toBe(413);
+    const del = () => post('/v1/delete', { kind: 'scam', id: '00000001-aaaa-bbbb', key: 'k'.repeat(28) }, { 'cf-connecting-ip': '5.5.5.5' });
+    for (let i = 0; i < 30; i++) expect((await handle(del(), d)).status).toBe(404);
+    expect((await handle(del(), d)).status).toBe(429);
+    // posting from that address is not affected
+    expect((await handle(post('/v1/scams', REPORT, { 'cf-connecting-ip': '5.5.5.5' }), d)).status).toBe(201);
+  });
+});
