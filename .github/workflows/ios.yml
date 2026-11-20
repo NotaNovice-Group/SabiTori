@@ -33,6 +33,14 @@ jobs:
           x="$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1 || true)"
           if [ -n "$x" ]; then sudo xcode-select -s "$x/Contents/Developer"; fi
           xcodebuild -version
+      - name: TEMP probe onnxruntime Swift package locations
+        continue-on-error: true
+        run: |
+          for u in https://github.com/microsoft/onnxruntime-swift-package-manager https://github.com/microsoft/onnxruntime-swift-package-manager.git https://github.com/microsoft/onnxruntime; do
+            echo "== $u"; GIT_TERMINAL_PROMPT=0 git ls-remote --tags "$u" 2>&1 | grep -E 'refs/tags/v?1\.2[4-9]|fatal' | tail -8
+          done
+          curl -sI https://github.com/microsoft/onnxruntime-swift-package-manager | head -3
+          curl -s https://raw.githubusercontent.com/microsoft/onnxruntime/v1.28.0/Package.swift | head -60
       - run: pnpm install --frozen-lockfile
       - name: Build the web app
         run: pnpm --filter @sabitori/app build
