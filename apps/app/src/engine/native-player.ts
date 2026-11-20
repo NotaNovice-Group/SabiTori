@@ -1,11 +1,14 @@
 /**
- * Voices. Packs whose manifest says `engine: 'piper'` (French and English today, community voices
- * later) are spoken by Piper, a small open neural voice that runs offline in a Web Worker (web and
- * Android WebView alike). The phone's own TTS stays underneath as the automatic fallback: Android's
- * offline TextToSpeech inside the Capacitor app (its WebView has no window.speechSynthesis), the Web
- * Speech API in a browser. If Piper cannot load, is too slow on this phone, or cannot make sound, the
- * system voice speaks instead and the listener is never left in silence. Recorded clips still play
- * through <audio>.
+ * Voices, best first, each one falling back to the next so the listener is never left in silence:
+ *
+ * 1. Kokoro-82M (English and French): a soft, smooth open neural voice, offline in its own Web Worker. Off for the
+ *    session when this phone is too slow for it (packages/speech/src/kokoro/speed-guard.ts) or it cannot load.
+ * 2. Piper, for packs whose manifest says `engine: 'piper'` (French and English today, community voices later),
+ *    also offline in a Web Worker. On iOS an Enhanced, Premium or Siri phone voice is preferred over Piper.
+ * 3. The phone's own TTS: Android's offline TextToSpeech inside the Capacitor app (its WebView has no
+ *    window.speechSynthesis), the Web Speech API in a browser.
+ *
+ * Recorded clips still play through <audio>.
  */
 import { Capacitor } from '@capacitor/core';
 import { pickVoice, SMOOTH_RANK, type PhoneVoice } from './voice-pick';
@@ -13,14 +16,22 @@ import { TextToSpeech } from '@capacitor-community/text-to-speech';
 import {
   createBrowserClips,
   createBrowserTts,
+  createKokoroTts,
+  createKokoroVoiceResolver,
+  createKokoroWorkerEngines,
   createPacksVoiceResolver,
   createPiperTts,
   createPiperWorkerEngines,
   createPlayer,
+  createWebAudioOutput,
+  KOKORO_VERSION,
+  kokoroThreads,
   piperSupported,
+  skipKokoro,
   TtsVoiceUnavailableError,
   type ClipBackend,
   type ManifestList,
+  type SlowVerdict,
   type Player,
   type TtsBackend,
 } from '@sabitori/speech';
@@ -71,7 +82,8 @@ export async function hasSmoothPhoneVoice(bcp47: string): Promise<boolean> {
 
 /**
  * iPhone: its Enhanced, Premium and Siri voices are smoother than the bundled Piper voices, so they speak
- * whenever the phone has one for the language; Piper (and then the compact system voice) otherwise.
+ * whenever the phone has one for the language; Piper (and then the compact system voice) otherwise. This sits
+ * below Kokoro: it only decides who speaks when Kokoro cannot.
  */
 function preferSmoothPhoneVoice(system: TtsBackend, piper: TtsBackend): TtsBackend {
   let active: TtsBackend = piper;
@@ -87,6 +99,33 @@ function preferSmoothPhoneVoice(system: TtsBackend, piper: TtsBackend): TtsBacke
   };
 }
 
+export interface KokoroMemory {
+  get(): unknown;
+  set(v: SlowVerdict): void;
+}
+
+const KOKORO_MEMORY_KEY = 'sabitori.kokoro.slow';
+
+/** The Kokoro verdict in local storage; storage that is blocked or full just means Kokoro is tested again. */
+function localKokoroMemory(): KokoroMemory {
+  return {
+    get() {
+      try {
+        return JSON.parse(globalThis.localStorage?.getItem(KOKORO_MEMORY_KEY) ?? 'null');
+      } catch {
+        return null;
+      }
+    },
+    set(v) {
+      try {
+        globalThis.localStorage?.setItem(KOKORO_MEMORY_KEY, JSON.stringify(v));
+      } catch {
+        /* not remembered: tested again next start */
+      }
+    },
+  };
+}
+
 /** Plays a clip from the downloaded update set when it has one, else the bundled file. */
 function withOverlay(inner: ClipBackend, resolveClip: (url: string) => Promise<string | null>): ClipBackend {
   return {
@@ -98,12 +137,21 @@ function withOverlay(inner: ClipBackend, resolveClip: (url: string) => Promise<s
   };
 }
 
-/** Piper on top of the system voice, or just the system voice where Piper cannot run (no Worker/WebAssembly/Web Audio). */
+/**
+ * Kokoro on top of Piper on top of the system voice, or just the system voice where neither can run (no
+ * Worker/WebAssembly/Web Audio).
+ */
 export function createAppTts(
   system: TtsBackend,
   opts?: {
     baseUrl?: string;
     piper?: boolean;
+    /** False: no Kokoro, Piper is the top voice. Default true (where Piper can run, Kokoro can too). */
+    kokoro?: boolean;
+    /** Wraps the Piper backend before Kokoro falls back to it (iOS: prefer a smooth phone voice over Piper). */
+    belowKokoro?: (piper: TtsBackend) => TtsBackend;
+    /** Where the "too slow for Kokoro" verdict is kept across starts. Default: local storage. */
+    kokoroMemory?: KokoroMemory;
     resolveUrl?: (url: string) => Promise<string | null>;
     fetchJson?: (url: string) => Promise<unknown>;
     /** The pack registry's shared manifest list, so voices do not fetch every manifest a second time. */
@@ -113,18 +161,45 @@ export function createAppTts(
   if (!(opts?.piper ?? piperSupported())) return system;
   const base = new URL(opts?.baseUrl ?? import.meta.env.BASE_URL, globalThis.document?.baseURI ?? globalThis.location?.href).href;
   const packs = `${base}packs`;
-  const tts = createPiperTts({
+  const output = createWebAudioOutput(); // one audio device for both neural voices
+  // Voices delivered by the signed update channel (an English voice, or a community-trained one) are
+  // read from the update store; manifests too, so an update can switch a language to its new voice.
+  const packVoice = createPacksVoiceResolver(packs, opts?.fetchJson, opts?.resolveUrl, opts?.list ? { list: opts.list } : undefined);
+  const piper = createPiperTts({
     engines: createPiperWorkerEngines(`${base}piper/`, `${base}ort/`),
-    // Voices delivered by the signed update channel (an English voice, or a community-trained one) are
-    // read from the update store; manifests too, so an update can switch a language to its new voice.
-    resolveVoice: createPacksVoiceResolver(packs, opts?.fetchJson, opts?.resolveUrl, opts?.list ? { list: opts.list } : undefined),
+    resolveVoice: packVoice,
     fallback: system,
+    output,
   });
-  // Load the voice of the phone's language while the person looks at the card, so the first sentence
-  // is not delayed by the load. Other voices load on first use.
+  const below = opts?.belowKokoro ? opts.belowKokoro(piper) : piper;
   const lang = globalThis.navigator?.language;
-  if (lang) void tts.warm(lang);
-  return tts;
+  const threads = kokoroThreads();
+  const memory = opts?.kokoroMemory ?? localKokoroMemory();
+  // This phone was found too slow for Kokoro recently: do not load the 92 MB model again only to find out again.
+  if (opts?.kokoro === false || skipKokoro(memory.get(), Date.now(), KOKORO_VERSION, threads)) {
+    // Load the voice of the phone's language while the person looks at the card, so the first sentence
+    // is not delayed by the load. Other voices load on first use.
+    if (lang) void piper.warm(lang);
+    return below;
+  }
+  const kokoro = createKokoroTts({
+    engines: createKokoroWorkerEngines(`${base}piper/`, `${base}ort/`, threads),
+    // The packs decide: a part spoken with the "en" or "fr" Piper voice files gets the Kokoro voice of that language.
+    resolveVoice: createKokoroVoiceResolver(packVoice, `${base}kokoro/`),
+    fallback: below,
+    output,
+    onEvent: (e) => {
+      if (e.type !== 'fallback') return;
+      // Too slow on this phone: remember it (skipKokoro), so the next starts do not load the model at all.
+      if (e.reason === 'first-synthesis-slow') memory.set({ version: KOKORO_VERSION, threads, at: Date.now(), ...(e.detail ? { why: e.detail } : {}) });
+      // Kokoro is off for the session (too slow, or it cannot load): get Piper ready for the next sentences.
+      if (lang && (e.reason === 'first-synthesis-slow' || e.reason === 'load-error' || e.reason === 'synthesis-error')) void piper.warm(lang);
+    },
+  });
+  // Load Kokoro for the phone's language while the person looks at the card. Only when Kokoro has no voice for it
+  // (or cannot load) is Piper loaded instead: two neural models at once is too much memory for a cheap phone.
+  if (lang) void kokoro.warm(lang).then((ok) => !ok && piper.warm(lang));
+  return kokoro;
 }
 
 export function createAppPlayer(
@@ -135,11 +210,13 @@ export function createAppPlayer(
   const native = Capacitor.isNativePlatform();
   const clips = resolveClip ? withOverlay(createBrowserClips(), resolveClip) : createBrowserClips();
   const system = native ? createNativeTts() : createBrowserTts();
-  const piper = createAppTts(system, {
+  const ios = native && Capacitor.getPlatform() === 'ios';
+  const tts = createAppTts(system, {
     ...(resolveClip ? { resolveUrl: resolveClip } : {}),
     ...(fetchJson ? { fetchJson } : {}),
     ...(list ? { list } : {}),
+    // iPhone: Kokoro first; when it cannot speak, a smooth installed phone voice before Piper.
+    ...(ios ? { belowKokoro: (piper: TtsBackend) => preferSmoothPhoneVoice(system, piper) } : {}),
   });
-  const tts = native && Capacitor.getPlatform() === 'ios' ? preferSmoothPhoneVoice(system, piper) : piper;
   return createPlayer({ tts, clips });
 }
