@@ -490,4 +490,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #103 | Probe 18: genuine shorthand money talk stays clean (regression test); main reproduces after #93 | local gate (Actions budget) |
 | 2026-11-20 | #104 | Speed re-measured after the fine-tuned encoder: range now 1.3 to 2.5 s (stand-in, not a phone) | local gate (Actions budget) |
 | 2026-11-20 | #105 | iOS privacy manifest (App Store requirement), bundled; untested on a Mac | local gate (Actions budget) |
-| 2026-11-20 | #106 | Robustness test: odd and huge inputs never throw or hang | local gate (Actions budget) |
+| 2026-11-20 | #108 | Robustness test: odd and huge inputs never throw or hang | local gate (Actions budget) |
