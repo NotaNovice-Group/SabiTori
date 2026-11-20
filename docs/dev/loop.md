@@ -403,6 +403,8 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
       notifications are already allowed) and on the Scams screen; no account, token or tracking. Relay phone: an
       ongoing "answering SMS" notification and a once-an-hour notice when the hourly limit is hit. Instant push
       (Firebase) documented as a later opt-in for the owner to decide. Tests: validator, freshness, limit notice.
+- [x] **French privacy policy in line.** `docs/privacy.fr.md` lacked the Vibrate permission (#79; it said five
+      permissions), the scam alerts line (#111) and the relay section 6a (#110): added, same content as English.
 
 ## Log
 
@@ -512,3 +514,4 @@ bottom. People can reorder, add or strike items at any time; the loop re-reads t
 | 2026-11-20 | #109 | SMS and USSD for phones with no internet: design (sourced numbers), prototype gateway | local gate (Actions budget) |
 | 2026-11-20 | #110 | Relay build: an Android phone with a local SIM answers forwarded SMS with the card, offline | local gate (Actions budget) |
 | 2026-11-20 | #111 | Scam alerts over the signed update channel (notification + Scams screen); relay status notifications | local gate (Actions budget) |
+| 2026-11-20 | #112 | French privacy policy in line (vibration, scam alerts, relay section) | local gate (Actions budget) |
