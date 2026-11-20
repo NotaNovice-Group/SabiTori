@@ -5,13 +5,13 @@ they are decisions, facts about the publisher, or results of steps outside the c
 reads "unfinished", so fill or remove them before the repository is public. `packages/understand/test/model-card.test.ts`
 checks that this list matches the files (regenerate it with `node scripts/owner-todo.mjs` after editing a document).
 
-Total: 45 placeholders in 14 files.
+Total: 46 placeholders in 15 files.
 
 ## `CHANGELOG.md` (3)
 
-- [ ] `CHANGELOG.md:150` release date, once released.
-- [ ] `CHANGELOG.md:181` French review status; resolve before release.
-- [ ] `CHANGELOG.md:182` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
+- [ ] `CHANGELOG.md:152` release date, once released.
+- [ ] `CHANGELOG.md:183` French review status; resolve before release.
+- [ ] `CHANGELOG.md:184` official numbers verification in `regions/CM/region.json`; remove this note once every entry is verified.
 
 ## `CODE_OF_CONDUCT.md` (1)
 
@@ -38,7 +38,7 @@ Total: 45 placeholders in 14 files.
 
 ## `docs/privacy.md` (1)
 
-- [ ] `docs/privacy.md:153` legal review of this section before a relay goes live
+- [ ] `docs/privacy.md:154` legal review of this section before a relay goes live
 
 ## `docs/release.md` (16)
 
@@ -88,6 +88,10 @@ Total: 45 placeholders in 14 files.
 - [ ] `docs/sustainability.md:46` publisher — individual founder or charitable vehicle
 - [ ] `docs/sustainability.md:57` publisher — individual founder or charitable vehicle
 - [ ] `docs/sustainability.md:58` first partner, once agreed in writing.
+
+## `docs/updates.md` (1)
+
+- [ ] `docs/updates.md:152` decide whether instant push is worth that change
 
 ## `docs/video-script.md` (2)
 

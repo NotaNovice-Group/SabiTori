@@ -127,6 +127,30 @@ The output goes to `dist-updates/` (git-ignored). Upload the whole directory to 
 `--previous`. Only files the app reads are published; anything else in `packs/` (READMEs, drafts)
 is listed as skipped.
 
+### Scam alerts
+
+A short warning about a scam going round ("A fake ENEO SMS asks for 2,000 FCFA to avoid a cut") reaches every phone
+that switched updates on, with its next daily check: it is a file of the update, `regions/<CC>/alerts.json`, signed
+like the rest. New alerts are shown as a notification (only if the person already allowed notifications for
+reminders; SabiTori never asks for that permission for alerts) and at the top of the Scams screen until they expire.
+
+```json
+{ "alerts": [ { "id": "fake-eneo-2026-11", "date": "2026-11-20", "expires": "2026-12-20",
+  "title": { "fr": "Faux SMS ENEO", "en": "Fake ENEO SMS" },
+  "body": { "fr": "Un SMS dit être d’ENEO et demande 2 000 FCFA pour éviter une coupure. ENEO ne fait pas cela.",
+            "en": "An SMS claims to be from ENEO and asks for 2,000 FCFA to avoid a cut. ENEO does not do this." } } ] }
+```
+
+Rules, checked by the update channel before a file is accepted (`parseAlerts`, `packages/connect/src/content.ts`):
+at most 20 alerts; a title of at most 60 and a text of at most 240 characters, in French and English; a date and an
+end date; **no link, phone number or USSD code**, so that even a stolen signing key could not send people to a scam.
+To publish: edit `regions/CM/alerts.json`, then publish an update as above.
+
+Why not instant push (Firebase Cloud Messaging) today: it needs a Firebase project, gives every phone a device token
+that Google and the publisher hold, and requires Google services on the phone; the privacy policy would change. The
+signed daily check gives the same alert within a day, with no account, token or tracking. Instant push can be added
+later as a separate opt-in. [OWNER: decide whether instant push is worth that change]
+
 ## 2. Error reports
 
 Only when `VITE_SENTRY_DSN` is set and the person switched "Send error reports" on; switching off

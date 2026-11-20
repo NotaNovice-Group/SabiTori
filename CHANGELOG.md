@@ -6,6 +6,8 @@ All notable changes to SabiTori are listed here. The format follows [Keep a Chan
 
 ### Added
 
+- Scam alerts: short warnings published with a signed update reach phones that turned updates on, as a notification
+  and on the Scams screen; no link, number or code allowed in an alert. The relay phone shows its status as a notification.
 - Relay build (`scripts/build-relay.sh`): an Android phone with a local SIM answers SMS forwarded to it with the
   card, made on the phone, offline. The only build with SMS permissions; never in a store.
 - Design and prototype for phones with no internet (`docs/sms-ussd.md`, `packages/gateway`): forward an SMS and get
