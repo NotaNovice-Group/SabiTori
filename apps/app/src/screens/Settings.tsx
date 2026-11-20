@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Trash2, FileUp, X, RefreshCw, Info, RotateCcw } from 'lucide-react';
+import { Trash2, FileUp, X, RefreshCw, Info, RotateCcw, ToggleRight, ToggleLeft, Rabbit, Turtle, Snail, CalendarDays, CalendarRange, CalendarX } from 'lucide-react';
 import { useApp } from '../app-context';
 import { Screen } from '../components/Screen';
 import { SpeakingButton } from '../components/SpeakingButton';
@@ -123,8 +123,8 @@ export function SettingsScreen() {
         if (key === 'updatesOn' && on && !settings.updatesOn) void checkNow();
       }}
       options={[
-        { value: 'on', key: 'app.settings.on', label: t('app.settings.on') },
-        { value: 'off', key: 'app.settings.off', label: t('app.settings.off') },
+        { value: 'on', key: 'app.settings.on', label: t('app.settings.on'), icon: <ToggleRight size={24} strokeWidth={2} aria-hidden /> },
+        { value: 'off', key: 'app.settings.off', label: t('app.settings.off'), icon: <ToggleLeft size={24} strokeWidth={2} aria-hidden /> },
       ]}
     />
   );
@@ -144,8 +144,8 @@ export function SettingsScreen() {
           value={settings.listenFirst ? 'on' : 'off'}
           onChange={(v) => setSettings({ listenFirst: v === 'on' })}
           options={[
-            { value: 'on', key: 'app.settings.on', label: t('app.settings.on') },
-            { value: 'off', key: 'app.settings.off', label: t('app.settings.off') },
+            { value: 'on', key: 'app.settings.on', label: t('app.settings.on'), icon: <ToggleRight size={24} strokeWidth={2} aria-hidden /> },
+            { value: 'off', key: 'app.settings.off', label: t('app.settings.off'), icon: <ToggleLeft size={24} strokeWidth={2} aria-hidden /> },
           ]}
         />
       </section>
@@ -157,9 +157,9 @@ export function SettingsScreen() {
           value={settings.speed}
           onChange={(v) => setSettings({ speed: v })}
           options={[
-            { value: 0, key: 'app.settings.speed.normal', label: t('app.settings.speed.normal') },
-            { value: 1, key: 'app.settings.speed.slow', label: t('app.settings.speed.slow') },
-            { value: 2, key: 'app.settings.speed.slower', label: t('app.settings.speed.slower') },
+            { value: 0, key: 'app.settings.speed.normal', label: t('app.settings.speed.normal'), icon: <Rabbit size={24} strokeWidth={2} aria-hidden /> },
+            { value: 1, key: 'app.settings.speed.slow', label: t('app.settings.speed.slow'), icon: <Turtle size={24} strokeWidth={2} aria-hidden /> },
+            { value: 2, key: 'app.settings.speed.slower', label: t('app.settings.speed.slower'), icon: <Snail size={24} strokeWidth={2} aria-hidden /> },
           ]}
         />
       </section>
@@ -171,9 +171,9 @@ export function SettingsScreen() {
           value={settings.retention}
           onChange={(v) => setSettings({ retention: v })}
           options={[
-            { value: 30, key: 'app.settings.history.30', label: t('app.settings.history.30') },
-            { value: 7, key: 'app.settings.history.7', label: t('app.settings.history.7') },
-            { value: 0, key: 'app.settings.history.0', label: t('app.settings.history.0') },
+            { value: 30, key: 'app.settings.history.30', label: t('app.settings.history.30'), icon: <CalendarDays size={24} strokeWidth={2} aria-hidden /> },
+            { value: 7, key: 'app.settings.history.7', label: t('app.settings.history.7'), icon: <CalendarRange size={24} strokeWidth={2} aria-hidden /> },
+            { value: 0, key: 'app.settings.history.0', label: t('app.settings.history.0'), icon: <CalendarX size={24} strokeWidth={2} aria-hidden /> },
           ]}
         />
         {settings.retention === 0 && <p className="panel-hint">{t('app.settings.history.0_hint')}</p>}
